@@ -37,7 +37,7 @@ import { createServer, type Server } from "node:http";
 import type { AddressInfo } from "node:net";
 import { dirname, extname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
-import { chromium, type BrowserContext, type Page } from "@playwright/test";
+import { chromium, type BrowserContext, type Locator, type Page } from "@playwright/test";
 
 interface StageRow {
   id: string;
@@ -114,6 +114,10 @@ const WIDTHS =
 /* How long ONE stage gets to boot and report, once it has been scrolled into view. Per stage and
  * not per page: a single wedged frame should cost its own slot, not the whole page's budget. */
 const STAGE_BUDGET_MS = 15_000;
+
+/** How long to wait for the tabs enhancer to have run before opening a stage's panel (see
+ *  `revealStage`). Short on purpose: it is a signal that JS has mounted, not a measurement. */
+const MOUNT_BUDGET_MS = 5_000;
 
 /** Navigation only. A built page is static HTML; this is slack, not a measurement window. */
 const NAV_BUDGET_MS = 60_000;
@@ -203,6 +207,46 @@ function previewPages() {
 }
 
 /*
+ * OPEN THE TAB A STAGE LIVES IN, because otherwise the wait below is a race this script loses.
+ *
+ * SSR emits every tab panel visible: nothing in `tabs.css` hides an inactive one, the Zag machine
+ * puts the `hidden` attribute on at mount and the UA sheet does the rest. So at
+ * `domcontentloaded` a stage in the Reference tab HAS a real box, the skip below does not catch
+ * it, and by the time `frame-ready` is being waited on the enhancer has mounted and hidden the
+ * panel  -  the iframe is never promoted and the wait burns its whole budget. Measured: 14 stages,
+ * every one an anatomy diagram, which is exactly the set that moved into the Reference tab.
+ *
+ * Activating the panel first is also what makes the number MEAN something. A reader who opens that
+ * tab gets the same jump every other preview was measured to remove; reserving its height is the
+ * whole point of the artifact.
+ */
+async function revealStage(page: Page, stage: Locator): Promise<void> {
+  if (!(await stage.evaluate((el) => Boolean(el.closest("[data-sk-tabs-content]"))))) return;
+
+  /* SSR carries no `aria-selected`; the machine writes it. Its presence is "the enhancer has run",
+     and clicking a trigger before that would just be undone when it does. */
+  await page
+    .waitForFunction(() => Boolean(document.querySelector("[data-sk-tabs-trigger][aria-selected]")), undefined, {
+      timeout: MOUNT_BUDGET_MS,
+    })
+    .catch(() => {});
+
+  await stage.evaluate((el) => {
+    /* Innermost outwards: a preview can sit in a tab inside a tab. `click()` dispatches even on a
+       panel that is still hidden, so the order only has to be complete, not clever. */
+    let panel = el.closest<HTMLElement>("[data-sk-tabs-content]");
+    while (panel) {
+      const value = panel.getAttribute("data-value");
+      const root = panel.closest<HTMLElement>("[data-sk-tabs]");
+      if (value && root) {
+        root.querySelector<HTMLElement>(`[data-sk-tabs-trigger][data-value="${CSS.escape(value)}"]`)?.click();
+      }
+      panel = root?.parentElement?.closest<HTMLElement>("[data-sk-tabs-content]") ?? null;
+    }
+  });
+}
+
+/*
  * Read one page's stages, ONE AT A TIME, each while it is on screen.
  *
  * Not "scroll the whole page, then read them all": the shared IntersectionObserver
@@ -237,6 +281,8 @@ async function measurePage(page: Page, url: string, origin: string) {
 
   for (const index of indices) {
     const stage = stages.nth(index);
+
+    await revealStage(page, stage);
 
     /*
      * A STAGE INSIDE A CLOSED PANEL HAS NO BOX, AND IS SKIPPED RATHER THAN WAITED FOR.

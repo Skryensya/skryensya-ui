@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-21T16:16:08.645Z",
+  "generatedAt": "2026-09-21T18:00:45.846Z",
   "viewport": {
     "width": 1920,
     "height": 1000
@@ -14,24 +14,30 @@
     "/components/accordion": {
       "accordion-multiple": 326,
       "accordion-of-one-item": 142,
+      "accordion-part-by-part": 434,
       "accordion-single": 326,
-      "details-with-a-shared-name": 494
+      "details-with-a-shared-name": 494,
+      "detailsgroup-anatomy": 513
     },
     "/components/avatar": {
-      "colors": 112,
-      "in-a-composition": 146,
-      "sizes": 112,
-      "stacked-avatars": 88,
-      "with-an-image": 96
+      "avatar-part-by-part": 201,
+      "avatargroup-part-by-part": 177,
+      "colors": 217,
+      "in-a-composition": 147,
+      "sizes": 113,
+      "stacked-avatars": 89,
+      "with-an-image": 97
     },
     "/components/back-to-top": {
       "backtotop-always-shown": 144,
-      "backtotop-on-scroll": 288
+      "backtotop-on-scroll": 288,
+      "backtotop-part-by-part": 163
     },
     "/components/badge": {
       "badge": 77,
       "badge-dot": 57,
       "badge-dot-in-the-corner": 93,
+      "badge-part-by-part": 153,
       "badge-sm": 77,
       "pulsing-badge-dot": 57
     },
@@ -49,6 +55,7 @@
     },
     "/components/button": {
       "button-as-a-link": 93,
+      "button-part-by-part": 185,
       "button-with-default-values": 93,
       "button-with-leading-icon": 93,
       "button-xs-sm-md-lg": 97,
@@ -58,9 +65,12 @@
       "tilebutton": 145
     },
     "/components/calendar": {
-      "calendar": 367,
-      "calendar-min-max": 367,
-      "calendar-range": 367
+      "calendar": 384,
+      "calendar-day-view": 583,
+      "calendar-min-max": 384,
+      "calendar-month-view": 569,
+      "calendar-range": 384,
+      "calendar-year-view": 569
     },
     "/components/callout": {
       "callout-part-by-part": 287,
@@ -84,56 +94,65 @@
       "visits-over-the-last-eight-weeks": 400
     },
     "/components/carousel": {
-      "card-carousel": 420,
-      "focus-inside-a-card": 470,
-      "multi-up-autoplay": 438,
-      "no-controls": 215,
-      "no-js-native-css": 284
+      "card-carousel": 421,
+      "carousel-part-by-part": 518,
+      "focus-inside-a-card": 419,
+      "multi-up-autoplay": 387,
+      "no-controls": 216,
+      "no-js-native-css": 285
     },
     "/components/changelog": {
-      "changelog": 536
+      "changelog": 793,
+      "changelog-part-by-part": 355
     },
     "/components/charts": {
       "budget-by-team-five-categories": 416,
       "bundle-weight-per-week": 352,
-      "contributions-over-the-last-five-months": 575,
+      "chart-part-by-part": 379,
+      "contributions-over-the-last-five-months": 576,
       "documented-components-per-quarter": 352,
-      "four-chart-cards-different-options": 572,
+      "four-chart-cards-different-options": 769,
       "interaction-latency-per-version": 352,
-      "latency-by-endpoint-with-detail": 384,
+      "latency-by-endpoint-with-detail": 394,
       "quarterly-revenue-this-year-against-last": 416,
-      "revenue-by-quarter": 564,
-      "revenue-users-and-errors-per-week": 483,
+      "revenue-by-quarter": 565,
+      "revenue-users-and-errors-per-week": 484,
       "site-traffic-by-period": 416,
       "visits-over-the-last-eight-weeks": 416,
-      "whole-home-power-usage": 511
+      "whole-home-power-usage": 512
     },
     "/components/checkbox": {
-      "checkbox": 72,
-      "checkboxgroup": 168,
-      "tilecheckbox": 168
+      "checkbox": 73,
+      "checkbox-part-by-part": 192,
+      "checkboxgroup": 169,
+      "multi-select-scale": 117,
+      "tilecheckbox": 487
     },
     "/components/color-picker": {
-      "accent": 384,
-      "background-color": 117,
-      "brand-color": 384,
-      "color-with-presets": 384,
-      "colorpicker-disabled": 121
+      "accent": 385,
+      "background-color": 118,
+      "brand-color": 385,
+      "color-with-presets": 385,
+      "colorpicker-disabled": 122,
+      "colorpicker-part-by-part": 725
     },
     "/components/combobox": {
-      "combobox": 288
+      "an-open-combobox-part-by-part": 468,
+      "combobox": 289
     },
     "/components/command-palette": {
-      "commandpalette": 384
+      "an-open-commandpalette-part-by-part": 938,
+      "commandpalette": 385
     },
     "/components/comment-thread": {
-      "comment-with-actions": 184,
-      "comments-loading": 314,
-      "deep-thread": 888,
-      "deep-thread-with-no-folding": 888,
-      "one-comment-on-its-own": 144,
-      "sample-comments": 660,
-      "thread-with-progressive-loading": 382
+      "comment-part-by-part": 428,
+      "comment-with-actions": 329,
+      "comments-loading": 315,
+      "deep-thread": 1369,
+      "deep-thread-with-no-folding": 1369,
+      "one-comment-on-its-own": 289,
+      "sample-comments": 785,
+      "thread-with-progressive-loading": 401
     },
     "/components/component-preview": {
       "button": 92,
@@ -144,16 +163,19 @@
       "grid-multicol": 272
     },
     "/components/data-grid": {
-      "quick-actions": 131,
-      "scores-by-round": 172
+      "datagrid-part-by-part": 220,
+      "quick-actions": 132,
+      "scores-by-round": 173
     },
     "/components/date-picker": {
-      "custom-datepicker": 384,
-      "datepicker-disabled": 123,
-      "native-datepicker": 123
+      "an-open-datepicker-part-by-part": 508,
+      "custom-datepicker": 385,
+      "datepicker-disabled": 124,
+      "native-datepicker": 124
     },
     "/components/dialog": {
       "confirm": 385,
+      "dialog-part-by-part": 393,
       "dialog-vaul": 385
     },
     "/components/drawer": {
@@ -161,14 +183,21 @@
       "native-drawer": 384
     },
     "/components/editor": {
-      "editor": 276,
-      "editor-with-a-compact-bar": 217
+      "editor": 353,
+      "editor-part-by-part": 374,
+      "editor-with-a-compact-bar": 252
     },
     "/components/empty-state": {
-      "empty-state": 291
+      "empty-state": 316,
+      "emptystate-part-by-part": 460
     },
     "/components/feed": {
-      "feed": 348
+      "activity-feed-with-composed-identities": 543,
+      "feed": 349,
+      "feed-part-by-part": 329,
+      "feed-with-a-batch-in-flight": 255,
+      "flat-comment-feed": 289,
+      "stream-with-a-load-more-button": 301
     },
     "/components/file-upload": {
       "dropping-anywhere-in-the-document": 496,
@@ -176,19 +205,21 @@
       "fileupload-part-by-part": 515
     },
     "/components/folder": {
-      "folderstack": 724,
-      "folderstack-with-no-previews": 632,
-      "on-a-raised-surface": 492,
-      "on-a-sunken-surface": 492,
-      "the-second-folder-with-active-held-on": 724
+      "folder-part-by-part": 601,
+      "folderstack": 937,
+      "folderstack-with-no-previews": 873,
+      "on-a-raised-surface": 653,
+      "on-a-sunken-surface": 653,
+      "the-second-folder-with-active-held-on": 937
     },
     "/components/footer": {
       "credit-line": 102,
       "site-footer": 239
     },
     "/components/form-field": {
-      "formfield": 173,
-      "formfield-select": 123
+      "formfield": 174,
+      "formfield-part-by-part": 290,
+      "formfield-select": 127
     },
     "/components/grid": {
       "grid": 106,
@@ -224,10 +255,11 @@
       "icon-sm-md-lg": 72
     },
     "/components/image-frame": {
-      "aspect": 486,
-      "fit": 388,
-      "imageframe": 596,
-      "position": 388
+      "aspect": 205,
+      "fit": 178,
+      "imageframe": 241,
+      "imageframe-part-by-part": 328,
+      "position": 178
     },
     "/components/inline": {
       "action-bar": 228,
@@ -236,6 +268,7 @@
     },
     "/components/input": {
       "input": 148,
+      "one-class-three-elements": 411,
       "textarea": 236,
       "three-fields-that-validate-themselves": 326
     },
@@ -255,22 +288,26 @@
       "tilelink": 144
     },
     "/components/list": {
-      "1-just-the-list": 288,
-      "2-title-and-description": 337,
-      "3-leading-media": 337,
-      "4-trailing-meta": 337,
-      "5-the-row-acts": 337,
-      "6-everything-together": 247
+      "1-just-the-list": 289,
+      "2-title-and-description": 338,
+      "3-leading-media": 338,
+      "4-trailing-meta": 338,
+      "5-the-row-acts": 338,
+      "6-everything-together": 266,
+      "list-part-by-part": 222
     },
     "/components/loader": {
-      "blend-analysis": 178,
-      "loader-in-context": 193,
-      "loader-sizes": 191,
-      "loader-speeds": 191
+      "blend-analysis": 179,
+      "designs-with-no-children": 1305,
+      "designs-with-staggered-marks": 690,
+      "loader-in-context": 482,
+      "loader-sizes": 234,
+      "loader-speeds": 213
     },
     "/components/marquee": {
       "autoplay-marquee-no-control": 96,
-      "column-of-update-cards": 288,
+      "column-of-update-cards": 289,
+      "marquee-part-by-part": 269,
       "marquee-waiting-for-play": 144,
       "strip-of-release-badges": 96,
       "strip-of-team-avatars": 112,
@@ -278,9 +315,11 @@
       "the-same-strip-with-the-control": 144
     },
     "/components/megamenu": {
-      "megamenu": 384
+      "an-open-megamenu-part-by-part": 383,
+      "megamenu": 385
     },
     "/components/menu": {
+      "an-open-menu-part-by-part": 423,
       "as-a-context-menu": 337,
       "compact-density": 289,
       "menu": 289,
@@ -288,32 +327,41 @@
       "pointer-intent-safety-triangle": 481
     },
     "/components/menubar": {
+      "an-open-menubar-part-by-part": 401,
       "as-nav-list": 289,
       "dropdowns-with-a-submenu": 481,
       "menu-bar": 289
     },
     "/components/meter": {
-      "meter": 191
+      "meter": 192,
+      "meter-part-by-part": 202
     },
     "/components/navbar": {
-      "navbar": 160
+      "navbar": 160,
+      "navbar-part-by-part": 198
     },
     "/components/number-field": {
-      "numberfield": 123
+      "numberfield": 124,
+      "numberfield-part-by-part": 268
     },
     "/components/pagination": {
-      "pagination": 80
+      "pagination": 81,
+      "pagination-part-by-part": 241
     },
     "/components/placeholder": {
-      "layout-with-placeholder": 593,
-      "placeholder-content": 616,
-      "skeleton-and-real-text-same-role": 201,
-      "the-four-signatures": 240
+      "layout-with-placeholder": 533,
+      "placeholder-content": 533,
+      "placeholder-part-by-part": 224,
+      "skeleton-and-real-text-same-role": 325,
+      "the-four-signatures": 241
     },
     "/components/popover": {
-      "popover": 384,
-      "popover-in-all-four-placements": 384,
-      "popover-with-a-header-and-footer": 384
+      "an-open-popover-part-by-part": 484,
+      "popover": 385,
+      "popover-in-all-four-placements": 389,
+      "popover-with-a-header-and-footer": 385,
+      "popup": 289,
+      "popup-part-by-part": 283
     },
     "/components/popup": {
       "popup": 288,
@@ -323,82 +371,98 @@
       "primitives": 369
     },
     "/components/process-list": {
-      "processlist": 461
+      "processlist": 590,
+      "processlist-part-by-part": 369
     },
     "/components/progress": {
-      "progress": 104
+      "progress": 105,
+      "progress-part-by-part": 145
     },
     "/components/radio-group": {
-      "radiogroup": 136,
-      "tileradiogroup": 144
+      "likert-scale-composed": 117,
+      "radiogroup": 137,
+      "radiogroup-part-by-part": 253,
+      "table-likert": 316,
+      "tileradiogroup": 369
     },
     "/components/segmented": {
-      "segmented": 80
+      "segmented": 81,
+      "segmented-part-by-part": 169
     },
     "/components/select": {
+      "an-open-select-part-by-part": 468,
       "enhanced-select": 289,
       "native-select": 289
     },
     "/components/sidebar": {
-      "resizable-sidebar": 352,
-      "sidebar": 352,
-      "sidebar-floating-trigger": 352
+      "resizable-sidebar": 353,
+      "sidebar": 353,
+      "sidebar-floating-trigger": 353,
+      "sidebar-part-by-part": 417
     },
     "/components/skip-link": {
       "both-in-order": 48,
       "skiplink": 48
     },
     "/components/slider": {
-      "price-range": 80,
-      "slider": 124
+      "price-range": 81,
+      "slider": 125,
+      "slider-part-by-part": 197
     },
     "/components/split-button": {
-      "splitbutton": 288,
-      "splitbutton-danger-variant": 288,
-      "splitbutton-ghost-variant": 288,
-      "splitbutton-menu-first": 288,
-      "splitbutton-small-size": 288,
-      "splitbutton-subtle-variant": 288,
-      "splitbutton-translucent-variant": 288
+      "splitbutton": 289,
+      "splitbutton-danger-variant": 289,
+      "splitbutton-ghost-variant": 289,
+      "splitbutton-menu-first": 289,
+      "splitbutton-part-by-part": 181,
+      "splitbutton-small-size": 289,
+      "splitbutton-subtle-variant": 289,
+      "splitbutton-translucent-variant": 289
     },
     "/components/stack": {
       "stack": 237,
       "stack-part-by-part": 238
     },
     "/components/stat": {
-      "animated-stat-cards": 202,
-      "stat": 186
+      "animated-stat-cards": 510,
+      "stat": 187,
+      "stat-part-by-part": 224
     },
     "/components/steps": {
-      "steps": 137,
-      "vertical-steps": 225
+      "steps": 289,
+      "steps-part-by-part": 314,
+      "vertical-steps": 226
     },
     "/components/switch": {
-      "switch": 72,
-      "tileswitch": 144
+      "switch": 73,
+      "switch-part-by-part": 191,
+      "tileswitch": 257
     },
     "/components/table": {
-      "compact-table-0-6-system": 421,
-      "performance-by-region-resizable": 231,
-      "sticky-first-column": 231,
-      "sticky-header-row": 269,
-      "table": 228,
-      "table-in-box": 262,
-      "table-pagination": 392,
-      "wide-table-1-2-system": 421
+      "compact-table-0-6-system": 422,
+      "performance-by-region-resizable": 232,
+      "sticky-first-column": 232,
+      "sticky-header-row": 270,
+      "table": 250,
+      "table-in-box": 284,
+      "table-pagination": 447,
+      "table-part-by-part": 394,
+      "wide-table-1-2-system": 422
     },
     "/components/tabs": {
       "basic-tabs": 162,
       "hanging-tabs": 162,
       "sm-and-md-tabs": 283,
+      "tabs-part-by-part": 250,
       "tabs-with-states": 194,
       "vertical-tabs-with-manual-control": 254
     },
     "/components/tag": {
-      "link-tags": 76,
-      "removable-tags": 76,
-      "simple-tag": 76,
-      "tones": 76
+      "link-tags": 77,
+      "removable-tags": 77,
+      "simple-tag": 77,
+      "tag-part-by-part": 165,
+      "tones": 77
     },
     "/components/text": {
       "inline-text": 72,
@@ -407,40 +471,47 @@
       "validation-message": 69
     },
     "/components/time-field": {
-      "every-15-minutes": 288,
-      "forcing-24-hour-form-without-depending-on-the-locale": 288,
-      "native-time-input": 121,
-      "timefield": 288
+      "an-open-timefield-part-by-part": 533,
+      "every-15-minutes": 289,
+      "forcing-24-hour-form-without-depending-on-the-locale": 289,
+      "native-time-input": 122,
+      "timefield": 289
     },
     "/components/toast": {
-      "simple-toast": 288,
-      "toast-after-an-action": 288,
-      "toast-stack": 384,
-      "toast-with-an-action": 288,
-      "toast-with-state": 384
+      "simple-toast": 289,
+      "toast-after-an-action": 289,
+      "toast-part-by-part": 193,
+      "toast-stack": 385,
+      "toast-with-an-action": 289,
+      "toast-with-state": 385
     },
     "/components/toc": {
       "h2-and-h3": 192,
       "text": 192,
+      "toc-part-by-part": 343,
       "with-icons": 192
     },
     "/components/toolbar": {
-      "toolbar": 90,
-      "toolbar-with-a-nested-segmented": 90
+      "toolbar": 92,
+      "toolbar-part-by-part": 179,
+      "toolbar-with-a-nested-segmented": 91
     },
     "/components/tooltip": {
-      "tooltip": 288
+      "tooltip": 289,
+      "tooltip-part-by-part": 278
     },
     "/components/tree-view": {
-      "disabled-node": 152,
-      "files-with-icons": 246,
-      "minimal-treeview": 120,
-      "multiple-selection-and-three-levels": 224,
-      "open-and-selected-from-the-start": 224
+      "disabled-node": 143,
+      "files-with-icons": 231,
+      "minimal-treeview": 109,
+      "multiple-selection-and-three-levels": 211,
+      "open-and-selected-from-the-start": 211,
+      "treeview-part-by-part": 376
     },
     "/components/treegrid": {
-      "sample-file-explorer": 657,
-      "sample-inbox": 277
+      "sample-file-explorer": 658,
+      "sample-inbox": 278,
+      "treegrid-part-by-part": 449
     },
     "/components/wrapper": {
       "wrapper": 183,
@@ -457,28 +528,34 @@
       "html": 368
     },
     "/es/componentes/accordion": {
-      "accordion-de-un-item": 141,
-      "accordion-multiple": 325,
-      "accordion-single": 325,
-      "details-con-name-compartido": 406
+      "accordion-de-un-item": 142,
+      "accordion-multiple": 326,
+      "accordion-parte-por-parte": 434,
+      "accordion-single": 326,
+      "anatomia-de-detailsgroup": 513,
+      "details-con-name-compartido": 494
     },
     "/es/componentes/avatar": {
-      "avatares-apilados": 88,
-      "colores": 112,
-      "con-imagen": 96,
-      "en-composicion": 146,
-      "tamanos": 112
+      "avatar-parte-por-parte": 201,
+      "avatares-apilados": 89,
+      "avatargroup-parte-por-parte": 177,
+      "colores": 217,
+      "con-imagen": 97,
+      "en-composicion": 147,
+      "tamanos": 113
     },
     "/es/componentes/back-to-top": {
       "backtotop-al-scrollear": 288,
+      "backtotop-parte-por-parte": 163,
       "backtotop-siempre-visible": 144
     },
     "/es/componentes/badge": {
-      "badge": 76,
-      "badge-dot": 56,
-      "badge-dot-en-la-esquina": 92,
-      "badge-dot-pulsante": 56,
-      "badge-sm": 76
+      "badge": 77,
+      "badge-dot": 57,
+      "badge-dot-en-la-esquina": 93,
+      "badge-dot-pulsante": 57,
+      "badge-parte-por-parte": 153,
+      "badge-sm": 77
     },
     "/es/componentes/box": {
       "box": 275,
@@ -505,9 +582,12 @@
       "tilebutton": 144
     },
     "/es/componentes/calendar": {
-      "calendar": 367,
-      "calendar-min-max": 367,
-      "calendar-rango": 367
+      "calendar": 384,
+      "calendar-min-max": 384,
+      "calendar-rango": 384,
+      "calendar-vista-de-ano": 569,
+      "calendar-vista-de-dia": 583,
+      "calendar-vista-de-mes": 569
     },
     "/es/componentes/callout": {
       "callout-info": 143,
@@ -531,56 +611,65 @@
       "visitas-de-las-ultimas-ocho-semanas": 400
     },
     "/es/componentes/carousel": {
-      "carrusel-de-tarjetas": 420,
-      "foco-dentro-de-una-tarjeta": 470,
-      "multi-up-autoplay": 438,
-      "sin-controles": 215,
-      "sin-js-css-nativo": 284
+      "carousel-parte-por-parte": 539,
+      "carrusel-de-tarjetas": 421,
+      "foco-dentro-de-una-tarjeta": 419,
+      "multi-up-autoplay": 387,
+      "sin-controles": 216,
+      "sin-js-css-nativo": 285
     },
     "/es/componentes/changelog": {
-      "changelog": 582
+      "changelog": 898,
+      "changelog-parte-por-parte": 376
     },
     "/es/componentes/charts": {
-      "aportes-de-los-ultimos-cinco-meses": 575,
+      "aportes-de-los-ultimos-cinco-meses": 608,
+      "chart-parte-por-parte": 379,
       "componentes-documentados-por-trimestre": 352,
-      "consumo-electrico-de-toda-la-casa": 511,
-      "cuatro-chart-cards-distintas-opciones": 572,
+      "consumo-electrico-de-toda-la-casa": 512,
+      "cuatro-chart-cards-distintas-opciones": 769,
       "ingresos-del-trimestre-este-ano-contra-el-anterior": 416,
-      "ingresos-por-trimestre": 564,
-      "ingresos-usuarios-y-errores-por-semana": 483,
+      "ingresos-por-trimestre": 565,
+      "ingresos-usuarios-y-errores-por-semana": 484,
       "latencia-de-interaccion-por-version": 352,
-      "latencia-por-endpoint-con-detalle": 384,
+      "latencia-por-endpoint-con-detalle": 394,
       "peso-del-bundle-por-semana": 352,
       "presupuesto-por-equipo-cinco-categorias": 416,
-      "trafico-del-sitio-por-periodo": 416,
+      "trafico-del-sitio-por-periodo": 426,
       "visitas-de-las-ultimas-ocho-semanas": 416
     },
     "/es/componentes/checkbox": {
-      "checkbox": 72,
-      "checkboxgroup": 168,
-      "tilecheckbox": 168
+      "checkbox": 73,
+      "checkbox-parte-por-parte": 192,
+      "checkboxgroup": 169,
+      "escala-de-seleccion-multiple": 117,
+      "tilecheckbox": 517
     },
     "/es/componentes/color-picker": {
-      "acento": 384,
-      "color-con-presets": 384,
-      "color-de-fondo": 117,
-      "color-de-marca": 384,
-      "colorpicker-disabled": 121
+      "acento": 385,
+      "color-con-presets": 385,
+      "color-de-fondo": 118,
+      "color-de-marca": 385,
+      "colorpicker-disabled": 122,
+      "colorpicker-parte-por-parte": 725
     },
     "/es/componentes/combobox": {
-      "combobox": 288
+      "combobox": 289,
+      "combobox-abierto-parte-por-parte": 468
     },
     "/es/componentes/command-palette": {
-      "commandpalette": 384
+      "commandpalette": 385,
+      "commandpalette-abierta-parte-por-parte": 938
     },
     "/es/componentes/comment-thread": {
-      "comentario-con-acciones": 184,
-      "comentarios-cargando": 314,
-      "comentarios-de-ejemplo": 660,
-      "hilo-con-carga-progresiva": 382,
-      "hilo-profundo": 888,
-      "hilo-profundo-sin-plegado": 888,
-      "un-comentario-suelto": 144
+      "comentario-con-acciones": 329,
+      "comentarios-cargando": 315,
+      "comentarios-de-ejemplo": 785,
+      "comment-parte-por-parte": 428,
+      "hilo-con-carga-progresiva": 401,
+      "hilo-profundo": 1409,
+      "hilo-profundo-sin-plegado": 1409,
+      "un-comentario-suelto": 289
     },
     "/es/componentes/component-preview": {
       "button": 92,
@@ -591,28 +680,33 @@
       "grid-multicol": 272
     },
     "/es/componentes/data-grid": {
-      "acciones-rapidas": 131,
-      "puntajes-por-ronda": 172
+      "acciones-rapidas": 132,
+      "datagrid-parte-por-parte": 220,
+      "puntajes-por-ronda": 173
     },
     "/es/componentes/date-picker": {
-      "datepicker-custom": 384,
-      "datepicker-disabled": 123,
-      "datepicker-nativo": 123
+      "datepicker-abierto-parte-por-parte": 508,
+      "datepicker-custom": 385,
+      "datepicker-disabled": 124,
+      "datepicker-nativo": 124
     },
     "/es/componentes/dialog": {
-      "confirm": 384,
-      "dialog-vaul": 384
+      "confirm": 385,
+      "dialog-parte-por-parte": 393,
+      "dialog-vaul": 385
     },
     "/es/componentes/drawer": {
       "drawer-nativo": 384,
       "html": 384
     },
     "/es/componentes/editor": {
-      "editor": 276,
-      "editor-con-barra-compacta": 217
+      "editor": 353,
+      "editor-con-barra-compacta": 252,
+      "editor-parte-por-parte": 374
     },
     "/es/componentes/empty-state": {
-      "empty-state": 291
+      "empty-state": 316,
+      "emptystate-parte-por-parte": 460
     },
     "/es/componentes/fade-edge": {
       "fade-a-color": 242,
@@ -623,7 +717,12 @@
       "intensidad-del-desvanecido": 351
     },
     "/es/componentes/feed": {
-      "feed": 348
+      "feed": 349,
+      "feed-con-un-lote-en-vuelo": 255,
+      "feed-de-actividad-con-identidades-compuestas": 543,
+      "feed-de-comentarios-planos": 289,
+      "feed-parte-por-parte": 329,
+      "stream-con-boton-de-cargar-mas": 301
     },
     "/es/componentes/file-upload": {
       "fileupload": 496,
@@ -631,19 +730,21 @@
       "soltar-en-cualquier-parte-del-documento": 496
     },
     "/es/componentes/folder": {
-      "folderstack": 724,
-      "folderstack-sin-previews": 632,
-      "la-segunda-carpeta-con-active-puesto": 724,
-      "sobre-una-superficie-elevada": 492,
-      "sobre-una-superficie-hundida": 492
+      "folder-parte-por-parte": 601,
+      "folderstack": 937,
+      "folderstack-sin-previews": 873,
+      "la-segunda-carpeta-con-active-puesto": 937,
+      "sobre-una-superficie-elevada": 653,
+      "sobre-una-superficie-hundida": 653
     },
     "/es/componentes/footer": {
       "credit-line": 102,
       "site-footer": 239
     },
     "/es/componentes/form-field": {
-      "formfield": 173,
-      "formfield-select": 123
+      "formfield": 174,
+      "formfield-parte-por-parte": 290,
+      "formfield-select": 127
     },
     "/es/componentes/grid": {
       "grid": 106,
@@ -679,10 +780,11 @@
       "icon-sm-md-lg": 72
     },
     "/es/componentes/image-frame": {
-      "aspect": 486,
-      "fit": 388,
-      "imageframe": 596,
-      "position": 388
+      "aspect": 205,
+      "fit": 178,
+      "imageframe": 241,
+      "imageframe-parte-por-parte": 328,
+      "position": 178
     },
     "/es/componentes/inline": {
       "barra-de-acciones": 228,
@@ -690,9 +792,10 @@
       "inline-parte-por-parte": 178
     },
     "/es/componentes/input": {
-      "input": 147,
-      "textarea": 235,
-      "una-clase-tres-elementos": 382
+      "input": 148,
+      "textarea": 236,
+      "tres-campos-que-se-validan-solos": 326,
+      "una-clase-tres-elementos": 411
     },
     "/es/componentes/kbd": {
       "kbd": 71,
@@ -710,65 +813,80 @@
       "tilelink": 144
     },
     "/es/componentes/list": {
-      "1-solo-la-lista": 288,
-      "2-titulo-y-descripcion": 337,
-      "3-media-al-inicio": 337,
-      "4-meta-al-final": 337,
-      "5-la-fila-actua": 337,
-      "6-todo-junto": 247
+      "1-solo-la-lista": 289,
+      "2-titulo-y-descripcion": 338,
+      "3-media-al-inicio": 338,
+      "4-meta-al-final": 338,
+      "5-la-fila-actua": 356,
+      "6-todo-junto": 248,
+      "list-parte-por-parte": 222
     },
     "/es/componentes/loader": {
-      "analisis-de-mezcla": 178,
-      "loader-en-contexto": 200,
-      "tamanos-de-loader": 191,
-      "velocidades-de-loader": 191
+      "analisis-de-mezcla": 179,
+      "disenos-con-marcas-escalonadas": 669,
+      "disenos-sin-hijos": 1305,
+      "loader-en-contexto": 482,
+      "tamanos-de-loader": 247,
+      "velocidades-de-loader": 213
     },
     "/es/componentes/marquee": {
-      "columna-de-tarjetas-de-novedades": 288,
+      "columna-de-tarjetas-de-novedades": 289,
       "franja-de-avatares-del-equipo": 112,
       "franja-de-badges-de-lanzamiento": 96,
       "la-misma-fila-con-fade-none-cortada-en-seco": 96,
       "la-misma-franja-con-control": 144,
       "marquee-con-autoplay-sin-control": 96,
+      "marquee-parte-por-parte": 269,
       "marquee-que-espera-play": 144
     },
     "/es/componentes/megamenu": {
-      "megamenu": 384
+      "megamenu": 385,
+      "megamenu-abierto-parte-por-parte": 383
     },
     "/es/componentes/menu": {
-      "como-context-menu": 336,
-      "densidad-compacta": 288,
-      "intencion-del-puntero-safety-triangle": 480,
-      "menu": 288,
-      "submenus-anidados": 288
+      "como-context-menu": 337,
+      "densidad-compacta": 289,
+      "intencion-del-puntero-safety-triangle": 481,
+      "menu": 289,
+      "menu-abierto-parte-por-parte": 423,
+      "submenus-anidados": 289
     },
     "/es/componentes/menubar": {
-      "barra-de-menu": 288,
-      "como-nav-list": 288,
-      "desplegables-con-submenu": 480
+      "barra-de-menu": 289,
+      "como-nav-list": 289,
+      "desplegables-con-submenu": 481,
+      "menubar-abierto-parte-por-parte": 401
     },
     "/es/componentes/meter": {
-      "meter": 191
+      "meter": 192,
+      "meter-parte-por-parte": 202
     },
     "/es/componentes/navbar": {
-      "navbar": 160
+      "navbar": 160,
+      "navbar-parte-por-parte": 198
     },
     "/es/componentes/number-field": {
-      "numberfield": 123
+      "numberfield": 124,
+      "numberfield-parte-por-parte": 268
     },
     "/es/componentes/pagination": {
-      "pagination": 80
+      "pagination": 81,
+      "pagination-parte-por-parte": 241
     },
     "/es/componentes/placeholder": {
-      "las-cuatro-firmas": 240,
-      "layout-con-placeholder": 593,
-      "placeholder-contenido": 616,
-      "skeleton-y-texto-real-mismo-rol": 201
+      "las-cuatro-firmas": 241,
+      "layout-con-placeholder": 533,
+      "placeholder-contenido": 533,
+      "placeholder-parte-por-parte": 224,
+      "skeleton-y-texto-real-mismo-rol": 325
     },
     "/es/componentes/popover": {
-      "popover": 384,
-      "popover-con-encabezado-y-pie": 384,
-      "popover-en-las-cuatro-colocaciones": 384
+      "popover": 385,
+      "popover-abierto-parte-por-parte": 484,
+      "popover-con-encabezado-y-pie": 385,
+      "popover-en-las-cuatro-colocaciones": 389,
+      "popup": 289,
+      "popup-parte-por-parte": 283
     },
     "/es/componentes/popup": {
       "popup": 288,
@@ -778,81 +896,98 @@
       "primitivas": 369
     },
     "/es/componentes/process-list": {
-      "processlist": 461
+      "processlist": 558,
+      "processlist-parte-por-parte": 369
     },
     "/es/componentes/progress": {
-      "progress": 104
+      "progress": 105,
+      "progress-parte-por-parte": 145
     },
     "/es/componentes/radio-group": {
-      "radiogroup": 136,
-      "tileradiogroup": 144
+      "escala-likert-compuesta": 117,
+      "likert-de-tabla": 295,
+      "radiogroup": 137,
+      "radiogroup-parte-por-parte": 253,
+      "tileradiogroup": 369
     },
     "/es/componentes/segmented": {
-      "segmented": 80
+      "segmented": 81,
+      "segmented-parte-por-parte": 169
     },
     "/es/componentes/select": {
-      "select-enhanced": 288,
-      "select-nativo": 288
+      "select-abierto-parte-por-parte": 468,
+      "select-enhanced": 289,
+      "select-nativo": 289
     },
     "/es/componentes/sidebar": {
-      "sidebar": 352,
-      "sidebar-redimensionable": 352,
-      "sidebar-trigger-flotante": 352
+      "sidebar": 353,
+      "sidebar-parte-por-parte": 417,
+      "sidebar-redimensionable": 353,
+      "sidebar-trigger-flotante": 353
     },
     "/es/componentes/skip-link": {
       "los-dos-en-orden": 48,
       "skiplink": 48
     },
     "/es/componentes/slider": {
-      "rango-de-precio": 80,
-      "slider": 124
+      "rango-de-precio": 81,
+      "slider": 125,
+      "slider-parte-por-parte": 197
     },
     "/es/componentes/split-button": {
-      "splitbutton": 288,
-      "splitbutton-menu-primero": 288,
-      "splitbutton-tamano-small": 288,
-      "splitbutton-variante-danger": 288,
-      "splitbutton-variante-ghost": 288,
-      "splitbutton-variante-subtle": 288,
-      "splitbutton-variante-translucent": 288
+      "splitbutton": 289,
+      "splitbutton-menu-primero": 289,
+      "splitbutton-parte-por-parte": 181,
+      "splitbutton-tamano-small": 289,
+      "splitbutton-variante-danger": 289,
+      "splitbutton-variante-ghost": 289,
+      "splitbutton-variante-subtle": 289,
+      "splitbutton-variante-translucent": 289
     },
     "/es/componentes/stack": {
       "stack": 237,
       "stack-parte-por-parte": 238
     },
     "/es/componentes/stat": {
-      "stat": 186,
-      "stat-cards-animadas": 202
+      "stat": 219,
+      "stat-cards-animadas": 510,
+      "stat-parte-por-parte": 224
     },
     "/es/componentes/steps": {
-      "steps": 137,
-      "steps-vertical": 225
+      "steps": 289,
+      "steps-parte-por-parte": 314,
+      "steps-vertical": 226
     },
     "/es/componentes/switch": {
-      "switch": 72,
-      "tileswitch": 144
+      "switch": 73,
+      "switch-parte-por-parte": 191,
+      "tileswitch": 305
     },
     "/es/componentes/table": {
-      "fila-de-encabezado-sticky": 269,
-      "primera-columna-sticky": 231,
-      "rendimiento-por-region-redimensionable": 231,
-      "table": 228,
-      "table-amplia-1-2-del-sistema": 421,
-      "table-compacta-0-6-del-sistema": 421,
-      "table-en-box": 262,
-      "table-pagination": 392
+      "fila-de-encabezado-sticky": 270,
+      "primera-columna-sticky": 232,
+      "rendimiento-por-region-redimensionable": 232,
+      "table": 271,
+      "table-amplia-1-2-del-sistema": 422,
+      "table-compacta-0-6-del-sistema": 422,
+      "table-en-box": 305,
+      "table-pagination": 447,
+      "table-parte-por-parte": 415
     },
     "/es/componentes/tabs": {
-      "tabs-basicos": 161,
-      "tabs-con-estados": 193,
-      "tabs-sm-y-md": 282,
-      "tabs-verticales-con-control-manual": 253
+      "tabs-basicos": 162,
+      "tabs-colgantes": 162,
+      "tabs-con-estados": 194,
+      "tabs-parte-por-parte": 250,
+      "tabs-sm-y-md": 283,
+      "tabs-verticales-con-control-manual": 254
     },
     "/es/componentes/tag": {
-      "tag-simple": 76,
-      "tags-enlace": 76,
-      "tags-removibles": 76,
-      "tonos": 76
+      "tag-parte-por-parte": 165,
+      "tag-simple": 77,
+      "tags-enlace": 77,
+      "tags-removibles": 77,
+      "tonos": 77
     },
     "/es/componentes/text": {
       "bloque-de-titulo": 209,
@@ -861,40 +996,47 @@
       "texto-inline": 72
     },
     "/es/componentes/time-field": {
-      "cada-15-minutos": 288,
-      "forzar-24-horas-sin-depender-del-locale": 288,
-      "input-de-hora-nativo": 121,
-      "timefield": 288
+      "cada-15-minutos": 289,
+      "forzar-24-horas-sin-depender-del-locale": 289,
+      "input-de-hora-nativo": 122,
+      "timefield": 289,
+      "timefield-abierto-parte-por-parte": 533
     },
     "/es/componentes/toast": {
-      "pila-de-toasts": 384,
-      "toast-con-accion": 288,
-      "toast-con-estado": 384,
-      "toast-despues-de-una-accion": 288,
-      "toast-simple": 288
+      "pila-de-toasts": 385,
+      "toast-con-accion": 289,
+      "toast-con-estado": 385,
+      "toast-despues-de-una-accion": 289,
+      "toast-parte-por-parte": 193,
+      "toast-simple": 289
     },
     "/es/componentes/toc": {
       "con-iconos": 192,
       "h2-y-h3": 192,
-      "texto": 192
+      "texto": 192,
+      "toc-parte-por-parte": 343
     },
     "/es/componentes/toolbar": {
-      "toolbar": 90,
-      "toolbar-con-segmented-anidado": 90
+      "toolbar": 92,
+      "toolbar-con-segmented-anidado": 91,
+      "toolbar-parte-por-parte": 179
     },
     "/es/componentes/tooltip": {
-      "tooltip": 288
+      "tooltip": 289,
+      "tooltip-parte-por-parte": 278
     },
     "/es/componentes/tree-view": {
-      "abierto-y-seleccionado-de-entrada": 224,
-      "archivos-con-iconos": 246,
-      "nodo-deshabilitado": 152,
-      "seleccion-multiple-y-tres-niveles": 224,
-      "treeview-minimo": 120
+      "abierto-y-seleccionado-de-entrada": 211,
+      "archivos-con-iconos": 231,
+      "nodo-deshabilitado": 143,
+      "seleccion-multiple-y-tres-niveles": 211,
+      "treeview-minimo": 109,
+      "treeview-parte-por-parte": 376
     },
     "/es/componentes/treegrid": {
-      "bandeja-de-entrada-de-ejemplo": 277,
-      "explorador-de-archivos-de-ejemplo": 657
+      "bandeja-de-entrada-de-ejemplo": 278,
+      "explorador-de-archivos-de-ejemplo": 658,
+      "treegrid-parte-por-parte": 449
     },
     "/es/componentes/wrapper": {
       "wrapper": 183,
@@ -918,8 +1060,9 @@
       "button": 92
     },
     "/es/nav-list": {
-      "navegacion-de-documentacion": 212,
-      "navegacion-de-producto": 348,
+      "navegacion-de-documentacion": 213,
+      "navegacion-de-producto": 349,
+      "navlist-parte-por-parte": 387,
       "principal": 144
     },
     "/es/primer-componente": {
@@ -960,9 +1103,10 @@
       "button": 92
     },
     "/nav-list": {
-      "documentation-navigation": 212,
+      "documentation-navigation": 213,
+      "navlist-part-by-part": 387,
       "primary": 144,
-      "product-navigation": 348
+      "product-navigation": 349
     },
     "/scrollbar": {
       "sk-scrollbar": 224,
@@ -986,28 +1130,30 @@
       "vaul-part-by-part": 251
     },
     "/components/qr-code": {
-      "correction-levels": 185,
-      "module-shapes": 225,
-      "qr-beside-its-written-link": 368,
-      "qr-in-a-popover": 288,
-      "qrcode": 152,
-      "sizes": 273,
-      "the-eight-masks": 185,
-      "ticket": 388,
-      "tints": 506,
-      "with-a-logo": 192
+      "correction-levels": 334,
+      "module-shapes": 414,
+      "qr-beside-its-written-link": 369,
+      "qr-in-a-popover": 289,
+      "qrcode": 153,
+      "qrcode-part-by-part": 281,
+      "sizes": 611,
+      "the-eight-masks": 483,
+      "ticket": 389,
+      "tints": 952,
+      "with-a-logo": 193
     },
     "/es/componentes/qr-code": {
-      "con-logo": 192,
-      "entrada": 388,
-      "formas-de-modulo": 225,
-      "las-ocho-mascaras": 185,
-      "niveles-de-correccion": 185,
-      "qr-con-su-enlace-escrito": 368,
-      "qr-en-un-popover": 288,
-      "qrcode": 152,
-      "tamanos": 273,
-      "tintes": 506
+      "con-logo": 193,
+      "entrada": 389,
+      "formas-de-modulo": 414,
+      "las-ocho-mascaras": 483,
+      "niveles-de-correccion": 334,
+      "qr-con-su-enlace-escrito": 369,
+      "qr-en-un-popover": 289,
+      "qrcode": 153,
+      "qrcode-parte-por-parte": 281,
+      "tamanos": 611,
+      "tintes": 952
     },
     "/components/annotation": {
       "accordion-part-by-part": 391,
@@ -1060,6 +1206,158 @@
       "ratingdisplay": 73,
       "sm-md-y-lg": 133,
       "un-simbolo-dos-direcciones": 189
+    },
+    "/components/description-list": {
+      "descriptionlist": 232,
+      "descriptionlist-in-columns": 297,
+      "descriptionlist-part-by-part": 283,
+      "descriptionlist-ruled-and-compact": 312,
+      "descriptionlist-with-a-tag-and-a-link": 171
+    },
+    "/components/diagram": {
+      "a-query-s-lifecycle": 222,
+      "a-web-application-on-aws": 1133,
+      "an-app-inside-a-vpc": 755,
+      "an-authenticated-request": 288,
+      "an-order-s-foreign-keys": 313,
+      "authorizing-a-request": 274,
+      "fulfilling-an-order": 293,
+      "publishing-a-post": 293,
+      "triaging-a-complaint": 422
+    },
+    "/components/fade-edge": {
+      "fade-intensity": 352,
+      "fade-to-a-colour": 243,
+      "fade-to-bottom": 259,
+      "fade-to-left": 111,
+      "fade-to-right": 111,
+      "fade-to-top": 259
+    },
+    "/components/quote": {
+      "quote": 160,
+      "quote-as-a-testimonial": 231,
+      "quote-part-by-part": 248,
+      "quote-pull-variant": 190,
+      "quote-with-no-attribution": 131
+    },
+    "/components/separator": {
+      "labelledseparator-between-two-ways-to-sign-in": 190,
+      "labelledseparator-part-by-part": 190,
+      "separator": 178,
+      "the-three-tones": 244,
+      "vertical-separators-in-a-line-of-metadata": 73
+    },
+    "/components/state-button": {
+      "statebutton-as-theme-toggle": 81,
+      "statebutton-for-copy-status": 81,
+      "statebutton-with-three-states": 81
+    },
+    "/components/tags-input": {
+      "a-read-only-tagsinput": 93,
+      "an-empty-tagsinput": 93,
+      "tagsinput": 93,
+      "tagsinput-capped-at-three": 93,
+      "tagsinput-inside-a-formfield": 148,
+      "tagsinput-part-by-part": 209
+    },
+    "/components/tile": {
+      "expandabletile": 217,
+      "expandabletile-part-by-part": 333
+    },
+    "/components/timeline": {
+      "timeline": 443,
+      "timeline-part-by-part": 365,
+      "timeline-the-five-tones": 414
+    },
+    "/components/typography": {
+      "code-within-text": 121,
+      "heading": 121,
+      "link-within-text": 97,
+      "output-element": 73,
+      "strong-emphasis": 121,
+      "text": 121,
+      "text-secondary-tone": 97
+    },
+    "/es/componentes/description-list": {
+      "descriptionlist": 232,
+      "descriptionlist-con-divisores-compacta": 312,
+      "descriptionlist-con-tag-y-enlace": 171,
+      "descriptionlist-en-columnas": 297,
+      "descriptionlist-parte-por-parte": 283
+    },
+    "/es/componentes/diagram": {
+      "autorizar-una-peticion": 271,
+      "claves-foraneas-de-un-pedido": 313,
+      "despachar-un-pedido": 293,
+      "el-ciclo-de-vida-de-una-consulta": 222,
+      "publicar-una-nota": 293,
+      "triaje-de-un-reclamo": 467,
+      "una-aplicacion-en-una-vpc": 755,
+      "una-aplicacion-web-en-aws": 1133,
+      "una-peticion-autenticada": 291
+    },
+    "/es/componentes/quote": {
+      "quote": 160,
+      "quote-como-testimonio": 231,
+      "quote-parte-por-parte": 248,
+      "quote-sin-atribucion": 131,
+      "quote-variante-pull": 190
+    },
+    "/es/componentes/separator": {
+      "labelledseparator-entre-dos-formas-de-entrar": 190,
+      "labelledseparator-parte-por-parte": 190,
+      "los-tres-tonos": 292,
+      "separadores-verticales-en-una-linea-de-metadatos": 97,
+      "separator": 178
+    },
+    "/es/componentes/state-button": {
+      "statebutton-as-theme-toggle": 81,
+      "statebutton-for-copy-status": 81,
+      "statebutton-with-three-states": 81
+    },
+    "/es/componentes/tags-input": {
+      "tagsinput": 93,
+      "tagsinput-con-tope-de-tres": 93,
+      "tagsinput-de-solo-lectura": 93,
+      "tagsinput-dentro-de-un-formfield": 148,
+      "tagsinput-parte-por-parte": 209,
+      "tagsinput-vacio": 93
+    },
+    "/es/componentes/tile": {
+      "expandabletile": 217,
+      "expandabletile-parte-por-parte": 333
+    },
+    "/es/componentes/timeline": {
+      "timeline": 467,
+      "timeline-los-cinco-tonos": 389,
+      "timeline-parte-por-parte": 365
+    },
+    "/es/componentes/tipografia": {
+      "code-within-text": 121,
+      "heading": 121,
+      "link-within-text": 121,
+      "output-element": 73,
+      "strong-emphasis": 121,
+      "text": 121,
+      "text-secondary-tone": 121
+    },
+    "/es/tipografia": {
+      "caption-a-lg": 175,
+      "displays": 456,
+      "eyebrow-titulo-y-subtitulo": 221,
+      "h1-a-h6": 278
+    },
+    "/typography": {
+      "caption-to-lg": 175,
+      "displays": 456,
+      "eyebrow-title-and-subtitle": 188,
+      "h1-to-h6": 278
+    },
+    "/components/code-preview": {
+      "codepreview-part-by-part": 341
+    },
+    "/es/componentes/code-preview": {
+      "codepreview-parte-por-parte": 450
     }
   }
 }

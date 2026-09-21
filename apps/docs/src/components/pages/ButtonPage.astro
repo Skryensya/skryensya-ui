@@ -48,9 +48,7 @@ button.addEventListener("click", runDeployment);`;
   contractId="button"
   testFiles={["packages/react/src/components/button.test.tsx", "packages/vanilla/src/components/button.test.ts"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("button.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("button.anatomyBody")} />
     <ComponentPreview
       tree={buttonAnatomyTree(t)}
@@ -60,7 +58,10 @@ button.addEventListener("click", runDeployment);`;
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("button.lede")} />
     <h3>{t("button.defaultTitle")}</h3>
     <p set:html={t("button.defaultBody")} />
     <ComponentPreview tree={buttonDefaultTree(t)} label={t("button.defaultLabel")} />

@@ -54,9 +54,13 @@ async function initRouteDocument(): Promise<void> {
     const { initNotFound } = await import("./not-found");
     initNotFound();
   }
-  if (document.querySelector("[data-docs-copy-cells]")) {
-    const { initCopyCells } = await import("./copy-cells");
-    initCopyCells();
+  if (document.querySelector("[data-sk-deferred-code]")) {
+    const { initDeferredCode } = await import("./deferred-code");
+    initDeferredCode();
+  }
+  if (document.querySelector("[data-sk-page-binding-tabs]")) {
+    const { initPageBinding } = await import("./page-binding");
+    initPageBinding();
   }
   if (document.querySelector("[data-sk-hook-playground]")) {
     const { initHookPlayground } = await import("./hook-playground");

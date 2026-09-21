@@ -104,9 +104,7 @@ await initComponents();`;
   styleGroups={[{ file: "components/toast.css", probe: "sk-toast" }]}
   testFiles={["packages/vanilla/src/components/toast.test.ts"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("toastPage.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("toastPage.anatomyBody")} />
     <ComponentPreview
       tree={toastAnatomyTree(t)}
@@ -116,7 +114,10 @@ await initComponents();`;
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("toastPage.lede")} />
     <h3>{t("toastPage.emitTitle")}</h3>
     <p set:html={t("toastPage.emitBody")} />
     <ComponentPreview

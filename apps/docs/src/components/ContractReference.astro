@@ -19,7 +19,9 @@
  * the emitter failed. But this is no longer a reading with things left out of it, it is the artifact.
  */
 import CodeBlock from "./CodeBlock.astro";
+import DeferredCode from "./DeferredCode.astro";
 import { contractDoc, contractJson } from "../lib/contract-reference";
+import { contractSourceUrl } from "../lib/contract-source";
 import { getLocale, useTranslations } from "../i18n";
 
 interface Props {
@@ -32,11 +34,17 @@ const { id, heading } = Astro.props;
 const t = useTranslations(getLocale(Astro.url));
 
 const contract = contractDoc(id);
+const sourceUrl = contractSourceUrl(id);
 ---
 
 <h2>{heading ?? t("contract.title")}</h2>
+<p><a class="sk-link" href={sourceUrl} target="_blank" rel="noopener noreferrer">{t("contract.sourceLink")}</a></p>
 
 {/* `open`, because here the code IS the page. Disclosure earns its place when a long block would
     bury the prose after it; this tab has no prose after it, so a toggle would only hide five sixths
     of the one thing the reader came for. */}
-<CodeBlock code={contractJson(contract)} label={`${contract.id}.json`} lang="json" open />
+{/* The Reference tab is never the one a page opens on, so this JSON is hidden at load by
+    construction: park it (see DeferredCode) rather than lay it out for nobody. */}
+<DeferredCode>
+  <CodeBlock code={contractJson(contract)} label={`${contract.id}.json`} lang="json" open />
+</DeferredCode>

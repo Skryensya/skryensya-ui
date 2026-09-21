@@ -5,7 +5,7 @@
  */
 import { anchorNameFor, bindAnchor, supportsAnchorPositioning } from "@skryensya/core/anchored";
 import { writeClipboard } from "@skryensya/core/copy-button";
-import { setIconState } from "@skryensya/core/icon-state-button";
+import { setIconState } from "@skryensya/core/state-button";
 
 let nextId = 0;
 const uniqueId = (prefix: string) => `${prefix}-${++nextId}`;
@@ -21,8 +21,9 @@ const FEEDBACK_DURATION = 1800;
 const CLICK_THROTTLE = 400;
 
 /*
- * Docs-local now (decision 33: no published contract owns this shape any more). `CopyCells.astro`'s
- * script (`copy-cells.ts`) retargets the one shared button by writing `target`/`root` directly, so
+ * Docs-local now (decision 33: no published contract owns this shape any more). The token reference
+ * used to retarget one shared button across three thousand table cells (`CopyCells.astro` /
+ * `copy-cells.ts`, both gone with it); what is left are the buttons on code blocks, one per block, so
  * this is exported rather than kept private to this file.
  */
 export const attrs = {

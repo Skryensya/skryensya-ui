@@ -292,21 +292,40 @@
 
   /*
    * A narrow screen has room to read the specimen or the labels beside it, never both. Keep the
-   * drawing rather than shrinking it: the four gutters become two ordered stacks, one above and one
-   * below the specimen. They participate in normal flow, so the frame grows to contain every label;
-   * a translated lane cannot push a bubble beyond the viewport. The bindings retain the measured
-   * boxes for their leaders but skip lane distribution at this breakpoint.
+   * drawing rather than shrinking it: the four gutters become two CLUSTERS, one above and one below
+   * the specimen. They participate in normal flow, so the frame grows to contain every label; a
+   * translated lane cannot push a bubble beyond the viewport. The bindings retain the measured boxes
+   * for their leaders but skip lane distribution at this breakpoint.
+   *
+   * THE CLUSTERS WRAP, they are not columns, and the difference is the whole height of the diagram.
+   * One label per line is the obvious reading of "stack them", and it charges the frame a full line
+   * for a chip that is fifty pixels wide: FileUpload's fifteen names took 543px of column beside an
+   * empty right half, turning a 515px drawing into a 1058px one. A `row wrap` cluster spends that
+   * width instead, and the same fifteen names land in four rows.
+   *
+   * THE SUBJECT FORCES ITS OWN LINE (`flex: 1 0 100%`), which is what keeps this ONE wrapping
+   * container readable as three bands rather than a bag of items: every `order: 0` label fills rows
+   * above it, the subject can never share a row with a label, and the `order: 2` labels start a
+   * fresh row under it. No wrapper element, and therefore nothing new in the authored markup.
    */
   @media (max-width: 40rem) {
     .sk-annotated {
       display: flex;
-      flex-direction: column;
-      align-items: stretch;
+      flex-flow: row wrap;
+      align-items: flex-start;
+      align-content: flex-start;
+      /* The cluster's own spacing, not the diagram's: `--sk-annotated-gap` is the clearance between
+         the specimen and a margin, and between two chips in a row it reads as a gulf. The subject
+         keeps the real gap as a margin below. */
+      gap: var(--space-inline-xs) var(--space-inline-sm);
     }
 
     .sk-annotated__subject {
       order: 1;
+      /* `100%` basis: a line of its own, whatever the row above it was doing. */
+      flex: 1 0 100%;
       min-inline-size: 0;
+      margin-block: var(--sk-annotated-gap);
       position: relative;
       z-index: 0;
     }
@@ -328,17 +347,30 @@
 
     .sk-annotation:is([data-side="inline-start"], [data-side="block-start"]) {
       order: 0;
-      align-self: flex-start;
     }
 
     .sk-annotation:is([data-side="inline-end"], [data-side="block-end"]) {
       order: 2;
-      align-self: flex-start;
     }
 
+    /*
+     * END-ALIGNED IS A MARGIN NOW, not `align-self`. In the column this used to be, the cross axis
+     * was the inline one and `flex-end` put a chip against the far edge; in a wrapping row the cross
+     * axis is the block one, where the same declaration would only move the chip DOWN inside its own
+     * row. An auto inline margin says the thing the option has always meant: take the rest of the
+     * row, and sit at its end.
+     */
     .sk-annotation[data-mobile-align="end"] {
-      align-self: flex-end;
+      margin-inline-start: auto;
     }
+
+    /* Last, and on a line of its own: a footnote about the drawing belongs under all of it, not
+       wrapped into the cluster of names above. */
+    .sk-annotated__key {
+      order: 3;
+      flex: 1 0 100%;
+    }
+
     .sk-annotated__leaders {
       z-index: 1;
     }

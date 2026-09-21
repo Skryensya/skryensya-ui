@@ -104,9 +104,7 @@ const contextMenuReact = `<Menu
   ]}
   testFiles={["packages/vanilla/src/components/menu.test.ts", "packages/react/src/components/menu.test.tsx"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("menuPage.description")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("menuPage.anatomyBody")} />
     <ComponentPreview
       html={menuAnatomyHtml(t)}
@@ -116,7 +114,10 @@ const contextMenuReact = `<Menu
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("menuPage.description")} />
     <ComponentPreview tree={menuTree(t)} js={js} label="Menu" viewport="menu" />
 
     <h3>{t("component.contractNotesTitle")}</h3>

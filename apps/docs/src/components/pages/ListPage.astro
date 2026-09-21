@@ -36,9 +36,7 @@ const styles = `@import "@skryensya/core/components/list.css";`;
   contractId="list"
   testFiles={["packages/react/src/components/list.test.tsx"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("listPage.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("listPage.anatomyBody")} />
     <ComponentPreview
       tree={listAnatomyTree(t)}
@@ -48,7 +46,10 @@ const styles = `@import "@skryensya/core/components/list.css";`;
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("listPage.lede")} />
     <h3>{t("listPage.stepsTitle")}</h3>
     <p set:html={t("listPage.stepsBody")} />
 

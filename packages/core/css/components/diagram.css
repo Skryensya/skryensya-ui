@@ -1,0 +1,824 @@
+/*
+ * TIER 3, DIAGRAM
+ *
+ * Boxes and the arrows between them: a flow, an if/else, a small decision tree, a state chart that
+ * comes back around. Annotation's sibling and its opposite - that one names the parts of ONE thing,
+ * this one says which of SEVERAL things leads to which - and the two share no vocabulary on purpose.
+ *
+ * THE LAYOUT IS A PLAIN GRID AND THE COMPONENT NEVER SOLVES IT. That is the load-bearing decision,
+ * and the alternative (a layout algorithm that places nodes from the edge list) is what turns a
+ * 400-line component into a graph library. Here the nodes are grid items in reading order, the whole
+ * of the layout API is how many columns there are and how many a node covers, and anything past that
+ * is the consumer writing `grid-area` against `.sk-diagram__node` in their own stylesheet. Because
+ * the connectors are computed from the boxes that layout PRODUCED, a diagram re-arranged by someone
+ * else's media query re-routes itself and its author writes no JavaScript: the drawing follows the
+ * layout, the layout never has to tell the drawing.
+ *
+ * THE PAINT ORDER IS THE DOM ORDER AND THERE IS NO `z-index` IN THIS FILE. All three children of the
+ * frame are positioned, so they stack in document order: connectors first (behind, because a line
+ * crossing OVER a box reads as passing through it), the nodes over them, the edge labels over both
+ * (a label has to be legible where it sits on its own line). Every hand-rolled version of this
+ * component ends up with a z-index ladder; the ladder is what you write when the elements are in the
+ * wrong order.
+ *
+ * NOTHING HERE IS INTERACTIVE, and unlike Annotation that is not a near miss. Annotation has to
+ * reveal one mark at a time (seven outlines at once is a cage over the specimen), so its labels are
+ * focusable and its marks light up. A diagram has no such problem: the line between two nodes is
+ * drawn permanently, so the pairing a reader needs is already on the page. Adding hover states would
+ * make a drawing look like a control, and adding tab stops would put four items in the tab order
+ * that do nothing when you reach them.
+ */
+@layer components {
+  .sk-diagram {
+    /*
+     * THE LAYOUT, and both of these are hooks first and options second. The contract's `columns` and
+     * `span` write exactly these custom properties inline, so a consumer's own media query can
+     * retune the same drawing (`--sk-diagram-columns: 1` under 40rem, say) without the two fighting:
+     * the inline value wins where it is set, and where it is not, this is what answers.
+     */
+    --sk-diagram-columns: 1;
+    --sk-diagram-node-span: 1;
+    /*
+     * A SIZE CONTAINER, and it is the grid's own width the nodes need rather than the viewport's.
+     * A diagram is as often in a half-width column or a docs preview as it is on a page, and the
+     * question a node has to answer - "how much room does one column actually have?" - has no
+     * viewport answer. `inline-size` only: the drawing's height is its content's and stays so.
+     */
+    container-type: inline-size;
+    /*
+     * THE ROW GAP IS THE CONNECTOR, which is why it is the one measurement here that is not tuned
+     * down for compactness. Everything between two ranks lives in it: the clearance the arrowhead
+     * keeps from its target, the head itself, and whatever line is left over. At 24px that is 5 and
+     * 8 and 11, so two thirds of the connector is its own tip and the drawing reads as a column of
+     * arrowheads. At 40px there is a line with a head on it.
+     *
+     * The inline gap is tighter on purpose: a branch's two children are siblings and want to look
+     * like siblings, and nothing has to fit between them.
+     */
+    --sk-diagram-row-gap: var(--space-stack-xl);
+    --sk-diagram-column-gap: var(--space-inline-md);
+
+    /*
+     * THE NODE. A quiet raised surface, the same register Annotation's label bubble uses and for the
+     * same reason: a box in a diagram has to read as a mark laid ON the page rather than as a card
+     * the reader could click. Depth comes from the raised elevation, not from bulk.
+     */
+    --sk-diagram-node-bg: var(--color-bg-surface-raised);
+    --sk-diagram-node-border-color: var(--color-border-default);
+    --sk-diagram-node-border-width: 1px;
+    --sk-diagram-node-color: var(--color-text-primary);
+    --sk-diagram-node-radius: var(--radius-control);
+    --sk-diagram-node-padding-inline: var(--space-inset-md);
+    --sk-diagram-node-padding-block: var(--space-inset-xs);
+    /*
+     * A FLOOR AND A CEILING ON THE NODE'S MEASURE, and the floor is the one that matters. Without it
+     * a two-word node and a ten-word node in the same row are visibly different objects, and the
+     * reader reads the difference as meaning something. With it, short nodes agree on a width and
+     * the diagram has a module.
+     */
+    --sk-diagram-node-min-inline-size: 6rem;
+    --sk-diagram-node-max-inline-size: 14rem;
+    --sk-diagram-node-font-size: var(--font-size-body-sm);
+    --sk-diagram-node-line-height: var(--font-line-height-body-sm);
+    --sk-diagram-node-font-weight: var(--font-weight-body);
+    --sk-diagram-node-shadow: var(--elevation-raised);
+
+    /*
+     * A NODE'S MARK, and ONE size for every one of them. An infrastructure drawing is twenty boxes
+     * with a logo each; sized per node, twenty images are twenty chances for one to be a different
+     * height, and a rank of logos that do not agree reads as a rank of things that are not alike.
+     */
+    --sk-diagram-logo-size: 1.75rem;
+    --sk-diagram-logo-gap: var(--space-inline-xs);
+
+    /*
+     * A RECORD: a node with named rows under a rule. The rule is the whole of the convention, which
+     * is why the rows need no shape of their own: a reader takes "a title, a line, then a list" as
+     * a thing with parts, whether the parts are a class's members or a table's columns.
+     */
+    --sk-diagram-row-color: var(--color-text-secondary);
+    --sk-diagram-row-font-size: var(--font-size-caption);
+    --sk-diagram-row-line-height: var(--font-line-height-caption);
+    --sk-diagram-row-padding-block: var(--space-inset-xs);
+    /*
+     * TIGHTER THAN THE NODE'S OWN, because a record is a small box full of short identifiers and
+     * the node's padding was sized for a sentence. At the node's 16px, `id` sat in a 97px row with
+     * sixteen pixels of nothing in front of it and seventy behind: the indent read as deliberate
+     * and meant nothing. Half that is enough to keep a name off the border.
+     */
+    --sk-diagram-row-padding-inline: var(--space-inline-sm);
+    --sk-diagram-row-rule-color: var(--color-border-subtle);
+
+    /*
+     * THE DECISION'S PROPORTIONS. Wide, because a question is a line of text and a rhombus as tall
+     * as it is wide is the largest object on a drawing whose subject is elsewhere. 1.7 is about
+     * where the two slopes still read as a diamond rather than as a flattened hexagon, and it keeps
+     * a two-line question inside the shape at the default padding.
+     */
+    --sk-diagram-decision-aspect: 1.7;
+    /*
+     * How much wider than the border width the fill is inset, so the outline reads as ONE hairline
+     * on the slopes. A box inset of one pixel is less than one pixel measured perpendicular to a
+     * sloped edge, so the two are not the same number and pretending they are draws a stroke that
+     * is visibly thinner than every other border on the drawing.
+     */
+    --sk-diagram-decision-stroke-scale: 1.8;
+
+    /*
+     * THE CONNECTOR IS CHROME, not content, so it is drawn at the weight of a rule and not of a
+     * stroke. Two device pixels of accent line between every pair of boxes turns the apparatus into
+     * the loudest thing on a drawing whose subject is the boxes. Same argument, and the same answer,
+     * as Annotation's hairline leader.
+     */
+    --sk-diagram-connector-color: var(--color-border-strong);
+    --sk-diagram-connector-width: 1.5px;
+
+    /*
+     * A ZONE IS THE QUIETEST THING ON THE DRAWING, and it has to be: it is the largest object by
+     * area, it is behind everything, and it says the least. A dashed hairline and a wash barely off
+     * the canvas is enough to read as "these belong together" without competing with the boxes it
+     * contains. Dashed rather than solid because a boundary is a grouping and not a thing: a solid
+     * rule at this size reads as one more, much larger, node.
+     */
+    --sk-diagram-zone-border-color: var(--color-border-subtle);
+    --sk-diagram-zone-border-width: 1px;
+    --sk-diagram-zone-border-style: dashed;
+    --sk-diagram-zone-bg: color-mix(in oklab, var(--color-bg-surface-sunken) 55%, transparent);
+    --sk-diagram-zone-radius: var(--radius-surface);
+    --sk-diagram-zone-color: var(--color-text-tertiary);
+    --sk-diagram-zone-font-size: var(--font-size-caption);
+    --sk-diagram-zone-padding-inline: var(--space-inset-sm);
+    --sk-diagram-zone-padding-block: var(--space-inset-xs);
+    /*
+     * ROOM FOR THE BOUNDARIES THEMSELVES, and a frame with zones is the only one that needs any.
+     *
+     * A zone is drawn OUTSIDE the nodes it holds, so the outermost one reaches past the grid on all
+     * four sides, and past the top by an extra band for its own name. The frame's height is its
+     * grid's height, so without this the outer boundary is simply cut off at the bottom: measured on
+     * the infrastructure demo, the VPC's lower edge fell 36px below the frame and the preview clipped
+     * it. Reserving the room here rather than in the geometry is what keeps a zone from being able
+     * to move a node: the padding shifts the grid, the zone is computed from where the grid landed,
+     * and the two agree by construction.
+     *
+     * Deep nesting needs more (each level is one more padding out); three levels is where these
+     * numbers stop being enough, and a consumer with four re-declares them.
+     */
+    --sk-diagram-zone-inset: 2.75rem;
+    --sk-diagram-zone-inset-block-start: 4.5rem;
+
+    /*
+     * THE EDGE LABEL sits ON its own line, so it needs a ground to be legible against: the line runs
+     * underneath it and would otherwise strike through the word. A chip, the same shape as
+     * Annotation's, at caption size because it is apparatus around the drawing rather than content
+     * in it.
+     */
+    --sk-diagram-edge-bg: var(--color-bg-canvas);
+    --sk-diagram-edge-color: var(--color-text-secondary);
+    --sk-diagram-edge-border-color: var(--color-border-subtle);
+    --sk-diagram-edge-radius: var(--radius-pill);
+    /*
+     * A CHIP WITH ROOM IN IT. The first version padded the inline axis only and left the block axis
+     * at zero, on the argument that a shorter chip covers less of the line it sits on. It covers
+     * less and it reads as a word with a rule drawn through its ascenders: the chip's border lands
+     * within a pixel or two of the glyphs, and the connector passes behind at exactly cap height.
+     * Air on both axes is what makes the label a label sitting on a line, rather than an
+     * interruption in the line.
+     */
+    --sk-diagram-edge-padding-inline: var(--space-inline-sm);
+    --sk-diagram-edge-padding-block: var(--space-inset-xs);
+    --sk-diagram-edge-font-size: var(--font-size-caption);
+    --sk-diagram-edge-line-height: var(--font-line-height-caption);
+
+    /*
+     * `relative` is STRUCTURE: the connector overlay and the edge overlay are both `absolute` and
+     * this is the containing block they resolve against, which is also the coordinate space the
+     * binding measures in. Written explicitly rather than inherited from anything, because a diagram
+     * whose lines land in the wrong place is the least debuggable failure this component has.
+     */
+    position: relative;
+    display: block;
+    inline-size: 100%;
+    max-inline-size: 100%;
+  }
+
+  /*
+   * THE NODES ARE THE GRID. No wrapper between the list and the items, so a consumer placing a node
+   * by hand writes `grid-area` on `.sk-diagram__node` and nothing else has to know.
+   *
+   * `minmax(0, 1fr)` rather than `auto`: equal columns are what make a branch's two children sit
+   * symmetrically under their parent, and the zero floor is what lets a long node shrink instead of
+   * pushing the frame past its container.
+   */
+  /*
+   * THE ZONES, and like the edge labels they stay in normal flow until the binding has measured
+   * something. Unplaced they are a row of region names under the drawing, which is what a reader
+   * with no JavaScript gets: the groupings still named, just not drawn around anything.
+   */
+  .sk-diagram__zones {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    gap: var(--space-inline-xs);
+    margin: 0 0 var(--space-stack-sm);
+    padding: 0;
+    list-style: none;
+  }
+
+  .sk-diagram[data-sk-placed] .sk-diagram__zones {
+    position: absolute;
+    inset: 0;
+    display: block;
+    margin: 0;
+    /* A region is a drawn boundary and never a target: what a pointer finds inside one is the node
+       it was aiming at. */
+    pointer-events: none;
+  }
+
+  /*
+   * Only a frame that HAS a zone pays for one. `:has()` rather than an attribute the binding
+   * writes, because this is a fact about the authored markup and not about a measurement: the room
+   * has to be reserved before the first pass, or the first pass measures a grid that is about to
+   * move.
+   */
+  .sk-diagram:has(.sk-diagram__zone) {
+    padding-block: var(--sk-diagram-zone-inset-block-start) var(--sk-diagram-zone-inset);
+    padding-inline: var(--sk-diagram-zone-inset);
+  }
+
+  .sk-diagram__zone {
+    border: var(--sk-diagram-zone-border-width) var(--sk-diagram-zone-border-style)
+      var(--sk-diagram-zone-border-color);
+    border-radius: var(--sk-diagram-zone-radius);
+    padding: var(--sk-diagram-zone-padding-block) var(--sk-diagram-zone-padding-inline);
+    background: var(--sk-diagram-zone-bg);
+    color: var(--sk-diagram-zone-color);
+    font-size: var(--sk-diagram-zone-font-size);
+  }
+
+  .sk-diagram[data-sk-placed] .sk-diagram__zone {
+    /*
+     * Physical for the reason the edge chips are (the numbers come out of
+     * `getBoundingClientRect`), and `box-sizing: border-box` because the binding writes the
+     * OUTSIDE of the boundary: the rectangle it computed is where the line goes, not where the
+     * padding starts.
+     */
+    position: absolute;
+    top: 0;
+    left: 0;
+    box-sizing: border-box;
+    padding: 0;
+  }
+
+  /* A zone that holds nothing has no box to draw: the binding leaves it unplaced and it stays out
+     of the drawing rather than collapsing to a dot at the origin. */
+  .sk-diagram[data-sk-placed] .sk-diagram__zone:not([style*="translate"]) {
+    display: none;
+  }
+
+  .sk-diagram[data-sk-placed] .sk-diagram__zone-label {
+    position: absolute;
+    inset-block-start: var(--sk-diagram-zone-padding-block);
+    inset-inline-start: var(--sk-diagram-zone-padding-inline);
+  }
+
+  .sk-diagram__nodes {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(var(--sk-diagram-columns), minmax(0, 1fr));
+    gap: var(--sk-diagram-row-gap) var(--sk-diagram-column-gap);
+    justify-items: center;
+    /*
+     * STRETCH, so a rank of boxes is a rank and not a row of different objects. Three leaves whose
+     * labels wrap to one, two and three lines are 31, 52 and 73 pixels tall left to themselves, and
+     * a reader takes that difference for meaning. Each node is its own grid with its content
+     * centred, so the words stay in the middle of whatever height the row settles on.
+     */
+    align-items: stretch;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /*
+   * THE TITLE IS ITS OWN ELEMENT ON EVERY NODE, including the boxes that hold nothing else. One
+   * anatomy for every node is worth the span a plain box does not need: the alternative is two
+   * shapes of node and a stylesheet that has to know which one it is looking at.
+   */
+  .sk-diagram__node-title {
+    display: block;
+  }
+
+  /*
+   * THE MARK'S BOX, and the component's whole contribution to it: a square of a known size with
+   * whatever the author brought centred in it.
+   *
+   * `object-fit: contain` on the media, so a logo that is not square keeps its proportions and sits
+   * inside the square rather than being cropped to it. A brand mark cropped is a brand mark altered,
+   * which is the one thing every trademark guideline in the world agrees about.
+   *
+   * The selectors reach the media WHATEVER brought it: an `ImageFrame`'s `img`, an `Icon`'s `svg`, a
+   * raw one of either. The alternative is this box knowing which contract filled it, which is
+   * exactly what a slot exists to avoid.
+   */
+  .sk-diagram__node-logo {
+    display: grid;
+    place-items: center;
+    inline-size: var(--sk-diagram-logo-size);
+    block-size: var(--sk-diagram-logo-size);
+    /* A mark never shrinks to make room for a long name: it is the one fixed thing in the box. */
+    flex: none;
+  }
+
+  /*
+   * The direct child fills the square whatever it is, and the MEDIA inside it is contained. Two
+   * rules because a mark usually arrives wrapped: an `ImageFrame` is a box around an `img`, an
+   * `Icon` is an element around an `svg`, and sizing only the media would leave the wrapper at its
+   * own idea of a size.
+   */
+  .sk-diagram__node-logo > * {
+    inline-size: 100%;
+    block-size: 100%;
+  }
+
+  .sk-diagram__node-logo :is(img, svg, picture, video) {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: contain;
+  }
+
+  /*
+   * A node WITH a mark is two columns: the mark, then everything else. Rows, when it also has them,
+   * run under both, because a record's columns belong to the whole box and not to the half of it
+   * beside the logo.
+   */
+
+  /*
+   * A RECORD'S TITLE SITS OVER ITS ROWS, not over the middle of the box.
+   *
+   * Every other node centres its words, and a record centring its title while its rows start at
+   * the leading edge is what made the rows look arbitrarily indented: there was nothing above the
+   * indent to explain it. Sharing one leading edge is the explanation, and it is also what a class
+   * box and a table header have always done.
+   */
+  .sk-diagram__node:has(.sk-diagram__rows) > .sk-diagram__node-title {
+    justify-self: stretch;
+    padding-inline: calc(
+      var(--sk-diagram-row-padding-inline) - var(--node-fit-inline)
+    );
+    text-align: start;
+  }
+
+  /*
+   * THE ROWS: what turns a box into a RECORD, and the rule above them is the whole convention. A
+   * reader takes "a title, a line, then a list" as a thing with parts, whether those parts are a
+   * class's members or a table's columns, so this needs no silhouette of its own.
+   *
+   * FULL BLEED, which is why the node's inline padding is handed back with a negative margin: the
+   * rule has to run edge to edge, or it reads as an underline on the title rather than as the line
+   * that divides a record.
+   *
+   * `text-align: start`, against the node's own centring, because a list of names is read down its
+   * leading edge and centred rows turn a record into a poem.
+   */
+  .sk-diagram__rows {
+    /*
+     * `justify-self` AND NOT `inline-size: 100%`, which is what it said first and is the difference
+     * between a record that fits its columns and one that spills them past its own border. A
+     * percentage width resolves against the containing block, so it contributes NOTHING to the
+     * intrinsic size of the box it is inside: the node measured itself against its title alone,
+     * came out 99px wide because that is what "Order" needs, and then `customer_id` was laid out in
+     * a 65px row and overflowed it. Left `auto`, the list contributes its widest row, the node
+     * grows to hold it, and stretching is only how it fills the width it earned.
+     *
+     * The negative margins are what make that arithmetic come out right: they cancel the row's own
+     * padding, so a row's text area ends up exactly as wide as the title's, and the node's
+     * intrinsic width is the wider of the two.
+     */
+    justify-self: stretch;
+    margin: var(--sk-diagram-node-padding-block) calc(var(--node-fit-inline) * -1)
+      calc(var(--sk-diagram-node-padding-block) * -1);
+    border-block-start: var(--sk-diagram-node-border-width) solid var(--sk-diagram-row-rule-color);
+    padding: 0;
+    list-style: none;
+    color: var(--sk-diagram-row-color);
+    font-size: var(--sk-diagram-row-font-size);
+    line-height: var(--sk-diagram-row-line-height);
+    text-align: start;
+  }
+
+  /*
+   * One row. Its BOX is what an anchored connector is measured against (`rowPin` in
+   * `@skryensya/core/diagram` projects this element's centre onto the node's own side), so the
+   * block padding here is not decoration: it is the distance between two foreign keys arriving at
+   * one record, and squeezing it is what makes two arrows land on top of each other.
+   */
+  .sk-diagram__row {
+    padding: var(--sk-diagram-row-padding-block) var(--sk-diagram-row-padding-inline);
+  }
+
+  .sk-diagram__row + .sk-diagram__row {
+    border-block-start: var(--sk-diagram-node-border-width) solid
+      color-mix(in oklab, var(--sk-diagram-row-rule-color) 50%, transparent);
+  }
+
+  /*
+   * A RECORD DOES NOT STRETCH WITH ITS RANK, which is the one place the tidy-ranks rule gives way.
+   *
+   * Stretching is right for boxes: three leaves whose labels wrap to one, two and three lines are
+   * three different objects if left to themselves, and a reader takes that difference for meaning.
+   * A record already says how tall it is, because its height IS its field count, and stretching one
+   * with two fields to match one with three opens a gap under its rule that looks like a missing
+   * row. Its natural height is the true one, so it keeps it and sits at the top of its rank.
+   */
+  .sk-diagram__node:has(.sk-diagram__rows) {
+    align-self: start;
+  }
+
+  /*
+   * A DECISION HAS NO ROWS, and refusing them is a real rule rather than a defensive check: a
+   * rhombus narrows to nothing at the top and bottom, so a list inside one is a list cut off at
+   * both ends. Hiding them is the honest failure. The alternative is a drawing that silently loses
+   * content the author wrote.
+   */
+  .sk-diagram__node[data-shape="decision"] .sk-diagram__rows {
+    display: none;
+  }
+
+  .sk-diagram__node {
+    /*
+     * `position: relative` is not decoration either: the decision shape is a rotated pseudo-element
+     * behind the text, and the visually hidden route list is an absolutely positioned child. Both
+     * resolve against this.
+     */
+    position: relative;
+    grid-column: span var(--sk-diagram-node-span);
+    display: grid;
+    place-items: center;
+    box-sizing: border-box;
+    /*
+     * THE FLOOR YIELDS TO THE CELL, which is the difference between a tidy rank and four boxes
+     * welded into a bar. A bare `min-inline-size` is a hard floor: in a four-column drawing 340px
+     * wide the cells are 79px and the floor is 96px, so every leaf overflowed its column and the
+     * column gap disappeared under its neighbours. `min()` keeps the floor where there is room for
+     * it and gives it up where there is not, which is the only case it was ever wrong in.
+     */
+    /*
+     * THE INLINE PADDING, CAPPED BY THE COLUMN IT HAS TO FIT IN. The hook is the padding a node
+     * wants; this is the padding there is room for.
+     *
+     * A node cannot shrink below its own padding plus its longest word, so on a narrow drawing a
+     * flat 24px per side is not a style, it is an overflow: a four-column tree at 340px gets 76px
+     * tracks, and 48px of that being padding left "Carrier" needing 94px. Every leaf overran its
+     * track, ate the 12px gap, and the row read as one continuous strip with the outermost nodes
+     * hanging off both edges of the frame.
+     *
+     * `100cqi / columns` is that track, and an eighth of it is padding that stays proportionate
+     * instead of staying constant. Where there is room the cap is far above the token and nothing
+     * changes, which is why this is a guard rail and not a second opinion about spacing. A node
+     * that SPANS columns has more room than this credits it with, and under-padding a wide box is
+     * the harmless direction to be wrong in.
+     *
+     * It is a separate property from the hook, not a narrowing of it, because three rules read the
+     * padding back - the title's optical inset and the rows' full-bleed negative margin - and an
+     * arithmetic that used the wanted value where the box uses the capped one would hang the rule
+     * over the node's border by the difference.
+     *
+     * NO `--sk-` PREFIX, which is the house mark for a property that is internal and not part of
+     * the override surface (`--arrow-size` in anchored, `--collapse` in breadcrumb). The hooks gate
+     * reads the prefix literally and would otherwise make this a documented knob, and a knob that
+     * turns off an overflow guard is not one worth publishing. Capping at the point of USE is also
+     * what keeps the guard honest: a consumer who raises the padding hook gets the cap too.
+     */
+    --node-fit-inline: min(
+      var(--sk-diagram-node-padding-inline),
+      100cqi / var(--sk-diagram-columns) / 8
+    );
+
+    min-inline-size: min(var(--sk-diagram-node-min-inline-size), 100%);
+    max-inline-size: var(--sk-diagram-node-max-inline-size);
+    border: var(--sk-diagram-node-border-width) solid var(--sk-diagram-node-border-color);
+    border-radius: var(--sk-diagram-node-radius);
+    padding: var(--sk-diagram-node-padding-block) var(--node-fit-inline);
+    background: var(--sk-diagram-node-bg);
+    box-shadow: var(--sk-diagram-node-shadow);
+    color: var(--sk-diagram-node-color);
+    font-size: var(--sk-diagram-node-font-size);
+    font-weight: var(--sk-diagram-node-font-weight);
+    line-height: var(--sk-diagram-node-line-height);
+    text-align: center;
+    /* A node names one thing: `balance` keeps a two-line name from breaking one word onto its own
+       line, which in a small box reads as a mistake rather than as a wrap. */
+    text-wrap: balance;
+  }
+
+  /*
+   * THE TERMINAL: where the drawing starts or stops. A pill, which is to say a box with nothing
+   * sharp about it, and that is the whole of the convention: a reader tells an endpoint from a step
+   * by the absence of corners, with no legend to consult. `--radius-pill` rather than a large number
+   * because a pill is a SHAPE and not a roundness setting (CONTEXT.md's radius dimension says so),
+   * so it survives a consumer moving the whole system to `radius: none`.
+   */
+  .sk-diagram__node[data-shape="terminal"] {
+    --sk-diagram-node-radius: var(--radius-pill);
+    --sk-diagram-node-padding-inline: var(--space-inset-lg);
+  }
+
+  /*
+   * THE DECISION: a wide rhombus, clipped, with its outline drawn as two stacked layers.
+   *
+   * IT IS WIDE, not square, and that is the correction this shape needed most. The first version
+   * rotated a square behind the text, which keeps a real border and a real shadow and costs one
+   * declaration: `aspect-ratio: 1`. That declaration is what made a decision the biggest object on
+   * every drawing. A question is a line or two of text, so the box is as wide as the words; forcing
+   * its height to match turned "Paid for?" spanning four columns into a 164 by 164 lozenge sitting
+   * among 96 by 31 boxes, and a reader reads that difference in size as a difference in importance.
+   * Every flowchart ever drawn uses a WIDE rhombus for exactly this reason.
+   *
+   * WHICH COSTS THE ROTATION TRICK, because a rhombus that is not square cannot be a rotated square.
+   * So the shape is clipped, and the border it would otherwise lose is drawn as TWO clipped layers:
+   * the outer one is the border colour, the inner one is inset and holds the fill, and what shows
+   * between them is the outline. The inset is scaled past the border width because a box inset of
+   * one pixel is less than a pixel measured PERPENDICULAR to a sloped edge.
+   *
+   * The one thing genuinely lost is the raised shadow: `clip-path` clips a box shadow away with
+   * everything else, and the `drop-shadow()` filter that would survive it takes a literal colour,
+   * which this system does not name (`--elevation-raised` is a box-shadow composite). A decision
+   * therefore sits flat while its neighbours are raised. That reads as deliberate rather than as a
+   * bug: the diamond is already the one shape on the drawing that does not need depth to be found.
+   *
+   * THE PADDING is what keeps the text inside the RHOMBUS rather than inside its box, and it is a
+   * LENGTH rather than a percentage, which is the correction that took the longest to see. A
+   * rhombus narrows to nothing at its top and bottom vertices, so a label that reaches the box's
+   * corners is outside the shape, and the obvious way to say "leave a fifth of the width on each
+   * side" is `padding-inline: 22%`. A percentage padding resolves against the CONTAINING BLOCK,
+   * which for a grid item is its grid area: a decision spanning four columns of an 820px drawing
+   * took 22% of 770px, i.e. 169px of padding on each side, and `box-sizing: border-box` cannot
+   * shrink a box below its own padding, so `max-inline-size` was quietly powerless and the node
+   * came out 339px wide and 199px tall. Nothing in the markup said why.
+   *
+   * The honest number does not involve the width at all. For a text block `T` tall, centred in a
+   * rhombus `W` wide and `W / A` tall, the shape is `W - T * A` wide where the text's own top and
+   * bottom edges are, so the content has to be that narrow: `2P >= T * A`. The width cancels. At
+   * 1.6em of line box per side times the aspect, that covers a two-line question with a little to
+   * spare, and a decision node is deliberately the one that wants a short question in it.
+   *
+   * WHY THE GEOMETRY MODULE KNOWS ABOUT THIS SHAPE, which is the one place a silhouette leaks out of
+   * the stylesheet: a connector leaving a third of the way along the BOX's bottom edge would start
+   * in the empty corner beside the rhombus, visibly detached from it. `sideOutline` in
+   * `@skryensya/core/diagram` walks the two lower faces instead, which is also what puts an
+   * if/else's two branches on the lower-left and lower-right faces without anything anywhere
+   * knowing what an if/else is. It reads the BOUNDING BOX, and the four vertices of a rhombus are
+   * that box's own edge midpoints however wide it is, so nothing there changes with the aspect.
+   */
+  .sk-diagram__node[data-shape="decision"] {
+    /*
+     * `isolation` is what keeps the rhombus BEHIND this node's own text and IN FRONT of the
+     * connectors under it. The clipped layers have to paint below the label (a positioned child with
+     * no z-index paints over inline content, which would bury the question inside its own shape),
+     * and `z-index: -1` alone would send them below the frame's whole stacking context, i.e. behind
+     * the connector overlay: the diamond would then be crossed out by every line arriving at it.
+     * Isolating the node is what bounds the -1 to this element.
+     */
+    isolation: isolate;
+    /*
+     * The one node that does NOT stretch with its row: its height is its width over the aspect
+     * ratio, and a stretched rhombus would take its height from a neighbour and then compute a
+     * width from it, which is the tail wagging the dog.
+     */
+    align-self: center;
+    aspect-ratio: var(--sk-diagram-decision-aspect);
+    border: 0;
+    border-radius: 0;
+    /* `T * A / 2`, with `T` two line boxes. None on the block axis, where the aspect ratio is
+       already what decides the height. */
+    padding-inline: calc(1.6em * var(--sk-diagram-decision-aspect));
+    padding-block: 0;
+    background: none;
+    box-shadow: none;
+    inline-size: fit-content;
+  }
+
+  .sk-diagram__node[data-shape="decision"]::before,
+  .sk-diagram__node[data-shape="decision"]::after {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+  }
+
+  /*
+   * AFTER THE SHAPES, and the order is the rule rather than an accident of where it was typed. A
+   * terminal widens its own inline padding for its rounded caps, which is right for a word in a
+   * pill and wrong for a mark in one: at equal specificity the later rule wins, so this sat above
+   * the shapes and every pill with a logo kept 24px in front of the tile while its neighbours had
+   * 12. One drawing, two indents, no reason a reader could see.
+   */
+  .sk-diagram__node:has(.sk-diagram__node-logo) {
+    /*
+     * A NODE WITH A MARK IS PROPORTIONED FOR THE MARK, not for a line of text.
+     *
+     * The defaults are sized for words: generous on the inline axis so a sentence is not against
+     * the border, mean on the block axis because a line of text needs no headroom. Put a 36px tile
+     * in that box and the numbers come out backwards. Measured: 24px of padding to the left of the
+     * mark, 4px above and below it, and 4px between it and its own name, so the tile was jammed
+     * against the type with a corridor of empty space either side of the pair.
+     *
+     * A mark wants the opposite: less in front of it, because the tile is already an inset shape
+     * and a second inset reads as a margin nobody asked for; more above and below, because a square
+     * needs air where a line of text does not; and a real gap before the words, because a logo
+     * touching its label is one object and they are two.
+     */
+    --sk-diagram-node-padding-inline: var(--space-inline-md);
+    --sk-diagram-node-padding-block: var(--space-inline-sm);
+    --sk-diagram-logo-gap: var(--space-inline-sm);
+
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: var(--sk-diagram-logo-gap);
+    justify-items: start;
+    align-items: center;
+    /* Beside a mark, a centred name reads as floating: the two share a baseline and a left edge. */
+    text-align: start;
+  }
+
+  .sk-diagram__node:has(.sk-diagram__node-logo) > .sk-diagram__rows {
+    grid-column: 1 / -1;
+  }
+
+  /* The outline: the whole rhombus, in the border colour. */
+  .sk-diagram__node[data-shape="decision"]::before {
+    inset: 0;
+    background: var(--sk-diagram-node-border-color);
+  }
+
+  /*
+   * The fill: the same rhombus, pulled in far enough that what stays uncovered reads as a hairline.
+   * The multiplier is the sloped-edge correction described above; it is not a magic number so much
+   * as "a box inset is not a stroke width".
+   */
+  .sk-diagram__node[data-shape="decision"]::after {
+    inset: calc(var(--sk-diagram-node-border-width) * var(--sk-diagram-decision-stroke-scale));
+    background: var(--sk-diagram-node-bg);
+  }
+
+  /*
+   * THE READING OF THE DRAWING, written into each node by the binding: where this node leads, one
+   * line per outgoing edge. Announced, never drawn.
+   *
+   * It is `sk-visually-hidden` from the base bundle rather than a clip of its own, which is not
+   * tidiness: three components in this kit once rendered `class="sr-only"`, a name borrowed from
+   * other systems and defined nowhere in this one, and where the app had not defined it the hidden
+   * text was simply visible. The pattern is the kit's answer and this uses it.
+   *
+   * The reset below is what keeps it out of the node's own layout even so: the node is a grid, and
+   * an absolutely positioned child of a grid still takes a cell's worth of nothing unless its own
+   * list styling is cleared.
+   */
+  .sk-diagram__routes {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /*
+   * THE EDGE LABELS, IN NORMAL FLOW UNTIL THE DRAWING EXISTS.
+   *
+   * Every edge's position is a measurement, so before the first pass there is nothing to position it
+   * with. This is the state a reader gets with no JavaScript, with the script still loading, or with
+   * it broken: the nodes as a list, and the words on the relationships as a row under them. It is
+   * not the drawing, and it is as far as a drawing of relationships can honestly degrade.
+   *
+   * `[data-sk-placed]`, written by the binding once it has measured, is what turns the same markup
+   * into the overlay. Both bindings write it, so the two stages of the same tree flip at the same
+   * moment and the symmetry gate compares like with like.
+   */
+  .sk-diagram__edges {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    gap: var(--space-inline-xs);
+    margin: var(--space-stack-md) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .sk-diagram[data-sk-placed] .sk-diagram__edges {
+    position: absolute;
+    inset: 0;
+    display: block;
+    margin: 0;
+    /* A label sits over the drawing and must never be what a pointer finds: there is nothing here to
+       click, and a chip that swallowed a click would be a control that does nothing. */
+    pointer-events: none;
+  }
+
+  .sk-diagram__edge {
+    /* A chip, not a pill with a body: inline padding keeps the word off the curve and the block
+       padding is zero, so the label is exactly as tall as its line and the connector it covers is
+       hidden for the shortest possible run. */
+    border: 1px solid var(--sk-diagram-edge-border-color);
+    border-radius: var(--sk-diagram-edge-radius);
+    padding: var(--sk-diagram-edge-padding-block) var(--sk-diagram-edge-padding-inline);
+    background: var(--sk-diagram-edge-bg);
+    color: var(--sk-diagram-edge-color);
+    font-size: var(--sk-diagram-edge-font-size);
+    line-height: var(--sk-diagram-edge-line-height);
+    /* An edge's name is one token ("Yes", "on error"): a second line makes the chip a paragraph
+       sitting on a line. */
+    white-space: nowrap;
+  }
+
+  /*
+   * AN UNLABELLED EDGE DRAWS NO CHIP, and `:empty` is what says so with no attribute and no class.
+   * Most edges in a linear flow have no label at all; a blank sticker in the middle of every one of
+   * them would be the diagram announcing that it has nothing to announce.
+   */
+  .sk-diagram__edge:empty {
+    display: none;
+  }
+
+  /*
+   * An edge whose ends name no node, or whose ends have no box yet. The binding writes this rather
+   * than guessing at a position: a label floating in the middle of a drawing claims a relationship
+   * the drawing does not show, which is worse than saying nothing. Authoring it wrong is caught by
+   * the validator; this is the fallback for markup nobody validated.
+   */
+  .sk-diagram__edge[data-sk-orphan] {
+    display: none;
+  }
+
+  .sk-diagram[data-sk-placed] .sk-diagram__edge {
+    position: absolute;
+    /*
+     * PHYSICAL, not logical, and this is the one seam in the component. The binding's numbers come
+     * out of `getBoundingClientRect`, which has no opinion about writing direction, so the origin
+     * they are measured from has to be the physical top-left. Everything an AUTHOR writes here is
+     * direction-agnostic (there is no side option anywhere in this contract) and the grid above
+     * flips on its own in RTL; only this origin is pinned.
+     */
+    top: 0;
+    left: 0;
+    /*
+     * TWO TRANSLATIONS THAT COMPOSE. The binding writes the `translate` property (a point ON the
+     * stroke, in px); this `transform` then places the chip relative to that point in its OWN
+     * units, which is the only way to do it without the binding knowing how wide the chip turned
+     * out to be. They are separate properties applied in a fixed order, so neither overwrites the
+     * other.
+     *
+     * ON THE STROKE, not beside it, and the chip's ground is what makes that work: the connector
+     * runs underneath and would otherwise be read as struck through the word. Hanging the chip off
+     * to one side keeps the whole line visible and was tried first; it needs room beside the line
+     * that a compact drawing does not have, and it put the state chart's `resolves` on top of the
+     * box it was labelling and its `invalidate` off the edge of the frame. What the geometry does
+     * instead is keep the ARROWHEAD clear (see `DiagramEdgePlacement.label`), which is the only
+     * part of a connector a chip must never hide.
+     */
+    transform: translate(-50%, -50%);
+  }
+
+  /*
+   * THE OVERLAY IS OUT OF FLOW, which is why it claims no cell and cannot widen the grid. `inset: 0`
+   * against a positioned block resolves to the PADDING box, so its user units and the binding's
+   * measurements share one origin with nothing to convert.
+   *
+   * `overflow: visible` because a back edge legitimately runs OUTSIDE the nodes, in a lane past the
+   * widest of them, and a self-transition loops above its own node. Clipping there would shave every
+   * cycle in the drawing, which is the one relationship a reader is most likely to be looking for.
+   */
+  .sk-diagram__connectors {
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .sk-diagram__line {
+    fill: none;
+    stroke: var(--sk-diagram-connector-color);
+    stroke-width: var(--sk-diagram-connector-width);
+    /* `round` on both, so a rounded corner meets its arms cleanly and a line end is a line end
+       rather than a notch at this weight. */
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /*
+   * THE ARROWHEAD IS FILLED, not stroked, and it is one `<path>` rather than an SVG `<marker>`.
+   *
+   * A marker is the platform's own answer and would need an id, which means a document with two
+   * diagrams on it needs two ids that do not collide, generated per instance, present in one binding
+   * and absent in the other. Computing the triangle is a dozen lines, keeps both bindings writing
+   * byte-identical attributes, and puts the geometry where the rest of the geometry already is.
+   */
+  .sk-diagram__arrow {
+    fill: var(--sk-diagram-connector-color);
+    stroke: none;
+  }
+
+  /*
+   * NO `prefers-reduced-motion` BLOCK, deliberately: nothing here moves. The connectors are redrawn
+   * when the frame resizes, and animating that would mean a diagram whose lines are wrong for the
+   * length of a transition. A drawing snaps.
+   */
+}

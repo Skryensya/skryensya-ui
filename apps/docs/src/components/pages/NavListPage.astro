@@ -26,9 +26,7 @@ const styles = `@import "@skryensya/core/patterns/nav-list.css";`;
   contractId="nav-list"
   testFiles={["packages/react/src/components/nav-list.test.tsx", "packages/vanilla/src/components/nav-list.test.ts"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("navListPage.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("navListPage.anatomyBody")} />
     <ComponentPreview
       tree={navListAnatomyTree(t)}
@@ -38,7 +36,10 @@ const styles = `@import "@skryensya/core/patterns/nav-list.css";`;
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("navListPage.lede")} />
     <h3>{t("navListPage.productTitle")}</h3>
     <p set:html={t("navListPage.productBody")} />
     <ComponentPreview

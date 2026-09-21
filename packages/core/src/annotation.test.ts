@@ -313,24 +313,24 @@ describe("placeAnnotations", () => {
     expect(only(placement)!.path).toBe("M 230 20 L 230 24 L 308 102");
   });
 
-  it("routes a stacked label with only one elbow", () => {
-    const [placement] = placeAnnotations(
-      [measurement({ side: "block-start", label: box(160, 0, 140, 20), target: box(300, 100, 40, 20) })],
-      subject,
-      { distribute: false, leaderRoute: "right-elbow" },
-    );
-
-    expect(only(placement)!.path).toBe("M 300 10 L 308 10 L 308 102");
-  });
-
-  it("enters the lower edge when a stacked label sits below its target", () => {
+  /*
+   * A LABEL IN THE NARROW CLUSTER IS ROUTED LIKE ANY OTHER, which is the point of this pair.
+   *
+   * The narrow stack used to be one label per line down the left edge, with the whole right half of
+   * the frame empty, and it was given a route of its own (`leaderRoute: "right-elbow"`) to use that
+   * emptiness: step right out of the bubble, then run to the ring. Once the stack became a WRAPPING
+   * cluster the emptiness went away  -  a label's right edge is the next label  -  and with it the
+   * only reason that route existed. Leaving the label's facing edge, which is what every other
+   * label does, is both shorter and the one rule the diagram now has.
+   */
+  it("enters the lower edge when a label in the cluster sits below its target", () => {
     const [placement] = placeAnnotations(
       [measurement({ side: "block-end", label: box(160, 220, 140, 20), target: box(300, 100, 40, 20) })],
       subject,
-      { distribute: false, leaderRoute: "right-elbow" },
+      { distribute: false },
     );
 
-    expect(only(placement)!.path).toBe("M 300 230 L 308 230 L 308 118");
+    expect(only(placement)!.path).toBe("M 230 220 L 230 196 L 308 118");
   });
 
   it("draws the ring outside the part when asked to offset it", () => {

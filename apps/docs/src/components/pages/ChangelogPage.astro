@@ -22,9 +22,7 @@ const styles = `@import "@skryensya/core/components/changelog.css";`;
   contractId="changelog"
   testFiles={["packages/react/src/components/changelog.test.tsx"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("changelogPage.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("changelogPage.anatomyBody")} />
     <ComponentPreview
       tree={changelogAnatomyTree(t)}
@@ -34,7 +32,10 @@ const styles = `@import "@skryensya/core/components/changelog.css";`;
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("changelogPage.lede")} />
     <ComponentPreview tree={changelogTree(t)} label="Changelog" note={t("changelogPage.previewNote")} />
 
     <h3>{t("changelogPage.whenTitle")}</h3>

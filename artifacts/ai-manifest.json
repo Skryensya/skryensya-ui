@@ -5,6 +5,18 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-21",
+            "en": {
+              "body": "<code>DetailsGroup</code>, <code>Details</code>, <code>Details.Summary</code> and <code>Details.Content</code> now live inside the <code>accordion</code> contract, under the same names, the same <code>sk-details*</code> classes and the same React module. They were their own row in the catalogue, which made a reader choose between two entries before learning they answered the same question (the same dissolve Popup got into Popover). Their changelog entries move here; nothing you compose today changes.",
+              "title": "Details stops being its own contract and becomes part of Accordion"
+            },
+            "es": {
+              "body": "<code>DetailsGroup</code>, <code>Details</code>, <code>Details.Summary</code> y <code>Details.Content</code> viven ahora dentro del contrato <code>accordion</code>, con los mismos nombres, las mismas clases <code>sk-details*</code> y el mismo módulo de React. Eran un componente propio en el catálogo, y obligaban a elegir entre dos entradas antes de saber que respondían la misma pregunta (mismo movimiento que Popup dentro de Popover). Las entradas de su changelog bajan acá; nada que se componga hoy cambia.",
+              "title": "Details deja de ser un contrato aparte y pasa a ser parte de Accordion"
+            },
+            "kind": "rework"
+          },
+          {
             "date": "2026-09-18",
             "en": {
               "body": "Accordion paints with <code>tile.css</code>, so <code>--sk-tile-title-weight</code> is retunable from here too. The default is unchanged.",
@@ -79,6 +91,55 @@
             "target": "Accordion"
           },
           {
+            "date": "2026-09-17",
+            "en": {
+              "body": "Interactive or form host signatures publish <code>forward</code> (<code>id</code>/<code>aria-*</code> and link or form attrs where relevant). An attr outside the list is <code>unknown-attr</code>.",
+              "title": "Interactive signatures declare forward"
+            },
+            "es": {
+              "body": "Las firmas host interactivas o de formulario publican <code>forward</code> (<code>id</code>/<code>aria-*</code> y attrs de enlace o formulario cuando aplica). Un attr fuera de la lista es <code>unknown-attr</code>.",
+              "title": "Firmas interactivas declaran forward"
+            },
+            "kind": "feature"
+          },
+          {
+            "date": "2026-09-17",
+            "en": {
+              "body": "The chevron-down/up indicator is documented as <code>compose</code> of <code>icon</code> with <code>systemOwned</code> (already baked via <code>data-sk-icon</code>).",
+              "title": "Details.Summary declares compose of the chevron Icon"
+            },
+            "es": {
+              "body": "El indicador chevron-down/up queda documentado como <code>compose</code> de <code>icon</code> con <code>systemOwned</code> (ya estaba horneado vía <code>data-sk-icon</code>).",
+              "title": "Details.Summary declara compose del chevron Icon"
+            },
+            "kind": "feature",
+            "target": "Details.Summary"
+          },
+          {
+            "date": "2026-09-17",
+            "en": {
+              "body": "A lone disclosure is the common case; the group only coordinates exclusivity via <code>name</code>. The contract rejected a top-level <code>Details</code> even though React and native HTML allow it.",
+              "title": "Details no longer requires a DetailsGroup ancestor"
+            },
+            "es": {
+              "body": "Un disclosure suelto es el caso común; el grupo sólo coordina exclusividad vía <code>name</code>. El contrato dejaba de validar un <code>Details</code> en la raíz, aunque React y el HTML nativo sí lo permiten.",
+              "title": "Details ya no exige vivir dentro de DetailsGroup"
+            },
+            "kind": "bugfix"
+          },
+          {
+            "date": "2026-09-17",
+            "en": {
+              "body": "<code>sk-details__heading</code>, <code>sk-details__title</code> and <code>sk-details__description</code> were styled but were not contract parts and nothing used them: a title inside the summary is composed with Typography. They go with the hooks only they read, <code>--sk-details-title-font-size</code> and <code>--sk-details-description-font-size</code>.",
+              "title": "The title classes no tree used are gone"
+            },
+            "es": {
+              "body": "<code>sk-details__heading</code>, <code>sk-details__title</code> y <code>sk-details__description</code> tenían estilo pero no eran partes del contrato ni las usaba nadie: un título dentro del summary se compone con Typography. Salen con los hooks que sólo ellas leían, <code>--sk-details-title-font-size</code> y <code>--sk-details-description-font-size</code>.",
+              "title": "Se van las clases de título que ningún árbol usaba"
+            },
+            "kind": "breaking"
+          },
+          {
             "date": "2026-09-16",
             "en": {
               "body": "<code>Accordion.Item</code> honours <code>defaultOpen</code> when the root has no <code>defaultValue</code>/<code>value</code> (same as vanilla <code>data-default-open</code>). On open-set changes, React dispatches <code>sk:accordionvaluechange</code> on the root as well as <code>onValueChange</code>. The item host is fixed to <code>section</code> (<code>as</code> removed), <code>headingLevel</code> clamps to 1..6, and <code>collapsible</code> only applies when <code>type=\"single\"</code>.",
@@ -142,6 +203,18 @@
           {
             "date": "2026-09-12",
             "en": {
+              "body": "The contract now publishes this component's <code>20</code> styling hooks. Nothing you wrote changes: the same hooks, under the same names, and the stylesheet was not touched. What is new is that the contract declares them, so the compiler fails when the stylesheet declares one the contract does not publish, or the contract promises one the stylesheet never declares. That second half is the one that matters: until now, re-declaring a hook that no longer existed was not an error, it was silence.",
+              "title": "details's styling hooks are now declared in the contract"
+            },
+            "es": {
+              "body": "El contrato ahora publica los <code>20</code> styling hooks de este componente. Nada de lo que hayas escrito cambia: son los mismos hooks, con los mismos nombres, y la hoja de estilos no se tocó. Lo nuevo es que el contrato los declara, así que el compilador falla si la hoja declara uno que el contrato no publica, o si el contrato promete uno que la hoja no declara. Esa segunda mitad es la que importa: hasta ahora, redeclarar un hook que ya no existía no daba error, daba silencio.",
+              "title": "Los styling hooks de details quedan declarados en el contrato"
+            },
+            "kind": "feature"
+          },
+          {
+            "date": "2026-09-12",
+            "en": {
               "body": "The previous batch over-published these lists. They were generated by counting every <code>--sk-*</code> a stylesheet <em>declares</em>, and tuning another component's hook inside your own scope counted as publishing it: seventeen contracts ended up claiming <code>--sk-icon-size</code>. A hook now belongs to the sheet that declares it without naming another family, and the gate uses that same rule. No styling changes; what changes is whose each hook is said to be.",
               "title": "The styling hook list stops claiming other components' hooks"
             },
@@ -175,6 +248,18 @@
             },
             "kind": "feature",
             "target": "headingLevel"
+          },
+          {
+            "date": "2026-08-11",
+            "en": {
+              "body": "It joins the catalogue with <code>DetailsGroup</code>, <code>Details</code>, <code>Details.Summary</code>, <code>Details.Content</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>name</code>, <code>open</code>. Its stylesheet is <code>components/details.css</code>.",
+              "title": "Details is published as a contract, with 4 signatures"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>DetailsGroup</code>, <code>Details</code>, <code>Details.Summary</code>, <code>Details.Content</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>name</code>, <code>open</code>. La hoja es <code>components/details.css</code>.",
+              "title": "Details se publica como contrato, con 4 signatures"
+            },
+            "kind": "feature"
           },
           {
             "date": "2026-08-04",
@@ -222,6 +307,18 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-20",
+            "en": {
+              "body": "Below 40rem the four margins no longer stack one per line: they become two clusters that wrap into rows above and below the specimen, and the key drops to a line of its own. FileUpload's fifteen names went from 543px of column to four rows, and the diagram from 1058px to 593px. <code>mobileAlign=\"end\"</code> now pushes a label to the end of ITS row (<code>margin-inline-start: auto</code>) rather than aligning it on the cross axis.",
+              "title": "Narrow screens cluster the labels into rows instead of one column"
+            },
+            "es": {
+              "body": "Debajo de 40rem los cuatro márgenes ya no se apilan uno por línea: forman dos grupos que envuelven en filas arriba y abajo del espécimen, y la clave baja a su propia línea. Las quince etiquetas de FileUpload pasaron de 543px de columna a cuatro filas, y el diagrama de 1058px a 593px. <code>mobileAlign=\"end\"</code> ahora empuja la etiqueta al final de SU fila (<code>margin-inline-start: auto</code>) en vez de alinearla en el eje cruzado.",
+              "title": "En pantallas angostas las etiquetas se agrupan en filas, no en una columna"
+            },
+            "kind": "rework"
+          },
           {
             "date": "2026-09-19",
             "en": {
@@ -1790,6 +1887,18 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-21",
+            "en": {
+              "body": "<code>--sk-code-preview-label-bg</code> is now a declared styling hook: the label paints as its own sunken region while the body of the block sits on the ordinary surface. That value existed in the stylesheet and no contract named it, so overriding it was documented nowhere.",
+              "title": "The label row has a ground of its own"
+            },
+            "es": {
+              "body": "<code>--sk-code-preview-label-bg</code> ya es un styling hook declarado: la etiqueta se pinta como una región hundida aparte y el cuerpo del bloque queda sobre la superficie normal. Antes ese valor existía en la hoja y ningún contrato lo nombraba, así que sobrescribirlo no estaba documentado en ninguna parte.",
+              "title": "La fila de la etiqueta tiene su propio fondo"
+            },
+            "kind": "feature"
+          },
+          {
             "date": "2026-09-17",
             "en": {
               "body": "The surface hash now projects options through a whitelist (no <code>machineInput</code>), includes <code>eventDetails</code>, and still excludes the template (<code>also</code>, ephemeral attrs). This contract's API did not change; only what the hash measures did.",
@@ -2905,92 +3014,75 @@
         "version": "0.0.1-dev"
       }
     ],
-    "details": [
+    "description-list": [
       {
         "date": null,
         "entries": [
           {
-            "date": "2026-09-17",
+            "date": "2026-09-20",
             "en": {
-              "body": "Interactive or form host signatures publish <code>forward</code> (<code>id</code>/<code>aria-*</code> and link or form attrs where relevant). An attr outside the list is <code>unknown-attr</code>.",
-              "title": "Interactive signatures declare forward"
+              "body": "It joins the catalogue with <code>DescriptionList</code> and <code>DescriptionItem</code>: name-and-value pairs about ONE record (an order's summary, a document's metadata). When the same fields are shown for several records that is a Table instead: a cell that means something because of its row AND its column is a different thing. Each pair is wrapped in the <code>&lt;div&gt;</code> HTML itself allows inside <code>&lt;dl&gt;</code>, and that element is what makes the row addressable: the divider and the two-column layout both hang off it. <code>layout</code> takes <code>stacked</code> (the default) and <code>columns</code>, which falls back to stacked on its own below 36rem. The name column is a length (<code>--sk-description-list-term-size</code>) rather than <code>max-content</code>, because the rows are drawn one by one instead of on one shared grid. There is no enhancer. Its stylesheet is <code>components/description-list.css</code>.",
+              "title": "DescriptionList is published as a contract, with 2 signatures"
             },
             "es": {
-              "body": "Las firmas host interactivas o de formulario publican <code>forward</code> (<code>id</code>/<code>aria-*</code> y attrs de enlace o formulario cuando aplica). Un attr fuera de la lista es <code>unknown-attr</code>.",
-              "title": "Firmas interactivas declaran forward"
+              "body": "Entra al catálogo con <code>DescriptionList</code> y <code>DescriptionItem</code>: pares de nombre y valor sobre UN registro (el resumen de un pedido, los metadatos de un documento). Si los mismos campos se muestran para varios registros, eso es una Table: una celda que significa algo por su fila Y su columna es otra cosa. Cada par va envuelto en el <code>&lt;div&gt;</code> que el propio HTML admite dentro de <code>&lt;dl&gt;</code>, y ese elemento es lo que vuelve direccionable la fila: de ahí cuelgan el divisor y el layout de dos columnas. <code>layout</code> tiene <code>stacked</code> (default) y <code>columns</code>, que bajo 36rem vuelve solo a apilarse. La columna del nombre es un largo (<code>--sk-description-list-term-size</code>) y no <code>max-content</code>, porque las filas se dibujan una a una en vez de sobre una grilla compartida. No tiene enhancer. La hoja es <code>components/description-list.css</code>.",
+              "title": "DescriptionList se publica como contrato, con 2 signatures"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.0.1-dev"
+      }
+    ],
+    "diagram": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-09-21",
+            "en": {
+              "body": "A node's <code>logo</code> slot takes a tree: an <code>ImageFrame</code> pointing at an SVG or a PNG, an <code>Icon</code> from whichever set is installed, or anything else the catalogue renders. All the component supplies is the box, one size for the whole drawing (<code>--sk-diagram-logo-size</code>): twenty nodes with twenty hand-sized images are twenty chances for one to be a different height. The kit ships no brand marks and never will.",
+              "title": "A node can carry a mark, and the mark is the author's to bring"
+            },
+            "es": {
+              "body": "El slot <code>logo</code> de un nodo acepta un árbol: un <code>ImageFrame</code> apuntando a un SVG o un PNG, un <code>Icon</code> del set que esté instalado, o cualquier otra cosa que el catálogo sepa dibujar. Lo único que pone el componente es la caja, del mismo tamaño para todo el dibujo (<code>--sk-diagram-logo-size</code>): veinte nodos con veinte imágenes dimensionadas a mano son veinte oportunidades de que una quede de otra altura. El kit no trae marcas y no las va a traer.",
+              "title": "Un nodo puede llevar una marca, y la marca la trae quien compone"
             },
             "kind": "feature"
           },
           {
-            "date": "2026-09-17",
+            "date": "2026-09-21",
             "en": {
-              "body": "The chevron-down/up indicator is documented as <code>compose</code> of <code>icon</code> with <code>systemOwned</code> (already baked via <code>data-sk-icon</code>).",
-              "title": "Details.Summary declares compose of the chevron Icon"
+              "body": "The <code>zones</code> slot draws a named region around the nodes that name it: a VPC with its subnets, a cluster with its services, a phase with its steps. A zone <strong>lays nothing out</strong>, it only traces a boundary where the grid already put the boxes, so it asks for no coordinate at all. A node declares the <em>innermost</em> zone it is in (<code>zone</code>) and a zone declares what it is inside (<code>within</code>), and that nesting is what makes an outer boundary draw further out.",
+              "title": "Zones, for drawing a boundary around the nodes that name it"
             },
             "es": {
-              "body": "El indicador chevron-down/up queda documentado como <code>compose</code> de <code>icon</code> con <code>systemOwned</code> (ya estaba horneado vía <code>data-sk-icon</code>).",
-              "title": "Details.Summary declara compose del chevron Icon"
-            },
-            "kind": "feature",
-            "target": "Details.Summary"
-          },
-          {
-            "date": "2026-09-17",
-            "en": {
-              "body": "A lone disclosure is the common case; the group only coordinates exclusivity via <code>name</code>. The contract rejected a top-level <code>Details</code> even though React and native HTML allow it.",
-              "title": "Details no longer requires a DetailsGroup ancestor"
-            },
-            "es": {
-              "body": "Un disclosure suelto es el caso común; el grupo sólo coordina exclusividad vía <code>name</code>. El contrato dejaba de validar un <code>Details</code> en la raíz, aunque React y el HTML nativo sí lo permiten.",
-              "title": "Details ya no exige vivir dentro de DetailsGroup"
-            },
-            "kind": "bugfix"
-          },
-          {
-            "date": "2026-09-17",
-            "en": {
-              "body": "<code>sk-details__heading</code>, <code>sk-details__title</code> and <code>sk-details__description</code> were styled but were not contract parts and nothing used them: a title inside the summary is composed with Typography. They go with the hooks only they read, <code>--sk-details-title-font-size</code> and <code>--sk-details-description-font-size</code>.",
-              "title": "The title classes no tree used are gone"
-            },
-            "es": {
-              "body": "<code>sk-details__heading</code>, <code>sk-details__title</code> y <code>sk-details__description</code> tenían estilo pero no eran partes del contrato ni las usaba nadie: un título dentro del summary se compone con Typography. Salen con los hooks que sólo ellas leían, <code>--sk-details-title-font-size</code> y <code>--sk-details-description-font-size</code>.",
-              "title": "Se van las clases de título que ningún árbol usaba"
-            },
-            "kind": "breaking"
-          },
-          {
-            "date": "2026-09-12",
-            "en": {
-              "body": "The contract now publishes this component's <code>20</code> styling hooks. Nothing you wrote changes: the same hooks, under the same names, and the stylesheet was not touched. What is new is that the contract declares them, so the compiler fails when the stylesheet declares one the contract does not publish, or the contract promises one the stylesheet never declares. That second half is the one that matters: until now, re-declaring a hook that no longer existed was not an error, it was silence.",
-              "title": "details's styling hooks are now declared in the contract"
-            },
-            "es": {
-              "body": "El contrato ahora publica los <code>20</code> styling hooks de este componente. Nada de lo que hayas escrito cambia: son los mismos hooks, con los mismos nombres, y la hoja de estilos no se tocó. Lo nuevo es que el contrato los declara, así que el compilador falla si la hoja declara uno que el contrato no publica, o si el contrato promete uno que la hoja no declara. Esa segunda mitad es la que importa: hasta ahora, redeclarar un hook que ya no existía no daba error, daba silencio.",
-              "title": "Los styling hooks de details quedan declarados en el contrato"
+              "body": "El slot <code>zones</code> dibuja una región con nombre alrededor de los nodos que la nombran: una VPC con sus subredes, un cluster con sus servicios, una fase con sus pasos. Una zona <strong>no acomoda nada</strong>, sólo traza el borde donde la grilla ya puso las cajas, así que no pide ninguna coordenada. El nodo declara la zona <em>más interna</em> (<code>zone</code>) y la zona declara dentro de cuál está (<code>within</code>), y el anidamiento es lo que hace que el borde de afuera se dibuje más afuera.",
+              "title": "Zonas, para dibujar un límite alrededor de los nodos que la nombran"
             },
             "kind": "feature"
           },
           {
-            "date": "2026-09-12",
+            "date": "2026-09-21",
             "en": {
-              "body": "The previous batch over-published these lists. They were generated by counting every <code>--sk-*</code> a stylesheet <em>declares</em>, and tuning another component's hook inside your own scope counted as publishing it: seventeen contracts ended up claiming <code>--sk-icon-size</code>. A hook now belongs to the sheet that declares it without naming another family, and the gate uses that same rule. No styling changes; what changes is whose each hook is said to be.",
-              "title": "The styling hook list stops claiming other components' hooks"
+              "body": "The <code>rows</code> slot turns a box into a record: a rule under the title and one line per row. It is for a class with its members or a table with its columns, and what makes it different from putting the text inside is that the rows are NAMED: <code>fromRow</code> and <code>toRow</code> anchor an edge to one, and the connector touches the node's edge at that row's own height. An anchored edge always comes in from the side, because a row has a height and no width.",
+              "title": "A node can have named rows, and an edge can point at one"
             },
             "es": {
-              "body": "El lote anterior publico estas listas de mas. Se generaron contando todo <code>--sk-*</code> que la hoja <em>declara</em>, y afinar el hook de otro componente dentro del propio scope contaba como publicarlo: diecisiete contratos terminaron reclamando <code>--sk-icon-size</code>. Ahora un hook pertenece a la hoja que lo declara sin nombrar otra familia, y el gate usa esa misma regla. Ningun estilo cambia; cambia de quien se dice que es cada hook.",
-              "title": "La lista de styling hooks deja de reclamar los de otros componentes"
+              "body": "El slot <code>rows</code> convierte una caja en un registro: una raya bajo el título y una línea por fila. Sirve para una clase con sus miembros o una tabla con sus columnas, y lo que lo hace distinto de poner el texto adentro es que las filas tienen nombre: <code>fromRow</code> y <code>toRow</code> anclan la arista a una, y el conector toca el borde del nodo a la altura de esa fila. Una arista anclada entra siempre por el costado, porque una fila tiene alto y no ancho.",
+              "title": "Un nodo puede tener filas con nombre, y una arista puede apuntar a una"
             },
-            "kind": "bugfix"
+            "kind": "feature"
           },
           {
-            "date": "2026-08-11",
+            "date": "2026-09-21",
             "en": {
-              "body": "It joins the catalogue with <code>DetailsGroup</code>, <code>Details</code>, <code>Details.Summary</code>, <code>Details.Content</code>: both bindings realize it, and this page's reference is rendered from the compiled contract rather than from prose written beside it. There is no enhancer: the markup is complete on its own, so both bindings are the same markup twice. Options: <code>name</code>, <code>open</code>. Its stylesheet is <code>components/details.css</code>.",
-              "title": "Details is published as a contract, with 4 signatures"
+              "body": "A frame with two collections: <code>nodes</code>, which are ordinary HTML boxes in a grid, and <code>edges</code>, which are <code>from</code>/<code>to</code> and nothing else. The runtime measures and draws the routes, the elbows and the arrowheads; an author writes no coordinate. Three shapes (<code>process</code>, <code>decision</code>, <code>terminal</code>), cycles routed through the margin, and an announced list inside each node saying where it leads.",
+              "title": "Diagram publishes nodes and edges, the other half of what Annotation does"
             },
             "es": {
-              "body": "Entra al catálogo con <code>DetailsGroup</code>, <code>Details</code>, <code>Details.Summary</code>, <code>Details.Content</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>name</code>, <code>open</code>. La hoja es <code>components/details.css</code>.",
-              "title": "Details se publica como contrato, con 4 signatures"
+              "body": "Un marco con dos colecciones: <code>nodes</code>, que son cajas de HTML normal en una grilla, y <code>edges</code>, que son <code>from</code>/<code>to</code> y nada más. El runtime mide y dibuja recorridos, codos y puntas de flecha; quien compone no escribe una coordenada. Tres formas (<code>process</code>, <code>decision</code>, <code>terminal</code>), ciclos por el margen, y una lista anunciada dentro de cada nodo que dice a dónde lleva.",
+              "title": "Diagram publica nodos y aristas, la otra mitad de lo que hace Annotation"
             },
             "kind": "feature"
           }
@@ -3002,6 +3094,19 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-20",
+            "en": {
+              "body": "<code>footerAlign</code> (<code>start</code> | <code>end</code>, default <code>end</code>) moves the <code>&lt;form method=\"dialog\"&gt;</code> action row to the inline-start or inline-end via <code>data-footer-align</code> on the host.",
+              "title": "New footerAlign option for the footer row"
+            },
+            "es": {
+              "body": "<code>footerAlign</code> (<code>start</code> | <code>end</code>, por defecto <code>end</code>) mueve la fila de acciones del <code>&lt;form method=\"dialog\"&gt;</code> al inicio o al final del eje inline vía <code>data-footer-align</code> en el host.",
+              "title": "Nueva opción footerAlign en el footer"
+            },
+            "kind": "feature",
+            "target": "footerAlign"
+          },
           {
             "date": "2026-09-17",
             "en": {
@@ -4183,160 +4288,6 @@
             },
             "kind": "feature",
             "target": "name"
-          }
-        ],
-        "version": "0.0.1-dev"
-      }
-    ],
-    "icon-state-button": [
-      {
-        "date": null,
-        "entries": [
-          {
-            "date": "2026-09-17",
-            "en": {
-              "body": "<code>compose</code> documents the host via <code>also: sk-button</code> and faces via Icon (<code>systemOwned</code>).",
-              "title": "IconStateButton declares compose of Button and Icon"
-            },
-            "es": {
-              "body": "<code>compose</code> documenta el host vía <code>also: sk-button</code> y faces vía Icon (<code>systemOwned</code>).",
-              "title": "IconStateButton declara compose de Button e Icon"
-            },
-            "kind": "feature"
-          },
-          {
-            "date": "2026-09-17",
-            "en": {
-              "body": "Publishes <code>forward</code> with <code>data-variant</code>/<code>data-size</code> (Button attrs via <code>also</code>), plus <code>id</code>/<code>name</code>/<code>form</code> and <code>aria-*</code>. An attr outside the list is <code>unknown-attr</code>.",
-              "title": "IconStateButton declares forward for Button look attrs"
-            },
-            "es": {
-              "body": "Publica <code>forward</code> con <code>data-variant</code>/<code>data-size</code> (attrs de Button vía <code>also</code>), más <code>id</code>/<code>name</code>/<code>form</code> y <code>aria-*</code>. Un attr fuera de la lista es <code>unknown-attr</code>.",
-              "title": "IconStateButton declara forward para look de Button"
-            },
-            "kind": "feature"
-          },
-          {
-            "date": "2026-09-17",
-            "en": {
-              "body": "The template now writes <code>data-icon-only</code> by construction (trees used to emit an <code>sk-button</code> with text-button padding) and the contract requires <code>aria-label</code> or <code>aria-labelledby</code>: faces are glyphs, never visible text. React writes the same attribute. <code>variant</code>/<code>size</code> stay Button's via attrs.",
-              "title": "IconStateButton is always icon-only and requires an accessible name"
-            },
-            "es": {
-              "body": "El template escribe <code>data-icon-only</code> de fábrica (antes el árbol emitía un <code>sk-button</code> con padding de botón con texto) y el contrato exige <code>aria-label</code> o <code>aria-labelledby</code>: las caras son glifos, nunca texto visible. React escribe el mismo atributo. <code>variant</code>/<code>size</code> siguen siendo los de Button vía attrs.",
-              "title": "IconStateButton siempre es icon-only y exige nombre accesible"
-            },
-            "kind": "bugfix"
-          },
-          {
-            "date": "2026-09-17",
-            "en": {
-              "body": "A single face is not a state button, and a face with no <code>icon</code> showed nothing when it became current.",
-              "title": "At least two faces, each with its icon"
-            },
-            "es": {
-              "body": "Una sola cara no es un botón de estados, y una cara sin <code>icon</code> no mostraba nada al volverse actual.",
-              "title": "Al menos dos caras, y cada una con su ícono"
-            },
-            "kind": "breaking"
-          },
-          {
-            "date": "2026-09-16",
-            "en": {
-              "body": "<code>current</code> now declares that it names entries of <code>faces</code> by their <code>name</code>. A tree pointing at an entry that does not exist stops validating (<code>unknown-key</code>) instead of rendering with nothing selected and no reason given. Markup and bindings are unchanged.",
-              "title": "The validator checks that the initial value names an entry that exist"
-            },
-            "es": {
-              "body": "<code>current</code> ahora declara que nombra entradas de <code>faces</code> por su <code>name</code>. Un árbol que apunta a una entrada inexistente deja de validar (<code>unknown-key</code>) en vez de renderizar sin nada seleccionado ni decir por qué. El markup y los bindings no cambian.",
-              "title": "El validador comprueba que el valor inicial nombre una entrada que existe"
-            },
-            "kind": "bugfix"
-          },
-          {
-            "date": "2026-09-14",
-            "en": {
-              "body": "This control names its icons with the stable vocabulary, so a new role there arrives here without this contract changing shape: `code` can now be asked for. The surface moved because the set of names it accepts is part of what a consumer can depend on, not because anything about how it is used changed.",
-              "title": "Reaches the code role the vocabulary just gained"
-            },
-            "es": {
-              "body": "Este control nombra sus iconos con el vocabulario estable, así que un rol nuevo ahí llega aquí sin que este contrato cambie de forma: `code` ya se puede pedir. La superficie se movió porque el conjunto de nombres que acepta es parte de lo que un consumidor puede depender, no porque haya cambiado nada de cómo se usa.",
-              "title": "Alcanza el rol code, que el vocabulario acaba de sumar"
-            },
-            "kind": "feature"
-          },
-          {
-            "date": "2026-09-12",
-            "en": {
-              "body": "The contract now publishes this component's <code>8</code> styling hooks. Nothing you wrote changes: the same hooks, under the same names, and the stylesheet was not touched. What is new is that the contract declares them, so the compiler fails when the stylesheet declares one the contract does not publish, or the contract promises one the stylesheet never declares. That second half is the one that matters: until now, re-declaring a hook that no longer existed was not an error, it was silence.",
-              "title": "icon-state-button's styling hooks are now declared in the contract"
-            },
-            "es": {
-              "body": "El contrato ahora publica los <code>8</code> styling hooks de este componente. Nada de lo que hayas escrito cambia: son los mismos hooks, con los mismos nombres, y la hoja de estilos no se tocó. Lo nuevo es que el contrato los declara, así que el compilador falla si la hoja declara uno que el contrato no publica, o si el contrato promete uno que la hoja no declara. Esa segunda mitad es la que importa: hasta ahora, redeclarar un hook que ya no existía no daba error, daba silencio.",
-              "title": "Los styling hooks de icon-state-button quedan declarados en el contrato"
-            },
-            "kind": "feature"
-          },
-          {
-            "date": "2026-09-12",
-            "en": {
-              "body": "The previous batch over-published these lists. They were generated by counting every <code>--sk-*</code> a stylesheet <em>declares</em>, and tuning another component's hook inside your own scope counted as publishing it: seventeen contracts ended up claiming <code>--sk-icon-size</code>. A hook now belongs to the sheet that declares it without naming another family, and the gate uses that same rule. No styling changes; what changes is whose each hook is said to be.",
-              "title": "The styling hook list stops claiming other components' hooks"
-            },
-            "es": {
-              "body": "El lote anterior publico estas listas de mas. Se generaron contando todo <code>--sk-*</code> que la hoja <em>declara</em>, y afinar el hook de otro componente dentro del propio scope contaba como publicarlo: diecisiete contratos terminaron reclamando <code>--sk-icon-size</code>. Ahora un hook pertenece a la hoja que lo declara sin nombrar otra familia, y el gate usa esa misma regla. Ningun estilo cambia; cambia de quien se dice que es cada hook.",
-              "title": "La lista de styling hooks deja de reclamar los de otros componentes"
-            },
-            "kind": "bugfix"
-          },
-          {
-            "date": "2026-09-05",
-            "en": {
-              "body": "No change of its own. This control's faces are typed against `StableIconName`, so `vote-up` and `vote-down` (see `icon`'s own changelog) are two more values a face can take. The surface moved because the enum it derives from grew.",
-              "title": "Reaches the vocabulary's two new roles"
-            },
-            "es": {
-              "body": "Sin cambios propios. Las caras de este control se tipan contra `StableIconName`, así que `vote-up` y `vote-down` (ver el changelog de `icon`) son dos valores más que una cara puede tomar. La superficie se movió porque el enum del que deriva creció.",
-              "title": "Alcanza los dos roles nuevos del vocabulario"
-            },
-            "kind": "feature"
-          },
-          {
-            "date": "2026-09-02",
-            "en": {
-              "body": "The <code>icon</code> enum includes <code>language</code>, the same role that just joined the stable vocabulary.",
-              "title": "IconStateButton accepts the language role"
-            },
-            "es": {
-              "body": "El enum de <code>icon</code> incluye <code>language</code>, el mismo rol que acaba de entrar al vocabulario estable.",
-              "title": "IconStateButton acepta el rol language"
-            },
-            "kind": "feature",
-            "target": "icon"
-          },
-          {
-            "date": "2026-08-21",
-            "en": {
-              "body": "The <code>icon</code> enum includes <code>zoom-out</code>, the same role that just joined the stable vocabulary.",
-              "title": "IconStateButton accepts the zoom-out role"
-            },
-            "es": {
-              "body": "El enum de <code>icon</code> incluye <code>zoom-out</code>, el mismo rol que acaba de entrar al vocabulario estable.",
-              "title": "IconStateButton acepta el rol zoom-out"
-            },
-            "kind": "feature",
-            "target": "icon"
-          },
-          {
-            "date": "2026-08-19",
-            "en": {
-              "body": "It joins the catalogue with <code>IconStateButton</code>: an icon button whose states are declared by whoever uses it (one <code>faces</code> entry per instance, each with its own name and icon), not the contract. It does not decide when the active state changes. The consumer writes that behavior (copy to clipboard, cycle a color mode, whatever it needs) and applies it by writing <code>current</code>. Replaces <code>CopyButton</code> and <code>ThemeToggle</code>, both retired from the catalogue.",
-              "title": "IconStateButton is published as a contract, with one signature"
-            },
-            "es": {
-              "body": "Entra al catálogo con <code>IconStateButton</code>: un botón ícono cuyos estados los declara quien lo usa (un <code>faces</code> por instancia, cada uno con su propio nombre e ícono), no el contrato. No decide cuándo cambia el estado activo. Quien lo compone escribe ese comportamiento (copiar al portapapeles, ciclar un modo de color, lo que sea) y lo aplica escribiendo <code>current</code>. Reemplaza a <code>CopyButton</code> y <code>ThemeToggle</code>, ambos retirados del catálogo.",
-              "title": "IconStateButton se publica como contrato, con una signature"
-            },
-            "kind": "feature"
           }
         ],
         "version": "0.0.1-dev"
@@ -6139,6 +6090,26 @@
         "version": "0.0.1-dev"
       }
     ],
+    "otp-input": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-09-20",
+            "en": {
+              "body": "Over <code>@zag-js/pin-input</code>: pasting the whole code spreads it across segments, focus advances on its own, and <code>otp</code> (on by default) sets <code>autocomplete=\"one-time-code\"</code> so the phone offers the received SMS. <code>sk:otpinputvaluecomplete</code> fires once the last segment fills; <code>sk:otpinputinvalid</code> fires the character that did not match <code>type</code>.",
+              "title": "OtpInput, one segment per digit with SMS autofill"
+            },
+            "es": {
+              "body": "Sobre <code>@zag-js/pin-input</code>: pegar el código completo lo reparte por segmento, avanza el foco solo, y <code>otp</code> (activo por defecto) marca <code>autocomplete=\"one-time-code\"</code> para que el telefono ofrezca el SMS recibido. <code>sk:otpinputvaluecomplete</code> avisa cuando el ultimo segmento se llena; <code>sk:otpinputinvalid</code> avisa el caracter que no matcheaba <code>type</code>.",
+              "title": "OtpInput, un segmento por dígito con autofill de SMS"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.0.1-dev"
+      }
+    ],
     "pagination": [
       {
         "date": null,
@@ -6960,6 +6931,26 @@
         "version": "0.0.1-dev"
       }
     ],
+    "quote": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-09-20",
+            "en": {
+              "body": "It joins the catalogue with <code>Quote</code>: somebody else's words, and who said them. The root is a <code>&lt;figure&gt;</code> and the attribution sits OUTSIDE the <code>&lt;blockquote&gt;</code>, which is HTML's own rule rather than a layout preference. They are two deliberately separate fields: <code>attribution</code> is who said it (plain caption text) and <code>source</code> is the work it appeared in (that one IS the <code>&lt;cite&gt;</code>); putting a person's name in a <code>&lt;cite&gt;</code> is exactly the mistake the split makes hard to fall into. <code>cite</code> (the attribute) is the provenance URL and no browser renders it. <code>variant</code> has two values, <code>block</code> (inside the text, with a rule down its edge) and <code>pull</code> (lifted out of it, display type, no rule). It adds no quotation marks: the glyph belongs to the copy. There is no enhancer. Its stylesheet is <code>components/quote.css</code>.",
+              "title": "Quote is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Quote</code>: palabras de otro, y quién las dijo. La raíz es un <code>&lt;figure&gt;</code> y la atribución va FUERA del <code>&lt;blockquote&gt;</code>, que es la regla del propio HTML y no una preferencia de layout. Son dos campos distintos a propósito: <code>attribution</code> es quién lo dijo (texto del caption) y <code>source</code> es en qué obra apareció (ese sí es el <code>&lt;cite&gt;</code>); escribir el nombre de una persona dentro de un <code>&lt;cite&gt;</code> es justo el error que esta separación vuelve difícil de cometer. <code>cite</code> (el atributo) es la URL de procedencia y no la pinta ningún navegador. <code>variant</code> tiene dos valores, <code>block</code> (dentro del texto, con filete al inicio) y <code>pull</code> (levantada del texto, tipografía de display y sin filete). No agrega comillas: el glifo es de la copia. No tiene enhancer. La hoja es <code>components/quote.css</code>.",
+              "title": "Quote se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.0.1-dev"
+      }
+    ],
     "radio-group": [
       {
         "date": null,
@@ -7119,6 +7110,30 @@
               "title": "Rating, como input y como display"
             },
             "kind": "feature"
+          },
+          {
+            "date": "2026-09-20",
+            "en": {
+              "body": "<code>RatingDisplay</code> repeated its mask every SYMBOL instead of every tile, so 5.8 of them fit a five-symbol strip: a scale of 5 painted SIX stars, the last one clipped. The mask is now a whole tile wide, so a strip carries exactly <code>max</code> symbols. With that visible, the colour stop was wrong too: a percentage of the strip counts the gaps, so 3.8 and 4.3 drew the same picture. The stylesheet now computes it from <code>--sk-rating-value</code> in symbol space, and neither binding writes <code>--sk-rating-fill</code> any more.",
+              "title": "the strip drew one symbol too many"
+            },
+            "es": {
+              "body": "<code>RatingDisplay</code> repetia la mascara cada simbolo y no cada casilla, asi que en una tira de cinco entraban 5,8: una escala de 5 mostraba SEIS estrellas, la ultima cortada. Ahora la mascara mide la casilla completa y hay exactamente <code>max</code> simbolos. Con eso a la vista, el corte de color tambien estaba mal: era un porcentaje de la tira, que incluye los espacios, asi que 3,8 y 4,3 dibujaban lo mismo. Lo calcula la hoja de estilo desde <code>--sk-rating-value</code>, en simbolos: el emisor ya no escribe <code>--sk-rating-fill</code> y quien lo lea desde afuera tiene que leer el valor.",
+              "title": "la tira dibujaba un simbolo de mas"
+            },
+            "kind": "bugfix"
+          },
+          {
+            "date": "2026-09-20",
+            "en": {
+              "body": "<code>Rating</code>'s steps now carry <code>sk-button</code> with <code>data-icon-only</code>, <code>data-size=\"sm\"</code> and <code>data-variant=\"ghost\"</code>: the square face, its radius and the state layer all come from <code>button.css</code>, which a consumer now imports alongside <code>rating.css</code>. Before, a step was a 20px box with no radius and the state layer painted a grey square the size of the star.",
+              "title": "every step of the input is the kit's icon button"
+            },
+            "es": {
+              "body": "Los pasos de <code>Rating</code> llevan <code>sk-button</code> con <code>data-icon-only</code>, <code>data-size=\"sm\"</code> y <code>data-variant=\"ghost\"</code>: la cara cuadrada, el radio y la capa de estado salen de <code>button.css</code>, que ahora hay que importar junto a <code>rating.css</code>. Antes el paso era una caja de 20px sin radio y la capa de estado pintaba un cuadrado gris del tamano de la estrella.",
+              "title": "cada paso del input es el boton de icono del kit"
+            },
+            "kind": "breaking"
           }
         ],
         "version": "0.0.1-dev"
@@ -7282,6 +7297,19 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-20",
+            "en": {
+              "body": "<code>.sk-select</code> declared <code>gap: --space-stack-xs</code>, but its only two children are <code>control</code> and the positioner, and the positioner is out of flow, so the gap had nothing to act on. The label and the trigger live inside <code>control</code>, where that gap never reached them, and sat 3px apart on line leading alone. <code>control</code> is now the stack, so the spacing is the one the contract already declared. Markup and bindings are unchanged.",
+              "title": "The label is spaced from the trigger again"
+            },
+            "es": {
+              "body": "<code>.sk-select</code> declaraba <code>gap: --space-stack-xs</code>, pero sus únicos dos hijos son <code>control</code> y el positioner, y el positioner está fuera de flujo: el gap no tenía sobre qué actuar. La etiqueta y el trigger viven dentro de <code>control</code>, donde ese gap nunca llegaba, y quedaban a 3px de puro interlineado. <code>control</code> ahora es la pila, así que la separación es la que el contrato ya declaraba. Markup y bindings no cambian.",
+              "title": "La etiqueta vuelve a separarse del trigger"
+            },
+            "kind": "bugfix",
+            "target": "control"
+          },
+          {
             "date": "2026-09-17",
             "en": {
               "body": "The enhanced signature publishes <code>forward</code> with <code>id</code>/<code>aria-*</code> (alongside Select.native). An attr outside the list is <code>unknown-attr</code>.",
@@ -7438,6 +7466,26 @@
             "es": {
               "body": "Entra al catálogo con <code>Select.native</code>, <code>Select</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla monta sobre <code>data-sk-select</code>: el markup se autora y el enhancer lo hidrata, así que lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones: <code>name</code>, <code>value</code>, <code>placeholder</code>, <code>disabled</code>, <code>required</code>. La hoja es <code>components/select.css</code>.",
               "title": "Select se publica como contrato, con 2 signatures"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.0.1-dev"
+      }
+    ],
+    "separator": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-09-20",
+            "en": {
+              "body": "It joins the catalogue with <code>Separator</code> (the <code>&lt;hr&gt;</code>) and <code>LabelledSeparator</code> (the one with a word in the middle: “or”, “since 2019”). It exists because four families were already drawing their own in private - Toolbar, Sidebar, <code>menu.css</code> and <code>patterns/footer.css</code> - and outside them there was nothing to reach for. By default the line <em>means</em> something: an <code>&lt;hr&gt;</code> is a thematic break with the <code>separator</code> role. <code>decorative</code> is the way out for one that only draws, and it leaves the accessibility tree entirely. <code>orientation</code> writes <code>data-orientation</code> and <code>aria-orientation</code> from one option, so the stylesheet and the screen reader cannot drift apart. <strong>It is not a splitter</strong>: a separator that can be dragged is focusable and has a keyboard contract of its own, and that lives in <code>@skryensya/core/splitter</code>. Its stylesheet is <code>components/separator.css</code>.",
+              "title": "Separator is published as a contract, with 2 signatures"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Separator</code> (el <code>&lt;hr&gt;</code>) y <code>LabelledSeparator</code> (el de la palabra al medio: «o», «desde 2019»). Existe porque cuatro familias ya dibujaban el suyo en privado - Toolbar, Sidebar, <code>menu.css</code> y <code>patterns/footer.css</code> - y afuera de ellas no había nada que usar. Por defecto la línea <em>significa</em> algo: el <code>&lt;hr&gt;</code> es un quiebre temático con rol <code>separator</code>. <code>decorative</code> es la salida para la que sólo pinta, y la saca entera del árbol de accesibilidad. <code>orientation</code> escribe <code>data-orientation</code> y <code>aria-orientation</code> desde una sola opción, así que el CSS y el lector de pantalla no pueden discrepar. <strong>No es un splitter</strong>: un separador que se arrastra es focusable y tiene teclado propio, y eso vive en <code>@skryensya/core/splitter</code>. La hoja es <code>components/separator.css</code>.",
+              "title": "Separator se publica como contrato, con 2 signatures"
             },
             "kind": "feature"
           }
@@ -8089,6 +8137,172 @@
             "es": {
               "body": "Entra al catálogo con <code>Stat</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. El binding Vanilla monta sobre <code>data-sk-stat</code>: el markup se autora y el enhancer lo hidrata, así que lo que no necesita JavaScript funciona antes de que corra ninguno. Opciones: <code>trend</code>, <code>animate</code>, <code>count</code>, <code>locale</code>, <code>suffix</code>, <code>fractionDigits</code>. La hoja es <code>components/stat.css</code>.",
               "title": "Stat se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.0.1-dev"
+      }
+    ],
+    "state-button": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-09-20",
+            "en": {
+              "body": "The stylesheet uses <code>.sk-state-button</code> and <code>--sk-state-button-*</code> hooks, matching the contract; it previously pointed at the old <code>icon-state-button</code> id.",
+              "title": "Hooks and root part aligned with state-button"
+            },
+            "es": {
+              "body": "La hoja usa <code>.sk-state-button</code> y hooks <code>--sk-state-button-*</code>, como el contrato publica; antes apuntaban al id antiguo <code>icon-state-button</code>.",
+              "title": "Hooks y parte raíz alineados con state-button"
+            },
+            "kind": "bugfix"
+          },
+          {
+            "date": "2026-09-17",
+            "en": {
+              "body": "<code>compose</code> documents the host via <code>also: sk-button</code> and faces via Icon (<code>systemOwned</code>).",
+              "title": "IconStateButton declares compose of Button and Icon"
+            },
+            "es": {
+              "body": "<code>compose</code> documenta el host vía <code>also: sk-button</code> y faces vía Icon (<code>systemOwned</code>).",
+              "title": "IconStateButton declara compose de Button e Icon"
+            },
+            "kind": "feature"
+          },
+          {
+            "date": "2026-09-17",
+            "en": {
+              "body": "Publishes <code>forward</code> with <code>data-variant</code>/<code>data-size</code> (Button attrs via <code>also</code>), plus <code>id</code>/<code>name</code>/<code>form</code> and <code>aria-*</code>. An attr outside the list is <code>unknown-attr</code>.",
+              "title": "IconStateButton declares forward for Button look attrs"
+            },
+            "es": {
+              "body": "Publica <code>forward</code> con <code>data-variant</code>/<code>data-size</code> (attrs de Button vía <code>also</code>), más <code>id</code>/<code>name</code>/<code>form</code> y <code>aria-*</code>. Un attr fuera de la lista es <code>unknown-attr</code>.",
+              "title": "IconStateButton declara forward para look de Button"
+            },
+            "kind": "feature"
+          },
+          {
+            "date": "2026-09-17",
+            "en": {
+              "body": "The template now writes <code>data-icon-only</code> by construction (trees used to emit an <code>sk-button</code> with text-button padding) and the contract requires <code>aria-label</code> or <code>aria-labelledby</code>: faces are glyphs, never visible text. React writes the same attribute. <code>variant</code>/<code>size</code> stay Button's via attrs.",
+              "title": "IconStateButton is always icon-only and requires an accessible name"
+            },
+            "es": {
+              "body": "El template escribe <code>data-icon-only</code> de fábrica (antes el árbol emitía un <code>sk-button</code> con padding de botón con texto) y el contrato exige <code>aria-label</code> o <code>aria-labelledby</code>: las caras son glifos, nunca texto visible. React escribe el mismo atributo. <code>variant</code>/<code>size</code> siguen siendo los de Button vía attrs.",
+              "title": "IconStateButton siempre es icon-only y exige nombre accesible"
+            },
+            "kind": "bugfix"
+          },
+          {
+            "date": "2026-09-17",
+            "en": {
+              "body": "A single face is not a state button, and a face with no <code>icon</code> showed nothing when it became current.",
+              "title": "At least two faces, each with its icon"
+            },
+            "es": {
+              "body": "Una sola cara no es un botón de estados, y una cara sin <code>icon</code> no mostraba nada al volverse actual.",
+              "title": "Al menos dos caras, y cada una con su ícono"
+            },
+            "kind": "breaking"
+          },
+          {
+            "date": "2026-09-16",
+            "en": {
+              "body": "<code>current</code> now declares that it names entries of <code>faces</code> by their <code>name</code>. A tree pointing at an entry that does not exist stops validating (<code>unknown-key</code>) instead of rendering with nothing selected and no reason given. Markup and bindings are unchanged.",
+              "title": "The validator checks that the initial value names an entry that exist"
+            },
+            "es": {
+              "body": "<code>current</code> ahora declara que nombra entradas de <code>faces</code> por su <code>name</code>. Un árbol que apunta a una entrada inexistente deja de validar (<code>unknown-key</code>) en vez de renderizar sin nada seleccionado ni decir por qué. El markup y los bindings no cambian.",
+              "title": "El validador comprueba que el valor inicial nombre una entrada que existe"
+            },
+            "kind": "bugfix"
+          },
+          {
+            "date": "2026-09-14",
+            "en": {
+              "body": "This control names its icons with the stable vocabulary, so a new role there arrives here without this contract changing shape: `code` can now be asked for. The surface moved because the set of names it accepts is part of what a consumer can depend on, not because anything about how it is used changed.",
+              "title": "Reaches the code role the vocabulary just gained"
+            },
+            "es": {
+              "body": "Este control nombra sus iconos con el vocabulario estable, así que un rol nuevo ahí llega aquí sin que este contrato cambie de forma: `code` ya se puede pedir. La superficie se movió porque el conjunto de nombres que acepta es parte de lo que un consumidor puede depender, no porque haya cambiado nada de cómo se usa.",
+              "title": "Alcanza el rol code, que el vocabulario acaba de sumar"
+            },
+            "kind": "feature"
+          },
+          {
+            "date": "2026-09-12",
+            "en": {
+              "body": "The contract now publishes this component's <code>8</code> styling hooks. Nothing you wrote changes: the same hooks, under the same names, and the stylesheet was not touched. What is new is that the contract declares them, so the compiler fails when the stylesheet declares one the contract does not publish, or the contract promises one the stylesheet never declares. That second half is the one that matters: until now, re-declaring a hook that no longer existed was not an error, it was silence.",
+              "title": "state-button's styling hooks are now declared in the contract"
+            },
+            "es": {
+              "body": "El contrato ahora publica los <code>8</code> styling hooks de este componente. Nada de lo que hayas escrito cambia: son los mismos hooks, con los mismos nombres, y la hoja de estilos no se tocó. Lo nuevo es que el contrato los declara, así que el compilador falla si la hoja declara uno que el contrato no publica, o si el contrato promete uno que la hoja no declara. Esa segunda mitad es la que importa: hasta ahora, redeclarar un hook que ya no existía no daba error, daba silencio.",
+              "title": "Los styling hooks de state-button quedan declarados en el contrato"
+            },
+            "kind": "feature"
+          },
+          {
+            "date": "2026-09-12",
+            "en": {
+              "body": "The previous batch over-published these lists. They were generated by counting every <code>--sk-*</code> a stylesheet <em>declares</em>, and tuning another component's hook inside your own scope counted as publishing it: seventeen contracts ended up claiming <code>--sk-icon-size</code>. A hook now belongs to the sheet that declares it without naming another family, and the gate uses that same rule. No styling changes; what changes is whose each hook is said to be.",
+              "title": "The styling hook list stops claiming other components' hooks"
+            },
+            "es": {
+              "body": "El lote anterior publico estas listas de mas. Se generaron contando todo <code>--sk-*</code> que la hoja <em>declara</em>, y afinar el hook de otro componente dentro del propio scope contaba como publicarlo: diecisiete contratos terminaron reclamando <code>--sk-icon-size</code>. Ahora un hook pertenece a la hoja que lo declara sin nombrar otra familia, y el gate usa esa misma regla. Ningun estilo cambia; cambia de quien se dice que es cada hook.",
+              "title": "La lista de styling hooks deja de reclamar los de otros componentes"
+            },
+            "kind": "bugfix"
+          },
+          {
+            "date": "2026-09-05",
+            "en": {
+              "body": "No change of its own. This control's faces are typed against `StableIconName`, so `vote-up` and `vote-down` (see `icon`'s own changelog) are two more values a face can take. The surface moved because the enum it derives from grew.",
+              "title": "Reaches the vocabulary's two new roles"
+            },
+            "es": {
+              "body": "Sin cambios propios. Las caras de este control se tipan contra `StableIconName`, así que `vote-up` y `vote-down` (ver el changelog de `icon`) son dos valores más que una cara puede tomar. La superficie se movió porque el enum del que deriva creció.",
+              "title": "Alcanza los dos roles nuevos del vocabulario"
+            },
+            "kind": "feature"
+          },
+          {
+            "date": "2026-09-02",
+            "en": {
+              "body": "The <code>icon</code> enum includes <code>language</code>, the same role that just joined the stable vocabulary.",
+              "title": "IconStateButton accepts the language role"
+            },
+            "es": {
+              "body": "El enum de <code>icon</code> incluye <code>language</code>, el mismo rol que acaba de entrar al vocabulario estable.",
+              "title": "IconStateButton acepta el rol language"
+            },
+            "kind": "feature",
+            "target": "icon"
+          },
+          {
+            "date": "2026-08-21",
+            "en": {
+              "body": "The <code>icon</code> enum includes <code>zoom-out</code>, the same role that just joined the stable vocabulary.",
+              "title": "IconStateButton accepts the zoom-out role"
+            },
+            "es": {
+              "body": "El enum de <code>icon</code> incluye <code>zoom-out</code>, el mismo rol que acaba de entrar al vocabulario estable.",
+              "title": "IconStateButton acepta el rol zoom-out"
+            },
+            "kind": "feature",
+            "target": "icon"
+          },
+          {
+            "date": "2026-08-19",
+            "en": {
+              "body": "It joins the catalogue with <code>IconStateButton</code>: an icon button whose states are declared by whoever uses it (one <code>faces</code> entry per instance, each with its own name and icon), not the contract. It does not decide when the active state changes. The consumer writes that behavior (copy to clipboard, cycle a color mode, whatever it needs) and applies it by writing <code>current</code>. Replaces <code>CopyButton</code> and <code>ThemeToggle</code>, both retired from the catalogue.",
+              "title": "IconStateButton is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>IconStateButton</code>: un botón ícono cuyos estados los declara quien lo usa (un <code>faces</code> por instancia, cada uno con su propio nombre e ícono), no el contrato. No decide cuándo cambia el estado activo. Quien lo compone escribe ese comportamiento (copiar al portapapeles, ciclar un modo de color, lo que sea) y lo aplica escribiendo <code>current</code>. Reemplaza a <code>CopyButton</code> y <code>ThemeToggle</code>, ambos retirados del catálogo.",
+              "title": "IconStateButton se publica como contrato, con una signature"
             },
             "kind": "feature"
           }
@@ -8781,6 +8995,26 @@
             "es": {
               "body": "Entra al catálogo con <code>Tag</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>tone</code>, <code>removable</code>, <code>removeLabel</code>. La hoja es <code>components/tag.css</code>.",
               "title": "Tag se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.0.1-dev"
+      }
+    ],
+    "tags-input": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-09-20",
+            "en": {
+              "body": "It joins the catalogue with <code>TagsInput</code>: several values typed into one field (topics, recipients, labels). It accepts whatever is typed, which is the difference from <code>Combobox</code>: that one resolves what is typed against its own options, and this one takes the person's own vocabulary. The chip <strong>is</strong> a <code>Tag</code> (composed <code>sk-tag</code> classes, not a second drawing); what this family adds is the field around them. The starting tags are authored as markup, one element each, so the field is readable before its JavaScript arrives, and the enhancer takes that list as its seed and swaps it for the live one. Options: <code>max</code>, <code>delimiter</code> (a comma by default, which is what a list pasted from a spreadsheet already has), <code>allowDuplicates</code>, <code>editable</code>, plus the usual field states. Two things worth knowing because they are the machine's: past <code>max</code> a tag is refused <em>in silence</em> and the text stays in the entry, and with <code>allowDuplicates</code> off a repeat is dropped without a word. Its stylesheet is <code>components/tags-input.css</code>.",
+              "title": "TagsInput is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>TagsInput</code>: varios valores escritos en un solo campo (temas, destinatarios, etiquetas). Acepta lo que se escriba, que es la diferencia con <code>Combobox</code>: ese resuelve lo tecleado contra sus propias opciones y este toma el vocabulario de la persona. El chip <strong>es</strong> un <code>Tag</code> (clases <code>sk-tag</code> compuestas, no un segundo dibujo); lo que esta familia aporta es el campo alrededor. Los tags iniciales se escriben como markup, un elemento cada uno, así que el campo se lee antes de que llegue su JavaScript, y el enhancer toma esa lista como semilla y la reemplaza por la viva. Opciones: <code>max</code>, <code>delimiter</code> (coma por defecto, que es lo que ya trae una lista pegada de una planilla), <code>allowDuplicates</code>, <code>editable</code>, más los estados de campo. Dos cosas que conviene saber porque son de la máquina: pasado <code>max</code> el tag se rechaza <em>en silencio</em> y el texto se queda en la entrada, y con <code>allowDuplicates</code> apagado el repetido se descarta sin avisar. La hoja es <code>components/tags-input.css</code>.",
+              "title": "TagsInput se publica como contrato, con una signature"
             },
             "kind": "feature"
           }
@@ -10339,6 +10573,30 @@
           "markup": true,
           "portals": false,
           "react": "@skryensya/react/accordion#Accordion.Trigger"
+        },
+        "Details": {
+          "enhancer": null,
+          "markup": true,
+          "portals": false,
+          "react": "@skryensya/react/details#Details"
+        },
+        "Details.Content": {
+          "enhancer": null,
+          "markup": true,
+          "portals": false,
+          "react": "@skryensya/react/details#Details.Content"
+        },
+        "Details.Summary": {
+          "enhancer": null,
+          "markup": true,
+          "portals": false,
+          "react": "@skryensya/react/details#Details.Summary"
+        },
+        "DetailsGroup": {
+          "enhancer": null,
+          "markup": true,
+          "portals": false,
+          "react": "@skryensya/react/details#DetailsGroup"
         }
       },
       "category": "content",
@@ -10435,6 +10693,60 @@
           "part": "item",
           "sheet": "@skryensya/core/components/tile.css"
         },
+        "--sk-details-bg": {
+          "default": "var(--color-bg-surface)",
+          "output": false,
+          "part": "native",
+          "sheet": "@skryensya/core/components/details.css"
+        },
+        "--sk-details-border-color": {
+          "default": "var(--color-border-subtle)",
+          "output": false,
+          "part": "native",
+          "sheet": "@skryensya/core/components/details.css"
+        },
+        "--sk-details-content-bg": {
+          "default": "var(--color-bg-surface-sunken)",
+          "output": false,
+          "part": "native",
+          "sheet": "@skryensya/core/components/details.css"
+        },
+        "--sk-details-content-fg": {
+          "default": "var(--color-text-secondary)",
+          "output": false,
+          "part": "native",
+          "sheet": "@skryensya/core/components/details.css"
+        },
+        "--sk-details-fg": {
+          "default": "var(--color-text-primary)",
+          "output": false,
+          "part": "native",
+          "sheet": "@skryensya/core/components/details.css"
+        },
+        "--sk-details-gap": {
+          "default": "var(--sk-space-3)",
+          "output": false,
+          "part": "native",
+          "sheet": "@skryensya/core/components/details.css"
+        },
+        "--sk-details-heading-gap": {
+          "default": "var(--sk-space-2)",
+          "output": false,
+          "part": "native",
+          "sheet": "@skryensya/core/components/details.css"
+        },
+        "--sk-details-indicator-fg": {
+          "default": "var(--color-text-secondary)",
+          "output": false,
+          "part": "native",
+          "sheet": "@skryensya/core/components/details.css"
+        },
+        "--sk-details-padding": {
+          "default": "var(--sk-tile-padding)",
+          "output": false,
+          "part": "native",
+          "sheet": "@skryensya/core/components/details.css"
+        },
         "--sk-font-body-sm": {
           "default": "var(--font-size-body-sm)",
           "output": false,
@@ -10519,10 +10831,20 @@
         "--sk-tile-padding",
         "--sk-tile-radius",
         "--sk-tile-shadow",
-        "--sk-tile-title-weight"
+        "--sk-tile-title-weight",
+        "--sk-details-bg",
+        "--sk-details-border-color",
+        "--sk-details-content-bg",
+        "--sk-details-content-fg",
+        "--sk-details-fg",
+        "--sk-details-gap",
+        "--sk-details-heading-gap",
+        "--sk-details-indicator-fg",
+        "--sk-details-padding"
       ],
       "hookSheets": [
-        "@skryensya/core/components/tile.css"
+        "@skryensya/core/components/tile.css",
+        "@skryensya/core/components/details.css"
       ],
       "id": "accordion",
       "options": {
@@ -10559,6 +10881,16 @@
           "min": 1,
           "type": "number"
         },
+        "name": {
+          "attr": "name",
+          "type": "string"
+        },
+        "open": {
+          "attr": "open",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
         "type": {
           "attr": "data-type",
           "default": "single",
@@ -10576,6 +10908,11 @@
       "parts": {
         "content": "sk-tile__expandable-content",
         "item": "sk-tile",
+        "native": "sk-details",
+        "nativeContent": "sk-details__content",
+        "nativeGroup": "sk-details-group",
+        "nativeIndicator": "sk-details__indicator",
+        "nativeSummary": "sk-details__summary",
         "root": "sk-accordion",
         "trigger": "sk-tile__trigger",
         "triggerHeading": "sk-accordion__trigger-heading"
@@ -10584,13 +10921,15 @@
         "Accordion": {
           "alternatives": [
             "Tabs",
-            "ExpandableTile"
+            "ExpandableTile",
+            "DetailsGroup"
           ],
           "avoidWhen": [
             "son pocas secciones cortas; mostrarlas todas se lee más rápido que plegarlas",
             "el contenido se compara entre secciones; plegar obliga a recordar en vez de mirar",
             "las secciones son vistas alternativas del mismo espacio; eso es Tabs",
-            "es una sola superficie plegable, sin coordinación entre hermanas; eso es ExpandableTile"
+            "es una sola superficie plegable, sin coordinación entre hermanas; eso es ExpandableTile",
+            "nada necesita controlarse ni escucharse desde afuera: DetailsGroup lo hace sin JavaScript"
           ],
           "useWhen": [
             "hay varias secciones largas y conviene coordinar cuáles quedan abiertas: FAQ, términos",
@@ -10625,6 +10964,48 @@
           ],
           "useWhen": [
             "es el encabezado que abre y cierra su sección"
+          ]
+        },
+        "Details": {
+          "alternatives": [
+            "Accordion.Item"
+          ],
+          "avoidWhen": [
+            "hay que saber desde afuera si está abierto, o poder deshabilitar la sección: eso es Accordion.Item"
+          ],
+          "useWhen": [
+            "una sección que se despliega y no necesita nada de JavaScript",
+            "importa que funcione antes de que cargue cualquier script"
+          ]
+        },
+        "Details.Content": {
+          "alternatives": [],
+          "avoidWhen": [
+            "está fuera de un Details; no tiene quién lo abra"
+          ],
+          "useWhen": [
+            "es lo que la apertura revela"
+          ]
+        },
+        "Details.Summary": {
+          "alternatives": [],
+          "avoidWhen": [
+            "está fuera de un Details; no tiene qué abrir"
+          ],
+          "useWhen": [
+            "es lo que el estado cerrado muestra y lo que abre la sección"
+          ]
+        },
+        "DetailsGroup": {
+          "alternatives": [
+            "Accordion"
+          ],
+          "avoidWhen": [
+            "hay que controlar desde afuera qué queda abierto, o escuchar cuándo cambia: eso pide Accordion"
+          ],
+          "useWhen": [
+            "varias secciones se abren y cierran, y alcanza con que el navegador se encargue",
+            "conviene que sólo una quede abierta: los hermanos con el mismo name ya lo hacen solos"
           ]
         }
       },
@@ -10824,6 +11205,189 @@
               "headingLevel": "aria-level"
             },
             "part": "triggerHeading"
+          }
+        },
+        "Details": {
+          "host": {
+            "element": "details"
+          },
+          "intent": [
+            "one-disclosure",
+            "expandable-section",
+            "no-javascript"
+          ],
+          "options": [
+            "name",
+            "open"
+          ],
+          "react": {
+            "from": "@skryensya/react/details",
+            "name": "Details"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "cardinality": {
+                "Details.Content": "one",
+                "Details.Summary": "one"
+              },
+              "of": [
+                "Details.Summary",
+                "Details.Content"
+              ],
+              "ordered": true,
+              "required": true
+            }
+          },
+          "template": {
+            "element": "details",
+            "host": true,
+            "part": "native",
+            "slot": "children"
+          }
+        },
+        "Details.Content": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "disclosure-body",
+            "what-opening-reveals"
+          ],
+          "options": [],
+          "parents": [
+            "Details"
+          ],
+          "react": {
+            "from": "@skryensya/react/details",
+            "name": "Details.Content"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "element": "div",
+            "host": true,
+            "part": "nativeContent",
+            "slot": "children"
+          }
+        },
+        "Details.Summary": {
+          "compose": [
+            {
+              "of": "icon",
+              "systemOwned": true
+            }
+          ],
+          "forward": [
+            "id",
+            "aria-*"
+          ],
+          "host": {
+            "element": "summary"
+          },
+          "intent": [
+            "disclosure-trigger",
+            "what-the-closed-state-shows"
+          ],
+          "options": [],
+          "parents": [
+            "Details"
+          ],
+          "react": {
+            "from": "@skryensya/react/details",
+            "name": "Details.Summary"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "also": [
+              "sk-interactive"
+            ],
+            "children": [
+              {
+                "slot": "children"
+              },
+              {
+                "attrs": {
+                  "aria-hidden": "true"
+                },
+                "children": [
+                  {
+                    "attrs": {
+                      "data-state": "closed"
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "data-sk-icon": "chevron-down",
+                          "data-sk-icon-size": "md"
+                        },
+                        "element": "span"
+                      }
+                    ],
+                    "element": "span"
+                  },
+                  {
+                    "attrs": {
+                      "data-state": "open"
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "data-sk-icon": "chevron-up",
+                          "data-sk-icon-size": "md"
+                        },
+                        "element": "span"
+                      }
+                    ],
+                    "element": "span"
+                  }
+                ],
+                "element": "span",
+                "part": "nativeIndicator"
+              }
+            ],
+            "element": "summary",
+            "host": true,
+            "part": "nativeSummary"
+          }
+        },
+        "DetailsGroup": {
+          "host": {
+            "element": "section"
+          },
+          "intent": [
+            "faq-without-javascript",
+            "exclusive-disclosures",
+            "no-runtime-accordion"
+          ],
+          "options": [],
+          "react": {
+            "from": "@skryensya/react/details",
+            "name": "DetailsGroup"
+          },
+          "slots": {
+            "children": {
+              "accepts": "signature",
+              "of": [
+                "Details"
+              ],
+              "required": true
+            }
+          },
+          "template": {
+            "element": "section",
+            "host": true,
+            "part": "nativeGroup",
+            "slot": "children"
           }
         }
       }
@@ -15166,7 +15730,7 @@
       "css": "@skryensya/core/components/code-preview.css",
       "hookDetails": {
         "--sk-code-preview-bg": {
-          "default": "var(--color-bg-surface-sunken)",
+          "default": "var(--color-bg-surface)",
           "output": false,
           "part": "root",
           "sheet": "@skryensya/core/components/code-preview.css"
@@ -15225,6 +15789,12 @@
           "part": "root",
           "sheet": "@skryensya/core/components/code-preview.css"
         },
+        "--sk-code-preview-label-bg": {
+          "default": "var(--color-bg-surface-sunken)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/code-preview.css"
+        },
         "--sk-code-preview-label-fg": {
           "default": "var(--color-text-tertiary)",
           "output": false,
@@ -15249,6 +15819,7 @@
         "--sk-code-preview-font-size",
         "--sk-code-preview-footer-bg",
         "--sk-code-preview-label-active-fg",
+        "--sk-code-preview-label-bg",
         "--sk-code-preview-label-fg",
         "--sk-code-preview-window"
       ],
@@ -15310,7 +15881,7 @@
           ],
           "avoidWhen": [
             "es un literal dentro de una frase: eso es Code",
-            "lo que importa es copiarlo, no leerlo, no mostrarlo: eso es IconStateButton compuesto con el comportamiento de copiar, sin el bloque de código alrededor"
+            "lo que importa es copiarlo, no leerlo, no mostrarlo: eso es StateButton compuesto con el comportamiento de copiar, sin el bloque de código alrededor"
           ],
           "useWhen": [
             "hay que mostrar código y conviene que se lea como código: resaltado, con su etiqueta",
@@ -17806,10 +18377,10 @@
         },
         "CommentVote": {
           "alternatives": [
-            "IconStateButton"
+            "StateButton"
           ],
           "avoidWhen": [
-            "es una sola valoración sin dirección (me gusta); eso es un IconStateButton"
+            "es una sola valoración sin dirección (me gusta); eso es un StateButton"
           ],
           "useWhen": [
             "hay un puntaje que se sube o se baja, con el voto propio del lector reflejado"
@@ -20171,400 +20742,958 @@
         }
       }
     },
-    "details": {
+    "description-list": {
       "bindings": {
-        "Details": {
+        "DescriptionItem": {
           "enhancer": null,
           "markup": true,
           "portals": false,
-          "react": "@skryensya/react/details#Details"
+          "react": "@skryensya/react/description-list#DescriptionItem"
         },
-        "Details.Content": {
+        "DescriptionList": {
           "enhancer": null,
           "markup": true,
           "portals": false,
-          "react": "@skryensya/react/details#Details.Content"
-        },
-        "Details.Summary": {
-          "enhancer": null,
-          "markup": true,
-          "portals": false,
-          "react": "@skryensya/react/details#Details.Summary"
-        },
-        "DetailsGroup": {
-          "enhancer": null,
-          "markup": true,
-          "portals": false,
-          "react": "@skryensya/react/details#DetailsGroup"
+          "react": "@skryensya/react/description-list#DescriptionList"
         }
       },
-      "category": "content",
-      "css": "@skryensya/core/components/details.css",
+      "category": "data",
+      "css": "@skryensya/core/components/description-list.css",
       "hookDetails": {
-        "--sk-color-border-subtle": {
-          "default": "var(--color-border-subtle)",
-          "output": false,
-          "part": "root",
-          "sheet": "@skryensya/core/components/details.css"
-        },
-        "--sk-color-text-primary": {
+        "--sk-description-list-details-fg": {
           "default": "var(--color-text-primary)",
           "output": false,
           "part": "root",
-          "sheet": "@skryensya/core/components/details.css"
+          "sheet": "@skryensya/core/components/description-list.css"
         },
-        "--sk-color-text-secondary": {
-          "default": "var(--color-text-secondary)",
-          "output": false,
-          "part": "root",
-          "sheet": "@skryensya/core/components/details.css"
-        },
-        "--sk-details-bg": {
-          "default": "var(--color-bg-surface)",
-          "output": false,
-          "part": "root",
-          "sheet": "@skryensya/core/components/details.css"
-        },
-        "--sk-details-border-color": {
+        "--sk-description-list-divider-color": {
           "default": "var(--color-border-subtle)",
           "output": false,
           "part": "root",
-          "sheet": "@skryensya/core/components/details.css"
+          "sheet": "@skryensya/core/components/description-list.css"
         },
-        "--sk-details-content-bg": {
-          "default": "var(--color-bg-surface-sunken)",
+        "--sk-description-list-pair-gap": {
+          "default": "var(--space-inline-sm)",
           "output": false,
           "part": "root",
-          "sheet": "@skryensya/core/components/details.css"
+          "sheet": "@skryensya/core/components/description-list.css"
         },
-        "--sk-details-content-fg": {
+        "--sk-description-list-row-gap": {
+          "default": "var(--space-stack-sm)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/description-list.css"
+        },
+        "--sk-description-list-row-padding-y": {
+          "default": "0px",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/description-list.css"
+        },
+        "--sk-description-list-term-fg": {
           "default": "var(--color-text-secondary)",
           "output": false,
           "part": "root",
-          "sheet": "@skryensya/core/components/details.css"
+          "sheet": "@skryensya/core/components/description-list.css"
         },
-        "--sk-details-fg": {
-          "default": "var(--color-text-primary)",
-          "output": false,
-          "part": "root",
-          "sheet": "@skryensya/core/components/details.css"
-        },
-        "--sk-details-gap": {
-          "default": "var(--sk-space-3)",
-          "output": false,
-          "part": "root",
-          "sheet": "@skryensya/core/components/details.css"
-        },
-        "--sk-details-heading-gap": {
-          "default": "var(--sk-space-2)",
-          "output": false,
-          "part": "root",
-          "sheet": "@skryensya/core/components/details.css"
-        },
-        "--sk-details-indicator-fg": {
-          "default": "var(--color-text-secondary)",
-          "output": false,
-          "part": "root",
-          "sheet": "@skryensya/core/components/details.css"
-        },
-        "--sk-details-padding": {
-          "default": "var(--sk-tile-padding)",
-          "output": false,
-          "part": "root",
-          "sheet": "@skryensya/core/components/details.css"
-        },
-        "--sk-font-body-sm": {
+        "--sk-description-list-term-font-size": {
           "default": "var(--font-size-body-sm)",
           "output": false,
           "part": "root",
-          "sheet": "@skryensya/core/components/details.css"
+          "sheet": "@skryensya/core/components/description-list.css"
         },
-        "--sk-font-heading-sm": {
-          "default": "var(--font-size-heading-sm)",
+        "--sk-description-list-term-font-weight": {
+          "default": "var(--font-weight-label)",
           "output": false,
           "part": "root",
-          "sheet": "@skryensya/core/components/details.css"
+          "sheet": "@skryensya/core/components/description-list.css"
         },
-        "--sk-space-2": {
-          "default": "var(--space-inset-sm)",
+        "--sk-description-list-term-size": {
+          "default": "10rem",
           "output": false,
           "part": "root",
-          "sheet": "@skryensya/core/components/details.css"
-        },
-        "--sk-space-3": {
-          "default": "var(--space-inline-md)",
-          "output": false,
-          "part": "root",
-          "sheet": "@skryensya/core/components/details.css"
+          "sheet": "@skryensya/core/components/description-list.css"
         }
       },
       "hooks": [
-        "--sk-color-border-subtle",
-        "--sk-color-text-primary",
-        "--sk-color-text-secondary",
-        "--sk-details-bg",
-        "--sk-details-border-color",
-        "--sk-details-content-bg",
-        "--sk-details-content-fg",
-        "--sk-details-fg",
-        "--sk-details-gap",
-        "--sk-details-heading-gap",
-        "--sk-details-indicator-fg",
-        "--sk-details-padding",
-        "--sk-font-body-sm",
-        "--sk-font-heading-sm",
-        "--sk-space-2",
-        "--sk-space-3"
+        "--sk-description-list-details-fg",
+        "--sk-description-list-divider-color",
+        "--sk-description-list-pair-gap",
+        "--sk-description-list-row-gap",
+        "--sk-description-list-row-padding-y",
+        "--sk-description-list-term-fg",
+        "--sk-description-list-term-font-size",
+        "--sk-description-list-term-font-weight",
+        "--sk-description-list-term-size"
       ],
-      "id": "details",
+      "id": "description-list",
       "options": {
-        "name": {
-          "attr": "name",
-          "type": "string"
+        "density": {
+          "attr": "data-density",
+          "type": "enum",
+          "values": [
+            "compact"
+          ]
         },
-        "open": {
-          "attr": "open",
+        "dividers": {
+          "attr": "data-dividers",
           "default": false,
           "trueValue": "",
           "type": "boolean"
+        },
+        "layout": {
+          "attr": "data-layout",
+          "default": "stacked",
+          "type": "enum",
+          "values": [
+            "stacked",
+            "columns"
+          ]
         }
       },
       "parts": {
-        "content": "sk-details__content",
-        "group": "sk-details-group",
-        "indicator": "sk-details__indicator",
-        "root": "sk-details",
-        "summary": "sk-details__summary"
+        "details": "sk-description-list__details",
+        "group": "sk-description-list__group",
+        "root": "sk-description-list",
+        "term": "sk-description-list__term"
       },
       "semantics": {
-        "Details": {
+        "DescriptionItem": {
           "alternatives": [
-            "Accordion.Item"
+            "Table"
           ],
           "avoidWhen": [
-            "hay que animar el panel o saber desde afuera si está abierto: eso es Accordion.Item"
+            "the name needs markup of its own; a name that is a heading means this should be a section"
           ],
           "useWhen": [
-            "una sección que se despliega y no necesita nada de JavaScript",
-            "importa que funcione antes de que cargue cualquier script"
+            "one name and its value; the name is text, the value takes markup (a Tag, a link, a date)"
           ]
         },
-        "Details.Content": {
-          "alternatives": [],
-          "avoidWhen": [
-            "está fuera de un Details; no tiene quién lo abra"
-          ],
-          "useWhen": [
-            "es lo que la apertura revela"
-          ]
-        },
-        "Details.Summary": {
-          "alternatives": [],
-          "avoidWhen": [
-            "está fuera de un Details; no tiene qué abrir"
-          ],
-          "useWhen": [
-            "es lo que el estado cerrado muestra y lo que abre la sección"
-          ]
-        },
-        "DetailsGroup": {
+        "DescriptionList": {
           "alternatives": [
-            "Accordion"
+            "Table",
+            "List",
+            "FormField"
           ],
           "avoidWhen": [
-            "hay que animar la apertura o controlarla desde afuera: eso pide Accordion"
+            "the same fields are shown for SEVERAL records; a cell that means something because of its row and its column is a Table",
+            "the pairs are form controls a person fills in; that is FormField",
+            "it is a list of things rather than of facts about one thing; that is List"
           ],
           "useWhen": [
-            "varias secciones se abren y cierran, y alcanza con que el navegador se encargue",
-            "conviene que sólo una quede abierta: los hermanos con el mismo name ya lo hacen solos"
+            "the details of ONE record are shown as name and value: a summary, metadata, specs, key facts",
+            "each row is a complete statement on its own and nothing is compared across rows",
+            "the names are short and repeat the same shape: Status, Placed, Total, Tracking"
           ]
         }
       },
       "signatures": {
-        "Details": {
-          "host": {
-            "element": "details"
-          },
-          "intent": [
-            "one-disclosure",
-            "expandable-section",
-            "no-javascript"
-          ],
-          "options": [
-            "name",
-            "open"
-          ],
-          "react": {
-            "from": "@skryensya/react/details",
-            "name": "Details"
-          },
-          "slots": {
-            "children": {
-              "accepts": "signature",
-              "cardinality": {
-                "Details.Content": "one",
-                "Details.Summary": "one"
-              },
-              "of": [
-                "Details.Summary",
-                "Details.Content"
-              ],
-              "ordered": true,
-              "required": true
-            }
-          },
-          "template": {
-            "element": "details",
-            "host": true,
-            "part": "root",
-            "slot": "children"
-          }
-        },
-        "Details.Content": {
+        "DescriptionItem": {
           "host": {
             "element": "div"
           },
           "intent": [
-            "disclosure-body",
-            "what-opening-reveals"
+            "one-name-and-its-value",
+            "one-row-of-metadata"
           ],
           "options": [],
           "parents": [
-            "Details"
+            "DescriptionList"
           ],
           "react": {
-            "from": "@skryensya/react/details",
-            "name": "Details.Content"
+            "from": "@skryensya/react/description-list",
+            "name": "DescriptionItem"
           },
           "slots": {
             "children": {
               "accepts": "node",
               "required": true
-            }
-          },
-          "template": {
-            "element": "div",
-            "host": true,
-            "part": "content",
-            "slot": "children"
-          }
-        },
-        "Details.Summary": {
-          "compose": [
-            {
-              "of": "icon",
-              "systemOwned": true
-            }
-          ],
-          "forward": [
-            "id",
-            "aria-*"
-          ],
-          "host": {
-            "element": "summary"
-          },
-          "intent": [
-            "disclosure-trigger",
-            "what-the-closed-state-shows"
-          ],
-          "options": [],
-          "parents": [
-            "Details"
-          ],
-          "react": {
-            "from": "@skryensya/react/details",
-            "name": "Details.Summary"
-          },
-          "slots": {
-            "children": {
-              "accepts": "node",
+            },
+            "term": {
+              "accepts": "text",
               "required": true
             }
           },
           "template": {
-            "also": [
-              "sk-interactive"
-            ],
             "children": [
               {
-                "slot": "children"
+                "element": "dt",
+                "part": "term",
+                "slot": "term"
               },
               {
-                "attrs": {
-                  "aria-hidden": "true"
-                },
-                "children": [
-                  {
-                    "attrs": {
-                      "data-state": "closed"
-                    },
-                    "children": [
-                      {
-                        "attrs": {
-                          "data-sk-icon": "chevron-down",
-                          "data-sk-icon-size": "md"
-                        },
-                        "element": "span"
-                      }
-                    ],
-                    "element": "span"
-                  },
-                  {
-                    "attrs": {
-                      "data-state": "open"
-                    },
-                    "children": [
-                      {
-                        "attrs": {
-                          "data-sk-icon": "chevron-up",
-                          "data-sk-icon-size": "md"
-                        },
-                        "element": "span"
-                      }
-                    ],
-                    "element": "span"
-                  }
-                ],
-                "element": "span",
-                "part": "indicator"
+                "element": "dd",
+                "part": "details",
+                "slot": "children"
               }
             ],
-            "element": "summary",
+            "element": "div",
             "host": true,
-            "part": "summary"
+            "part": "group"
           }
         },
-        "DetailsGroup": {
+        "DescriptionList": {
           "host": {
-            "element": "section"
+            "element": "dl"
           },
           "intent": [
-            "faq-without-javascript",
-            "exclusive-disclosures",
-            "no-runtime-accordion"
+            "name-value-pairs",
+            "metadata",
+            "summary-of-one-record",
+            "specs",
+            "key-facts"
           ],
-          "options": [],
+          "options": [
+            "layout",
+            "dividers",
+            "density"
+          ],
           "react": {
-            "from": "@skryensya/react/details",
-            "name": "DetailsGroup"
+            "from": "@skryensya/react/description-list",
+            "name": "DescriptionList"
           },
           "slots": {
             "children": {
               "accepts": "signature",
               "of": [
-                "Details"
+                "DescriptionItem"
               ],
               "required": true
             }
           },
           "template": {
-            "element": "section",
+            "element": "dl",
             "host": true,
-            "part": "group",
+            "part": "root",
             "slot": "children"
           }
         }
       }
+    },
+    "diagram": {
+      "a11y": [
+        {
+          "because": "un diagrama es un grupo sin encabezado propio: sin `label`, un lector de pantalla anuncia una lista de palabras sueltas y nada dice de qué es el dibujo",
+          "requiresOneOf": [
+            "label"
+          ],
+          "when": {
+            "label": "absent"
+          }
+        }
+      ],
+      "bindings": {
+        "Diagram": {
+          "enhancer": "data-sk-diagram",
+          "markup": true,
+          "portals": false,
+          "react": "@skryensya/react/diagram#Diagram"
+        }
+      },
+      "category": "content",
+      "css": "@skryensya/core/components/diagram.css",
+      "hookDetails": {
+        "--sk-diagram-column-gap": {
+          "default": "var(--space-inline-md)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-columns": {
+          "default": "1",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-connector-color": {
+          "default": "var(--color-border-strong)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-connector-width": {
+          "default": "1.5px",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-decision-aspect": {
+          "default": "1.7",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-decision-stroke-scale": {
+          "default": "1.8",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-edge-bg": {
+          "default": "var(--color-bg-canvas)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-edge-border-color": {
+          "default": "var(--color-border-subtle)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-edge-color": {
+          "default": "var(--color-text-secondary)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-edge-font-size": {
+          "default": "var(--font-size-caption)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-edge-line-height": {
+          "default": "var(--font-line-height-caption)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-edge-padding-block": {
+          "default": "var(--space-inset-xs)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-edge-padding-inline": {
+          "default": "var(--space-inline-sm)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-edge-radius": {
+          "default": "var(--radius-pill)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-logo-gap": {
+          "default": "var(--space-inline-xs)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-logo-size": {
+          "default": "1.75rem",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-node-bg": {
+          "default": "var(--color-bg-surface-raised)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-node-border-color": {
+          "default": "var(--color-border-default)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-node-border-width": {
+          "default": "1px",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-node-color": {
+          "default": "var(--color-text-primary)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-node-font-size": {
+          "default": "var(--font-size-body-sm)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-node-font-weight": {
+          "default": "var(--font-weight-body)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-node-line-height": {
+          "default": "var(--font-line-height-body-sm)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-node-max-inline-size": {
+          "default": "14rem",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-node-min-inline-size": {
+          "default": "6rem",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-node-padding-block": {
+          "default": "var(--space-inset-xs)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-node-padding-inline": {
+          "default": "var(--space-inset-md)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-node-radius": {
+          "default": "var(--radius-control)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-node-shadow": {
+          "default": "var(--elevation-raised)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-node-span": {
+          "default": "1",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-row-color": {
+          "default": "var(--color-text-secondary)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-row-font-size": {
+          "default": "var(--font-size-caption)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-row-gap": {
+          "default": "var(--space-stack-xl)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-row-line-height": {
+          "default": "var(--font-line-height-caption)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-row-padding-block": {
+          "default": "var(--space-inset-xs)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-row-padding-inline": {
+          "default": "var(--space-inline-sm)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-row-rule-color": {
+          "default": "var(--color-border-subtle)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-zone-bg": {
+          "default": "color-mix(in oklab, var(--color-bg-surface-sunken) 55%, transparent)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-zone-border-color": {
+          "default": "var(--color-border-subtle)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-zone-border-style": {
+          "default": "dashed",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-zone-border-width": {
+          "default": "1px",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-zone-color": {
+          "default": "var(--color-text-tertiary)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-zone-font-size": {
+          "default": "var(--font-size-caption)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-zone-inset": {
+          "default": "2.75rem",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-zone-inset-block-start": {
+          "default": "4.5rem",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-zone-padding-block": {
+          "default": "var(--space-inset-xs)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-zone-padding-inline": {
+          "default": "var(--space-inset-sm)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-zone-radius": {
+          "default": "var(--radius-surface)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        }
+      },
+      "hooks": [
+        "--sk-diagram-columns",
+        "--sk-diagram-column-gap",
+        "--sk-diagram-row-gap",
+        "--sk-diagram-node-span",
+        "--sk-diagram-node-bg",
+        "--sk-diagram-node-border-color",
+        "--sk-diagram-node-border-width",
+        "--sk-diagram-node-color",
+        "--sk-diagram-node-radius",
+        "--sk-diagram-node-padding-inline",
+        "--sk-diagram-node-padding-block",
+        "--sk-diagram-node-min-inline-size",
+        "--sk-diagram-node-max-inline-size",
+        "--sk-diagram-node-font-size",
+        "--sk-diagram-node-line-height",
+        "--sk-diagram-node-font-weight",
+        "--sk-diagram-node-shadow",
+        "--sk-diagram-logo-size",
+        "--sk-diagram-logo-gap",
+        "--sk-diagram-row-color",
+        "--sk-diagram-row-font-size",
+        "--sk-diagram-row-line-height",
+        "--sk-diagram-row-padding-block",
+        "--sk-diagram-row-padding-inline",
+        "--sk-diagram-row-rule-color",
+        "--sk-diagram-decision-aspect",
+        "--sk-diagram-decision-stroke-scale",
+        "--sk-diagram-connector-color",
+        "--sk-diagram-connector-width",
+        "--sk-diagram-zone-bg",
+        "--sk-diagram-zone-border-color",
+        "--sk-diagram-zone-border-style",
+        "--sk-diagram-zone-border-width",
+        "--sk-diagram-zone-color",
+        "--sk-diagram-zone-font-size",
+        "--sk-diagram-zone-inset",
+        "--sk-diagram-zone-inset-block-start",
+        "--sk-diagram-zone-padding-block",
+        "--sk-diagram-zone-padding-inline",
+        "--sk-diagram-zone-radius",
+        "--sk-diagram-edge-bg",
+        "--sk-diagram-edge-color",
+        "--sk-diagram-edge-border-color",
+        "--sk-diagram-edge-radius",
+        "--sk-diagram-edge-padding-inline",
+        "--sk-diagram-edge-padding-block",
+        "--sk-diagram-edge-font-size",
+        "--sk-diagram-edge-line-height"
+      ],
+      "hookSheets": [
+        "@skryensya/core/patterns/visually-hidden.css"
+      ],
+      "id": "diagram",
+      "options": {
+        "columns": {
+          "integer": true,
+          "min": 1,
+          "styleProperty": "--sk-diagram-columns",
+          "type": "number"
+        },
+        "label": {
+          "attr": "aria-label",
+          "type": "string"
+        }
+      },
+      "parts": {
+        "arrow": "sk-diagram__arrow",
+        "connector": "sk-diagram__connector",
+        "connectors": "sk-diagram__connectors",
+        "edge": "sk-diagram__edge",
+        "edges": "sk-diagram__edges",
+        "line": "sk-diagram__line",
+        "logo": "sk-diagram__node-logo",
+        "node": "sk-diagram__node",
+        "nodes": "sk-diagram__nodes",
+        "root": "sk-diagram",
+        "route": "sk-diagram__route",
+        "routes": "sk-diagram__routes",
+        "row": "sk-diagram__row",
+        "rows": "sk-diagram__rows",
+        "title": "sk-diagram__node-title",
+        "zone": "sk-diagram__zone",
+        "zoneLabel": "sk-diagram__zone-label",
+        "zones": "sk-diagram__zones"
+      },
+      "semantics": {
+        "Diagram": {
+          "alternatives": [
+            "Annotated",
+            "ProcessList",
+            "Steps",
+            "TreeView"
+          ],
+          "avoidWhen": [
+            "lo que hay que nombrar son las partes de una sola cosa ya dibujada: eso es Annotation, que ancla cada etiqueta a un selector adentro del sujeto y no dibuja un grafo",
+            "el contenido es una secuencia sin ramas y sin ciclos: eso es ProcessList si son instrucciones, o Steps si lo primario es el progreso; un diagrama de una sola columna sin bifurcaciones es una lista con líneas de más",
+            "la jerarquía es de contención y no de flujo (carpetas, un árbol de archivos): eso es TreeView o Folder, donde lo que importa es qué está adentro de qué",
+            "el grafo es grande, viene de datos, o hay que explorarlo, hacer zoom o arrastrar nodos: esto no resuelve disposición, dibuja diagramas chicos escritos a mano",
+            "lo que se necesita es notación UML completa, swimlanes o tipos de caja por convención (cilindro, paralelogramo): son convenciones que hay que enseñarle a quien lee, y acá sólo viven las tres formas que se entienden sin leyenda"
+          ],
+          "useWhen": [
+            "hay que explicar cómo se relacionan varias cosas: un flujo lineal, un if/else, un árbol de decisión, una máquina de estados con un ciclo. Los cuatro salen de las mismas dos piezas, no son cuatro modos",
+            "las cajas son contenido HTML normal y el dibujo es todo lo demás: el runtime mide y calcula los recorridos, los codos, las puntas de flecha y dónde cae cada etiqueta. Quien compone nunca escribe una coordenada",
+            "la disposición es una grilla CSS común: `columns` en el marco y `span` en un nodo cubren las formas habituales, y cualquier otra cosa es `grid-area` en la hoja de quien lo usa. Si una media query mueve un nodo, los conectores se vuelven a trazar solos",
+            "la relación tiene que llegarle a un lector de pantalla: el SVG es `aria-hidden` y el binding escribe adentro de cada nodo una lista anunciada de a dónde lleva, así que el dibujo se puede leer sin verlo",
+            "hace falta un ciclo: una arista hacia un nodo que está más arriba sale por el margen y vuelve, que es como se dibuja \"y vuelve a empezar\" desde siempre",
+            "las aristas no son una secuencia sino una relación entre cosas (un modelo, un esquema): `arrow: \"none\"` dibuja la línea sin punta y la etiqueta lleva la cardinalidad",
+            "un nodo tiene que decir más que una línea de texto: su slot acepta una composición, así que adentro entra cualquier árbol del catálogo"
+          ]
+        }
+      },
+      "signatures": {
+        "Diagram": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "flowchart",
+            "decision-tree",
+            "state-diagram",
+            "state-machine",
+            "workflow-diagram",
+            "nodes-and-edges",
+            "boxes-and-arrows",
+            "branching-flow"
+          ],
+          "mount": "data-sk-diagram",
+          "options": [
+            "label",
+            "columns"
+          ],
+          "react": {
+            "from": "@skryensya/react/diagram",
+            "name": "Diagram"
+          },
+          "requires": [
+            "label"
+          ],
+          "slots": {
+            "edges": {
+              "accepts": "items",
+              "item": {
+                "options": {
+                  "arrow": {
+                    "attr": "data-arrow",
+                    "default": "end",
+                    "type": "enum",
+                    "values": [
+                      "end",
+                      "both",
+                      "none"
+                    ]
+                  },
+                  "from": {
+                    "attr": "data-from",
+                    "keyOf": {
+                      "slot": "nodes"
+                    },
+                    "type": "string"
+                  },
+                  "fromRow": {
+                    "attr": "data-from-row",
+                    "type": "string"
+                  },
+                  "to": {
+                    "attr": "data-to",
+                    "keyOf": {
+                      "slot": "nodes"
+                    },
+                    "type": "string"
+                  },
+                  "toRow": {
+                    "attr": "data-to-row",
+                    "type": "string"
+                  }
+                },
+                "requires": [
+                  "from",
+                  "to"
+                ],
+                "slots": {
+                  "children": {
+                    "accepts": "text"
+                  }
+                }
+              },
+              "minItems": 1,
+              "required": true
+            },
+            "nodes": {
+              "accepts": "items",
+              "item": {
+                "key": "node",
+                "options": {
+                  "node": {
+                    "attr": "data-node",
+                    "type": "string"
+                  },
+                  "shape": {
+                    "attr": "data-shape",
+                    "default": "process",
+                    "type": "enum",
+                    "values": [
+                      "process",
+                      "decision",
+                      "terminal"
+                    ]
+                  },
+                  "span": {
+                    "integer": true,
+                    "min": 1,
+                    "styleProperty": "--sk-diagram-node-span",
+                    "type": "number"
+                  },
+                  "zone": {
+                    "attr": "data-zone",
+                    "keyOf": {
+                      "slot": "zones"
+                    },
+                    "type": "string"
+                  }
+                },
+                "requires": [
+                  "node",
+                  "children"
+                ],
+                "slots": {
+                  "children": {
+                    "accepts": "node",
+                    "required": true
+                  },
+                  "logo": {
+                    "accepts": "node"
+                  },
+                  "rows": {
+                    "accepts": "items",
+                    "item": {
+                      "key": "row",
+                      "options": {
+                        "row": {
+                          "attr": "data-row",
+                          "type": "string"
+                        }
+                      },
+                      "requires": [
+                        "row",
+                        "children"
+                      ],
+                      "slots": {
+                        "children": {
+                          "accepts": "text",
+                          "required": true
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "minItems": 2,
+              "required": true
+            },
+            "zones": {
+              "accepts": "items",
+              "item": {
+                "key": "zone",
+                "options": {
+                  "within": {
+                    "attr": "data-within",
+                    "keyOf": {
+                      "slot": "zones"
+                    },
+                    "type": "string"
+                  },
+                  "zone": {
+                    "attr": "data-zone",
+                    "type": "string"
+                  }
+                },
+                "requires": [
+                  "zone",
+                  "children"
+                ],
+                "slots": {
+                  "children": {
+                    "accepts": "text",
+                    "required": true
+                  }
+                }
+              }
+            }
+          },
+          "template": {
+            "attrsWhen": [
+              {
+                "attrs": {
+                  "role": "group"
+                },
+                "given": true,
+                "option": "label"
+              }
+            ],
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "element": "span",
+                        "itemSlot": "children",
+                        "part": "zoneLabel"
+                      }
+                    ],
+                    "element": "li",
+                    "itemOptions": [
+                      "zone",
+                      "within"
+                    ],
+                    "part": "zone",
+                    "repeat": "zones"
+                  }
+                ],
+                "element": "ul",
+                "part": "zones"
+              },
+              {
+                "attrs": {
+                  "aria-hidden": "true",
+                  "focusable": "false"
+                },
+                "element": "svg",
+                "part": "connectors"
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "element": "span",
+                        "itemSlot": "logo",
+                        "part": "logo",
+                        "whenItemSlotGiven": "logo"
+                      },
+                      {
+                        "element": "span",
+                        "itemSlot": "children",
+                        "part": "title"
+                      },
+                      {
+                        "children": [
+                          {
+                            "element": "li",
+                            "itemOptions": [
+                              "row"
+                            ],
+                            "itemSlot": "children",
+                            "part": "row",
+                            "repeatItemSlot": "rows"
+                          }
+                        ],
+                        "element": "ul",
+                        "part": "rows",
+                        "whenItemSlotGiven": "rows"
+                      }
+                    ],
+                    "element": "li",
+                    "itemOptions": [
+                      "node",
+                      "shape",
+                      "span",
+                      "zone"
+                    ],
+                    "part": "node",
+                    "repeat": "nodes"
+                  }
+                ],
+                "element": "ul",
+                "part": "nodes"
+              },
+              {
+                "children": [
+                  {
+                    "element": "li",
+                    "itemOptions": [
+                      "from",
+                      "to",
+                      "fromRow",
+                      "toRow",
+                      "arrow"
+                    ],
+                    "itemSlot": "children",
+                    "part": "edge",
+                    "repeat": "edges"
+                  }
+                ],
+                "element": "ul",
+                "part": "edges"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        }
+      },
+      "systemOwned": [
+        "connector",
+        "line",
+        "arrow",
+        "routes",
+        "route"
+      ]
     },
     "dialog": {
       "bindings": {
@@ -20626,6 +21755,12 @@
           "part": "footer",
           "sheet": "@skryensya/core/components/dialog.css"
         },
+        "--sk-dialog-footer-justify": {
+          "default": "end",
+          "output": false,
+          "part": "footer",
+          "sheet": "@skryensya/core/components/dialog.css"
+        },
         "--sk-dialog-header-border-color": {
           "default": "var(--color-border-subtle)",
           "output": false,
@@ -20666,6 +21801,7 @@
         "--sk-dialog-fg",
         "--sk-dialog-footer-border-color",
         "--sk-dialog-footer-gap",
+        "--sk-dialog-footer-justify",
         "--sk-dialog-header-border-color",
         "--sk-dialog-inline-size",
         "--sk-dialog-padding",
@@ -20687,6 +21823,15 @@
           "attr": "aria-label",
           "default": "Close",
           "type": "string"
+        },
+        "footerAlign": {
+          "attr": "data-footer-align",
+          "default": "end",
+          "type": "enum",
+          "values": [
+            "start",
+            "end"
+          ]
         },
         "open": {
           "attr": "open",
@@ -20725,6 +21870,7 @@
           ],
           "useWhen": [
             "hay que decidir algo antes de seguir: confirmar un borrado, completar un paso corto",
+            "la fila de acciones del footer debe quedar al inicio o al final del eje inline (`footerAlign`; por defecto al final)",
             "conviene que el resto de la página quede inerte mientras tanto",
             "en móvil el mismo dialog puede pedirse como hoja desde abajo (opción vaul)",
             "confirmación destructiva o error bloqueante que necesita atención inmediata (opción alert)"
@@ -20762,7 +21908,8 @@
             "closeLabel",
             "open",
             "vaul",
-            "alert"
+            "alert",
+            "footerAlign"
           ],
           "react": {
             "from": "@skryensya/react/dialog",
@@ -23661,12 +24808,12 @@
         "Icon": {
           "alternatives": [
             "Button.action",
-            "IconStateButton"
+            "StateButton"
           ],
           "avoidWhen": [
             "es un concepto de producto (una factura, un avión): eso se pasa como icon data en el binding React, no como nombre estable",
             "se le pondría label dentro de un botón que ya tiene texto; el nombre accesible quedaría duplicado",
-            "hace falta un control con forma de botón: eso es Button (iconOnly) o IconStateButton, no un Icon solo"
+            "hace falta un control con forma de botón: eso es Button (iconOnly) o StateButton, no un Icon solo"
           ],
           "useWhen": [
             "refuerza una acción que ya tiene texto; sin label, decorativo",
@@ -23702,240 +24849,6 @@
           "template": {
             "element": "span",
             "host": true
-          }
-        }
-      }
-    },
-    "icon-state-button": {
-      "a11y": [
-        {
-          "because": "IconStateButton is always icon-only: faces are glyphs with no visible text, so the host owns the accessible name.",
-          "requiresOneOf": [
-            "aria-label",
-            "aria-labelledby"
-          ],
-          "when": {}
-        }
-      ],
-      "bindings": {
-        "IconStateButton": {
-          "enhancer": null,
-          "markup": true,
-          "portals": false,
-          "react": "@skryensya/react/icon-state-button#IconStateButton"
-        }
-      },
-      "category": "actions",
-      "css": "@skryensya/core/components/icon-state-button.css",
-      "hookDetails": {
-        "--sk-icon-state-button-rest-blur": {
-          "default": "4px",
-          "output": false,
-          "part": "root",
-          "sheet": "@skryensya/core/components/icon-state-button.css"
-        },
-        "--sk-icon-state-button-rest-scale": {
-          "default": "0.25",
-          "output": false,
-          "part": "root",
-          "sheet": "@skryensya/core/components/icon-state-button.css"
-        },
-        "--sk-icon-state-button-transition-duration": {
-          "default": "var(--motion-state-change-duration)",
-          "output": false,
-          "part": "root",
-          "sheet": "@skryensya/core/components/icon-state-button.css"
-        },
-        "--sk-icon-state-button-transition-easing": {
-          "default": "var(--motion-state-change-easing)",
-          "output": false,
-          "part": "root",
-          "sheet": "@skryensya/core/components/icon-state-button.css"
-        }
-      },
-      "hooks": [
-        "--sk-icon-state-button-rest-blur",
-        "--sk-icon-state-button-rest-scale",
-        "--sk-icon-state-button-transition-duration",
-        "--sk-icon-state-button-transition-easing"
-      ],
-      "id": "icon-state-button",
-      "options": {
-        "current": {
-          "attr": "data-current",
-          "keyOf": {
-            "slot": "faces"
-          },
-          "type": "string"
-        }
-      },
-      "parts": {
-        "root": "sk-icon-state-button"
-      },
-      "semantics": {
-        "IconStateButton": {
-          "alternatives": [
-            "Switch",
-            "Icon",
-            "Button.action"
-          ],
-          "avoidWhen": [
-            "el comportamiento ya existe hecho: un ciclo de modo de color usa las funciones de @skryensya/core/theme-toggle, un copy-to-clipboard usa writeClipboard de @skryensya/core/copy-button, sobre este mismo primitivo: no hay que reinventar esa parte",
-            "hay un solo estado, o dos que se leen como on/off: eso es un Switch o un Toggle simple, no vale la pena declarar una colección de caras para dos valores",
-            "el ícono es puramente decorativo y no cambia: eso es Icon, sin la anatomía de estados",
-            "hace falta un botón con etiqueta visible además del ícono: eso es Button.action, no esta anatomía de caras apiladas"
-          ],
-          "useWhen": [
-            "el control necesita mostrar uno de N estados con nombre, cada uno con su propio ícono, y quien lo usa va a escribir el comportamiento que decide cuál está activo (copiar, ciclar un modo, lo que sea)",
-            "los estados varían según el uso: no hay un set fijo que un contrato pueda declarar de antemano",
-            "es siempre icon-only: las caras son glifos, el host lleva data-icon-only de fábrica, y el nombre accesible es aria-label o aria-labelledby en el botón (nunca texto visible)",
-            "variant y size son los de Button (data-variant / data-size), no opciones de este contrato: ghost + sm es la forma de toolbar más común"
-          ]
-        }
-      },
-      "signatures": {
-        "IconStateButton": {
-          "compose": [
-            {
-              "of": "button",
-              "sheets": [
-                "@skryensya/core/components/button.css"
-              ],
-              "systemOwned": true
-            },
-            {
-              "of": "icon",
-              "systemOwned": true
-            }
-          ],
-          "forward": [
-            "id",
-            "name",
-            "form",
-            "data-variant",
-            "data-size",
-            "aria-*"
-          ],
-          "host": {
-            "element": "button"
-          },
-          "intent": [
-            "icon-button-with-states",
-            "multi-state-icon-button"
-          ],
-          "options": [
-            "current"
-          ],
-          "react": {
-            "from": "@skryensya/react/icon-state-button",
-            "name": "IconStateButton"
-          },
-          "slots": {
-            "faces": {
-              "accepts": "items",
-              "item": {
-                "key": "name",
-                "options": {
-                  "icon": {
-                    "attr": "data-sk-icon",
-                    "type": "enum",
-                    "values": [
-                      "chevron-up",
-                      "chevron-down",
-                      "chevron-left",
-                      "chevron-right",
-                      "arrow-up",
-                      "arrow-down",
-                      "arrow-left",
-                      "arrow-right",
-                      "vote-up",
-                      "vote-down",
-                      "external-link",
-                      "add",
-                      "remove",
-                      "close",
-                      "check",
-                      "search",
-                      "edit",
-                      "delete",
-                      "copy",
-                      "code",
-                      "filter",
-                      "refresh",
-                      "zoom-out",
-                      "more",
-                      "menu",
-                      "info",
-                      "success",
-                      "warning",
-                      "danger",
-                      "calendar",
-                      "clock",
-                      "upload",
-                      "download",
-                      "file",
-                      "folder",
-                      "settings",
-                      "user",
-                      "visibility",
-                      "visibility-off",
-                      "language",
-                      "mode-system",
-                      "mode-light",
-                      "mode-dark",
-                      "screen-desktop",
-                      "screen-tablet",
-                      "screen-mobile"
-                    ]
-                  },
-                  "name": {
-                    "attr": "data-face",
-                    "type": "string"
-                  }
-                },
-                "requires": [
-                  "icon"
-                ],
-                "slots": {}
-              },
-              "minItems": 2,
-              "required": true
-            }
-          },
-          "template": {
-            "also": [
-              "sk-button",
-              "sk-interactive",
-              "sk-icon-toggle"
-            ],
-            "attrs": {
-              "data-icon-only": "",
-              "type": "button"
-            },
-            "children": [
-              {
-                "children": [
-                  {
-                    "attrs": {
-                      "data-sk-icon-size": "md"
-                    },
-                    "element": "span",
-                    "itemOptions": [
-                      "name",
-                      "icon"
-                    ],
-                    "selectedBy": {
-                      "attr": "data-active",
-                      "option": "current"
-                    }
-                  }
-                ],
-                "repeat": "faces"
-              }
-            ],
-            "element": "button",
-            "host": true,
-            "part": "root"
           }
         }
       }
@@ -24754,7 +25667,7 @@
           ],
           "avoidWhen": [
             "es texto de código o un comando; eso va en un bloque Code / typography",
-            "es un control accionable; eso es Button o IconStateButton"
+            "es un control accionable; eso es Button o StateButton"
           ],
           "useWhen": [
             "se muestra una tecla o una combinación que el usuario puede presionar"
@@ -29889,6 +30802,334 @@
         }
       }
     },
+    "otp-input": {
+      "bindings": {
+        "OtpInput": {
+          "enhancer": "data-sk-otp-input",
+          "markup": true,
+          "portals": false,
+          "react": "@skryensya/react/otp-input#OtpInput"
+        }
+      },
+      "category": "forms",
+      "css": "@skryensya/core/components/otp-input.css",
+      "eventDetails": {
+        "invalid": {
+          "detail": {
+            "char": "string",
+            "index": "number"
+          },
+          "reactProp": "onValueInvalid",
+          "source": "root"
+        },
+        "valueChange": {
+          "detail": {
+            "value": "string"
+          },
+          "reactProp": "onValueChange",
+          "source": "root"
+        },
+        "valueComplete": {
+          "detail": {
+            "value": "string"
+          },
+          "reactProp": "onValueComplete",
+          "source": "root"
+        }
+      },
+      "events": {
+        "invalid": "sk:otpinputinvalid",
+        "valueChange": "sk:otpinputvaluechange",
+        "valueComplete": "sk:otpinputvaluecomplete"
+      },
+      "hookDetails": {
+        "--sk-otp-input-bg": {
+          "default": "var(--color-bg-surface-sunken)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/otp-input.css"
+        },
+        "--sk-otp-input-border-color": {
+          "default": "var(--color-border-default)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/otp-input.css"
+        },
+        "--sk-otp-input-fg": {
+          "default": "var(--color-text-primary)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/otp-input.css"
+        },
+        "--sk-otp-input-gap": {
+          "default": "var(--space-inline-xs)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/otp-input.css"
+        },
+        "--sk-otp-input-hint-color": {
+          "default": "var(--color-text-secondary)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/otp-input.css"
+        },
+        "--sk-otp-input-invalid-border-color": {
+          "default": "var(--color-border-danger)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/otp-input.css"
+        },
+        "--sk-otp-input-label-color": {
+          "default": "var(--color-text-secondary)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/otp-input.css"
+        },
+        "--sk-otp-input-radius": {
+          "default": "var(--radius-control)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/otp-input.css"
+        },
+        "--sk-otp-input-segment-size": {
+          "default": "var(--size-touch-target)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/otp-input.css"
+        }
+      },
+      "hooks": [
+        "--sk-otp-input-bg",
+        "--sk-otp-input-border-color",
+        "--sk-otp-input-fg",
+        "--sk-otp-input-gap",
+        "--sk-otp-input-hint-color",
+        "--sk-otp-input-invalid-border-color",
+        "--sk-otp-input-label-color",
+        "--sk-otp-input-radius",
+        "--sk-otp-input-segment-size"
+      ],
+      "id": "otp-input",
+      "options": {
+        "count": {
+          "computedInput": true,
+          "default": 6,
+          "integer": true,
+          "min": 1,
+          "type": "number"
+        },
+        "defaultValue": {
+          "attr": "data-default-value",
+          "default": "",
+          "machineInput": true,
+          "type": "string"
+        },
+        "disabled": {
+          "attr": "data-disabled",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "invalid": {
+          "attr": "data-invalid",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "mask": {
+          "attr": "data-mask",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "name": {
+          "attr": "data-name",
+          "machineInput": true,
+          "type": "string"
+        },
+        "otp": {
+          "attr": "data-otp",
+          "default": true,
+          "falseValue": "false",
+          "machineInput": true,
+          "type": "boolean"
+        },
+        "placeholder": {
+          "attr": "data-placeholder",
+          "default": "○",
+          "machineInput": true,
+          "type": "string"
+        },
+        "readOnly": {
+          "attr": "data-readonly",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "required": {
+          "attr": "required",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "segmentLabel": {
+          "attr": "data-item-label",
+          "default": "Code {index} of {count}",
+          "machineInput": true,
+          "type": "string"
+        },
+        "type": {
+          "attr": "data-type",
+          "default": "numeric",
+          "machineInput": true,
+          "type": "enum",
+          "values": [
+            "numeric",
+            "alphanumeric"
+          ]
+        }
+      },
+      "parts": {
+        "control": "sk-otp-input__control",
+        "hiddenInput": "sk-otp-input__hidden",
+        "hint": "sk-otp-input__hint",
+        "label": "sk-otp-input__label",
+        "root": "sk-otp-input",
+        "segment": "sk-otp-input__segment"
+      },
+      "semantics": {
+        "OtpInput": {
+          "alternatives": [
+            "Input",
+            "NumberField"
+          ],
+          "avoidWhen": [
+            "el valor es texto libre de largo variable; eso es Input",
+            "el valor es un número con paso y límites; eso es NumberField",
+            "hace falta validar el código contra un servidor antes de aceptarlo; eso lo resuelve quien compone, escuchando sk:otpinputvaluecomplete y mostrando el error en su propio mensaje"
+          ],
+          "useWhen": [
+            "se pide un código de un solo uso enviado por SMS, email o una app de autenticación",
+            "el código tiene un largo fijo conocido de antemano (4, 6 dígitos)",
+            "conviene que el teléfono ofrezca autocompletar el código recibido por SMS"
+          ]
+        }
+      },
+      "signatures": {
+        "OtpInput": {
+          "forward": [
+            "id",
+            "aria-*"
+          ],
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "one-time-code",
+            "otp",
+            "verification-code",
+            "sms-code",
+            "2fa-code",
+            "pin-code"
+          ],
+          "mount": "data-sk-otp-input",
+          "options": [
+            "count",
+            "type",
+            "mask",
+            "otp",
+            "placeholder",
+            "name",
+            "defaultValue",
+            "disabled",
+            "readOnly",
+            "required",
+            "invalid",
+            "segmentLabel"
+          ],
+          "react": {
+            "from": "@skryensya/react/otp-input",
+            "name": "OtpInput"
+          },
+          "slots": {
+            "hint": {
+              "accepts": "text"
+            },
+            "label": {
+              "accepts": "text",
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "element": "label",
+                "mount": "data-sk-otp-input-label",
+                "part": "label",
+                "slot": "label"
+              },
+              {
+                "children": [
+                  {
+                    "also": [
+                      "sk-interactive"
+                    ],
+                    "attrs": {
+                      "autocomplete": "off",
+                      "type": "text"
+                    },
+                    "element": "input",
+                    "mount": "data-sk-otp-input-segment",
+                    "part": "segment",
+                    "repeatComputed": {
+                      "from": [
+                        "count"
+                      ],
+                      "key": "index",
+                      "window": "otp-segments"
+                    }
+                  }
+                ],
+                "element": "div",
+                "mount": "data-sk-otp-input-control",
+                "part": "control"
+              },
+              {
+                "attrs": {
+                  "aria-hidden": "true",
+                  "tabindex": "-1",
+                  "type": "text"
+                },
+                "element": "input",
+                "mount": "data-sk-otp-input-hidden",
+                "options": [
+                  "name",
+                  "defaultValue",
+                  "disabled",
+                  "readOnly",
+                  "required"
+                ],
+                "part": "hiddenInput"
+              },
+              {
+                "element": "span",
+                "part": "hint",
+                "slot": "hint",
+                "whenGiven": "hint"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
     "pagination": {
       "bindings": {
         "Pagination": {
@@ -33060,6 +34301,225 @@
         "position"
       ]
     },
+    "quote": {
+      "bindings": {
+        "Quote": {
+          "enhancer": null,
+          "markup": true,
+          "portals": false,
+          "react": "@skryensya/react/quote#Quote"
+        }
+      },
+      "category": "content",
+      "css": "@skryensya/core/components/quote.css",
+      "hookDetails": {
+        "--sk-quote-attribution-fg": {
+          "default": "var(--color-text-tertiary)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/quote.css"
+        },
+        "--sk-quote-attribution-font-size": {
+          "default": "var(--font-size-body-sm)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/quote.css"
+        },
+        "--sk-quote-attribution-gap": {
+          "default": "0.25em",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/quote.css"
+        },
+        "--sk-quote-fg": {
+          "default": "var(--color-text-secondary)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/quote.css"
+        },
+        "--sk-quote-font-size": {
+          "default": "var(--font-size-body)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/quote.css"
+        },
+        "--sk-quote-font-style": {
+          "default": "normal",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/quote.css"
+        },
+        "--sk-quote-gap": {
+          "default": "var(--space-stack-xs)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/quote.css"
+        },
+        "--sk-quote-line-height": {
+          "default": "var(--font-line-height-body-relaxed)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/quote.css"
+        },
+        "--sk-quote-measure": {
+          "default": "60ch",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/quote.css"
+        },
+        "--sk-quote-padding-inline": {
+          "default": "var(--space-inline-md)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/quote.css"
+        },
+        "--sk-quote-rule-color": {
+          "default": "var(--color-border-strong)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/quote.css"
+        },
+        "--sk-quote-rule-width": {
+          "default": "2px",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/quote.css"
+        },
+        "--sk-quote-source-fg": {
+          "default": "var(--color-text-secondary)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/quote.css"
+        }
+      },
+      "hooks": [
+        "--sk-quote-attribution-fg",
+        "--sk-quote-attribution-gap",
+        "--sk-quote-attribution-font-size",
+        "--sk-quote-fg",
+        "--sk-quote-font-size",
+        "--sk-quote-font-style",
+        "--sk-quote-gap",
+        "--sk-quote-line-height",
+        "--sk-quote-measure",
+        "--sk-quote-padding-inline",
+        "--sk-quote-rule-color",
+        "--sk-quote-rule-width",
+        "--sk-quote-source-fg"
+      ],
+      "id": "quote",
+      "options": {
+        "cite": {
+          "attr": "cite",
+          "type": "string"
+        },
+        "variant": {
+          "attr": "data-variant",
+          "default": "block",
+          "type": "enum",
+          "values": [
+            "block",
+            "pull"
+          ]
+        }
+      },
+      "parts": {
+        "attribution": "sk-quote__attribution",
+        "body": "sk-quote__body",
+        "root": "sk-quote",
+        "source": "sk-quote__source"
+      },
+      "semantics": {
+        "Quote": {
+          "alternatives": [
+            "Callout",
+            "Text"
+          ],
+          "avoidWhen": [
+            "the text is the page's own voice; a quotation mark around it claims an author it does not have",
+            "it is a short quoted phrase inside a sentence; that is the native <q>, inline, not a block",
+            "it is a highlighted aside the page is making itself, with a status; that is a Callout",
+            "it is code, a command or output; that is Code or a CodePreview"
+          ],
+          "useWhen": [
+            "words that are somebody else's are shown as theirs: a quotation, a testimonial, an excerpt",
+            "a passage is lifted out of the text to be read on its own; that is variant pull",
+            "there is a name to put beside the words, a work to name, or both"
+          ]
+        }
+      },
+      "signatures": {
+        "Quote": {
+          "host": {
+            "element": "figure"
+          },
+          "intent": [
+            "quotation",
+            "blockquote",
+            "testimonial",
+            "pull-quote",
+            "somebody-elses-words"
+          ],
+          "options": [
+            "variant",
+            "cite"
+          ],
+          "react": {
+            "from": "@skryensya/react/quote",
+            "name": "Quote"
+          },
+          "slots": {
+            "attribution": {
+              "accepts": "text"
+            },
+            "children": {
+              "accepts": "node",
+              "required": true
+            },
+            "source": {
+              "accepts": "node"
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "element": "blockquote",
+                "options": [
+                  "cite"
+                ],
+                "part": "body",
+                "slot": "children"
+              },
+              {
+                "children": [
+                  {
+                    "slot": "attribution"
+                  },
+                  {
+                    "element": "cite",
+                    "part": "source",
+                    "slot": "source",
+                    "whenGiven": "source"
+                  }
+                ],
+                "element": "figcaption",
+                "part": "attribution",
+                "whenGiven": [
+                  "attribution",
+                  "source"
+                ]
+              }
+            ],
+            "element": "figure",
+            "host": true,
+            "options": [
+              "variant"
+            ],
+            "part": "root"
+          }
+        }
+      }
+    },
     "radio-group": {
       "a11y": [
         {
@@ -33505,9 +34965,9 @@
       },
       "hookDetails": {
         "--sk-rating-fill": {
-          "default": "0%",
+          "default": "clamp(\n      0px,\n      calc(\n        round(down, var(--sk-rating-value), 1) * var(--sk-rating-tile) +\n          (var(--sk-rating-value) - round(down, var(--sk-rating-value), 1)) * var(--sk-rating-size)\n      ),\n      100%\n    )",
           "output": false,
-          "part": "root",
+          "part": "symbols",
           "sheet": "@skryensya/core/components/rating.css"
         },
         "--sk-rating-gap": {
@@ -33551,6 +35011,12 @@
           "output": false,
           "part": "symbols",
           "sheet": "@skryensya/core/components/rating.css"
+        },
+        "--sk-rating-value": {
+          "default": "0",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/rating.css"
         }
       },
       "hooks": [
@@ -33561,7 +35027,8 @@
         "--sk-rating-on-color",
         "--sk-rating-size",
         "--sk-rating-symbol",
-        "--sk-rating-tile"
+        "--sk-rating-tile",
+        "--sk-rating-value"
       ],
       "id": "rating",
       "options": {
@@ -33675,6 +35142,15 @@
       },
       "signatures": {
         "Rating": {
+          "compose": [
+            {
+              "of": "button",
+              "sheets": [
+                "@skryensya/core/components/button.css"
+              ],
+              "systemOwned": true
+            }
+          ],
           "forward": [
             "id",
             "aria-*"
@@ -33716,9 +35192,13 @@
                 "children": [
                   {
                     "also": [
+                      "sk-button",
                       "sk-interactive"
                     ],
                     "attrs": {
+                      "data-icon-only": "",
+                      "data-size": "sm",
+                      "data-variant": "ghost",
                       "role": "radio"
                     },
                     "children": [
@@ -33814,16 +35294,7 @@
                   "aria-hidden": "true"
                 },
                 "element": "span",
-                "part": "symbols",
-                "style": [
-                  {
-                    "percentOf": [
-                      "value",
-                      "max"
-                    ],
-                    "property": "--sk-rating-fill"
-                  }
-                ]
+                "part": "symbols"
               },
               {
                 "element": "span",
@@ -34766,6 +36237,245 @@
               "value": ""
             },
             "part": "native"
+          }
+        }
+      }
+    },
+    "separator": {
+      "bindings": {
+        "LabelledSeparator": {
+          "enhancer": null,
+          "markup": true,
+          "portals": false,
+          "react": "@skryensya/react/separator#LabelledSeparator"
+        },
+        "Separator": {
+          "enhancer": null,
+          "markup": true,
+          "portals": false,
+          "react": "@skryensya/react/separator#Separator"
+        }
+      },
+      "category": "layout",
+      "css": "@skryensya/core/components/separator.css",
+      "hookDetails": {
+        "--sk-separator-color": {
+          "default": "var(--color-border-default)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/separator.css"
+        },
+        "--sk-separator-label-fg": {
+          "default": "var(--color-text-tertiary)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/separator.css"
+        },
+        "--sk-separator-label-font-size": {
+          "default": "var(--font-size-body-sm)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/separator.css"
+        },
+        "--sk-separator-label-gap": {
+          "default": "var(--space-inline-sm)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/separator.css"
+        },
+        "--sk-separator-spacing": {
+          "default": "var(--space-stack-md)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/separator.css"
+        },
+        "--sk-separator-thickness": {
+          "default": "1px",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/separator.css"
+        }
+      },
+      "hooks": [
+        "--sk-separator-color",
+        "--sk-separator-label-fg",
+        "--sk-separator-label-font-size",
+        "--sk-separator-label-gap",
+        "--sk-separator-spacing",
+        "--sk-separator-thickness"
+      ],
+      "id": "separator",
+      "options": {
+        "decorative": {
+          "attr": "data-decorative",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "orientation": {
+          "alsoAttr": "aria-orientation",
+          "attr": "data-orientation",
+          "default": "horizontal",
+          "type": "enum",
+          "values": [
+            "horizontal",
+            "vertical"
+          ]
+        },
+        "spacing": {
+          "attr": "data-spacing",
+          "default": "md",
+          "type": "enum",
+          "values": [
+            "none",
+            "sm",
+            "md",
+            "lg"
+          ]
+        },
+        "tone": {
+          "attr": "data-tone",
+          "default": "default",
+          "type": "enum",
+          "values": [
+            "subtle",
+            "default",
+            "strong"
+          ]
+        }
+      },
+      "parts": {
+        "label": "sk-separator__label",
+        "root": "sk-separator",
+        "rule": "sk-separator__rule"
+      },
+      "semantics": {
+        "LabelledSeparator": {
+          "alternatives": [
+            "Separator",
+            "Heading"
+          ],
+          "avoidWhen": [
+            "the word is a heading for what follows; that is a Heading, and the rule is decoration on top",
+            "it runs vertically: a label in a vertical rule is rotated text, a different component"
+          ],
+          "useWhen": [
+            "there is a word between the two halves: or, since 2019, older"
+          ]
+        },
+        "Separator": {
+          "alternatives": [
+            "LabelledSeparator",
+            "Stack"
+          ],
+          "avoidWhen": [
+            "the rule can be dragged to resize what it divides; that is a Window Splitter, with a keyboard contract of its own (@skryensya/core/splitter)",
+            "the separation is between rows of a list, a menu or a toolbar; those families draw their own",
+            "what is wanted is space, not a line; that is the gap of whatever holds the two blocks"
+          ],
+          "useWhen": [
+            "a rule divides two blocks that are about different things",
+            "a vertical hairline sits between two things placed side by side (it takes its height from whatever holds it)",
+            "the line is only paint - a card's internal edge - which is what decorative is for"
+          ]
+        }
+      },
+      "signatures": {
+        "LabelledSeparator": {
+          "forward": [
+            "id"
+          ],
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "or-divider",
+            "labelled-divider",
+            "rule-with-a-word-in-it"
+          ],
+          "options": [
+            "tone",
+            "spacing"
+          ],
+          "react": {
+            "from": "@skryensya/react/separator",
+            "name": "LabelledSeparator"
+          },
+          "slots": {
+            "children": {
+              "accepts": "text",
+              "required": true
+            }
+          },
+          "template": {
+            "attrs": {
+              "role": "separator"
+            },
+            "children": [
+              {
+                "attrs": {
+                  "aria-hidden": "true"
+                },
+                "element": "span",
+                "part": "rule"
+              },
+              {
+                "element": "span",
+                "part": "label",
+                "slot": "children"
+              },
+              {
+                "attrs": {
+                  "aria-hidden": "true"
+                },
+                "element": "span",
+                "part": "rule"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "labelledBySlot": "children",
+            "part": "root"
+          }
+        },
+        "Separator": {
+          "forward": [
+            "id",
+            "aria-*"
+          ],
+          "host": {
+            "element": "hr"
+          },
+          "intent": [
+            "divider",
+            "thematic-break",
+            "rule-between-blocks",
+            "hairline"
+          ],
+          "options": [
+            "orientation",
+            "tone",
+            "spacing",
+            "decorative"
+          ],
+          "react": {
+            "from": "@skryensya/react/separator",
+            "name": "Separator"
+          },
+          "slots": {},
+          "template": {
+            "attrsWhen": [
+              {
+                "attrs": {
+                  "role": "presentation"
+                },
+                "equals": "true",
+                "option": "decorative"
+              }
+            ],
+            "element": "hr",
+            "host": true,
+            "part": "root"
           }
         }
       }
@@ -36384,6 +38094,240 @@
               }
             ],
             "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
+    "state-button": {
+      "a11y": [
+        {
+          "because": "StateButton is always icon-only: faces are glyphs with no visible text, so the host owns the accessible name.",
+          "requiresOneOf": [
+            "aria-label",
+            "aria-labelledby"
+          ],
+          "when": {}
+        }
+      ],
+      "bindings": {
+        "StateButton": {
+          "enhancer": null,
+          "markup": true,
+          "portals": false,
+          "react": "@skryensya/react/state-button#StateButton"
+        }
+      },
+      "category": "actions",
+      "css": "@skryensya/core/components/state-button.css",
+      "hookDetails": {
+        "--sk-state-button-rest-blur": {
+          "default": "4px",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/state-button.css"
+        },
+        "--sk-state-button-rest-scale": {
+          "default": "0.25",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/state-button.css"
+        },
+        "--sk-state-button-transition-duration": {
+          "default": "var(--motion-state-change-duration)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/state-button.css"
+        },
+        "--sk-state-button-transition-easing": {
+          "default": "var(--motion-state-change-easing)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/state-button.css"
+        }
+      },
+      "hooks": [
+        "--sk-state-button-rest-blur",
+        "--sk-state-button-rest-scale",
+        "--sk-state-button-transition-duration",
+        "--sk-state-button-transition-easing"
+      ],
+      "id": "state-button",
+      "options": {
+        "current": {
+          "attr": "data-current",
+          "keyOf": {
+            "slot": "faces"
+          },
+          "type": "string"
+        }
+      },
+      "parts": {
+        "root": "sk-state-button"
+      },
+      "semantics": {
+        "StateButton": {
+          "alternatives": [
+            "Switch",
+            "Icon",
+            "Button.action"
+          ],
+          "avoidWhen": [
+            "el comportamiento ya existe hecho: un ciclo de modo de color usa las funciones de @skryensya/core/theme-toggle, un copy-to-clipboard usa writeClipboard de @skryensya/core/copy-button, sobre este mismo primitivo: no hay que reinventar esa parte",
+            "hay un solo estado, o dos que se leen como on/off: eso es un Switch o un Toggle simple, no vale la pena declarar una colección de caras para dos valores",
+            "el ícono es puramente decorativo y no cambia: eso es Icon, sin la anatomía de estados",
+            "hace falta un botón con etiqueta visible además del ícono: eso es Button.action, no esta anatomía de caras apiladas"
+          ],
+          "useWhen": [
+            "el control necesita mostrar uno de N estados con nombre, cada uno con su propio ícono, y quien lo usa va a escribir el comportamiento que decide cuál está activo (copiar, ciclar un modo, lo que sea)",
+            "los estados varían según el uso: no hay un set fijo que un contrato pueda declarar de antemano",
+            "es siempre icon-only: las caras son glifos, el host lleva data-icon-only de fábrica, y el nombre accesible es aria-label o aria-labelledby en el botón (nunca texto visible)",
+            "variant y size son los de Button (data-variant / data-size), no opciones de este contrato: ghost + sm es la forma de toolbar más común"
+          ]
+        }
+      },
+      "signatures": {
+        "StateButton": {
+          "compose": [
+            {
+              "of": "button",
+              "sheets": [
+                "@skryensya/core/components/button.css"
+              ],
+              "systemOwned": true
+            },
+            {
+              "of": "icon",
+              "systemOwned": true
+            }
+          ],
+          "forward": [
+            "id",
+            "name",
+            "form",
+            "data-variant",
+            "data-size",
+            "aria-*"
+          ],
+          "host": {
+            "element": "button"
+          },
+          "intent": [
+            "icon-button-with-states",
+            "multi-state-icon-button"
+          ],
+          "options": [
+            "current"
+          ],
+          "react": {
+            "from": "@skryensya/react/state-button",
+            "name": "StateButton"
+          },
+          "slots": {
+            "faces": {
+              "accepts": "items",
+              "item": {
+                "key": "name",
+                "options": {
+                  "icon": {
+                    "attr": "data-sk-icon",
+                    "type": "enum",
+                    "values": [
+                      "chevron-up",
+                      "chevron-down",
+                      "chevron-left",
+                      "chevron-right",
+                      "arrow-up",
+                      "arrow-down",
+                      "arrow-left",
+                      "arrow-right",
+                      "vote-up",
+                      "vote-down",
+                      "external-link",
+                      "add",
+                      "remove",
+                      "close",
+                      "check",
+                      "search",
+                      "edit",
+                      "delete",
+                      "copy",
+                      "code",
+                      "filter",
+                      "refresh",
+                      "zoom-out",
+                      "more",
+                      "menu",
+                      "info",
+                      "success",
+                      "warning",
+                      "danger",
+                      "calendar",
+                      "clock",
+                      "upload",
+                      "download",
+                      "file",
+                      "folder",
+                      "settings",
+                      "user",
+                      "visibility",
+                      "visibility-off",
+                      "language",
+                      "mode-system",
+                      "mode-light",
+                      "mode-dark",
+                      "screen-desktop",
+                      "screen-tablet",
+                      "screen-mobile"
+                    ]
+                  },
+                  "name": {
+                    "attr": "data-face",
+                    "type": "string"
+                  }
+                },
+                "requires": [
+                  "icon"
+                ],
+                "slots": {}
+              },
+              "minItems": 2,
+              "required": true
+            }
+          },
+          "template": {
+            "also": [
+              "sk-button",
+              "sk-interactive",
+              "sk-icon-toggle"
+            ],
+            "attrs": {
+              "data-icon-only": "",
+              "type": "button"
+            },
+            "children": [
+              {
+                "children": [
+                  {
+                    "attrs": {
+                      "data-sk-icon-size": "md"
+                    },
+                    "element": "span",
+                    "itemOptions": [
+                      "name",
+                      "icon"
+                    ],
+                    "selectedBy": {
+                      "attr": "data-active",
+                      "option": "current"
+                    }
+                  }
+                ],
+                "repeat": "faces"
+              }
+            ],
+            "element": "button",
             "host": true,
             "part": "root"
           }
@@ -38832,6 +40776,443 @@
               }
             ],
             "element": "a",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
+    "tags-input": {
+      "bindings": {
+        "TagsInput": {
+          "enhancer": "data-sk-tags-input",
+          "markup": true,
+          "portals": false,
+          "react": "@skryensya/react/tags-input#TagsInput"
+        }
+      },
+      "category": "forms",
+      "css": "@skryensya/core/components/tags-input.css",
+      "eventDetails": {
+        "valueChange": {
+          "detail": {
+            "value": "string[]"
+          },
+          "reactProp": "onValueChange",
+          "source": "root",
+          "trigger": "input"
+        }
+      },
+      "events": {
+        "valueChange": "sk:tagsinputvaluechange"
+      },
+      "hookDetails": {
+        "--sk-tag-bg": {
+          "default": "var(--color-bg-accent-subtle)",
+          "output": false,
+          "part": "preview",
+          "sheet": "@skryensya/core/components/tags-input.css"
+        },
+        "--sk-tag-fg": {
+          "default": "var(--color-text-accent)",
+          "output": false,
+          "part": "preview",
+          "sheet": "@skryensya/core/components/tags-input.css"
+        },
+        "--sk-tags-input-bg": {
+          "default": "var(--color-bg-surface-sunken)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/tags-input.css"
+        },
+        "--sk-tags-input-border-color": {
+          "default": "var(--color-border-default)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/tags-input.css"
+        },
+        "--sk-tags-input-border-width": {
+          "default": "1px",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/tags-input.css"
+        },
+        "--sk-tags-input-disabled-bg": {
+          "default": "var(--color-action-disabled)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/tags-input.css"
+        },
+        "--sk-tags-input-disabled-border-color": {
+          "default": "var(--color-border-subtle)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/tags-input.css"
+        },
+        "--sk-tags-input-gap": {
+          "default": "var(--space-inline-xs)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/tags-input.css"
+        },
+        "--sk-tags-input-input-min-size": {
+          "default": "8ch",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/tags-input.css"
+        },
+        "--sk-tags-input-invalid-border-color": {
+          "default": "var(--color-border-danger)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/tags-input.css"
+        },
+        "--sk-tags-input-padding-x": {
+          "default": "var(--space-inset-sm)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/tags-input.css"
+        },
+        "--sk-tags-input-padding-y": {
+          "default": "var(--space-inset-xs)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/tags-input.css"
+        },
+        "--sk-tags-input-radius": {
+          "default": "var(--radius-control)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/tags-input.css"
+        },
+        "--sk-tags-input-readonly-bg": {
+          "default": "var(--color-bg-surface)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/tags-input.css"
+        },
+        "--sk-tags-input-readonly-border-color": {
+          "default": "var(--color-border-subtle)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/tags-input.css"
+        },
+        "--sk-tags-input-shadow": {
+          "default": "var(--elevation-sunken)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/tags-input.css"
+        },
+        "--sk-tags-input-wash": {
+          "default": "var(--elevation-wash-sunken)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/tags-input.css"
+        }
+      },
+      "hooks": [
+        "--sk-tag-bg",
+        "--sk-tag-fg",
+        "--sk-tags-input-bg",
+        "--sk-tags-input-border-color",
+        "--sk-tags-input-border-width",
+        "--sk-tags-input-disabled-bg",
+        "--sk-tags-input-disabled-border-color",
+        "--sk-tags-input-gap",
+        "--sk-tags-input-input-min-size",
+        "--sk-tags-input-invalid-border-color",
+        "--sk-tags-input-padding-x",
+        "--sk-tags-input-padding-y",
+        "--sk-tags-input-radius",
+        "--sk-tags-input-readonly-bg",
+        "--sk-tags-input-readonly-border-color",
+        "--sk-tags-input-shadow",
+        "--sk-tags-input-wash"
+      ],
+      "id": "tags-input",
+      "options": {
+        "allowDuplicates": {
+          "attr": "data-allow-duplicates",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "delimiter": {
+          "attr": "data-delimiter",
+          "default": ",",
+          "machineInput": true,
+          "type": "string"
+        },
+        "disabled": {
+          "attr": "data-disabled",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "editable": {
+          "attr": "data-editable",
+          "default": true,
+          "falseValue": "false",
+          "machineInput": true,
+          "type": "boolean"
+        },
+        "invalid": {
+          "alsoAttr": "aria-invalid",
+          "attr": "data-invalid",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "label": {
+          "attr": "aria-label",
+          "type": "string"
+        },
+        "max": {
+          "attr": "data-max",
+          "integer": true,
+          "machineInput": true,
+          "min": 1,
+          "type": "number"
+        },
+        "name": {
+          "attr": "data-name",
+          "machineInput": true,
+          "type": "string"
+        },
+        "placeholder": {
+          "attr": "placeholder",
+          "type": "string"
+        },
+        "readOnly": {
+          "attr": "data-readonly",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "removeLabel": {
+          "attr": "aria-label",
+          "default": "Remove",
+          "type": "string"
+        },
+        "required": {
+          "attr": "data-required",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        }
+      },
+      "parts": {
+        "control": "sk-tags-input__control",
+        "hidden": "sk-tags-input__hidden",
+        "input": "sk-tags-input__input",
+        "item": "sk-tags-input__item",
+        "itemInput": "sk-tags-input__item-input",
+        "list": "sk-tags-input__items",
+        "preview": "sk-tags-input__item-preview",
+        "remove": "sk-tags-input__item-remove",
+        "root": "sk-tags-input",
+        "text": "sk-tags-input__item-text"
+      },
+      "semantics": {
+        "TagsInput": {
+          "alternatives": [
+            "Combobox",
+            "Tag",
+            "Input"
+          ],
+          "avoidWhen": [
+            "the values must come from a known list; that is a Combobox, and choosing this instead means accepting typos as data",
+            "there is one value; that is an Input",
+            "the chips are not a field at all but applied filters or keywords to display; that is Tag",
+            "what is being added comes from the platform rather than the keyboard; that is FileUpload"
+          ],
+          "useWhen": [
+            "several values are typed into one field: keywords, recipients, labels, skills",
+            "the vocabulary is the person's own, so whatever they type is a valid value",
+            "the values are short enough to read as chips; a long phrase in a chip is a truncation"
+          ]
+        }
+      },
+      "signatures": {
+        "TagsInput": {
+          "compose": [
+            {
+              "of": "tag",
+              "sheets": [
+                "@skryensya/core/components/tag.css"
+              ],
+              "systemOwned": true
+            }
+          ],
+          "forward": [
+            "id",
+            "aria-*"
+          ],
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "tags-input",
+            "multi-value-entry",
+            "keywords",
+            "recipients",
+            "chips-input",
+            "token-input"
+          ],
+          "mount": "data-sk-tags-input",
+          "options": [
+            "label",
+            "placeholder",
+            "removeLabel",
+            "max",
+            "delimiter",
+            "allowDuplicates",
+            "editable",
+            "name",
+            "disabled",
+            "readOnly",
+            "invalid",
+            "required"
+          ],
+          "react": {
+            "from": "@skryensya/react/tags-input",
+            "name": "TagsInput"
+          },
+          "requires": [
+            "label"
+          ],
+          "slots": {
+            "items": {
+              "accepts": "items",
+              "item": {
+                "options": {},
+                "slots": {
+                  "label": {
+                    "accepts": "text",
+                    "required": true
+                  }
+                }
+              },
+              "prop": "defaultValue"
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "attrsFromItemSlot": {
+                              "data-value": "label"
+                            },
+                            "children": [
+                              {
+                                "also": [
+                                  "sk-tag"
+                                ],
+                                "attrs": {
+                                  "data-removable": ""
+                                },
+                                "children": [
+                                  {
+                                    "also": [
+                                      "sk-tag__label"
+                                    ],
+                                    "element": "span",
+                                    "itemSlot": "label",
+                                    "mount": "data-sk-tags-input-item-text",
+                                    "part": "text"
+                                  },
+                                  {
+                                    "also": [
+                                      "sk-tag__remove",
+                                      "sk-button",
+                                      "sk-interactive"
+                                    ],
+                                    "attrs": {
+                                      "data-icon-only": "",
+                                      "data-size": "sm",
+                                      "data-sk-button": "",
+                                      "data-tone": "neutral",
+                                      "data-variant": "ghost",
+                                      "type": "button"
+                                    },
+                                    "children": [
+                                      {
+                                        "attrs": {
+                                          "data-sk-icon": "close",
+                                          "data-sk-icon-size": "md"
+                                        },
+                                        "element": "span"
+                                      }
+                                    ],
+                                    "element": "button",
+                                    "mount": "data-sk-tags-input-item-remove",
+                                    "options": [
+                                      "removeLabel"
+                                    ],
+                                    "part": "remove"
+                                  }
+                                ],
+                                "element": "span",
+                                "mount": "data-sk-tags-input-item-preview",
+                                "part": "preview"
+                              },
+                              {
+                                "attrs": {
+                                  "hidden": "",
+                                  "type": "text"
+                                },
+                                "element": "input",
+                                "mount": "data-sk-tags-input-item-input",
+                                "part": "itemInput"
+                              }
+                            ],
+                            "element": "span",
+                            "mount": "data-sk-tags-input-item",
+                            "part": "item"
+                          }
+                        ],
+                        "repeat": "items"
+                      }
+                    ],
+                    "element": "span",
+                    "mount": "data-sk-tags-input-items",
+                    "part": "list"
+                  },
+                  {
+                    "attrs": {
+                      "autocomplete": "off",
+                      "type": "text"
+                    },
+                    "element": "input",
+                    "mount": "data-sk-tags-input-input",
+                    "options": [
+                      "label",
+                      "placeholder"
+                    ],
+                    "part": "input"
+                  }
+                ],
+                "element": "div",
+                "mount": "data-sk-tags-input-control",
+                "part": "control"
+              },
+              {
+                "attrs": {
+                  "hidden": "",
+                  "type": "text"
+                },
+                "element": "input",
+                "mount": "data-sk-tags-input-hidden",
+                "part": "hidden"
+              }
+            ],
+            "element": "div",
             "host": true,
             "part": "root"
           }
@@ -43795,7 +46176,7 @@
     "working": "0.0.1"
   },
   "schemaVersion": "2.3",
-  "sourceHash": "53fea38af7380336",
+  "sourceHash": "88e2b71b4d06f74b",
   "vocabulary": {
     "a11y": "When `when` holds, one of `requiresOneOf` must be given: an option, a raw attribute, a filled slot, or a child signature by name.",
     "atLeastOneOf": "At least one member of each group counts: a filled slot, a boolean option set to true, or an option other than its default.",

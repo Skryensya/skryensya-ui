@@ -1,27 +1,96 @@
 ---
-import "@skryensya/core/components/select.css";
+/*
+ * La referencia de tokens, como tablas planas. El gemelo en inglés es `pages/reference.astro`, y su
+ * encabezado explica qué reemplazó esta página (`TokenTable.astro`, 333 líneas: filtros, botón de
+ * copiar compartido y una cuarta columna resuelta en el navegador) y por qué el marcado vive acá en
+ * lugar de en un componente, con el costo que eso tiene: dos locales, dos copias de la misma tabla.
+ */
 import Base from "../../layouts/Base.astro";
-import TokenTable from "../../components/TokenTable.astro";
+import { groupedTokens, tokens } from "../../lib/tokens";
+
+const toneByTier = { primitive: "warning", semantic: "accent", component: "success" } as const;
+const tierLabel = { primitive: "Primitivos", semantic: "Semánticos", component: "Por componente" } as const;
+
+const tiers = (["primitive", "semantic", "component"] as const).map((tier) => ({
+  tier,
+  label: tierLabel[tier],
+  groups: groupedTokens.filter((s) => s.group.tier === tier),
+  count: tokens.filter((t) => t.tier === tier).length,
+}));
+
+/* Ver `pages/reference.astro`: el alto estimado que `content-visibility: auto` necesita por familia. */
+const groupBlockSize = (rows: number) => `${(rows * 2.6 + 6.5).toFixed(1)}rem`;
+
+/*
+ * A value longer than its track ends in an ellipsis (site.css, `.token-group`), so the full string
+ * moves to `title`, and only where it is actually needed: a `title` on all three thousand rows
+ * would be the same information twice in the HTML for the ~10% that get cut. The threshold is the
+ * narrowest the column gets at the document's own width, in characters of the mono face.
+ */
+const fullText = (value: string) => (value.length > 40 ? value : undefined);
 ---
 
 <Base
   title="Referencia de tokens"
   documentLayout="grid"
-  description="Lookup de tokens: nombre, tier, valor declarado y valor resuelto en las dimensiones activas."
+  description="Todos los tokens del sistema: nombre, tier y el valor escrito en CSS."
 >
   <h1>Referencia de tokens</h1>
   <p class="lede">
-    Esta página es lookup. Sirve para encontrar un token, ver su tier y comparar el valor escrito en
-    CSS con el valor que resuelve el navegador en las dimensiones activas.
+    Cada token del sistema, con el tier al que pertenece y el valor que le da su hoja de estilos.
   </p>
 
-  <TokenTable />
+  {
+    tiers.map((t) => (
+      <section class="token-tier">
+        <h2 class="token-tier__title" id={`tier-${t.tier}`}>
+          <span class="sk-badge" data-tone={toneByTier[t.tier]}>{t.tier}</span>
+          {t.label}
+          <span class="token-tier__count">{t.count} tokens</span>
+        </h2>
+
+        {t.groups.map((s) => (
+          <div
+            class="sk-table-scroll token-group"
+            style={`--token-group-block-size: ${groupBlockSize(s.tokens.length)}`}
+          >
+            <table class="sk-table" data-layout="fixed">
+              <caption class="sk-table__caption">
+                <span class="token-group__label">{s.group.label}</span>
+                <span class="token-group__count">{s.tokens.length}</span>
+                <span class="token-group__source mono">{s.group.source}</span>
+              </caption>
+              <thead class="sk-table__head">
+                <tr class="sk-table__row">
+                  <th class="sk-table__header" scope="col">Token</th>
+                  <th class="sk-table__header" scope="col">Tier</th>
+                  <th class="sk-table__header" scope="col">Valor</th>
+                </tr>
+              </thead>
+              <tbody class="sk-table__body">
+                {s.tokens.map((r) => (
+                  <tr class="sk-table__row">
+                    {/* El nombre identifica la fila, así que es su header, no una celda. */}
+                    <th class="sk-table__header mono" scope="row" title={fullText(r.name)}>{r.name}</th>
+                    <td class="sk-table__cell">
+                      <span class="sk-badge" data-tone={toneByTier[r.tier]}>{r.tier}</span>
+                    </td>
+                    <td class="sk-table__cell mono" title={fullText(r.value)}>{r.value}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ))}
+      </section>
+    ))
+  }
 
   <h2>Límites de esta vista</h2>
   <p>
-    La tabla no explica la arquitectura ni reemplaza las guías. Si un token aparece como
-    <em>no resuelto en este contexto</em>, normalmente es un styling hook que solo existe dentro del
-    componente que lo declara.
+    La tabla no explica la arquitectura ni reemplaza las guías: es lookup. Un token de tier 3 aparece
+    acá como cadena de <code>var()</code> y no como literal, porque no existe hasta que un elemento lo
+    declara; la pestaña <strong>Style hooks</strong> de cada componente lo resuelve contra ese elemento.
   </p>
   <p>
     Para entender la dirección de referencias, lee <a href="/es/tiers">Tiers</a>. Para ver qué ejes

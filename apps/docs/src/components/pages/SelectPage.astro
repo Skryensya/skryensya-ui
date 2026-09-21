@@ -56,10 +56,7 @@ const forms = `<div
   ]}
   testFiles={["packages/react/src/components/select.test.tsx", "packages/vanilla/src/components/select.test.ts"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("selectPage.lede")} />
-    <p set:html={t("selectPage.nativeLinkBody")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("selectPage.anatomyBody")} />
     <ComponentPreview
       html={selectAnatomyHtml(t)}
@@ -69,7 +66,11 @@ const forms = `<div
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("selectPage.lede")} />
+    <p set:html={t("selectPage.nativeLinkBody")} />
     <ComponentPreview tree={selectTree(t)} label={t("selectPage.enhancedLabel")} viewport="menu" />
     <p set:html={t("selectPage.densityBody")} />
 

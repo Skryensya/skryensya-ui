@@ -16,6 +16,10 @@ const componentDescriptions = {
     es: "Nombra las partes de algo ya dibujado, con etiquetas en los márgenes y una línea guía a cada pieza.",
     en: "Names the parts of something already drawn, with labels in the margins and a leader line to each piece.",
   },
+  "/components/diagram": {
+    es: "Explica una relación entre varias cosas: nodos en una grilla y aristas que el runtime traza.",
+    en: "Explains how several things relate: nodes in a grid, and edges the runtime draws.",
+  },
   "/components/avatar": {
     es: "Representa la identidad de una persona con foto o iniciales.",
     en: "Represents a person's identity with a photo or initials.",
@@ -240,6 +244,22 @@ const componentDescriptions = {
     es: "Explica procedimientos ordenados con pasos y detalles.",
     en: "Explains ordered procedures with steps and supporting details.",
   },
+  "/components/description-list": {
+    es: "Muestra los datos de un registro como pares de nombre y valor.",
+    en: "Shows one record's details as name-and-value pairs.",
+  },
+  "/components/separator": {
+    es: "Dibuja la regla entre dos cosas, con o sin una palabra al medio.",
+    en: "Draws the rule between two things, with or without a word in the middle.",
+  },
+  "/components/tags-input": {
+    es: "Recoge varios valores escritos en un mismo campo, como chips.",
+    en: "Collects several values typed into one field, as chips.",
+  },
+  "/components/quote": {
+    es: "Muestra palabras de otro, con quién las dijo y en qué obra aparecieron.",
+    en: "Shows somebody else's words, with who said them and the work they appeared in.",
+  },
   "/components/timeline": {
     es: "Muestra eventos que ya ocurrieron en un riel fechado.",
     en: "Shows events that already happened on a dated rail.",
@@ -292,6 +312,10 @@ const componentDescriptions = {
     es: "Destaca una métrica con su etiqueta y contexto.",
     en: "Highlights a metric with its label and context.",
   },
+  "/components/state-button": {
+    es: "Muestra una de varias acciones o estados mediante un único botón de ícono.",
+    en: "Shows one of several actions or states through a single icon button.",
+  },
   "/components/steps": {
     es: "Orienta al usuario dentro de un proceso de varias etapas.",
     en: "Orients people within a multi-stage process.",
@@ -319,6 +343,10 @@ const componentDescriptions = {
   "/components/text": {
     es: "Aplica jerarquía, tono y medida consistente a la prosa.",
     en: "Applies consistent hierarchy, tone, and measure to prose.",
+  },
+  "/components/typography": {
+    es: "Combina texto, encabezados, enlaces, énfasis, código y resultados con semántica explícita.",
+    en: "Combines text, headings, links, emphasis, code, and output with explicit semantics.",
   },
   "/components/time-field": {
     es: "Captura horas por segmentos según el formato local.",

@@ -37,9 +37,7 @@ const hrefs = { overview: "#", pricing: "#", integrations: "#", teams: "#", ente
   ]}
   testFiles={["packages/vanilla/src/components/megamenu.test.ts", "packages/react/src/components/megamenu.test.tsx"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("megamenuPage.description")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("megamenuPage.anatomyBody")} />
     <ComponentPreview
       html={megamenuAnatomyHtml(t)}
@@ -49,7 +47,10 @@ const hrefs = { overview: "#", pricing: "#", integrations: "#", teams: "#", ente
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("megamenuPage.description")} />
     <ComponentPreview tree={megamenuTree(t, hrefs)} js={js} label="Megamenu" viewport="overlay" flush />
 
     <h3>{t("component.contractNotesTitle")}</h3>

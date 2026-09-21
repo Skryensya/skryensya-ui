@@ -23,9 +23,7 @@ const styles = `@import "@skryensya/core/patterns/state-layer.css";
   contractId="number-field"
   testFiles={["packages/vanilla/src/components/number-field.test.ts", "packages/react/src/components/number-field.test.tsx"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("numberFieldPage.description")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("numberFieldPage.anatomyBody")} />
     <ComponentPreview
       tree={numberFieldAnatomyTree(t)}
@@ -35,7 +33,10 @@ const styles = `@import "@skryensya/core/patterns/state-layer.css";
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("numberFieldPage.description")} />
     <ComponentPreview tree={numberFieldTree(t)} label="NumberField" viewport="auto" />
 
     <h3>{t("component.contractNotesTitle")}</h3>

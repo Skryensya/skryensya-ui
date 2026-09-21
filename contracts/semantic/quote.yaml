@@ -1,0 +1,15 @@
+# The structure lives in packages/core/src/quote.ts. Here, only why it is chosen.
+
+Quote:
+  useWhen:
+    - "words that are somebody else's are shown as theirs: a quotation, a testimonial, an excerpt"
+    - "a passage is lifted out of the text to be read on its own; that is variant pull"
+    - "there is a name to put beside the words, a work to name, or both"
+  avoidWhen:
+    - "the text is the page's own voice; a quotation mark around it claims an author it does not have"
+    - "it is a short quoted phrase inside a sentence; that is the native <q>, inline, not a block"
+    - "it is a highlighted aside the page is making itself, with a status; that is a Callout"
+    - "it is code, a command or output; that is Code or a CodePreview"
+  alternatives:
+    - Callout
+    - Text

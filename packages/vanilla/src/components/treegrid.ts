@@ -12,7 +12,7 @@ import {
 } from "@skryensya/core/treegrid";
 import { parseColumnWeights, resolveWeightedColumnWidths } from "@skryensya/core/splitter";
 import { createConnectMount } from "../runtime/svelte-hydrate.js";
-import { attachColumnResizer, watchColumnLayout } from "../splitter.js";
+import { attachColumnResizer, createColumnWidths, watchColumnLayout } from "../splitter.svelte.js";
 
 const selector = {
   root: "[data-sk-treegrid]",
@@ -158,12 +158,15 @@ function readColumnWeights(root: HTMLElement, colCount: number): readonly number
  * supplies what makes THIS a treegrid, where the `<col>` widths live, and how each resizer names
  * itself off `resizeLabel` plus its own column header's text.
  */
-function connectColumnResize(root: HTMLElement, cols: readonly HTMLTableColElement[]): () => void {
-  if (!root.hasAttribute("data-resizable-columns") || cols.length < 2) return () => {};
+function connectColumnResize(
+  root: HTMLElement,
+  cols: readonly HTMLTableColElement[],
+  columnWidths: { getWidths: () => readonly number[]; setWidths: (next: readonly number[]) => void } | null,
+): () => void {
+  if (!root.hasAttribute("data-resizable-columns") || cols.length < 2 || !columnWidths) return () => {};
   const headerCells = Array.from(root.querySelectorAll<HTMLTableCellElement>(":scope > thead > tr > th"));
   const resizeLabel = root.getAttribute("data-resize-label") ?? "";
-  const widths = () => cols.map((col) => Number.parseFloat(col.style.width) || 0);
-  const setWidths = (next: readonly number[]) => next.forEach((w, i) => (cols[i]!.style.width = `${w}px`));
+  const { getWidths: widths, setWidths } = columnWidths;
 
   const cleanups: (() => void)[] = [];
 
@@ -201,8 +204,12 @@ function connectColumnResize(root: HTMLElement, cols: readonly HTMLTableColEleme
  * already succeeded, otherwise it waits for the first real, nonzero width and reseeds every `<col>`
  * plus the table's own width from it, exactly once.
  */
-function watchTreegridLayout(root: HTMLElement, cols: readonly HTMLTableColElement[]): () => void {
-  if (!root.hasAttribute("data-resizable-columns") || cols.length < 1) return () => {};
+function watchTreegridLayout(
+  root: HTMLElement,
+  cols: readonly HTMLTableColElement[],
+  columnWidths: { getWidths: () => readonly number[]; setWidths: (next: readonly number[]) => void } | null,
+): () => void {
+  if (!root.hasAttribute("data-resizable-columns") || cols.length < 1 || !columnWidths) return () => {};
   const measured = root.parentElement instanceof HTMLElement ? root.parentElement : root;
   return watchColumnLayout({
     measured,
@@ -210,7 +217,7 @@ function watchTreegridLayout(root: HTMLElement, cols: readonly HTMLTableColEleme
     min: MIN_COLUMN_WIDTH,
     weights: readColumnWeights(root, cols.length),
     apply: (widths) => {
-      cols.forEach((col, i) => (col.style.width = `${widths[i]}px`));
+      columnWidths.setWidths(widths);
       root.style.width = `${widths.reduce((sum, width) => sum + width, 0)}px`;
     },
   });
@@ -220,8 +227,22 @@ function connect(root: HTMLElement): () => void {
   const rows = readRows(root);
   ensureDisclosureButtons(rows);
   const cols = applyColumnGroup(root, rows);
-  const cleanupLayoutWatch = watchTreegridLayout(root, cols);
-  const cleanupColumnResize = connectColumnResize(root, cols);
+  /*
+   * ONE shared `createColumnWidths` (`../splitter.svelte.ts`'s own doc) for both the resize handles
+   * AND the re-seed below: they must write through the SAME `$state` array, or a re-seed done via
+   * one and read via the other goes right back to being invisible to `useMachine`'s cached props.
+   * `null` when not resizable at all: `applyColumnGroup` already left the `<col>`s at their plain
+   * percentage split then, and nothing here should touch that.
+   */
+  const columnWidths =
+    root.hasAttribute("data-resizable-columns") && cols.length >= 1
+      ? createColumnWidths(
+          cols,
+          cols.map((col) => Number.parseFloat(col.style.width) || 0),
+        )
+      : null;
+  const cleanupLayoutWatch = watchTreegridLayout(root, cols, columnWidths);
+  const cleanupColumnResize = connectColumnResize(root, cols, columnWidths);
   /** Only visible rows are addressable. The same index space `resolveTreegridKey` expects. */
   let visible: RowEntry[] = [];
 

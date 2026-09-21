@@ -32,9 +32,7 @@ const styles = `@import "@skryensya/core/components/breadcrumb.css";`;
   contractId="breadcrumb"
   testFiles={["packages/react/src/components/breadcrumb.test.tsx", "packages/vanilla/src/components/breadcrumb.test.ts"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("breadcrumb.description")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("breadcrumb.anatomyBody")} />
     <ComponentPreview
       tree={annotationPluralTree(t)}
@@ -44,7 +42,10 @@ const styles = `@import "@skryensya/core/components/breadcrumb.css";`;
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("breadcrumb.description")} />
     <h3>{t("breadcrumb.examplesTitle")}</h3>
 
     <h4>{t("breadcrumb.twoTitle")}</h4>

@@ -1,0 +1,90 @@
+---
+import "@skryensya/core/components/state-button.css";
+import "@skryensya/core/components/button.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import {
+  stateButtonBasicTree,
+  stateButtonCopyTree,
+  stateButtonDemoScript,
+  stateButtonThemeToggleTree,
+} from "../../demos/state-button";
+import { getLocale, useTranslations } from "../../i18n";
+
+const t = useTranslations(getLocale(Astro.url));
+const install = `pnpm add @skryensya/core @skryensya/react`;
+const styles = `@import "@skryensya/core/components/state-button.css";`;
+---
+
+<ComponentPageShell
+  title="StateButton"
+  description={t("stateButtonPage.description")}
+  contractId="state-button"
+  testFiles={["packages/react/src/components/state-button.test.tsx"]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("stateButtonPage.lede")} />
+
+    <h3>{t("stateButtonPage.anatomyTitle")}</h3>
+    <p set:html={t("stateButtonPage.anatomyBody")} />
+    <ComponentPreview
+      tree={stateButtonBasicTree(t)}
+      previewScript={stateButtonDemoScript}
+      label="StateButton with three states"
+    />
+
+    <h3>{t("stateButtonPage.behaviorTitle")}</h3>
+    <p set:html={t("stateButtonPage.behaviorBody")} />
+
+    <h3>{t("stateButtonPage.variantTitle")}</h3>
+    <p set:html={t("stateButtonPage.variantBody")} />
+    <ComponentPreview
+      tree={stateButtonThemeToggleTree(t)}
+      previewScript={stateButtonDemoScript}
+      label="StateButton as theme toggle"
+    />
+
+    <h3>{t("stateButtonPage.useCaseThemeTitle")}</h3>
+    <p set:html={t("stateButtonPage.useCaseThemeBody")} />
+
+    <h3>{t("stateButtonPage.useCaseViewTitle")}</h3>
+    <p set:html={t("stateButtonPage.useCaseViewBody")} />
+
+    <h3>{t("stateButtonPage.useCaseCopyTitle")}</h3>
+    <p set:html={t("stateButtonPage.useCaseCopyBody")} />
+    <ComponentPreview
+      tree={stateButtonCopyTree(t)}
+      previewScript={stateButtonDemoScript}
+      label="StateButton for copy status"
+    />
+
+    <h3>{t("stateButtonPage.whenTitle")}</h3>
+    <ul>
+      <li set:html={t("stateButtonPage.whenItem1")} />
+      <li set:html={t("stateButtonPage.whenItem2")} />
+      <li set:html={t("stateButtonPage.whenItem3")} />
+    </ul>
+
+    <h3>{t("stateButtonPage.avoidTitle")}</h3>
+    <ul>
+      <li set:html={t("stateButtonPage.avoidItem1")} />
+      <li set:html={t("stateButtonPage.avoidItem2")} />
+      <li set:html={t("stateButtonPage.avoidItem3")} />
+      <li set:html={t("stateButtonPage.avoidItem4")} />
+    </ul>
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("stateButtonPage.contractItem1")} />
+      <li set:html={t("stateButtonPage.contractItem2")} />
+      <li set:html={t("stateButtonPage.contractItem3")} />
+      <li set:html={t("stateButtonPage.contractItem4")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+    <CodeBlock code={styles} label="CSS" />
+  </Fragment>
+</ComponentPageShell>

@@ -26,7 +26,7 @@ Al revisar un patrón:
 |---|---|---|---|---|
 | Alert | alert | ✅ Sí | `core/content.ts` (`contentContract`), `react/content.tsx` (`Toast`), `vanilla/toast.ts` | Revisado ✅ (1 gap corregido, ver notas) |
 | Alert Dialog | alertdialog | ✅ Sí | `core/dialog.ts` (`dialogContract`, opción `alert`), `react/dialog.tsx` (`Dialog` con `alert` prop) | Revisado ✅ (1 gap nuevo implementado, ver notas) |
-| Accordion | accordion | ✅ Sí | `core/accordion.ts` (Zag `@zag-js/collapsible` por ítem, no `@zag-js/accordion`) + `details.ts` (nativo, casos simples) | Revisado ✅ (1 gap implementado, 1 gap de documentación corregido, ver notas) |
+| Accordion | accordion | ✅ Sí | `core/accordion.ts` (Zag `@zag-js/collapsible` por ítem, no `@zag-js/accordion`) + las signatures `Details*` del mismo contrato (nativo, casos simples) | Revisado ✅ (1 gap implementado, 1 gap de documentación corregido, ver notas) |
 | Breadcrumb | breadcrumb | ✅ Sí | `core/breadcrumb.ts` (`aria-current="page"`) | Revisado ✅ (1 gap implementado. Nuevo primitivo de compilador, ver notas) |
 | Button | button, button_idl | ✅ Sí | `core/button.ts` | Revisado ✅ (sin gaps, ver notas) |
 | Carousel | carousel-1-prev-next, carousel-2-tablist | ✅ Sí | `core/carousel.ts` (Zag `@zag-js/carousel`) | Revisado ✅ (2 gaps corregidos. WCAG 2.2.2 + nombre accesible, ver notas) |
@@ -34,7 +34,7 @@ Al revisar un patrón:
 | Combobox | combobox-autocomplete-*, combobox-select-only, grid-combo | ✅ Sí | `core/combobox.ts`, `core/select.ts` (Zag `@zag-js/combobox`, `@zag-js/select`) | Revisado ✅ (1 gap corregido: `aria-selected` en single-select, ver notas; Select queda para otra pasada) |
 | Combobox (datepicker) | combobox-datepicker | ✅ Sí | `core/date-picker.ts` + `core/calendar.ts` (Zag `@zag-js/date-picker`) | Revisado ✅ (1 gap i18n corregido en ambas capas, ver notas; 1 hallazgo arquitectónico anotado, no tocado a pedido del usuario) |
 | Dialog (Modal) | dialog, datepicker-dialog | ✅ Sí | `core/dialog.ts` (nativo `<dialog>` + `showModal()`) | Revisado ✅ (sin gaps nuevos. El gap real ya se corrigió durante Alert Dialog, ver notas) |
-| Disclosure | disclosure-card, disclosure-faq, disclosure-image-description | ✅ Sí | `core/details.ts` (nativo `<details>`/`<summary>`) | Revisado ✅ (sin gaps, ver notas) |
+| Disclosure | disclosure-card, disclosure-faq, disclosure-image-description | ✅ Sí | `core/accordion.ts`, signatures `Details*` (nativo `<details>`/`<summary>`) | Revisado ✅ (sin gaps, ver notas) |
 | Disclosure (navigation) | disclosure-navigation, disclosure-navigation-hybrid | ✅ Sí | `core/nav-list.ts` (`NavListGroup` con `collapsible`. Nuevo) | Revisado ✅ (no cubierto → implementado, ver notas) |
 | Feed | feed | ✅ Sí | `core/feed.ts` (`Feed`/`FeedArticle`, sin máquina. Display puro, WAI no exige teclado para este patrón) | Revisado ✅ (no cubierto → implementado, ver notas) |
 | Grid (data grid) | data-grids | ✅ Sí | `core/data-grid.ts` (`DataGrid`, sin máquina Zag. Igual arquitectura que `Treegrid`, sin la dimensión de jerarquía) | Revisado ✅ (no cubierto → implementado, ver notas) |
@@ -472,7 +472,7 @@ El usuario pidió agregarlo. Alcance de v1 acordado explícitamente antes de esc
 
 **Contra el patrón WAI** (`disclosure-faq`: botón con `aria-controls`/`aria-expanded`, Espacio/Enter alternan; el ejemplo NO menciona `<details>`/`<summary>` como alternativa, se queda en la versión ARIA a mano):
 
-- ✅ **`core/details.ts` es `<details>`/`<summary>` nativo**. El navegador ya mapea el atributo `open` al estado expandido/colapsado de forma accesible y `<summary>` ya activa con Espacio/Enter/click sin una sola línea de JS ni `aria-expanded`/`aria-controls` escritos a mano. Que el ejemplo específico de WAI no lo mencione no lo descarta: es la alternativa nativa reconocida para exactamente este patrón (mapeo HTML-AAM), y la misma filosofía "preferir la plataforma" ya confirmada repetidas veces en esta auditoría (`Switch`, `RadioGroup`, `Button`).
+- ✅ **Las signatures `Details*` de `core/accordion.ts` son `<details>`/`<summary>` nativo**. El navegador ya mapea el atributo `open` al estado expandido/colapsado de forma accesible y `<summary>` ya activa con Espacio/Enter/click sin una sola línea de JS ni `aria-expanded`/`aria-controls` escritos a mano. Que el ejemplo específico de WAI no lo mencione no lo descarta: es la alternativa nativa reconocida para exactamente este patrón (mapeo HTML-AAM), y la misma filosofía "preferir la plataforma" ya confirmada repetidas veces en esta auditoría (`Switch`, `RadioGroup`, `Button`).
 - ✅ **Único ARIA presente, `aria-hidden="true"` en el glyph decorativo del chevron**. Correcto, no forma parte del nombre accesible del trigger.
 
 **Veredicto:** sin gaps. Nativo, cero superficie ARIA que mantener sincronizada a mano.

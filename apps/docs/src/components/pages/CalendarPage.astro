@@ -22,9 +22,7 @@ const styles = `@import "@skryensya/core/components/calendar.css";`;
   contractId="calendar"
   testFiles={["packages/vanilla/src/components/calendar.svelte.test.ts"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("calendar.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("calendar.anatomyBody")} />
     <ComponentPreview
       tree={calendarAnatomyTree(t)}
@@ -34,7 +32,10 @@ const styles = `@import "@skryensya/core/components/calendar.css";`;
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("calendar.lede")} />
     <p set:html={t("calendar.anatomyMonthBody")} />
     <ComponentPreview
       html={calendarMonthAnatomyHtml(t)}

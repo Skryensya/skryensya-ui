@@ -5,6 +5,8 @@
    component a `tests` prop gets the real list styling for free, with nothing to remember to import. */
 import "@skryensya/core/components/list.css";
 import { getLocale, useTranslations } from "../i18n";
+import { iconMarkup } from "../icons";
+import { repositoryFileUrl } from "../lib/contract-source";
 import { testStatus } from "../lib/test-results";
 import { suite, workspaceRoot, type SuiteRow } from "../lib/test-suite";
 
@@ -45,6 +47,9 @@ interface Props {
 const { groups, files, hasReference = true } = Astro.props;
 const t = useTranslations(getLocale(Astro.url));
 
+/** Same trailing mark every other link that leaves the tab carries (SiteFooter, Base's report link). */
+const launchIcon = iconMarkup("external-link", { size: "sm" });
+
 if (!groups && !files) throw new Error("TestCoverage needs either `groups` or `files`.");
 
 /*
@@ -81,9 +86,26 @@ function statusDisplay(file: string, name: string) {
 {
   rendered.map((group) => (
     <>
+      {/*
+        * THE PATH IS THE LINK, rather than a "view source" button beside it. The row already printed
+        * the file's workspace path, which is the one thing a reader needs to go find it; making that
+        * same string the anchor adds a destination without adding a control, and it is the spelling
+        * GitHub wants anyway (`repositoryFileUrl` only prefixes the repo and `blob/main`).
+        *
+        * The rows under it are this file's real pass/fail, read from `test-results.json`; the link is
+        * what lets a reader go see WHY, which is the one question this tab could not answer before.
+        */}
       <p class="docs-tests__file">
         <span data-sk-icon="file" data-sk-icon-size="sm" aria-hidden="true"></span>
-        <span class="mono">{group.file}</span>
+        <a
+          class="sk-link sk-interactive docs-tests__file-link mono"
+          href={repositoryFileUrl(group.file)}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {group.file}
+          <Fragment set:html={launchIcon} />
+        </a>
       </p>
       <ul class="sk-list" aria-label={group.file}>
         {group.rows.map(({ title, description }) => {
@@ -124,6 +146,25 @@ function statusDisplay(file: string, name: string) {
 
   .docs-tests__file [data-sk-icon] {
     flex: none;
+  }
+
+  /*
+   * `sk-link` + `sk-interactive` do the paint: the kit's own text link, which is primary-coloured
+   * with a permanent underline and takes its hover/press/focus from the state layer like every other
+   * control. Nothing about the colour is restated here; what IS local is the row.
+   *
+   * The trailing launch icon needs the anchor to be a row of its own, the same `inline-flex` the
+   * footer's external links use: the label and the mark are two children that have to sit side by
+   * side while the anchor stays inline-level in the line it shares with the file glyph.
+   *
+   * `min-inline-size: 0` because a workspace path is one long unbroken token: without it the anchor
+   * refuses to shrink below its content and pushes the caption line out of a narrow panel.
+   */
+  .docs-tests__file-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-inline-xs);
+    min-inline-size: 0;
   }
 
   .sk-list__leading[data-tone="passed"] {

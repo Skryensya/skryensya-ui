@@ -1,0 +1,84 @@
+---
+import "@skryensya/core/components/quote.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
+/* The testimonial sits on a Box, and a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/patterns/box.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import {
+  quoteAnatomyTree,
+  quoteBareTree,
+  quotePullTree,
+  quoteTestimonialTree,
+  quoteTree,
+} from "../../demos/quote";
+import { annotationDemoCss } from "../../demos/annotation";
+import { getLocale, useTranslations } from "../../i18n";
+
+const t = useTranslations(getLocale(Astro.url));
+const install = `pnpm add @skryensya/core @skryensya/react`;
+const styles = `@import "@skryensya/core/components/quote.css";`;
+---
+
+<ComponentPageShell
+  title="Quote"
+  description={t("quotePage.description")}
+  contractId="quote"
+  testFiles={["packages/react/src/components/quote.test.tsx"]}
+>
+  <Fragment slot="anatomy">
+    <p set:html={t("quotePage.anatomyBody")} />
+    <ComponentPreview
+      tree={quoteAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("quotePage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+  </Fragment>
+
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("quotePage.lede")} />
+    <ComponentPreview tree={quoteTree(t)} label="Quote" />
+
+    <h3>{t("quotePage.citeTitle")}</h3>
+    <p set:html={t("quotePage.citeBody")} />
+
+    <h3>{t("quotePage.bareTitle")}</h3>
+    <p set:html={t("quotePage.bareBody")} />
+    <ComponentPreview tree={quoteBareTree(t)} label={t("quotePage.barePreviewLabel")} />
+
+    <h3>{t("quotePage.pullTitle")}</h3>
+    <p set:html={t("quotePage.pullBody")} />
+    <ComponentPreview tree={quotePullTree(t)} label={t("quotePage.pullPreviewLabel")} />
+
+    <h3>{t("quotePage.testimonialTitle")}</h3>
+    <p set:html={t("quotePage.testimonialBody")} />
+    <ComponentPreview tree={quoteTestimonialTree(t)} label={t("quotePage.testimonialPreviewLabel")} />
+
+    <h3>{t("quotePage.whenTitle")}</h3>
+    <ul>
+      <li set:html={t("quotePage.whenItem1")} />
+      <li set:html={t("quotePage.whenItem2")} />
+      <li set:html={t("quotePage.whenItem3")} />
+      <li set:html={t("quotePage.whenItem4")} />
+    </ul>
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("quotePage.contractItem1")} />
+      <li set:html={t("quotePage.contractItem2")} />
+      <li set:html={t("quotePage.contractItem3")} />
+      <li set:html={t("quotePage.contractItem4")} />
+      <li set:html={t("quotePage.contractItem5")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+    <CodeBlock code={styles} label="CSS" />
+  </Fragment>
+</ComponentPageShell>

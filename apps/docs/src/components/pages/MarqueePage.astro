@@ -37,9 +37,7 @@ const react = emitReactSource(marqueeAutoplayTree(), {
   contractId="marquee"
   testFiles={["packages/react/src/components/marquee.test.tsx", "packages/vanilla/src/components/marquee.test.ts"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("marquee.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("marquee.anatomyBody")} />
     <ComponentPreview
       tree={marqueeAnatomyTree(t)}
@@ -49,7 +47,10 @@ const react = emitReactSource(marqueeAutoplayTree(), {
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("marquee.lede")} />
     <h3>{t("marquee.whenTitle")}</h3>
     <p set:html={t("marquee.whenBody")} />
 

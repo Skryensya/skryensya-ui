@@ -85,15 +85,21 @@
   /*
    * FOUC: prefer React panels before the enhancer mounts when the document already carries the
    * shared preference (docs FOUC script / prior navigation).
+   *
+   * KEYED ON HAVING A REACT PANEL, not on having a binding SWITCH, which is what it used to ask.
+   * The two meant the same thing while every preview that shipped both halves also shipped the
+   * control for choosing between them; a consumer whose switch lives elsewhere (the docs moved
+   * theirs to the page masthead) would otherwise get no FOUC protection at all. A preview with one
+   * binding has no react panel, matches nothing here, and is left alone exactly as before.
    */
   :root[data-sk-component-preview-pref="react"]
-    .sk-component-preview:has([data-sk-component-preview-binding-tabs])
+    .sk-component-preview:has(> [data-sk-component-preview-binding="react"])
     > [data-sk-component-preview-binding="vanilla"] {
     display: none !important;
   }
 
   :root[data-sk-component-preview-pref="react"]
-    .sk-component-preview:has([data-sk-component-preview-binding-tabs])
+    .sk-component-preview:has(> [data-sk-component-preview-binding="react"])
     > [data-sk-component-preview-binding="react"]:not(.sk-component-preview__react-stage) {
     display: block !important;
   }
@@ -106,7 +112,7 @@
    * React binding sat 12px lower than the Vanilla one it is supposed to match exactly.
    */
   :root[data-sk-component-preview-pref="react"]
-    .sk-component-preview:has([data-sk-component-preview-binding-tabs])
+    .sk-component-preview:has(> [data-sk-component-preview-binding="react"])
     > .sk-component-preview__react-stage[data-sk-component-preview-binding="react"] {
     display: contents !important;
   }
@@ -122,7 +128,26 @@
     min-inline-size: 0;
   }
 
+  /*
+   * THE HEADER OUTRANKS THE STAGE'S OVERLAYS, and it takes a z-index to do it because of where the
+   * screen toggle's tooltip actually lives.
+   *
+   * `.sk-segmented` sets `isolation: isolate` (segmented.css) so its sliding indicator can sit under
+   * its options without those local z-indices escaping. That is right for the widget and it TRAPS
+   * anything anchored from inside it: the tooltip on each screen-preset option is
+   * `position: fixed; z-index: var(--z-popover)`, and clamped inside the segmented's own context
+   * that 200 counts for nothing outside it. The segmented then competes here at `z-index: auto`,
+   * which paints BELOW `__loading` (1) and `__resizer` (2) in this card. So while a preview was
+   * loading, hovering a screen preset drew the tooltip behind the spinner.
+   *
+   * Raising the header rather than the segmented or the tooltip: the header is the card's chrome
+   * band, everything in it is chrome, and all of it should sit over the stage area. `3` is above
+   * both overlays and means nothing outside this card  -  `.sk-component-preview` is
+   * `isolation: isolate` (see its own note), so this number never reaches the page.
+   */
   .sk-component-preview__header {
+    position: relative;
+    z-index: 3;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;

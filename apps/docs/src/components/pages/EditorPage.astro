@@ -36,9 +36,7 @@ mountEditor();`;
   badge={t("editorPage.betaBadge")}
   contractId="editor"
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("editorPage.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("editorPage.anatomyBody")} />
     <ComponentPreview
       tree={editorAnatomyTree(t)}
@@ -49,7 +47,10 @@ mountEditor();`;
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("editorPage.lede")} />
     <ComponentPreview tree={editorTree(t)} js={js} label="Editor" viewport="auto" />
 
     <h3>{t("editorPage.formatsTitle")}</h3>

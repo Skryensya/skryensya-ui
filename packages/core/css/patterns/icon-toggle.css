@@ -2,7 +2,7 @@
  * PATTERN, ICON TOGGLE
  *
  * An icon-only button whose faces occupy one cell and morph between states. Icon State Button
- * (`components/icon-state-button.css`) is the one signature built on it; the stack and the
+ * (`components/state-button.css`) is the one signature built on it; the stack and the
  * cross-fade live here, not there.
  *
  * Compose onto `.sk-button` (ghost + icon-only), the way `sk-interactive` composes with

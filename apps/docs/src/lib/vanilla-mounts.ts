@@ -1,3 +1,5 @@
+import { canonicalPath } from "../i18n";
+
 export type VanillaMountDocumentation = {
   /** Human-facing enhanced contract. */
   name: string;
@@ -129,3 +131,17 @@ export const vanillaMounts = {
     selector: "[data-sk-vaul]",
   },
 } satisfies Record<string, VanillaMountDocumentation>;
+
+/**
+ * The mount seam for a page, from either locale's URL.
+ *
+ * The catalogue is keyed by the canonical (English) route because a mount seam is a package fact,
+ * not a translated one; `canonicalPath` is the same normaliser `component-icons.ts` already uses to
+ * look a page up from whichever URL the reader is on.
+ *
+ * `undefined` is a real answer and the common one: 18 routes own an enhancer, and the rest are
+ * native controls or CSS-only modules whose Vanilla story is a stylesheet import and nothing else.
+ */
+export function vanillaMountFor(pathname: string): VanillaMountDocumentation | undefined {
+  return (vanillaMounts as Record<string, VanillaMountDocumentation>)[canonicalPath(pathname)];
+}

@@ -32,9 +32,7 @@ const t = useTranslations(getLocale(Astro.url));
     },
   ]}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("box.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("box.anatomyBody")} />
     <ComponentPreview
       tree={boxAnatomyTree(t)}
@@ -44,7 +42,10 @@ const t = useTranslations(getLocale(Astro.url));
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("box.lede")} />
     <h3>{t("box.whenTitle")}</h3>
     <p set:html={t("box.whenBody1")} />
     <p set:html={t("box.whenBody2")} />

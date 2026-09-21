@@ -1,5 +1,5 @@
 /*
- * ICON TOGGLE, the stacked-face morph that Icon State Button (`icon-state-button.ts`, decision 33)
+ * ICON TOGGLE, the stacked-face morph that Icon State Button (`state-button.ts`, decision 33)
  * composes.
  *
  * An icon-only button whose faces occupy one cell and cross-fade. The PATTERN owns the stack
@@ -13,7 +13,7 @@
  * on it, and whatever a consumer composes on top.
  *
  * Flat class, composed the way `sk-interactive` composes with `sk-button`:
- * `class="sk-button sk-interactive sk-icon-toggle sk-icon-state-button"`.
+ * `class="sk-button sk-interactive sk-icon-toggle sk-state-button"`.
  */
 
 export const iconToggleParts = {

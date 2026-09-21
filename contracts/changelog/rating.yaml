@@ -3,7 +3,7 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribe la entrada y pega el
 # hash nuevo.
-surface: "da8f4a0f6e4c17f2"
+surface: "de133eee0c66843d"
 entries:
   - date: 2026-09-20
     kind: feature
@@ -23,3 +23,45 @@ entries:
         (4.3 of 5 stops at 86%). The symbol is a CSS mask behind <code>--sk-rating-symbol</code>,
         not an icon vocabulary role, so swapping it for a heart is one declaration.
         <code>Meter</code> hands over the rating intent.
+
+  - date: 2026-09-20
+    kind: bugfix
+    es:
+      title: la tira dibujaba un simbolo de mas
+      body: >-
+        <code>RatingDisplay</code> repetia la mascara cada simbolo y no cada casilla, asi que en una
+        tira de cinco entraban 5,8: una escala de 5 mostraba SEIS estrellas, la ultima cortada.
+        Ahora la mascara mide la casilla completa y hay exactamente <code>max</code> simbolos. Con
+        eso a la vista, el corte de color tambien estaba mal: era un porcentaje de la tira, que
+        incluye los espacios, asi que 3,8 y 4,3 dibujaban lo mismo. Lo calcula la hoja de estilo
+        desde <code>--sk-rating-value</code>, en simbolos: el emisor ya no escribe
+        <code>--sk-rating-fill</code> y quien lo lea desde afuera tiene que leer el valor.
+    en:
+      title: the strip drew one symbol too many
+      body: >-
+        <code>RatingDisplay</code> repeated its mask every SYMBOL instead of every tile, so 5.8 of
+        them fit a five-symbol strip: a scale of 5 painted SIX stars, the last one clipped. The mask
+        is now a whole tile wide, so a strip carries exactly <code>max</code> symbols. With that
+        visible, the colour stop was wrong too: a percentage of the strip counts the gaps, so 3.8
+        and 4.3 drew the same picture. The stylesheet now computes it from
+        <code>--sk-rating-value</code> in symbol space, and neither binding writes
+        <code>--sk-rating-fill</code> any more.
+
+  - date: 2026-09-20
+    kind: breaking
+    es:
+      title: cada paso del input es el boton de icono del kit
+      body: >-
+        Los pasos de <code>Rating</code> llevan <code>sk-button</code> con
+        <code>data-icon-only</code>, <code>data-size="sm"</code> y <code>data-variant="ghost"</code>:
+        la cara cuadrada, el radio y la capa de estado salen de <code>button.css</code>, que ahora
+        hay que importar junto a <code>rating.css</code>. Antes el paso era una caja de 20px sin
+        radio y la capa de estado pintaba un cuadrado gris del tamano de la estrella.
+    en:
+      title: every step of the input is the kit's icon button
+      body: >-
+        <code>Rating</code>'s steps now carry <code>sk-button</code> with
+        <code>data-icon-only</code>, <code>data-size="sm"</code> and <code>data-variant="ghost"</code>:
+        the square face, its radius and the state layer all come from <code>button.css</code>, which
+        a consumer now imports alongside <code>rating.css</code>. Before, a step was a 20px box with
+        no radius and the state layer painted a grey square the size of the star.

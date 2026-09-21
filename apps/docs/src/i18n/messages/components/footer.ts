@@ -17,7 +17,7 @@ export const footerMessages = {
     "footer.description": "El cierre de la página: una banda con superficie propia, un borde arriba y espacio para respirar. Anatomía libre.",
     "footer.betaBadge": "Beta",
     "footer.lede":
-      "Footer sólo posee <code>padding</code>, <code>surface</code> y <code>divider</code>, con los valores por defecto pensados para cerrar la página en vez de desaparecer en ella: <code>surface: \"sunken\"</code>, <code>divider</code> prendido y <code>padding: \"lg\"</code>. Las columnas, el aviso legal y el crédito siguen siendo composición libre: <a href=\"/componentes/grid\">Grid</a>, <a href=\"/componentes/nav-list\">NavList</a> y <a href=\"/componentes/typography\">Text</a> adentro.",
+      "Footer sólo posee <code>padding</code>, <code>surface</code> y <code>divider</code>, con los valores por defecto pensados para cerrar la página en vez de desaparecer en ella: <code>surface: \"sunken\"</code>, <code>divider</code> prendido y <code>padding: \"lg\"</code>. Las columnas, el aviso legal y el crédito siguen siendo composición libre: <a href=\"/componentes/grid\">Grid</a>, <a href=\"/componentes/nav-list\">NavList</a> y <a href=\"/es/componentes/tipografia\">Text</a> adentro.",
     "footer.whenTitle": "Cuándo usarlo",
     "footer.whenBody1":
       "Usa Footer para el cierre de la página: la banda final que dice «la página termina aquí», con navegación secundaria, aviso legal o una línea de crédito. El host es un <code>&lt;footer&gt;</code>, y a nivel de documento ese elemento YA es el landmark <code>contentinfo</code> sin escribir <code>role</code>.",

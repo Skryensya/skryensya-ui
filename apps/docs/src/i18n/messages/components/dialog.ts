@@ -50,6 +50,8 @@ export const dialogMessages = {
       'Importa <a class="sk-link sk-interactive" href="/es/scroll-lock">scroll lock</a> si quieres congelar la página detrás sin CLS al desaparecer la scrollbar.',
     "dialog.contractItem7":
       'Con <a class="sk-link sk-interactive" href="/es/transparencias"><code>prefers-reduced-transparency</code></a>, el backdrop deja la mezcla translúcida y pasa a un fondo opaco; la modalidad no cambia.',
+    "dialog.contractItem8":
+      '<code>footerAlign</code> (<code>start</code> | <code>end</code>, React: <code>footerAlign</code>; por defecto <code>end</code>) alinea la fila de acciones del footer al inicio o al final del eje inline. El orden de los botones en el DOM sigue definiendo cuál queda a la izquierda de cuál.',
     "dialog.vaulTitle": "Opción: Dialog Vaul",
     "dialog.vaulIntro":
       "Cuando el contenido pide una superficie desde el borde en móvil, el mismo <code>&lt;dialog&gt;</code> puede optar en <strong>Dialog Vaul</strong>: añade slide, light-dismiss y drag-to-dismiss. La modalidad (foco, Escape, inert) sigue siendo de <code>showModal()</code>.",
@@ -129,6 +131,8 @@ export const dialogMessages = {
       'Import <a class="sk-link sk-interactive" href="/scroll-lock">scroll lock</a> if you want to freeze the page behind it with no CLS when the scrollbar disappears.',
     "dialog.contractItem7":
       'With <a class="sk-link sk-interactive" href="/transparency"><code>prefers-reduced-transparency</code></a>, the backdrop drops the translucent blend for an opaque one; modality does not change.',
+    "dialog.contractItem8":
+      '<code>footerAlign</code> (<code>start</code> | <code>end</code>, React: <code>footerAlign</code>; default <code>end</code>) aligns the footer action row to the inline-start or inline-end. DOM order still controls which button sits left of which.',
     "dialog.vaulTitle": "Option: Dialog Vaul",
     "dialog.vaulIntro":
       "When content asks for an edge-anchored surface on mobile, the same <code>&lt;dialog&gt;</code> can opt into <strong>Dialog Vaul</strong>: it adds slide, light-dismiss and drag-to-dismiss. Modality (focus, Escape, inert) still comes from <code>showModal()</code>.",

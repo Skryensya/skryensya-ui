@@ -41,9 +41,7 @@ const indentHook = `.sk-tree-view {
   ]}
   testFiles={["packages/vanilla/src/components/tree-view.test.ts", "packages/react/src/components/tree-view.test.tsx"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("treeViewPage.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("treeViewPage.anatomyBody")} />
     <ComponentPreview
       tree={treeViewAnatomyTree(t)}
@@ -53,7 +51,10 @@ const indentHook = `.sk-tree-view {
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("treeViewPage.lede")} />
     <h3>{t("treeViewPage.minimalTitle")}</h3>
     <p set:html={t("treeViewPage.minimalBody")} />
     <ComponentPreview tree={treeViewMinimalTree(t)} label={t("treeViewPage.minimalLabel")} />

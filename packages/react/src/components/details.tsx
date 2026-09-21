@@ -1,4 +1,4 @@
-import { detailsParts } from "@skryensya/core/details";
+import { detailsParts } from "@skryensya/core/accordion";
 import type { HTMLAttributes, ReactNode } from "react";
 import { Icon } from "./icon.js";
 

@@ -196,6 +196,111 @@ describe("Button.navigation", () => {
   });
 });
 
+/*
+ * THE TWO AXES NOTHING WAS ASKING ABOUT. Both are presence-only attributes the emitter writes for
+ * authored markup, so a React binding that spelled either one differently diverges at the symmetry
+ * gate (G2) rather than in any test  -  the same reasoning the appearance-axes case above states.
+ */
+describe("Button.action welded edges", () => {
+  it("welds either edge on its own, and both at once for a middle member", () => {
+    const ui = render(
+      <>
+        <Button weldStart>Start</Button>
+        <Button weldEnd>End</Button>
+        <Button weldStart weldEnd>Middle</Button>
+      </>,
+    );
+
+    const start = ui.getByRole("button", { name: "Start" });
+    expect(start.getAttribute("data-weld-start")).toBe("");
+    expect(start.hasAttribute("data-weld-end")).toBe(false);
+
+    const end = ui.getByRole("button", { name: "End" });
+    expect(end.hasAttribute("data-weld-start")).toBe(false);
+    expect(end.getAttribute("data-weld-end")).toBe("");
+
+    const middle = ui.getByRole("button", { name: "Middle" });
+    expect(middle.getAttribute("data-weld-start")).toBe("");
+    expect(middle.getAttribute("data-weld-end")).toBe("");
+  });
+
+  /* Presence-only: `false` has to leave no attribute at all, not `data-weld-start="false"`, which CSS
+     would match on. The plain button beside it is what proves the absent case is the default and not
+     something this render happened to drop. */
+  it("writes nothing for an unwelded edge", () => {
+    const ui = render(
+      <>
+        <Button weldStart={false} weldEnd={false}>Explicitly flat</Button>
+        <Button>Plain</Button>
+      </>,
+    );
+
+    for (const name of ["Explicitly flat", "Plain"]) {
+      const button = ui.getByRole("button", { name });
+      expect(button.hasAttribute("data-weld-start")).toBe(false);
+      expect(button.hasAttribute("data-weld-end")).toBe(false);
+    }
+  });
+
+  /* Orthogonal to every other axis, which the option's own doc claims and nothing checked. */
+  it("welds a button of any variant and size", () => {
+    const ui = render(
+      <Button weldStart weldEnd variant="ghost" tone="danger" size="sm">
+        Quiet middle
+      </Button>,
+    );
+    const button = ui.getByRole("button", { name: "Quiet middle" });
+
+    expect(button.getAttribute("data-weld-start")).toBe("");
+    expect(button.getAttribute("data-variant")).toBe("ghost");
+    expect(button.getAttribute("data-tone")).toBe("danger");
+    expect(button.getAttribute("data-size")).toBe("sm");
+  });
+});
+
+/*
+ * The default (`type="button"`, tested at the top of this file) exists so a button inside a form is
+ * inert unless it says otherwise. These are the other half of that promise: when it DOES say
+ * otherwise, the platform behaviour has to arrive intact.
+ */
+describe("Button.action form participation", () => {
+  it("submits its form when asked, and resets one on reset", () => {
+    const onSubmit = vi.fn((event: React.FormEvent) => event.preventDefault());
+    const ui = render(
+      <form onSubmit={onSubmit}>
+        <input name="title" defaultValue="draft" />
+        <Button type="submit">Send</Button>
+        <Button type="reset">Clear</Button>
+      </form>,
+    );
+
+    const field = ui.container.querySelector("input") as HTMLInputElement;
+    field.value = "edited";
+
+    fireEvent.click(ui.getByRole("button", { name: "Send" }));
+    expect(onSubmit).toHaveBeenCalledTimes(1);
+
+    fireEvent.click(ui.getByRole("button", { name: "Clear" }));
+    expect(field.value).toBe("draft");
+  });
+
+  /* `name` and `value` are forwarded rather than options, and the contract's own note says why they
+     travel together: a submit button that names a field and cannot say what it submits is half an
+     attribute. Read off the submitter, which is the only place the pair means anything. */
+  it("carries the name and value a submitter needs to say which button sent the form", () => {
+    const ui = render(
+      <Button type="submit" name="intent" value="publish">
+        Publish
+      </Button>,
+    );
+    const button = ui.getByRole("button", { name: "Publish" }) as HTMLButtonElement;
+
+    expect(button.name).toBe("intent");
+    expect(button.value).toBe("publish");
+    expect(button.type).toBe("submit");
+  });
+});
+
 describe("Button.action pressed", () => {
   it("writes aria-pressed only when pressed is given", () => {
     const ui = render(

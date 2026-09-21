@@ -1,0 +1,25 @@
+# Qué cambió en otp-input, en las palabras que lee quien lo usa. Sólo se agrega, nunca se reescribe.
+#
+# `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
+# que no coincide, algo de lo que un consumidor depende se movió: escribe la entrada y pega el
+# hash nuevo.
+surface: "abfd697515bb08d7"
+entries:
+  - date: 2026-09-20
+    kind: feature
+    es:
+      title: OtpInput, un segmento por dígito con autofill de SMS
+      body: >-
+        Sobre <code>@zag-js/pin-input</code>: pegar el código completo lo reparte por segmento,
+        avanza el foco solo, y <code>otp</code> (activo por defecto) marca
+        <code>autocomplete="one-time-code"</code> para que el telefono ofrezca el SMS recibido.
+        <code>sk:otpinputvaluecomplete</code> avisa cuando el ultimo segmento se llena;
+        <code>sk:otpinputinvalid</code> avisa el caracter que no matcheaba <code>type</code>.
+    en:
+      title: OtpInput, one segment per digit with SMS autofill
+      body: >-
+        Over <code>@zag-js/pin-input</code>: pasting the whole code spreads it across segments,
+        focus advances on its own, and <code>otp</code> (on by default) sets
+        <code>autocomplete="one-time-code"</code> so the phone offers the received SMS.
+        <code>sk:otpinputvaluecomplete</code> fires once the last segment fills;
+        <code>sk:otpinputinvalid</code> fires the character that did not match <code>type</code>.

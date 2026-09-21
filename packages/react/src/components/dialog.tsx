@@ -1,9 +1,15 @@
 import { dialogParts, dialogContract } from "@skryensya/core/dialog";
+import type { SignatureOptionsOf } from "@skryensya/core/contract";
 import { useId, type DialogHTMLAttributes, type ReactNode } from "react";
 import { Icon } from "./icon.js";
 
 /* Derived, never restated: the default lives in the contract. */
-const { alert: alertOption, closeLabel: closeLabelOption, vaul: vaulOption } = dialogContract.options;
+const {
+  alert: alertOption,
+  closeLabel: closeLabelOption,
+  footerAlign: footerAlignOption,
+  vaul: vaulOption,
+} = dialogContract.options;
 
 /*
  * DIALOG: the centred modal box, and a binding that is markup and nothing else.
@@ -17,6 +23,8 @@ const { alert: alertOption, closeLabel: closeLabelOption, vaul: vaulOption } = d
  * way to close a dialog, it works before any script runs, and its `value` lets the opener tell a
  * cancel from a confirm.
  */
+type DialogOptions = SignatureOptionsOf<typeof dialogContract, "Dialog">;
+
 export type DialogProps = DialogHTMLAttributes<HTMLDialogElement> & {
   /** Matches the contract slot: plain text that names the dialog. */
   title: string;
@@ -36,6 +44,7 @@ export type DialogProps = DialogHTMLAttributes<HTMLDialogElement> & {
    * one. Focus is still the platform's: put `autofocus` on the least destructive action yourself.
    */
   alert?: boolean;
+  footerAlign?: DialogOptions["footerAlign"];
 };
 
 export function Dialog({
@@ -44,6 +53,7 @@ export function Dialog({
   className,
   closeLabel = closeLabelOption.default,
   footer,
+  footerAlign = footerAlignOption.default,
   title,
   vaul = vaulOption.default,
   ...props
@@ -58,6 +68,7 @@ export function Dialog({
       aria-labelledby={titleId}
       aria-modal={alert ? "true" : undefined}
       className={className ? `${dialogParts.root} ${className}` : dialogParts.root}
+      data-footer-align={footerAlign === "end" ? undefined : footerAlign}
       data-sk-dialog-vaul={vaul ? "" : undefined}
       // The enhancer's drag axis is generic and defaults to `inline-start` with nothing to read;
       // `dialog-vaul.css` only ever slides from the bottom, so this is not a choice: see core.

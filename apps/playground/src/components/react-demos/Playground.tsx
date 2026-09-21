@@ -13,7 +13,7 @@ import { CommandPalette } from "@skryensya/react/command-palette";
 import { Dialog } from "@skryensya/react/dialog";
 import { useHotkey } from "@skryensya/react/hotkey";
 import { Icon, IconSetProvider } from "@skryensya/react/icon";
-import { IconStateButton } from "@skryensya/react/icon-state-button";
+import { StateButton } from "@skryensya/react/state-button";
 import { Kbd } from "@skryensya/react/kbd";
 import { Tooltip } from "@skryensya/react/tooltip";
 import { Loader } from "@skryensya/react/loader";
@@ -1143,12 +1143,12 @@ function EditorFiles({
         ) : null}
         {/*
           A KIT BUTTON, in the same three attributes every other icon control on this screen wears:
-          ghost, `sm`, icon-only. `IconStateButton` is the composition the kit prescribes for a
+          ghost, `sm`, icon-only. `StateButton` is the composition the kit prescribes for a
           control whose icon reports state (decision 33: no `CopyButton` contract owns this markup
           any more), and it renders a real `.sk-button`, so the button's own shape rules apply to it
           the moment it is told which shape it is.
         */}
-        <IconStateButton
+        <StateButton
           aria-label={copied === "copied" ? strings.copied : strings.copy}
           current={copied}
           data-icon-only=""

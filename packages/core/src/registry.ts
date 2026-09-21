@@ -9,6 +9,10 @@ import { statContract } from "./stat.js";
 import { calloutContract } from "./callout.js";
 import { processListContract } from "./process-list.js";
 import { changelogContract } from "./changelog.js";
+import { descriptionListContract } from "./description-list.js";
+import { quoteContract } from "./quote.js";
+import { separatorContract } from "./separator.js";
+import { tagsInputContract } from "./tags-input.js";
 import { timelineContract } from "./timeline.js";
 import { chartContract } from "./chart.js";
 import { stepsContract } from "./steps.js";
@@ -24,11 +28,12 @@ import { treeViewContract } from "./tree-view.js";
 import { sidebarContract } from "./sidebar.js";
 import { skipLinkContract } from "./skip-link.js";
 import { annotationContract } from "./annotation.js";
+import { diagramContract } from "./diagram.js";
 import { backToTopContract } from "./back-to-top.js";
 import { accordionContract } from "./accordion.js";
 import { tileContract } from "./tile.js";
 import { paginationContract, tablePagerContract } from "./pagination.js";
-import { iconStateButtonContract } from "./icon-state-button.js";
+import { stateButtonContract } from "./state-button.js";
 import { contentContract } from "./content.js";
 import { numberFieldContract } from "./number-field.js";
 import { navbarContract } from "./navbar.js";
@@ -41,6 +46,7 @@ import { menubarContract } from "./menubar.js";
 import { megamenuContract } from "./megamenu.js";
 import { meterContract } from "./meter.js";
 import { ratingContract } from "./rating.js";
+import { otpInputContract } from "./otp-input.js";
 import { dataGridContract } from "./data-grid.js";
 import { feedContract } from "./feed.js";
 import { commentThreadContract } from "./comment-thread.js";
@@ -75,7 +81,6 @@ import { treegridContract } from "./treegrid.js";
 import { tabsContract } from "./tabs.js";
 import { tocContract } from "./toc.js";
 import { componentPreviewContract } from "./component-preview.js";
-import { detailsContract } from "./details.js";
 import { vaulContract } from "./vaul.js";
 import type { ComponentContract, ContractSignature } from "./contract.js";
 
@@ -143,11 +148,15 @@ export const contracts = fromContracts(
   timeFieldContract,
   treeViewContract,
   tileContract,
-  iconStateButtonContract,
+  stateButtonContract,
   numberFieldContract,
   placeholderContract,
   processListContract,
   changelogContract,
+  descriptionListContract,
+  quoteContract,
+  separatorContract,
+  tagsInputContract,
   timelineContract,
   progressContract,
   radioGroupContract,
@@ -168,6 +177,7 @@ export const contracts = fromContracts(
   megamenuContract,
   meterContract,
   ratingContract,
+  otpInputContract,
   dataGridContract,
   feedContract,
   commentThreadContract,
@@ -185,10 +195,10 @@ export const contracts = fromContracts(
   wrapperContract,
   tabsContract,
   tocContract,
-  detailsContract,
   vaulContract,
   componentPreviewContract,
   annotationContract,
+  diagramContract,
 );
 
 export type ContractId = keyof typeof contracts;

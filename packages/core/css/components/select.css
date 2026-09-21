@@ -284,6 +284,19 @@
     z-index: var(--z-popover);
   }
 
+  /*
+   * THE STACK IS HERE, NOT ON THE ROOT. `.sk-select` declares `gap: --space-stack-xs` above, and
+   * measured live it separated nothing: the root's only two children are THIS box and the
+   * positioner, and the positioner is out of flow, so the gap had no second item to act on. The
+   * label and the trigger are inside this wrapper, where the root's gap never reaches them, and
+   * they sat 3px apart on line leading alone while every sibling field in the kit puts 12px between
+   * its label and its control (FileUpload, measured on its own page).
+   */
+  .sk-select__control {
+    display: grid;
+    gap: var(--space-stack-xs);
+  }
+
   .sk-select__label {
     color: var(--color-text-secondary);
     font-size: var(--font-size-caption);

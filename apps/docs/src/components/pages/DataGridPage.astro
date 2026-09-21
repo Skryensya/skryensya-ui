@@ -35,9 +35,7 @@ initComponents();`;
   ]}
   testFiles={["packages/react/src/components/data-grid.test.tsx", "packages/vanilla/src/components/data-grid.test.ts"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("dataGridPage.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("dataGridPage.anatomyBody")} />
     <ComponentPreview
       tree={dataGridAnatomyTree(t)}
@@ -47,8 +45,10 @@ initComponents();`;
       hideSource
       chrome={false}
     />
+  </Fragment>
 
-
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("dataGridPage.lede")} />
     <h3>{t("dataGridPage.dataTitle")}</h3>
     <p set:html={t("dataGridPage.dataBody")} />
     <ComponentPreview tree={dataGridScoresTree(t)} js={js} label={t("dataGridPage.dataLabel")} />

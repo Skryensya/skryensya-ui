@@ -190,7 +190,7 @@ export type ContractSlot = {
   readonly cardinality?: Readonly<Record<string, "one" | "optional" | "many">>;
   /**
    * Cardinality over a GROUP of signatures counted together: a badge holder takes exactly one
-   * anchor, whichever of Button, IconStateButton or Avatar it is. Per-signature `cardinality` can
+   * anchor, whichever of Button, StateButton or Avatar it is. Per-signature `cardinality` can
    * only say "at most one of each", which lets two different anchors through.
    */
   readonly groupCardinality?: readonly { readonly of: readonly string[]; readonly count: "one" | "optional" | "many" }[];
@@ -397,7 +397,7 @@ export type ContractTemplate = {
    */
   readonly repeatComputed?: {
     /** The computation. The compiler holds the list; a name it does not know fails the build. */
-    readonly window: "pagination-range" | "skeleton-lines" | "rating-symbols";
+    readonly window: "pagination-range" | "skeleton-lines" | "rating-symbols" | "otp-segments";
     /** Option names, in the computation's argument order. */
     readonly from: readonly string[];
     /** The item option each entry's value lands in, so `selectedBy` and `itemOptions` can name it. */

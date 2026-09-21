@@ -2,7 +2,6 @@ import { ratingGroup } from "@skryensya/core/machines";
 import {
   ratingContract,
   ratingEvents,
-  ratingFillPercent,
   ratingParts,
   type RatingSymbolSize,
 } from "@skryensya/core/rating";
@@ -108,7 +107,12 @@ export function Rating({
           <span
             {...api.getItemProps({ index: item })}
             aria-roledescription={undefined}
-            className={`${ratingParts.item} sk-interactive`}
+            /* The kit's icon-only button, borrowed the same way the emitter borrows it: see the
+               `compose` note on the contract's own `Rating` signature. */
+            className={`${ratingParts.item} sk-button sk-interactive`}
+            data-icon-only=""
+            data-size="sm"
+            data-variant="ghost"
             key={item}
           >
             {/*
@@ -164,11 +168,9 @@ export function RatingDisplay({
       role="img"
       style={{ "--sk-rating-value": value, "--sk-rating-max": max } as React.CSSProperties}
     >
-      <span
-        aria-hidden="true"
-        className={ratingParts.symbols}
-        style={{ "--sk-rating-fill": `${ratingFillPercent(value, max)}%` } as React.CSSProperties}
-      />
+      {/* No fill of its own: the stop is arithmetic in glyph space, and only the stylesheet knows
+          how wide a symbol is. It reads `--sk-rating-value` off the root, above. */}
+      <span aria-hidden="true" className={ratingParts.symbols} />
       {valueText === undefined ? null : <span className={ratingParts.value}>{valueText}</span>}
       {count === undefined ? null : <span className={ratingParts.count}>{count}</span>}
     </span>

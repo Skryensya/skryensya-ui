@@ -35,9 +35,7 @@ for (const root of document.querySelectorAll(
   styleGroups={[{ file: "components/switch.css", probe: "sk-switch" }]}
   testFiles={["packages/vanilla/src/components/tile-switch.svelte.test.ts"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("switchPage.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("switchPage.anatomyBody")} />
     <ComponentPreview
       tree={switchAnatomyTree(t)}
@@ -47,7 +45,10 @@ for (const root of document.querySelectorAll(
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("switchPage.lede")} />
     <ComponentPreview tree={switchTree(t)} label="Switch" />
     <p set:html={t("switchPage.body")} />
 

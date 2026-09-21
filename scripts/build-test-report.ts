@@ -10,9 +10,10 @@
  * whole build over it would be the wrong trade. Run it by hand after touching a tracked test file:
  *
  *   node scripts/build-test-report.ts
+ *   node scripts/build-test-report.ts --only button    # just the suites one page quotes
  */
 import { execFileSync } from "node:child_process";
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { demandedFiles } from "../apps/docs/src/lib/test-suite.ts";
@@ -28,7 +29,35 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
  * care, the way `component-registry.test.ts` says the docs registries were - but care is what
  * `demandedFiles` stops being the mechanism.
  */
-const TARGETS = demandedFiles(root);
+const ALL_TARGETS = demandedFiles(root);
+
+/*
+ * `--only <substring>[,<substring>…]` narrows the run to the suites a change actually touched, the
+ * same lever `build-preview-heights.ts` already gives its own crawl and for the same reason: a full
+ * pass is 109 vitest invocations, and re-running all of them to refresh two files is minutes of
+ * waiting plus a diff nobody asked for.
+ *
+ * MERGED, NOT REPLACED, which is the whole reason this is safe: a narrowed run reads the existing
+ * artifact and overwrites only the files it re-ran, so the suites it skipped keep the status they
+ * were last measured at rather than silently dropping out of the tab.
+ */
+const onlyIndex = process.argv.indexOf("--only");
+const only =
+  onlyIndex === -1
+    ? null
+    : (process.argv[onlyIndex + 1] ?? "")
+        .split(",")
+        .map((part) => part.trim())
+        .filter(Boolean);
+
+const TARGETS = only
+  ? ALL_TARGETS.filter(({ pkg, file }) => only.some((needle) => `${pkg}/${file}`.includes(needle)))
+  : ALL_TARGETS;
+
+if (TARGETS.length === 0) {
+  console.error(`  --only ${only?.join(",")} matched none of the ${ALL_TARGETS.length} suites the docs quote.`);
+  process.exit(1);
+}
 
 interface VitestJsonReport {
   testResults: {
@@ -36,7 +65,20 @@ interface VitestJsonReport {
   }[];
 }
 
-const results: Record<string, Record<string, string>> = {};
+/* A narrowed run starts from what is already recorded; a full one starts from nothing, so a suite a
+   page stopped quoting disappears instead of lingering. */
+const previous = (() => {
+  if (!only) return {};
+  try {
+    return (JSON.parse(readFileSync(join(root, "artifacts", "test-results.json"), "utf8")) as {
+      results?: Record<string, Record<string, string>>;
+    }).results ?? {};
+  } catch {
+    return {};
+  }
+})();
+
+const results: Record<string, Record<string, string>> = { ...previous };
 
 for (const { pkg, file } of TARGETS) {
   const cwd = join(root, pkg);

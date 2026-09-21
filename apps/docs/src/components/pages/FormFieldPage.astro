@@ -22,9 +22,7 @@ const css = `@import "@skryensya/core/tokens.scss";
   contractId="form-field"
   testFiles={["packages/react/src/components/form-field.test.tsx"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("formFieldPage.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("formFieldPage.anatomyBody")} />
     <ComponentPreview
       tree={formFieldAnatomyTree(t)}
@@ -34,7 +32,10 @@ const css = `@import "@skryensya/core/tokens.scss";
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("formFieldPage.lede")} />
     <ComponentPreview tree={formFieldTree(t)} label="FormField" />
 
     <h3>{t("formFieldPage.wiringTitle")}</h3>

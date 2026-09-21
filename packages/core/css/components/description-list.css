@@ -1,0 +1,120 @@
+/*
+ * TIER 3, DESCRIPTION LIST
+ *
+ * Pairs of a name and its value: one order's summary, one document's metadata, one product's specs.
+ * One axis, which is the whole difference from a table - nothing here is compared across rows.
+ *
+ * THE UA STYLES THIS ELEMENT MORE THAN MOST, and all of it has to go: `<dl>` carries a block margin
+ * and `<dd>` a 40px inline start margin, both of which are the browser drawing the indented
+ * glossary this component is not.
+ *
+ * Every hook resolves to a TIER-2 token, never a palette or raw color; scripts/lint.ts enforces it.
+ */
+@layer components {
+  .sk-description-list {
+    --sk-description-list-row-gap: var(--space-stack-sm);
+    --sk-description-list-row-padding-y: 0px;
+    /* Between the name and its value: the block gap when stacked, the column gap when side by side. */
+    --sk-description-list-pair-gap: var(--space-inline-sm);
+    /*
+     * The name column, when there is one. A LENGTH and not `max-content`, because the rows are laid
+     * out one by one rather than on a shared grid; see the header of description-list.ts for why
+     * that trade was taken. A consumer whose names are longer turns this one hook.
+     */
+    --sk-description-list-term-size: 10rem;
+    --sk-description-list-term-fg: var(--color-text-secondary);
+    --sk-description-list-term-font-size: var(--font-size-body-sm);
+    --sk-description-list-term-font-weight: var(--font-weight-label);
+    --sk-description-list-details-fg: var(--color-text-primary);
+    --sk-description-list-divider-color: var(--color-border-subtle);
+
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sk-description-list-row-gap);
+    /* The UA's block margin: this list is placed by whatever holds it, like every other component. */
+    margin: 0;
+    min-inline-size: 0;
+  }
+
+  .sk-description-list,
+  .sk-description-list *,
+  .sk-description-list *::before,
+  .sk-description-list *::after {
+    box-sizing: border-box;
+  }
+
+  .sk-description-list__group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sk-description-list-pair-gap);
+    min-inline-size: 0;
+    padding-block: var(--sk-description-list-row-padding-y);
+  }
+
+  .sk-description-list__term {
+    color: var(--sk-description-list-term-fg);
+    font-size: var(--sk-description-list-term-font-size);
+    font-weight: var(--sk-description-list-term-font-weight);
+    line-height: var(--font-line-height-body-sm);
+  }
+
+  .sk-description-list__details {
+    /* The UA's 40px indent, which is the glossary this component is not. */
+    margin: 0;
+    min-inline-size: 0;
+    color: var(--sk-description-list-details-fg);
+    font-size: var(--font-size-body);
+    line-height: var(--font-line-height-body);
+  }
+
+  /*
+   * COLUMNS. The pair sits side by side, drawn on the ROW rather than on one grid shared by every
+   * row, which is what keeps the group element in the box tree (see description-list.ts).
+   * `baseline`, not `start`: the name is a size smaller than its value, and aligning the boxes
+   * would leave the two texts visibly off each other.
+   */
+  .sk-description-list[data-layout="columns"] .sk-description-list__group {
+    display: grid;
+    grid-template-columns: var(--sk-description-list-term-size) minmax(0, 1fr);
+    align-items: baseline;
+    column-gap: var(--sk-description-list-pair-gap);
+  }
+
+  /*
+   * Below the compact breakpoint the column falls back to stacked on its own: a name column that
+   * has to share 320px with its value is not a layout, it is two truncations. The literal is
+   * `semantic/_breakpoints.scss`'s `compact` (36rem); tier-3 stays CSS (ADR-19), so it is written
+   * here with a pointer back rather than read from the map.
+   */
+  @media (width < 36rem) {
+    .sk-description-list[data-layout="columns"] .sk-description-list__group {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  /*
+   * DIVIDERS. On the row's block-start, and never on the first: a rule above the first pair would
+   * be the list drawing its own top edge, which belongs to whatever box holds it.
+   */
+  .sk-description-list[data-dividers] {
+    --sk-description-list-row-padding-y: var(--space-stack-sm);
+    --sk-description-list-row-gap: 0px;
+  }
+
+  .sk-description-list[data-dividers] .sk-description-list__group + .sk-description-list__group {
+    border-block-start: 1px solid var(--sk-description-list-divider-color);
+  }
+
+  /* Reference material rather than reading: the rows come closer, the type does not change. */
+  .sk-description-list[data-density="compact"] {
+    --sk-description-list-row-gap: var(--space-stack-xs);
+    --sk-description-list-pair-gap: var(--space-inline-xs);
+  }
+
+  .sk-description-list[data-density="compact"][data-dividers] {
+    --sk-description-list-row-gap: 0px;
+    --sk-description-list-row-padding-y: var(--space-stack-xs);
+  }
+}

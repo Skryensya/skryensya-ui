@@ -20,9 +20,7 @@ const install = `pnpm add @skryensya/core @skryensya/react`;
   styleGroups={[{ file: "components/meter.css", probe: "sk-meter" }]}
   testFiles={["packages/react/src/components/meter.test.tsx"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("meterPage.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("meterPage.anatomyBody")} />
     <ComponentPreview
       tree={meterAnatomyTree(t)}
@@ -32,7 +30,10 @@ const install = `pnpm add @skryensya/core @skryensya/react`;
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("meterPage.lede")} />
     <ComponentPreview tree={meterTree(t)} label="Meter" />
     <p set:html={t("meterPage.body")} />
     <p set:html={t("component.reactNote")} />

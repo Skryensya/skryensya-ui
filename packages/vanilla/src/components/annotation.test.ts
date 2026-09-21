@@ -151,7 +151,10 @@ describe("connectAnnotated", () => {
     expect(second!.style.translate).toBe("0px 220px");
   });
 
-  it("keeps stacked mobile labels in their flow positions", () => {
+  /* The narrow cluster packs itself (annotation.css wraps the labels into rows), so the binding only
+     has to stay out of the way: no lane distribution, and the same leader route as every other
+     label  -  out of the facing edge of the box the stylesheet put it in. */
+  it("keeps clustered narrow-screen labels in their flow positions", () => {
     vi.stubGlobal("matchMedia", () => ({ matches: true }));
     const root = frame([{ for: ".part-a", text: "part a" }, { for: ".part-b", text: "part b" }]);
     layOut(root);
@@ -160,7 +163,7 @@ describe("connectAnnotated", () => {
     const [first, second] = labelsOf(root);
     expect(first!.style.translate).toBe("0px 0px");
     expect(second!.style.translate).toBe("0px 0px");
-    expect(overlayOf(root).querySelector("path")!.getAttribute("d")).toContain("L 208 10 L 208 102");
+    expect(overlayOf(root).querySelector("path")!.getAttribute("d")).toBe("M 140 10 L 202 72 L 202 108");
   });
 
   it("draws one mark per label, each a leader and a ring, in the labels' own order", () => {

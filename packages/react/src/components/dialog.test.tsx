@@ -71,6 +71,24 @@ describe("Dialog", () => {
     expect(ui.container.querySelector(".sk-dialog__footer")).toBeNull();
   });
 
+  it("aligns the footer row to the inline-start when footerAlign is start", () => {
+    const ui = render(
+      <Dialog footer={<button type="submit">OK</button>} footerAlign="start" open title="Confirmar">
+        Contenido
+      </Dialog>,
+    );
+    expect(ui.container.querySelector("dialog")?.getAttribute("data-footer-align")).toBe("start");
+  });
+
+  it("omits data-footer-align when footerAlign is the default end", () => {
+    const ui = render(
+      <Dialog footer={<button type="submit">OK</button>} open title="Confirmar">
+        Contenido
+      </Dialog>,
+    );
+    expect(ui.container.querySelector("dialog")?.hasAttribute("data-footer-align")).toBe(false);
+  });
+
   it("opts into Dialog Vaul with the enhancer's own mount point", () => {
     const ui = render(
       <Dialog title="Filtros" vaul>

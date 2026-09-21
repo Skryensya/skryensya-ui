@@ -6,6 +6,7 @@ export const componentMessages = {
      * for the same reason as `contract.*` above. `{name}` is the one thing that changes.
      */
     "component.tabUsage": "Uso",
+    "component.anatomy": "Anatomía",
     "component.tabInstall": "Instalación",
     "component.tabStyle": "Style hooks",
     "component.tabA11y": "Accesibilidad",
@@ -21,6 +22,7 @@ export const componentMessages = {
   en: {
 
     "component.tabUsage": "Usage",
+    "component.anatomy": "Anatomy",
     "component.tabInstall": "Installation",
     "component.tabStyle": "Style hooks",
     "component.tabA11y": "Accessibility",

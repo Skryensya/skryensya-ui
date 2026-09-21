@@ -29,9 +29,7 @@ const t = useTranslations(getLocale(Astro.url));
   contractId="image-frame"
   testFiles={["packages/react/src/components/image-frame.test.tsx"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("imageFrame.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("imageFrame.anatomyBody")} />
     <ComponentPreview
       tree={imageFrameAnatomyTree(t)}
@@ -41,7 +39,10 @@ const t = useTranslations(getLocale(Astro.url));
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("imageFrame.lede")} />
     <ComponentPreview tree={imageFrameTree(t)} label="ImageFrame" />
 
     <h3>{t("imageFrame.aspectTitle")}</h3>

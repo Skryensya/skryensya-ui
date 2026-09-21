@@ -412,7 +412,7 @@ const usageTreeSchema: z.ZodType<UsageTree> = z.lazy(() =>
  * Every part class name, reverse-mapped to the ONE stylesheet that owns it  -  built once from the
  * compiled manifest's own `parts` maps (`{ root: "sk-button", interactive: "sk-interactive", ... }`
  * per contract). What `cssFor` needs to resolve a template's `also` classes back to a stylesheet:
- * `also` names CSS classes borrowed from ANOTHER contract's template (`IconStateButton`'s
+ * `also` names CSS classes borrowed from ANOTHER contract's template (`StateButton`'s
  * `also: ["sk-button", "sk-interactive", "sk-icon-toggle"]`, borrowing `Button`'s own root class),
  * not a contract id  -  nothing walking `tree.contract` alone can ever resolve it.
  *
@@ -453,7 +453,7 @@ function alsoClassesFor(node: UsageTree): readonly string[] {
   /*
    * This used to cast to a GUESS, not to a type: a hand-written re-derivation of
    * `ContractSignature["template"]["also"]`, three packages from where that is declared. It was added
-   * to fix a confirmed bug (IconStateButton emitting with its own sheet and no `button.css`: valid
+   * to fix a confirmed bug (StateButton emitting with its own sheet and no `button.css`: valid
    * markup, silently unstyled), and a second bug in the same walk would have been exactly as
    * invisible, because no type in this file could have disagreed with it.
    */
@@ -472,9 +472,9 @@ function alsoClassesFor(node: UsageTree): readonly string[] {
 /*
  * Every stylesheet the composition needs, so a consumer is not left to guess the imports.
  *
- * Confirmed live as a real gap, not a hypothetical: composing `IconStateButton` (whose template
+ * Confirmed live as a real gap, not a hypothetical: composing `StateButton` (whose template
  * borrows `also: ["sk-button", ...]`) and asking `validate_ui` for its `css` returned
- * `icon-state-button.css` alone. `button.css`  -  the stylesheet `.sk-button` actually needs  -  was
+ * `state-button.css` alone. `button.css`  -  the stylesheet `.sk-button` actually needs  -  was
  * missing, because nothing here ever looked at `also` before. The button rendered as a real,
  * correctly-classed `<button>` with the browser's bare UA chrome instead of the kit's own: valid
  * markup, silently unstyled. `classToCss`/`alsoClassesFor` above are what closes it.

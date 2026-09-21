@@ -41,9 +41,7 @@ mountIcons(document, lucideIcons);`;
   ]}
   testFiles={["packages/react/src/components/popover.test.tsx"]}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("popoverPage.description")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("popoverPage.anatomyBody")} />
     <ComponentPreview
       html={popoverAnatomyHtml(t)}
@@ -53,7 +51,10 @@ mountIcons(document, lucideIcons);`;
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("popoverPage.description")} />
     <ComponentPreview tree={popoverTree(t)} js={js} label="Popover" viewport="overlay" />
 
     <h3>{t("popoverPage.structuredTitle")}</h3>

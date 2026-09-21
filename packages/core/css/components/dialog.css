@@ -157,15 +157,20 @@
   .sk-dialog__footer {
     --sk-dialog-footer-border-color: var(--color-border-subtle);
     --sk-dialog-footer-gap: var(--space-inline-sm);
+    --sk-dialog-footer-justify: end;
 
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: end;
+    justify-content: var(--sk-dialog-footer-justify);
     gap: var(--sk-dialog-footer-gap);
     margin: 0;
     padding: var(--sk-dialog-padding);
     border-block-start: 1px solid var(--sk-dialog-footer-border-color);
+  }
+
+  .sk-dialog[data-footer-align="start"] {
+    --sk-dialog-footer-justify: start;
   }
 
   @media (prefers-reduced-motion: reduce) {

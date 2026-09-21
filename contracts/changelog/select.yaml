@@ -187,3 +187,24 @@ entries:
       body: >-
         <code>sk-value-change</code> → <code>sk:selectvaluechange</code>. No two families dispatch the same name any more: a listener on a root stops receiving
         the events of a different component nested inside it. The contract now declares them in <code>events</code>, so the compiler publishes them.
+  - date: 2026-09-20
+    kind: bugfix
+    target: control
+    es:
+      title: La etiqueta vuelve a separarse del trigger
+      body: >-
+        <code>.sk-select</code> declaraba <code>gap: --space-stack-xs</code>, pero sus únicos dos
+        hijos son <code>control</code> y el positioner, y el positioner está fuera de flujo: el
+        gap no tenía sobre qué actuar. La etiqueta y el trigger viven dentro de
+        <code>control</code>, donde ese gap nunca llegaba, y quedaban a 3px de puro interlineado.
+        <code>control</code> ahora es la pila, así que la separación es la que el contrato ya
+        declaraba. Markup y bindings no cambian.
+    en:
+      title: The label is spaced from the trigger again
+      body: >-
+        <code>.sk-select</code> declared <code>gap: --space-stack-xs</code>, but its only two
+        children are <code>control</code> and the positioner, and the positioner is out of flow, so
+        the gap had nothing to act on. The label and the trigger live inside <code>control</code>,
+        where that gap never reached them, and sat 3px apart on line leading alone.
+        <code>control</code> is now the stack, so the spacing is the one the contract already
+        declared. Markup and bindings are unchanged.

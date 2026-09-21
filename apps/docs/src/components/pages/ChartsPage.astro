@@ -181,9 +181,7 @@ const tanstackSource = `import { TanStackChart } from "@skryensya/charts/react/t
   badge={t("chartsPage.betaBadge")}
   testFiles={["packages/charts/src/react/chart.test.tsx", "apps/docs/src/components/pages/ChartsPage.test.ts"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("chartsPage.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("chartsPage.anatomyBody")} />
     <ComponentPreview
       tree={chartsAnatomyTree(t)}
@@ -193,7 +191,10 @@ const tanstackSource = `import { TanStackChart } from "@skryensya/charts/react/t
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("chartsPage.lede")} />
     <div class="sk-callout" data-tone="info">
       <div class="sk-callout__content">
         <div class="sk-callout__description" set:html={t("chartsPage.calloutBody")} />

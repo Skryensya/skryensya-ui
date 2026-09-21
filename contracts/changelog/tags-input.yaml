@@ -1,0 +1,41 @@
+# What changed in tags-input, in the words its users read. Only appended to, never rewritten.
+#
+# `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
+# does not match, something a consumer depends on has moved: write the entry and paste in the new
+# hash.
+surface: "8a32c9bc37aff078"
+entries:
+  - date: 2026-09-20
+    kind: feature
+    es:
+      title: TagsInput se publica como contrato, con una signature
+      body: >-
+        Entra al catálogo con <code>TagsInput</code>: varios valores escritos en un solo campo
+        (temas, destinatarios, etiquetas). Acepta lo que se escriba, que es la diferencia con
+        <code>Combobox</code>: ese resuelve lo tecleado contra sus propias opciones y este toma el
+        vocabulario de la persona. El chip <strong>es</strong> un <code>Tag</code> (clases
+        <code>sk-tag</code> compuestas, no un segundo dibujo); lo que esta familia aporta es el campo
+        alrededor. Los tags iniciales se escriben como markup, un elemento cada uno, así que el campo
+        se lee antes de que llegue su JavaScript, y el enhancer toma esa lista como semilla y la
+        reemplaza por la viva. Opciones: <code>max</code>, <code>delimiter</code> (coma por defecto,
+        que es lo que ya trae una lista pegada de una planilla), <code>allowDuplicates</code>,
+        <code>editable</code>, más los estados de campo. Dos cosas que conviene saber porque son de
+        la máquina: pasado <code>max</code> el tag se rechaza <em>en silencio</em> y el texto se queda
+        en la entrada, y con <code>allowDuplicates</code> apagado el repetido se descarta sin avisar.
+        La hoja es <code>components/tags-input.css</code>.
+    en:
+      title: TagsInput is published as a contract, with one signature
+      body: >-
+        It joins the catalogue with <code>TagsInput</code>: several values typed into one field
+        (topics, recipients, labels). It accepts whatever is typed, which is the difference from
+        <code>Combobox</code>: that one resolves what is typed against its own options, and this one
+        takes the person's own vocabulary. The chip <strong>is</strong> a <code>Tag</code>
+        (composed <code>sk-tag</code> classes, not a second drawing); what this family adds is the
+        field around them. The starting tags are authored as markup, one element each, so the field
+        is readable before its JavaScript arrives, and the enhancer takes that list as its seed and
+        swaps it for the live one. Options: <code>max</code>, <code>delimiter</code> (a comma by
+        default, which is what a list pasted from a spreadsheet already has), <code>allowDuplicates</code>,
+        <code>editable</code>, plus the usual field states. Two things worth knowing because they
+        are the machine's: past <code>max</code> a tag is refused <em>in silence</em> and the text
+        stays in the entry, and with <code>allowDuplicates</code> off a repeat is dropped without a
+        word. Its stylesheet is <code>components/tags-input.css</code>.

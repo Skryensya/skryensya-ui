@@ -33,6 +33,7 @@ import {
   accordionExclusiveTree,
   accordionMultipleTree,
   accordionSingleTree,
+  detailsAnatomyTree,
   detailsGroupTree,
 } from "../../demos/accordion";
 import { annotationAnatomyTree, annotationDemoCss } from "../../demos/annotation";
@@ -51,6 +52,14 @@ import { lucideIcons } from "@skryensya/icons-lucide";
 
 mountIcons(document, lucideIcons);`;
 
+/*
+ * Accordion's enhanced surface is a composition: accordion.css owns the frame and tile.css owns
+ * each expandable item. Details is its own native, CSS-only path below.
+ */
+const enhancedStyles = `@import "@skryensya/core/components/accordion.css";
+@import "@skryensya/core/components/tile.css";`;
+const reactInstall = `pnpm add @skryensya/core @skryensya/react`;
+
 const nativeInstall = `pnpm add @skryensya/core`;
 const nativeStyles = `@import "@skryensya/core/components/details.css";`;
 
@@ -68,9 +77,15 @@ const detailsLink = `<a href="#details-nativo">${t("accordion.detailsNativoLabel
     { file: "components/accordion.css", probe: "sk-accordion", title: "Accordion" },
     { file: "components/details.css", probe: "sk-details", title: t("accordion.detailsNativoLabel") },
   ]}
-  testFiles={["packages/react/src/components/accordion.test.tsx", "packages/vanilla/src/components/accordion.svelte.test.ts"]}}
+  testFiles={["packages/react/src/components/accordion.test.tsx", "packages/vanilla/src/components/accordion.svelte.test.ts"]}
 >
-  <Fragment slot="usage">
+  {/*
+    * TWO DIAGRAMS, because this contract has two anatomies. The first is the machine-driven
+    * accordion (`sk-accordion` + the Tile parts); the second is the platform's, whose five
+    * `sk-details*` classes share nothing with it but the paint. One drawing covering four of eight
+    * signatures was the gap the merge left behind.
+    */}
+  <Fragment slot="anatomy">
     <ComponentPreview
       tree={annotationAnatomyTree(t)}
       css={annotationDemoCss}
@@ -80,10 +95,54 @@ const detailsLink = `<a href="#details-nativo">${t("accordion.detailsNativoLabel
       chrome={false}
     />
 
+    <h3>{t("accordion.nativeAnatomyLabel")}</h3>
+    <p set:html={t("accordion.nativeAnatomyBody")} />
+    <ComponentPreview
+      tree={detailsAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("accordion.nativeAnatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+  </Fragment>
+
+  <Fragment slot="usage">
     <div class="sk-callout" data-tone="info">
       <div class="sk-callout__content">
         <p set:html={t("accordion.intro", { detailsLink })} />
       </div>
+    </div>
+
+    {/*
+      * CHOOSING COMES FIRST, and this section moving up here is the whole restructure.
+      *
+      * The decision table used to sit at the very bottom, INSIDE a trailing "Details nativo"
+      * section, which is what made the page read as two components: everything above was
+      * "Accordion", and then at the end came a second thing with its own heading, its own preview
+      * and its own contract list. A reader met the alternative only after learning the one they
+      * might not have needed. Now the page names both halves in its first paragraph, hands over the
+      * table before any demo, and the demos below are jobs rather than components.
+      */}
+    <h3 id="que-mitad">{t("accordion.choiceTitle")}</h3>
+    <p set:html={t("accordion.choiceBody")} />
+    <div class="sk-table-scroll">
+    <table class="sk-table">
+      <thead class="sk-table__head">
+        <tr class="sk-table__row">
+          <th class="sk-table__header">{t("accordion.decisionHeadNeed")}</th>
+          <th class="sk-table__header">{t("accordion.decisionHeadUse")}</th>
+        </tr>
+      </thead>
+      <tbody class="sk-table__body">
+        <tr class="sk-table__row"><td set:html={t("accordion.decisionRow1Need")} class="sk-table__cell" /><td set:html={t("accordion.decisionRow1Use")} class="sk-table__cell" /></tr>
+        <tr class="sk-table__row"><td set:html={t("accordion.decisionRow2Need")} class="sk-table__cell" /><td set:html={t("accordion.decisionRow2Use")} class="sk-table__cell" /></tr>
+        <tr class="sk-table__row"><td set:html={t("accordion.decisionRow3Need")} class="sk-table__cell" /><td set:html={t("accordion.decisionRow3Use")} class="sk-table__cell" /></tr>
+        <tr class="sk-table__row"><td set:html={t("accordion.decisionRow4Need")} class="sk-table__cell" /><td set:html={t("accordion.decisionRow4Use")} class="sk-table__cell" /></tr>
+        <tr class="sk-table__row"><td set:html={t("accordion.decisionRow5Need")} class="sk-table__cell" /><td set:html={t("accordion.decisionRow5Use")} class="sk-table__cell" /></tr>
+        <tr class="sk-table__row"><td set:html={t("accordion.decisionRow6Need")} class="sk-table__cell" /><td set:html={t("accordion.decisionRow6Use")} class="sk-table__cell" /></tr>
+      </tbody>
+    </table>
     </div>
 
     <h3>{t("accordion.oneItemTitle")}</h3>
@@ -94,6 +153,30 @@ const detailsLink = `<a href="#details-nativo">${t("accordion.detailsNativoLabel
     <p set:html={t("accordion.exclusiveBody")} />
     <ComponentPreview tree={accordionExclusiveTree(t)} label={t("accordion.exclusiveLabel")} />
 
+    {/*
+      * THE PLATFORM'S ANSWER TO THE SECTION ABOVE, and it sits here for that reason: `name` on a
+      * set of siblings is the same job `type="single"` just did, so the two demos belong next to
+      * each other rather than one at the top of the page and one at the foot of it.
+      *
+      * `id="details-nativo"` is load-bearing and stays whatever this heading is called:
+      * `/components/details` is a 301 onto this anchor, and `accordion.intro` / `accordion.a11yP3`
+      * both link to it.
+      */}
+    <h3 id="details-nativo">{t("accordion.nativeTitle")}</h3>
+    <p class="lede" set:html={t("accordion.nativeLede")} />
+    <p set:html={t("accordion.nativeBody")} />
+    <ComponentPreview tree={detailsGroupTree(t)} label={t("accordion.nativePreviewLabel")} />
+
+    <h4>{t("accordion.nativeContractTitle")}</h4>
+    <ul>
+      <li set:html={t("accordion.nativeContractItem1")} />
+      <li set:html={t("accordion.nativeContractItem2")} />
+      <li set:html={t("accordion.nativeContractItem3")} />
+      <li set:html={t("accordion.nativeContractItem4")} />
+      <li set:html={t("accordion.nativeContractItem5")} />
+    </ul>
+
+    {/* Machine-only, and the table above says why: the platform has no `multiple`. */}
     <h3>{t("accordion.multipleTitle")}</h3>
     <p set:html={t("accordion.multipleBody")} />
     <ComponentPreview tree={accordionMultipleTree(t)} label={t("accordion.multipleLabel")} />
@@ -114,53 +197,54 @@ const detailsLink = `<a href="#details-nativo">${t("accordion.detailsNativoLabel
       <li set:html={t("accordion.contractEvent")} />
     </ul>
     <p set:html={t("accordion.contractRest", { reference: `<strong>${t("contract.tab")}</strong>` })} />
-
-    <h3 id="details-nativo">{t("accordion.detailsNativoLabel")}</h3>
-    <p class="lede" set:html={t("accordion.nativeLede")} />
-    <div class="sk-table-scroll">
-    <table class="sk-table">
-      <thead class="sk-table__head">
-        <tr class="sk-table__row">
-          <th class="sk-table__header">{t("accordion.decisionHeadNeed")}</th>
-          <th class="sk-table__header">{t("accordion.decisionHeadUse")}</th>
-        </tr>
-      </thead>
-      <tbody class="sk-table__body">
-        <tr class="sk-table__row"><td set:html={t("accordion.decisionRow1Need")} class="sk-table__cell" /><td set:html={t("accordion.decisionRow1Use")} class="sk-table__cell" /></tr>
-        <tr class="sk-table__row"><td set:html={t("accordion.decisionRow2Need")} class="sk-table__cell" /><td set:html={t("accordion.decisionRow2Use")} class="sk-table__cell" /></tr>
-        <tr class="sk-table__row"><td set:html={t("accordion.decisionRow3Need")} class="sk-table__cell" /><td set:html={t("accordion.decisionRow3Use")} class="sk-table__cell" /></tr>
-        <tr class="sk-table__row"><td set:html={t("accordion.decisionRow4Need")} class="sk-table__cell" /><td set:html={t("accordion.decisionRow4Use")} class="sk-table__cell" /></tr>
-        <tr class="sk-table__row"><td set:html={t("accordion.decisionRow5Need")} class="sk-table__cell" /><td set:html={t("accordion.decisionRow5Use")} class="sk-table__cell" /></tr>
-        <tr class="sk-table__row"><td set:html={t("accordion.decisionRow6Need")} class="sk-table__cell" /><td set:html={t("accordion.decisionRow6Use")} class="sk-table__cell" /></tr>
-      </tbody>
-    </table>
-    </div>
-    <p set:html={t("accordion.nativeBody")} />
-    <ComponentPreview tree={detailsGroupTree(t)} label={t("accordion.nativePreviewLabel")} />
-
-    <h4>{t("accordion.nativeContractTitle")}</h4>
-    <ul>
-      <li set:html={t("accordion.nativeContractItem1")} />
-      <li set:html={t("accordion.nativeContractItem2")} />
-      <li set:html={t("accordion.nativeContractItem3")} />
-      <li set:html={t("accordion.nativeContractItem4")} />
-      <li set:html={t("accordion.nativeContractItem5")} />
-    </ul>
   </Fragment>
 
+  {/*
+    * SPLIT ACROSS THE SHELL'S TWO INSTALL HALVES, because this page had three stories stacked in one
+    * panel and a reader only ever needed one of them. The lede is the same sentence on both sides
+    * (one `t()` call, so the two cannot drift); everything else divides cleanly.
+    *
+    * THE NATIVE `<details>` PATH IS FILED UNDER VANILLA, which is a judgement and worth stating: it
+    * is markup plus a stylesheet and no script at all, so it belongs with the half whose whole claim
+    * is that you write the markup yourself. A React consumer composing `Details` from
+    * `@skryensya/react/details` installs it the React way, which the React half already covers.
+    */}
   <Fragment slot="install">
+    <p class="lede">{t("accordion.installIntro")}</p>
+
+    <h3>{t("accordion.reactInstallTitle")}</h3>
+    <p>{t("accordion.reactInstallBody")}</p>
+    <CodeBlock code={reactInstall} label="terminal" />
+    <CodeBlock code={enhancedStyles} label="CSS" lang="css" />
+  </Fragment>
+
+  <Fragment slot="installVanilla">
+    <p class="lede">{t("accordion.installIntro")}</p>
+
     <VanillaMount {...vanillaMounts["/components/accordion"]} headingLevel="h3" />
     <p set:html={t("accordion.iconsNote")} />
     <CodeBlock code={iconsSetup} label="JavaScript" />
 
     <h3>{t("accordion.nativeInstallTitle")}</h3>
+    <p set:html={t("accordion.nativeInstallBody")} />
     <CodeBlock code={nativeInstall} label="terminal" />
     <CodeBlock code={nativeStyles} label="CSS" lang="css" />
   </Fragment>
 
   <Fragment slot="a11y">
-    <p set:html={t("accordion.a11yP1")} />
-    <p set:html={t("accordion.a11yP2")} />
-    <p set:html={t("accordion.a11yP3", { detailsLink })} />
+    <p class="lede" set:html={t("accordion.a11yIntro")} />
+
+    <h3>{t("accordion.a11ySemanticsTitle")}</h3>
+    <ul>
+      <li set:html={t("accordion.a11ySemanticsItem1")} />
+      <li set:html={t("accordion.a11ySemanticsItem2")} />
+      <li set:html={t("accordion.a11ySemanticsItem3")} />
+    </ul>
+
+    <h3>{t("accordion.a11yKeyboardTitle")}</h3>
+    <p set:html={t("accordion.a11yKeyboardBody")} />
+
+    <h3>{t("accordion.a11yNativeTitle")}</h3>
+    <p set:html={t("accordion.a11yNativeBody")} />
   </Fragment>
 </ComponentPageShell>

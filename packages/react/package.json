@@ -33,6 +33,22 @@
       "types": "./src/components/tag.tsx",
       "default": "./src/components/tag.tsx"
     },
+    "./description-list": {
+      "types": "./src/components/description-list.tsx",
+      "default": "./src/components/description-list.tsx"
+    },
+    "./separator": {
+      "types": "./src/components/separator.tsx",
+      "default": "./src/components/separator.tsx"
+    },
+    "./tags-input": {
+      "types": "./src/components/tags-input.tsx",
+      "default": "./src/components/tags-input.tsx"
+    },
+    "./quote": {
+      "types": "./src/components/quote.tsx",
+      "default": "./src/components/quote.tsx"
+    },
     "./progress": {
       "types": "./src/components/progress.tsx",
       "default": "./src/components/progress.tsx"
@@ -289,9 +305,9 @@
       "types": "./src/components/content.tsx",
       "default": "./src/components/content.tsx"
     },
-    "./icon-state-button": {
-      "types": "./src/components/icon-state-button.tsx",
-      "default": "./src/components/icon-state-button.tsx"
+    "./state-button": {
+      "types": "./src/components/state-button.tsx",
+      "default": "./src/components/state-button.tsx"
     },
     "./tooltip": {
       "types": "./src/components/tooltip.tsx",
@@ -369,6 +385,10 @@
       "types": "./src/components/number-field.tsx",
       "default": "./src/components/number-field.tsx"
     },
+    "./otp-input": {
+      "types": "./src/components/otp-input.tsx",
+      "default": "./src/components/otp-input.tsx"
+    },
     "./split-button": {
       "types": "./src/components/split-button.tsx",
       "default": "./src/components/split-button.tsx"
@@ -392,6 +412,10 @@
     "./render-tree": {
       "types": "./src/render-tree.tsx",
       "default": "./src/render-tree.tsx"
+    },
+    "./diagram": {
+      "types": "./src/components/diagram.tsx",
+      "default": "./src/components/diagram.tsx"
     },
     "./dialog": {
       "types": "./src/components/dialog.tsx",

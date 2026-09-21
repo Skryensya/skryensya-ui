@@ -30,7 +30,7 @@ export const ratingParts = {
   root: "sk-rating",
   /** Zag puts the radiogroup here, not on the root, so this is what carries the accessible name. */
   control: "sk-rating__control",
-  /** The display's whole strip: one element, one repeated mask. See `ratingFillPercent`. */
+  /** The display's whole strip: one element, one repeated mask, one colour stop. */
   symbols: "sk-rating__symbols",
   /** The input's radio, one per step. */
   item: "sk-rating__item",
@@ -64,16 +64,14 @@ export const ratingEvents = {
 export const ratingDefaultMax = 5;
 
 /**
- * How much of the strip is filled, as a percentage, for `value` out of `max`.
+ * How much of the SCALE a value covers, as a percentage, clamped to it.
  *
- * ONE NUMBER FOR THE WHOLE ROW rather than one per symbol, and that is what makes a fractional
- * rating exact instead of rounded. The stylesheet repeats the symbol mask `max` times across the
- * strip and paints underneath it with a hard colour stop at this percentage, so 4.3 of 5 stops the
- * fill 86% across: four whole symbols and three tenths of the fifth. Nothing rounds, and no element
- * has to exist per symbol for the display to be honest about its own average.
- *
- * Clamped through `clampedFraction`, so a value outside the scale paints the end of it rather than
- * overflowing the strip.
+ * NOT WHERE THE STRIP'S PAINT STOPS, and the difference is the gaps. A strip of five is five
+ * symbols AND four gaps wide, so 86% of it lands 2px short of "four symbols and three tenths of
+ * the fifth" - short enough that 3.8 and 4.3 drew the same picture, which is the one thing this
+ * display exists not to do. The stylesheet therefore computes its own stop in glyph space, from
+ * `--sk-rating-value`; see `rating.css`. This is the plain fraction, for a consumer who wants the
+ * number (a summary line, a sort key), and nothing reads it back into the DOM.
  */
 export function ratingFillPercent(value: number, max: number = ratingDefaultMax): number {
   return clampedFraction(value, 0, max) * 100;
@@ -83,7 +81,7 @@ export function ratingFillPercent(value: number, max: number = ratingDefaultMax)
  * Snaps to the nearest half.
  *
  * Not applied anywhere by default, and offered because "4.3 stars" is a number a lot of products
- * would rather show as 4.5 than as the literal 86% this contract paints. That is a product
+ * would rather show as 4.5 than as the literal three tenths this contract paints. That is a product
  * decision, so it is a function a consumer calls on the way in, never a rounding this contract does
  * to a value it was handed.
  */
@@ -109,6 +107,10 @@ export const ratingContract = {
     "--sk-rating-size",
     "--sk-rating-symbol",
     "--sk-rating-tile",
+    /* The display's own input, written by both bindings from `value` and read by the stylesheet to
+       place the colour stop. Listed because the sheet declares its floor, and because overriding
+       it is how a consumer paints a strip whose value never went through the contract. */
+    "--sk-rating-value",
   ],
 
   options: {
@@ -161,6 +163,15 @@ export const ratingContract = {
       options: ["defaultValue", "max", "label", "name", "disabled", "readOnly", "symbolSize", "itemLabel"],
       requires: ["label"],
       forward: ["id", "aria-*"],
+      /*
+       * EACH STEP IS THE KIT'S ICON-ONLY BUTTON, borrowed rather than redrawn. A step is a square
+       * that holds one glyph and reacts to a pointer, which is what `sk-button[data-icon-only]`
+       * already is: the square, the radius, the ghost face and the state layer all come from
+       * `button.css`, and the only thing this contract still owns is which glyph goes inside.
+       * Before this it owned all of it, badly: a bare 20px box with no radius, so the state layer
+       * painted a grey square the size of the star itself.
+       */
+      compose: [{ of: "button", sheets: ["@skryensya/core/components/button.css"], systemOwned: true }],
       mount: ratingAttrs.root,
       slots: {},
       template: {
@@ -191,9 +202,15 @@ export const ratingContract = {
             repeatComputed: { window: "rating-symbols", from: ["max"], key: "value" },
             element: "span",
             part: "item",
-            also: ["sk-interactive"],
+            also: ["sk-button", "sk-interactive"],
             mount: ratingAttrs.item,
-            attrs: { role: "radio" },
+            /*
+             * `sm`, the SECOND face of the scale and not the default one: five of these sit in a
+             * row under a line of text, and the 40px `md` square turns a rating into a toolbar.
+             * `rating.css` re-points `--sk-button-height` for the other two symbol sizes, so the
+             * face follows the glyph instead of being a fourth thing to keep in step.
+             */
+            attrs: { role: "radio", "data-icon-only": "", "data-size": "sm", "data-variant": "ghost" },
             selectedBy: { option: "defaultValue", attr: "aria-checked", value: "true" },
             children: [
               { element: "span", part: "symbol", attrs: { "aria-hidden": "true" } },
@@ -243,11 +260,17 @@ export const ratingContract = {
         attrs: { role: "img" },
         children: [
           {
+            /*
+             * NO `style` OF ITS OWN, and that is the fix for a display that drew 3.8 and 4.3 alike.
+             * It used to carry `--sk-rating-fill` as a percentage of the strip (`percentOf`), and a
+             * strip is symbols AND gaps, so the stop landed short of the fraction it claimed. The
+             * arithmetic that gets it right needs the symbol's own size, which only the stylesheet
+             * knows, so the stylesheet does it: `--sk-rating-value` is already on the root, and
+             * `rating.css` turns it into a length in glyph space.
+             */
             element: "span",
             part: "symbols",
             attrs: { "aria-hidden": "true" },
-            /* The whole strip in one number. See `ratingFillPercent`. */
-            style: [{ property: "--sk-rating-fill", percentOf: ["value", "max"] }],
           },
           { element: "span", part: "value", name: "valueText", whenGiven: "valueText", slot: "valueText" },
           { element: "span", part: "count", name: "count", whenGiven: "count", slot: "count" },

@@ -136,8 +136,8 @@ export const annotationAttrs = {
   /** The ring's corner radius, in px. Read by the binding, never rendered. */
   ringRadius: "data-ring-radius",
   /**
-   * The label's cross-axis alignment in the narrow-screen stack. Omitted preserves that stack's
-   * default; set it only for the diagrams whose label order needs the opposite edge.
+   * Where the label sits in its row of the narrow-screen cluster. Omitted keeps the cluster's own
+   * packing; set it only for the diagrams whose label order needs the opposite edge.
    */
   mobileAlign: "data-mobile-align",
 } as const;
@@ -193,7 +193,7 @@ const logicalSide = (side: PhysicalSide, direction: AnnotationDirection): Annota
 /** Clearance between two labels that would otherwise touch, in px. */
 export const ANNOTATION_LANE_GAP = 6;
 
-/** A narrow-screen stack label may hug either logical inline edge. */
+/** A narrow-screen cluster label may hug either logical inline edge of its row. */
 export type AnnotationMobileAlign = "start" | "end";
 
 export const annotationMobileAlignments = ["start", "end"] as const satisfies readonly AnnotationMobileAlign[];
@@ -733,11 +733,6 @@ export type AnnotationPlacementOptions = {
   readonly direction?: AnnotationDirection;
   /** Keep labels in their flow positions while still drawing leaders from those measured boxes. */
   readonly distribute?: boolean;
-  /**
-   * The mobile stack's leaders step only a little right from each bubble, then run toward its ring.
-   * Each label gets a distinct elbow, so no shared rail reaches the container edge or crosses labels.
-   */
-  readonly leaderRoute?: "direct" | "right-elbow";
 };
 
 /**
@@ -764,7 +759,6 @@ export function placeAnnotations(
   const ringGap = options.ringGap ?? ANNOTATION_RING_GAP;
   const direction = options.direction ?? "ltr";
   const distribute = options.distribute ?? true;
-  const leaderRoute = options.leaderRoute ?? "direct";
 
   const sides = measurements.map((measurement) =>
     annotationExitSide(measurement.label, subject, measurement.side, direction),
@@ -829,7 +823,7 @@ export function placeAnnotations(
      * run, not an elbow forced by an evenly-spaced fan. Origins stay ordered with the targets so
      * no two of a label's own leaders cross.
      */
-    const origins = leaderRoute === "direct" ? spreadAlong(label, gutter, targets[index]!) : [];
+    const origins = spreadAlong(label, gutter, targets[index]!);
     const marks = targets[index]!.map((target, at) => {
       const inset = measurement.ringInset ?? ringInset;
       /* Narrowest opinion first: this one mark, then the frame, then the part's own corner, then the
@@ -848,20 +842,6 @@ export function placeAnnotations(
           ? ANNOTATION_RING_RADIUS
           : Math.max(0, target.radius - inset));
       const ring = ringAround(target, inset, radius);
-      if (leaderRoute === "right-elbow") {
-        const from = { x: label.x + label.width, y: label.y + label.height / 2 };
-        const edge: PhysicalSide = from.y <= ring.y + ring.height / 2 ? "top" : "bottom";
-        const to = leaderTarget(from, ring, edge, tipInset, ringGap);
-        /*
-         * A mobile label needs the fewest route possible: horizontal to the point above or below the
-         * ring, then a vertical entry. Adding an intermediate rail turns this simple relationship
-         * into four segments without avoiding anything the labels' higher paint layer does not.
-         */
-        return {
-          path: annotationPath(dedupe([from, { x: to.x, y: from.y }, to])),
-          ring,
-        };
-      }
       const from = origins[at]!;
       const to = leaderTarget(from, ring, gutter, tipInset, ringGap);
       return {
@@ -1191,9 +1171,9 @@ export const annotationContract = {
                 machineInput: true,
               },
               /**
-               * Cross-axis alignment when the narrow layout stacks labels above or below the
-               * specimen. Omit it for the stack default; use `end` for a label that belongs against
-               * the far edge without forcing every label in that group to follow it.
+               * Where the label lands in its row once the narrow layout clusters labels above and
+               * below the specimen. Omit it for the cluster's own packing; use `end` for a label
+               * that belongs against the far edge without forcing its neighbours to follow it.
                */
               mobileAlign: {
                 type: "enum",

@@ -171,7 +171,7 @@ export const commentThreadEvents = {
  * It exists because THREE things have to agree and nothing was enforcing it: `data-voted` paints the
  * accent, and the two buttons' `aria-pressed` announce the state. Written by hand they drifted apart
  * twice during this component's own development - once painting a vote a screen reader called
- * unpressed, once the reverse. Mirrors `setIconState` (`icon-state-button.ts`), which is the same
+ * unpressed, once the reverse. Mirrors `setIconState` (`state-button.ts`), which is the same
  * shape for the same reason: a small imperative helper for a consumer's own behaviour script.
  *
  * `count` is left alone when omitted, so a consumer who only wants to move the highlight can.

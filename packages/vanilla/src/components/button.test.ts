@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { destroyMount } from "../runtime/svelte-hydrate.js";
 import { mountButton } from "./button.js";
 
 function mount(html: string): HTMLElement {
@@ -116,5 +117,81 @@ describe("Button.navigation Vanilla contracts", () => {
     );
 
     expect(() => mountButton(root)).toThrow(/cannot be disabled/i);
+  });
+
+  /*
+   * `aria-disabled` is WRITTEN FROM the disabled state, not merely left alone, which means the
+   * enhancer removes a stale one as readily as it adds a true one. Authored `aria-disabled="false"`
+   * is the case that shows it: the enhancer reads it as not-disabled and then clears the attribute
+   * rather than echoing a value a screen reader would announce.
+   */
+  it("clears an aria-disabled the author left behind on an enabled button", () => {
+    const root = mount(
+      '<button class="sk-button sk-interactive" data-sk-button aria-disabled="false">Save</button>',
+    );
+
+    mountButton(root);
+
+    expect(root.hasAttribute("aria-disabled")).toBe(false);
+    expect(root.hasAttribute("disabled")).toBe(false);
+  });
+
+  /*
+   * THE AT-ONLY PATH. A control that stays focusable and announces itself unavailable carries
+   * `aria-disabled` WITHOUT native `disabled`; the enhancer has to read that as disabled too, or a
+   * button the author marked unavailable comes back enabled to everything but a screen reader.
+   */
+  it("treats aria-disabled alone as disabled, without inventing the native attribute", () => {
+    const root = mount(
+      '<button class="sk-button sk-interactive" data-sk-button aria-disabled="true">Save</button>',
+    );
+
+    mountButton(root);
+
+    expect(root.getAttribute("aria-disabled")).toBe("true");
+    // Not promoted to the native one: that would take the control out of the tab order, which is the
+    // whole thing an `aria-disabled` button is choosing not to do.
+    expect(root.hasAttribute("disabled")).toBe(false);
+  });
+
+  /*
+   * The default `type` exists so a button inside a form is inert unless it says otherwise; it must
+   * never overwrite one the author did say. `reset` rather than `submit` because the disabled case
+   * above already covers `submit`, and a silent overwrite there would be caught by neither.
+   */
+  it("never replaces a type the author wrote", () => {
+    const root = mount('<button class="sk-button sk-interactive" data-sk-button type="reset">Clear</button>');
+
+    mountButton(root);
+
+    expect(root.getAttribute("type")).toBe("reset");
+  });
+
+  /* `aria-labelledby` is the third way to name an icon-only button, beside `aria-label` and real
+     text; it is the one that points somewhere else, so the enhancer cannot confirm it resolves. It
+     accepts the promise, which is what the other two cases do not prove. */
+  it("accepts an icon-only button named by aria-labelledby", () => {
+    const root = mount(
+      '<div><span id="close-label">Close</span>' +
+        '<button class="sk-button sk-interactive" data-sk-button data-icon-only aria-labelledby="close-label">' +
+        '<svg class="sk-icon" data-icon="close"></svg></button></div>',
+    );
+    const button = root.querySelector<HTMLElement>("button");
+    if (!button) throw new Error("Expected a button.");
+
+    expect(() => mountButton(button)).not.toThrow();
+  });
+
+  /* Mount, tear down, mount again: the enhancer owns no state, so the second mount has to be a real
+     one (1, not the 0 an already-ready root returns) and nothing may carry over. */
+  it("can be torn down and mounted again", () => {
+    const root = mount('<button class="sk-button sk-interactive" data-sk-button>Save</button>');
+
+    expect(mountButton(root)).toBe(1);
+    destroyMount(root);
+    expect(root.hasAttribute("data-sk-ready")).toBe(false);
+
+    expect(mountButton(root)).toBe(1);
+    expect(root.getAttribute("type")).toBe("button");
   });
 });

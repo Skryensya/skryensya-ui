@@ -26,10 +26,7 @@ const t = useTranslations(getLocale(Astro.url));
   contractId="callout"
   testFiles={["packages/react/src/components/callout.test.tsx"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("callout.lede1")} />
-    <p class="lede" set:html={t("callout.lede2")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("callout.anatomyBody")} />
     <ComponentPreview
       tree={calloutAnatomyTree(t)}
@@ -39,7 +36,11 @@ const t = useTranslations(getLocale(Astro.url));
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("callout.lede1")} />
+    <p class="lede" set:html={t("callout.lede2")} />
     <h3>{t("callout.tonesTitle")}</h3>
     <p set:html={t("callout.tonesBody1")} />
     <p set:html={t("callout.tonesBody2")} />

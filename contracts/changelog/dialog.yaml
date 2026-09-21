@@ -3,8 +3,23 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "94613cc44aad7936"
+surface: "8dab4e06d79297d2"
 entries:
+  - date: 2026-09-20
+    kind: feature
+    target: footerAlign
+    es:
+      title: Nueva opción footerAlign en el footer
+      body: >-
+        <code>footerAlign</code> (<code>start</code> | <code>end</code>, por defecto
+        <code>end</code>) mueve la fila de acciones del <code>&lt;form method="dialog"&gt;</code>
+        al inicio o al final del eje inline vía <code>data-footer-align</code> en el host.
+    en:
+      title: New footerAlign option for the footer row
+      body: >-
+        <code>footerAlign</code> (<code>start</code> | <code>end</code>, default
+        <code>end</code>) moves the <code>&lt;form method="dialog"&gt;</code> action row to the
+        inline-start or inline-end via <code>data-footer-align</code> on the host.
   - date: 2026-09-17
     kind: feature
     es:

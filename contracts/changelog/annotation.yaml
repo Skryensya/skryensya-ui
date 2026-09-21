@@ -5,6 +5,24 @@
 # hash nuevo.
 surface: "c00312f000345eb0"
 entries:
+  - date: 2026-09-20
+    kind: rework
+    es:
+      title: En pantallas angostas las etiquetas se agrupan en filas, no en una columna
+      body: >-
+        Debajo de 40rem los cuatro márgenes ya no se apilan uno por línea: forman dos grupos que
+        envuelven en filas arriba y abajo del espécimen, y la clave baja a su propia línea. Las
+        quince etiquetas de FileUpload pasaron de 543px de columna a cuatro filas, y el diagrama de
+        1058px a 593px. <code>mobileAlign="end"</code> ahora empuja la etiqueta al final de SU fila
+        (<code>margin-inline-start: auto</code>) en vez de alinearla en el eje cruzado.
+    en:
+      title: Narrow screens cluster the labels into rows instead of one column
+      body: >-
+        Below 40rem the four margins no longer stack one per line: they become two clusters that
+        wrap into rows above and below the specimen, and the key drops to a line of its own.
+        FileUpload's fifteen names went from 543px of column to four rows, and the diagram from
+        1058px to 593px. <code>mobileAlign="end"</code> now pushes a label to the end of ITS row
+        (<code>margin-inline-start: auto</code>) rather than aligning it on the cross axis.
   - date: 2026-09-17
     kind: chore
     es:

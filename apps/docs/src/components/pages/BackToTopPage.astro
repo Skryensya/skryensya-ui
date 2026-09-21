@@ -74,9 +74,7 @@ const pill = `.mi-back-to-top {
   contractId="back-to-top"
   testFiles={["packages/react/src/components/back-to-top.test.tsx", "packages/vanilla/src/components/back-to-top.test.ts"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("backToTop.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("backToTop.anatomyBody")} />
     <ComponentPreview
       tree={backToTopAnatomyTree(t)}
@@ -86,7 +84,10 @@ const pill = `.mi-back-to-top {
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("backToTop.lede")} />
     <h3>{t("backToTop.whenTitle")}</h3>
     <p set:html={t("backToTop.whenBody1")} />
     <p set:html={t("backToTop.whenBody2")} />

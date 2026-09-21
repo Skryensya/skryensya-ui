@@ -47,6 +47,10 @@ const registrations: readonly Registration[] = [
     load: async () => (await import("../components/back-to-top.js")).mountBackToTop,
   },
   {
+    selector: "[data-sk-otp-input]",
+    load: async () => (await import("../components/otp-input.js")).mountOtpInput,
+  },
+  {
     selector: "[data-sk-rating]",
     load: async () => (await import("../components/rating.js")).mountRating,
   },
@@ -94,6 +98,10 @@ const registrations: readonly Registration[] = [
   {
     selector: "[data-sk-tabs]",
     load: async () => (await import("../components/tabs.js")).mountTabs,
+  },
+  {
+    selector: "[data-sk-tags-input]",
+    load: async () => (await import("../components/tags-input.js")).mountTagsInput,
   },
   {
     selector: "[data-sk-carousel]",
@@ -264,6 +272,10 @@ const registrations: readonly Registration[] = [
   {
     selector: "[data-sk-breadcrumb]",
     load: async () => (await import("../components/breadcrumb.js")).mountBreadcrumb,
+  },
+  {
+    selector: "[data-sk-diagram]",
+    load: async () => (await import("../components/diagram.js")).mountDiagram,
   },
   /*
    * LAST ON PURPOSE, and it is the only entry in this table whose POSITION means anything.

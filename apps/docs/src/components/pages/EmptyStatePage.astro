@@ -18,9 +18,7 @@ const t = useTranslations(getLocale(Astro.url));
   contractId="empty-state"
   testFiles={["packages/react/src/components/empty-state.test.tsx"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("emptyState.description")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("emptyState.anatomyBody")} />
     <ComponentPreview
       tree={emptyStateAnatomyTree(t)}
@@ -30,7 +28,10 @@ const t = useTranslations(getLocale(Astro.url));
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("emptyState.description")} />
     <ComponentPreview tree={emptyStateTree(t)} label="Empty State" />
 
     <h3>{t("component.contractNotesTitle")}</h3>

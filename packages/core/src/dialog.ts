@@ -38,6 +38,7 @@ export const dialogContract = {
     "--sk-dialog-fg",
     "--sk-dialog-footer-border-color",
     "--sk-dialog-footer-gap",
+    "--sk-dialog-footer-justify",
     "--sk-dialog-header-border-color",
     "--sk-dialog-inline-size",
     "--sk-dialog-padding",
@@ -84,13 +85,27 @@ export const dialogContract = {
      * here. An alert dialog only ever differs from a plain one in how it is ANNOUNCED.
      */
     alert: { type: "boolean", default: false, attr: "role", trueValue: "alertdialog" },
+    /**
+     * Where the footer action row sits on the inline axis. The default groups controls at the
+     * inline-end (today's behaviour). `start` moves the whole row to the inline-start.
+     *
+     * DOM order still controls which button sits left of which; this option only moves the group.
+     * To pin Cancel and Confirm to opposite edges, that is a different layout (`between`) and is
+     * not this option: keep `end` and order the buttons, or compose with a hook override.
+     */
+    footerAlign: {
+      type: "enum",
+      values: ["start", "end"],
+      default: "end",
+      attr: "data-footer-align",
+    },
   },
 
   signatures: {
     Dialog: {
       intent: ["modal-dialog", "blocking-confirmation", "focused-task"],
       host: { element: "dialog" },
-      options: ["closeLabel", "open", "vaul", "alert"],
+      options: ["closeLabel", "open", "vaul", "alert", "footerAlign"],
       /*
        * Close control is a system-owned Button (+ close icon), not an authored child. `also` already
        * pulls button.css; compose is the machine-readable statement of that borrow.

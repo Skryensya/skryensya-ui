@@ -30,13 +30,7 @@ const install = `pnpm add @skryensya/core @skryensya/react`;
     },
   ]}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("wrapperPage.lede")} />
-
-    <h3>{t("wrapperPage.ceilingTitle")}</h3>
-    <p set:html={t("wrapperPage.ceilingBody")} />
-    <ComponentPreview tree={wrapperTree(t)} label="Wrapper" flush />
-
+  <Fragment slot="anatomy">
     <p set:html={t("wrapperPage.anatomyBody")} />
     <ComponentPreview
       tree={wrapperAnatomyTree(t)}
@@ -46,6 +40,14 @@ const install = `pnpm add @skryensya/core @skryensya/react`;
       hideSource
       chrome={false}
     />
+  </Fragment>
+
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("wrapperPage.lede")} />
+
+    <h3>{t("wrapperPage.ceilingTitle")}</h3>
+    <p set:html={t("wrapperPage.ceilingBody")} />
+    <ComponentPreview tree={wrapperTree(t)} label="Wrapper" flush />
     <p set:html={t("wrapperPage.belowBody")} />
 
     <h3>{t("wrapperPage.tableTitle")}</h3>

@@ -23,9 +23,7 @@ const styles = `@import "@skryensya/core/components/timeline.css";
   contractId="timeline"
   testFiles={["packages/react/src/components/timeline.test.tsx"]}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("timelinePage.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("timelinePage.anatomyBody")} />
     <ComponentPreview
       tree={timelineAnatomyTree(t)}
@@ -35,7 +33,10 @@ const styles = `@import "@skryensya/core/components/timeline.css";
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("timelinePage.lede")} />
     <ComponentPreview tree={timelineTree(t)} label="Timeline" />
 
     <h3>{t("timelinePage.tonesTitle")}</h3>

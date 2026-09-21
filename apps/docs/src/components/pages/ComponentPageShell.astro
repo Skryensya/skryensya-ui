@@ -34,6 +34,8 @@ import TestCoverage, { type TestGroup } from "../TestCoverage.astro";
 import { changelogFor } from "../../lib/contract-reference";
 import { findComponentIconMarkup } from "../../lib/component-icons";
 import { getLocale, useTranslations } from "../../i18n";
+import CodeBlock from "../CodeBlock.astro";
+import { vanillaMountFor } from "../../lib/vanilla-mounts";
 
 interface Props {
   title: string;
@@ -72,6 +74,7 @@ const t = useTranslations(getLocale(Astro.url));
 const hasContract = Boolean(contractId);
 const hasChanges = contractId ? changelogFor(contractId).length > 0 : false;
 const hasInstall = Astro.slots.has("install");
+
 /*
  * The styling-hooks table is DERIVED from the contract when a page does not say otherwise.
  *
@@ -92,7 +95,47 @@ const derivedStyleGroups: readonly HookGroup[] = (() => {
   return [{ file: contract.css.replace(/^@skryensya\/core\//, ""), probe }];
 })();
 
+/*
+ * INSTALLATION IS ONE PANEL WITH TWO HALVES, and the reader picks which one they are reading.
+ *
+ * The `install` slot is the REACT half. That is not a new convention, it is the one the site already
+ * had: ~98 component pages open their install slot with `pnpm add @skryensya/core @skryensya/react`
+ * and a stylesheet import, and three of them then stacked the Vanilla story underneath, so a React
+ * reader scrolled past mount seams they will never call and a Vanilla reader read an npm line for a
+ * package they are not installing. Naming the halves lets the page show one.
+ *
+ * THE SWITCH IS THE PREVIEWS' SWITCH. It writes the same document-level preference every
+ * ComponentPreview's binding tabs write (`data-sk-component-preview-pref` on `<html>`, seeded before
+ * first paint by `Base.astro` and persisted by `scripts/docs-binding.ts`), so flipping a demo to
+ * React changes what this tab says, and flipping this tab changes every demo. One question, asked
+ * once per reader rather than once per tab.
+ */
+const hasVanillaInstall = Astro.slots.has("installVanilla");
+
+/*
+ * THE VANILLA HALF IS GENERATED WHEN A PAGE DOES NOT WRITE ONE, from the two facts the shell
+ * already holds: the sheets this component needs (`derivedStyleGroups`, itself derived from the
+ * contract) and whether the route owns an enhancer (`vanillaMountFor`). Eighteen do; the rest are
+ * native controls and CSS-only modules whose Vanilla story really is "install core, import the
+ * sheet, write the markup", and spelling that out by hand on eighty pages is how eighty pages come
+ * to disagree about it.
+ *
+ * A page that needs to say more passes `installVanilla` and this is skipped entirely.
+ */
+const vanillaMount = vanillaMountFor(Astro.url.pathname);
+const vanillaInstallCommand = "pnpm add @skryensya/core";
+const vanillaStyleImports = derivedStyleGroups
+  .map((group) => `@import "@skryensya/core/${group.file}";`)
+  .join("\n");
+const vanillaMountSnippet = vanillaMount
+  ? `import { ${vanillaMount.mount} } from "${vanillaMount.entrypoint}";\n\n${vanillaMount.mount}();`
+  : null;
+
+/* Nothing to switch between when the page has no React half to begin with. */
+const canToggleInstall = hasInstall && (hasVanillaInstall || vanillaStyleImports.length > 0 || vanillaMountSnippet);
+
 const hasStyle = derivedStyleGroups.length > 0 || Astro.slots.has("style");
+const hasAnatomy = Astro.slots.has("anatomy");
 const hasA11y = Astro.slots.has("a11y");
 const hasTests = tests.length > 0 || (testFiles?.length ?? 0) > 0;
 
@@ -189,19 +232,79 @@ const markMarkup = findComponentIconMarkup(Astro.url.pathname, { className: "doc
           {badge && (
             <span class="sk-badge docs-component-hero__badge" data-tone="warning">{badge}</span>
           )}
+
         </div>
+
+          {/*
+            * THE PAGE'S ONE BINDING SWITCH, and the masthead is where it belongs because the
+            * question is about the page. Every preview used to carry its own copy, so a page with a
+            * dozen demos asked the reader the same thing a dozen times and the Installation tab
+            * asked it a thirteenth; and because the preference was shared all along, answering any
+            * one of them moved all the others, which is a control that looks per-demo and is not.
+            *
+            * ALWAYS RENDERED, not gated on the page having React demos. The preference is global
+            * (`data-sk-component-preview-pref` on `<html>`, persisted): it decides what the
+            * Installation tab says here and what every preview shows on the next page too, so a page
+            * whose own demos happen to be Vanilla-only is still a place a reader may want to set it.
+            *
+            * A SIBLING OF THE TITLE ROW, NOT AN ITEM IN IT, and positioned against the header
+            * itself (site.css). The collapse interpolates the title's TYPE rather than transforming
+            * the band, so a switch laid out beside the heading rode its shrinking line box: measured
+            * across the collapse it drifted 25px down and 8px across while the reader scrolled. The
+            * header's own box is a constant 66px at every scroll position, so anchoring to that
+            * holds the switch still.
+            *
+            * `data-sk-segmented` and the docs hook on one node, the doubling the previews used: the
+            * site's global enhancer runs the widget and `scripts/page-binding.ts` only listens for
+            * the `sk:segmentedvaluechange` it dispatches.
+            */}
+          <div
+            class="sk-segmented docs-component-hero__binding"
+            data-sk-segmented
+            data-sk-page-binding-tabs
+            data-value="vanilla"
+            role="radiogroup"
+            aria-label={t("install.bindingGroup")}
+          >
+            <span class="sk-segmented__indicator" aria-hidden="true" />
+            <button
+              class="sk-segmented__option sk-interactive"
+              data-sk-segmented-option
+              data-value="vanilla"
+              type="button"
+              role="radio"
+            >
+              Vanilla
+            </button>
+            <button
+              class="sk-segmented__option sk-interactive"
+              data-sk-segmented-option
+              data-value="react"
+              type="button"
+              role="radio"
+            >
+              React
+            </button>
+          </div>
+
+        {/* Head FOUC already wrote the preference on `<html>`; this only keeps the pill from flipping
+            Vanilla -> React once the Segmented enhancer arrives. */}
+        <script is:inline>
+          (function () {
+            var pref = document.documentElement.getAttribute("data-sk-component-preview-pref") || "vanilla";
+            var tabs = document.querySelector("[data-sk-page-binding-tabs]");
+            if (!tabs) return;
+            tabs.setAttribute("data-value", pref);
+            tabs.querySelectorAll("[data-sk-segmented-option]").forEach(function (option) {
+              option.setAttribute("aria-checked", option.getAttribute("data-value") === pref ? "true" : "false");
+            });
+          })();
+        </script>
       </header>
     </div>
     <div class="sk-tabs" data-orientation="horizontal" data-activation-mode="automatic" data-value="usage" data-sk-tabs>
       <div class="sk-tabs__list docs-component-hero-tabs" data-sk-tabs-list aria-label={t("component.tabsAriaLabel", { name: title })}>
         <button class="sk-tabs__trigger sk-interactive" data-sk-tabs-trigger data-value="usage" type="button">{t("component.tabUsage")}</button>
-        {
-          hasInstall && (
-            <button class="sk-tabs__trigger sk-interactive" data-sk-tabs-trigger data-value="install" type="button">
-              {t("component.tabInstall")}
-            </button>
-          )
-        }
         {
           hasContract && (
             <button class="sk-tabs__trigger sk-interactive" data-sk-tabs-trigger data-value="contract" type="button">
@@ -244,20 +347,93 @@ const markMarkup = findComponentIconMarkup(Astro.url.pathname, { className: "doc
             the document outline has a real h2 to hang the slot's h3s off of. */}
         <h2 class="sk-visually-hidden">{t("component.tabUsage")}</h2>
         <slot name="usage" />
-      </div>
 
-      {
-        hasInstall && (
-          <div class="sk-tabs__content sk-layout-grid" data-value="install" data-sk-tabs-content>
-            <h2>{t("component.tabInstall")}</h2>
-            <slot name="install" />
-          </div>
-        )
-      }
+        {/*
+          * INSTALLATION CLOSES THE USAGE PANEL rather than owning a tab of its own.
+          *
+          * The two were always read in one order: what the component is and what it looks like, then
+          * how to put it in your project. A tab made that a second navigation the reader had to know
+          * about, and it split a page that is already short for most primitives (Box, Badge) into two
+          * panels where the second was four lines of `pnpm add`. The heading is a real one, so the
+          * panel's own rail picks it up and the section is still linkable.
+          */}
+        {
+          hasInstall && (
+            <>
+            {/*
+              * `h3`, not `h2`, and the rail is the reason: `buildHeroTabsToc` collects
+              * `:scope > h3, :scope > h4`, so an `h2` here would be a section a reader cannot
+              * navigate to  -  which is a real loss now that this stopped being a tab. h3 is also the
+              * level the panel's own sections use ("Label", "Dot"), and Installation is their peer.
+              * The install content's own headings live inside `.docs-install__half`, so they are not
+              * direct children and stay out of the rail exactly as they did when this was a tab.
+              */}
+            <h3>{t("component.tabInstall")}</h3>
+
+            {/*
+              * Both halves are always in the document; `site.css` shows the one the preference names,
+              * so switching costs no request and the hidden half stays findable by in-page search.
+              *
+              * THE ATTRIBUTE IS CONDITIONAL, and that is not tidiness. A page with install prose but
+              * no contract and no `styleGroups` (a pattern page, a survey of several components) has
+              * no Vanilla half to generate, so it gets no switch  -  and if its one half still wore
+              * `data-sk-install-binding="react"`, the stylesheet would hide the whole Installation
+              * section from every reader whose preference is Vanilla, which is the default.
+              */}
+            <div class="docs-install__half" data-sk-install-binding={canToggleInstall ? "react" : undefined}>
+              <slot name="install" />
+            </div>
+
+            {canToggleInstall && (
+            <div class="docs-install__half" data-sk-install-binding="vanilla">
+              {hasVanillaInstall ? (
+                <slot name="installVanilla" />
+              ) : (
+                <>
+                  <p>{t("install.vanillaGenerated")}</p>
+                  <CodeBlock code={vanillaInstallCommand} label="terminal" />
+                  {vanillaStyleImports.length > 0 && (
+                    <CodeBlock code={vanillaStyleImports} label="CSS" lang="css" />
+                  )}
+                  {vanillaMountSnippet ? (
+                    <>
+                      <p set:html={t("install.vanillaMount", { name: vanillaMount!.name })} />
+                      <CodeBlock code={vanillaMountSnippet} label="JavaScript" />
+                    </>
+                  ) : (
+                    <p>{t("install.vanillaNoMount")}</p>
+                  )}
+                </>
+              )}
+            </div>
+            )}
+            </>
+          )
+        }
+      </div>
 
       {
         hasContract && contractId && (
           <div class="sk-tabs__content sk-layout-grid" data-sk-tabs-content data-value="contract">
+            {/*
+              * THE ANATOMY DIAGRAM OPENS THIS TAB, above the generated reference, because the two are
+              * the same information twice and this is the order they are useful in: the drawing names
+              * the parts and points at them, the table below then says what each one accepts. In Uso
+              * it sat above the demos, where it was answering a question ("what is this made of")
+              * that a reader scrolling examples has not asked yet.
+              *
+              * A SLOT, not something this shell can render: the specimen is composed per page from
+              * that component's own demo module, so only the page knows the tree. Pages that have no
+              * diagram pass nothing and the panel opens on the reference exactly as before.
+              */}
+            {hasAnatomy && (
+              <>
+                {/* A real heading, so the panel's rail has something to list above "Referencia" and
+                    the outline does not open on un-headed prose. */}
+                <h2>{t("component.anatomy")}</h2>
+                <slot name="anatomy" />
+              </>
+            )}
             <ContractReference id={contractId} />
           </div>
         )

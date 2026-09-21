@@ -1,0 +1,97 @@
+/*
+ * TIER 3, SEPARATOR
+ *
+ * A rule between two things, published once, after four families had each drawn their own.
+ *
+ * THE NATIVE RULE IS RESET BEFORE ITS BORDER IS DRAWN. An `<hr>` otherwise keeps a UA `inset`
+ * border, which can turn a hairline into a groove. The reset leaves one explicit, solid border
+ * whose thickness and color this component owns.
+ *
+ * Every hook resolves to a TIER-2 token, never a palette or raw color; scripts/lint.ts enforces it.
+ */
+@layer components {
+  .sk-separator {
+    --sk-separator-thickness: 1px;
+    --sk-separator-color: var(--color-border-default);
+    --sk-separator-spacing: var(--space-stack-md);
+    --sk-separator-label-fg: var(--color-text-tertiary);
+    --sk-separator-label-font-size: var(--font-size-body-sm);
+    --sk-separator-label-gap: var(--space-inline-sm);
+
+    box-sizing: border-box;
+    /* The UA's own rule: an inset border and a block margin this component decides for itself. */
+    border: 0;
+    flex-shrink: 0;
+  }
+
+  /* The bare rule, on the `<hr>`. The labelled one is a flex row and sizes itself below. */
+  hr.sk-separator {
+    margin: 0;
+  }
+
+  hr.sk-separator[data-orientation="horizontal"] {
+    inline-size: 100%;
+    block-size: 0;
+    border-block-start: var(--sk-separator-thickness) solid var(--sk-separator-color);
+    margin-block: var(--sk-separator-spacing);
+  }
+
+  /*
+   * VERTICAL TAKES ITS HEIGHT FROM WHAT HOLDS IT. A separator has no content, so there is nothing to
+   * be as tall as: `align-self: stretch` is what makes it reach in the flex or grid row it divides,
+   * and `100%` is the fallback for a block context where stretch means nothing.
+   */
+  hr.sk-separator[data-orientation="vertical"] {
+    inline-size: var(--sk-separator-thickness);
+    block-size: 100%;
+    align-self: stretch;
+    margin-inline: var(--sk-separator-spacing);
+    margin-block: 0;
+  }
+
+  .sk-separator[data-tone="subtle"] {
+    --sk-separator-color: var(--color-border-subtle);
+  }
+
+  .sk-separator[data-tone="strong"] {
+    --sk-separator-color: var(--color-border-strong);
+  }
+
+  .sk-separator[data-spacing="none"] {
+    --sk-separator-spacing: 0px;
+  }
+
+  .sk-separator[data-spacing="sm"] {
+    --sk-separator-spacing: var(--space-stack-sm);
+  }
+
+  .sk-separator[data-spacing="lg"] {
+    --sk-separator-spacing: var(--space-stack-lg);
+  }
+
+  /*
+   * THE ONE WITH A WORD IN IT. Two rules that share what the label leaves, so the label sits where
+   * its own width puts it rather than at a fixed centre: `flex: 1` on both makes them equal, and a
+   * longer word simply takes more of the line.
+   */
+  div.sk-separator {
+    display: flex;
+    align-items: center;
+    gap: var(--sk-separator-label-gap);
+    margin-block: var(--sk-separator-spacing);
+  }
+
+  .sk-separator__rule {
+    flex: 1 1 0;
+    block-size: var(--sk-separator-thickness);
+    background: var(--sk-separator-color);
+  }
+
+  .sk-separator__label {
+    color: var(--sk-separator-label-fg);
+    font-size: var(--sk-separator-label-font-size);
+    line-height: var(--font-line-height-body-sm);
+    /* The word is the point of this variant: it never wraps into two lines between two rules. */
+    white-space: nowrap;
+  }
+}

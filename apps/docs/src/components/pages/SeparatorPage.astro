@@ -1,0 +1,85 @@
+---
+import "@skryensya/core/components/separator.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
+/* The demos put the rule between real content, and a frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/typography.css";
+import "@skryensya/core/components/button.css";
+import "@skryensya/core/patterns/layout.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import {
+  separatorAnatomyTree,
+  separatorLabelledTree,
+  separatorTonesTree,
+  separatorTree,
+  separatorVerticalTree,
+} from "../../demos/separator";
+import { annotationDemoCss } from "../../demos/annotation";
+import { getLocale, useTranslations } from "../../i18n";
+
+const t = useTranslations(getLocale(Astro.url));
+const install = `pnpm add @skryensya/core @skryensya/react`;
+const styles = `@import "@skryensya/core/components/separator.css";`;
+---
+
+<ComponentPageShell
+  title="Separator"
+  description={t("separatorPage.description")}
+  contractId="separator"
+  testFiles={["packages/react/src/components/separator.test.tsx"]}
+>
+  <Fragment slot="anatomy">
+    <p set:html={t("separatorPage.anatomyBody")} />
+    <ComponentPreview
+      tree={separatorAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("separatorPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+  </Fragment>
+
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("separatorPage.lede")} />
+    <ComponentPreview tree={separatorTree(t)} label="Separator" />
+
+    <h3>{t("separatorPage.meaningTitle")}</h3>
+    <p set:html={t("separatorPage.meaningBody")} />
+
+    <h3>{t("separatorPage.tonesTitle")}</h3>
+    <p set:html={t("separatorPage.tonesBody")} />
+    <ComponentPreview tree={separatorTonesTree(t)} label={t("separatorPage.tonesPreviewLabel")} />
+
+    <h3>{t("separatorPage.verticalTitle")}</h3>
+    <p set:html={t("separatorPage.verticalBody")} />
+    <ComponentPreview tree={separatorVerticalTree(t)} label={t("separatorPage.verticalPreviewLabel")} />
+
+    <h3>{t("separatorPage.labelledTitle")}</h3>
+    <p set:html={t("separatorPage.labelledBody")} />
+    <ComponentPreview tree={separatorLabelledTree(t)} label={t("separatorPage.labelledPreviewLabel")} />
+
+    <h3>{t("separatorPage.whenTitle")}</h3>
+    <ul>
+      <li set:html={t("separatorPage.whenItem1")} />
+      <li set:html={t("separatorPage.whenItem2")} />
+      <li set:html={t("separatorPage.whenItem3")} />
+      <li set:html={t("separatorPage.whenItem4")} />
+    </ul>
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("separatorPage.contractItem1")} />
+      <li set:html={t("separatorPage.contractItem2")} />
+      <li set:html={t("separatorPage.contractItem3")} />
+      <li set:html={t("separatorPage.contractItem4")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+    <CodeBlock code={styles} label="CSS" />
+  </Fragment>
+</ComponentPageShell>

@@ -421,6 +421,9 @@ importers:
       '@zag-js/number-input':
         specifier: ^1.43.3
         version: 1.43.3
+      '@zag-js/pin-input':
+        specifier: ^1.43.3
+        version: 1.43.3
       '@zag-js/radio-group':
         specifier: ^1.43.3
         version: 1.43.3
@@ -437,6 +440,9 @@ importers:
         specifier: 1.43.3
         version: 1.43.3
       '@zag-js/tabs':
+        specifier: ^1.43.3
+        version: 1.43.3
+      '@zag-js/tags-input':
         specifier: ^1.43.3
         version: 1.43.3
       '@zag-js/tooltip':
@@ -1941,6 +1947,9 @@ packages:
   '@zag-js/anatomy@1.43.3':
     resolution: {integrity: sha512-KzosWgu0TTtdBNHPUZg2W8E5JsGsExQ8oGkLDmV6Sym9twaATU2YVMCWsfitq3Isss4099wNMsHdjEPK2UyCjw==}
 
+  '@zag-js/auto-resize@1.43.3':
+    resolution: {integrity: sha512-Qb47USNXmbg5p2s8QjUwnTBWI5waVz8YHDCQO75sMoXi1CCxcdW3lSjsOI12FIBD0tiEhjkNGZrhTKnNu1gDkQ==}
+
   '@zag-js/carousel@1.43.3':
     resolution: {integrity: sha512-hXnG0XL/mpBPCJ3a+H88CZMSCzVsKnOLY7i1Fza+hKxUiGovxojCAitoASeg6ETd7bOzAbz0pvfGgwJPCdnGTQ==}
 
@@ -2005,6 +2014,9 @@ packages:
   '@zag-js/number-input@1.43.3':
     resolution: {integrity: sha512-XBuky+uuFXnshBHbIFfpUCly5nKZi+hW0R6pvgmqirqVyc4K/lwg4nz88/Z6U/q4uRQarKRr22fOMLthc7q7Yw==}
 
+  '@zag-js/pin-input@1.43.3':
+    resolution: {integrity: sha512-eUIyyJeA07yJzdGPh7vkQdnd/32OtU9xMppQDGIKHSJFA1ZIeqxdmy33Safj41XFurLBTStQAKLCSJmBGgY2Gg==}
+
   '@zag-js/popper@1.43.3':
     resolution: {integrity: sha512-99PPQerLylh+ouG16d0Go0UgpLR3rCQvWMmJoO5Ti8+2Ww3aqBNLTqpF0rJuLPe1Ps4BfEt5Lr4dYhL1ixgbRQ==}
 
@@ -2045,6 +2057,9 @@ packages:
 
   '@zag-js/tabs@1.43.3':
     resolution: {integrity: sha512-uLT5YiQAcDkSi9T1plYQyXAXaqGi1H5iw/PA0yXsWDOoNFU9jlPM5s8SuXbBJzXiufSFekdhzpNhMUhcapnBdA==}
+
+  '@zag-js/tags-input@1.43.3':
+    resolution: {integrity: sha512-JJx8WbN75PzKDBCWuIwZ6Anw2bk+CDPkB0gkCobuvAVhlYh0nN8HAWYPzMSzGZ+P2AhWN8KYEF9l8Pyx17XRXA==}
 
   '@zag-js/tooltip@1.43.3':
     resolution: {integrity: sha512-sBVhcejAQN5oDFE3PoGrvvjqOt5+9rHQjtjnnuhPZqeghsiX/IaL7AY8KelwDoNkMf2npN5i7loQvAZMZLVFaw==}
@@ -5365,6 +5380,10 @@ snapshots:
 
   '@zag-js/anatomy@1.43.3': {}
 
+  '@zag-js/auto-resize@1.43.3':
+    dependencies:
+      '@zag-js/dom-query': 1.43.3
+
   '@zag-js/carousel@1.43.3':
     dependencies:
       '@zag-js/anatomy': 1.43.3
@@ -5505,6 +5524,14 @@ snapshots:
       '@zag-js/types': 1.43.3
       '@zag-js/utils': 1.43.3
 
+  '@zag-js/pin-input@1.43.3':
+    dependencies:
+      '@zag-js/anatomy': 1.43.3
+      '@zag-js/core': 1.43.3
+      '@zag-js/dom-query': 1.43.3
+      '@zag-js/types': 1.43.3
+      '@zag-js/utils': 1.43.3
+
   '@zag-js/popper@1.43.3':
     dependencies:
       '@floating-ui/dom': 1.8.0
@@ -5587,6 +5614,17 @@ snapshots:
       '@zag-js/anatomy': 1.43.3
       '@zag-js/core': 1.43.3
       '@zag-js/dom-query': 1.43.3
+      '@zag-js/types': 1.43.3
+      '@zag-js/utils': 1.43.3
+
+  '@zag-js/tags-input@1.43.3':
+    dependencies:
+      '@zag-js/anatomy': 1.43.3
+      '@zag-js/auto-resize': 1.43.3
+      '@zag-js/core': 1.43.3
+      '@zag-js/dom-query': 1.43.3
+      '@zag-js/interact-outside': 1.43.3
+      '@zag-js/live-region': 1.43.3
       '@zag-js/types': 1.43.3
       '@zag-js/utils': 1.43.3
 

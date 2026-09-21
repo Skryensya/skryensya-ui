@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-20T03:18:52.959Z",
+  "generatedAt": "2026-09-21T15:38:36.454Z",
   "results": {
     "apps/docs/src/components/pages/CardPage.test.ts": {
       "imports tile.css, which Base.astro never loads globally": "passed",
@@ -323,15 +323,19 @@
       "leaves an empty value to required, the same as every other format": "passed"
     },
     "packages/react/src/components/accordion.test.tsx": {
+      "renders the contract's anatomy, and pairs each trigger with its own panel": "passed",
+      "wraps each trigger in a heading so it is reachable by heading navigation": "passed",
+      "clamps headingLevel to the 1..6 range aria-level means": "passed",
       "keeps exactly one item open in single mode": "passed",
       "allows independent open items in multiple mode": "passed",
-      "renders and closes a single Accordion item": "passed",
-      "wraps each trigger in a heading so it is reachable by heading navigation": "passed",
-      "honours a controlled value without inventing local open state": "passed",
+      "opens every value a multiple defaultValue names": "passed",
+      "refuses to close the last open section when collapsible is false": "passed",
+      "hides the closed section's panel instead of leaving it in the accessibility tree": "passed",
       "seeds open state from item defaultOpen when the root has no defaultValue": "passed",
       "lets root defaultValue win over item defaultOpen": "passed",
-      "clamps headingLevel to the 1..6 range aria-level means": "passed",
-      "dispatches the contract valueChange event on the root": "passed"
+      "ignores a click on a disabled section, whether the root or the item disabled it": "passed",
+      "dispatches the contract valueChange event on the root, carrying the shape its type promises": "passed",
+      "honours a controlled value without inventing local open state": "passed"
     },
     "packages/react/src/components/annotation.test.tsx": {
       "renders the specimen, one label each, and an overlay to draw into": "passed",
@@ -406,6 +410,11 @@
       "accepts a visually hidden name supplied through a slot rather than children": "passed",
       "renders navigation with Button appearance and anchor attributes": "passed",
       "does not write aria-pressed or disabled on a navigation host": "passed",
+      "welds either edge on its own, and both at once for a middle member": "passed",
+      "writes nothing for an unwelded edge": "passed",
+      "welds a button of any variant and size": "passed",
+      "submits its form when asked, and resets one on reset": "passed",
+      "carries the name and value a submitter needs to say which button sent the form": "passed",
       "writes aria-pressed only when pressed is given": "passed"
     },
     "packages/react/src/components/callout.test.tsx": {
@@ -497,6 +506,14 @@
       "does not wrap by default": "passed",
       "wraps columns into the next row when wrapCols is set": "passed",
       "Home/End move within the row; Ctrl+Home/End jump the whole grid": "passed"
+    },
+    "packages/react/src/components/description-list.test.tsx": {
+      "renders a native dl whose pairs are grouped": "passed",
+      "defaults to the stacked layout and takes columns": "passed",
+      "writes dividers as a presence attribute, and nothing when off": "passed",
+      "writes no density attribute until one is asked for": "passed",
+      "takes markup in the value and plain text in the name": "passed",
+      "keeps the consumer's className beside each part class": "passed"
     },
     "packages/react/src/components/dialog.test.tsx": {
       "closes through the platform's own form rather than a handler": "passed",
@@ -813,8 +830,18 @@
       "stamps the mount attrs the vanilla enhancer scans for": "passed",
       "dispatches sk:questionnairesubmit before a valid submit proceeds": "passed"
     },
+    "packages/react/src/components/quote.test.tsx": {
+      "renders a figure whose blockquote holds only the quoted words": "passed",
+      "puts the work in a cite element and the person outside it": "passed",
+      "omits the caption when there is neither a person nor a work": "passed",
+      "renders the caption when only the work is given": "passed",
+      "writes cite as provenance on the blockquote and renders nothing for it": "passed",
+      "defaults to the block variant and takes pull": "passed",
+      "keeps the consumer's className beside the part class": "passed"
+    },
     "packages/react/src/components/rating.test.tsx": {
       "is a radio group with one radio per step, named by its label": "passed",
+      "wears the kit's icon-only button on every step, exactly as the emitter writes it": "passed",
       "takes the scale it is given": "passed",
       "checks the step the value sits on, and only that one": "passed",
       "reports a pick through onValueChange and the DOM event alike": "passed",
@@ -823,8 +850,7 @@
       "refuses to change while read-only": "passed",
       "the input has no accessibility violations": "passed",
       "announces the whole reading once, as one image": "passed",
-      "fills the exact fraction rather than rounding to a whole symbol": "passed",
-      "paints the end of the scale instead of overflowing it": "passed",
+      "hands the stylesheet the value itself, not a percentage of the strip": "passed",
       "paints the number and the count only when they were written": "passed",
       "the display has no accessibility violations": "passed"
     },
@@ -832,6 +858,16 @@
       "uses the Zag select machine for popup selection and form value": "passed",
       "dispatches sk:selectvaluechange on the root for DOM parity with vanilla": "passed",
       "moves aria-selected onto the highlighted option before Enter commits anything": "passed"
+    },
+    "packages/react/src/components/separator.test.tsx": {
+      "renders a native hr that announces as a separator": "passed",
+      "keeps the styled and the announced orientation in step": "passed",
+      "leaves the accessibility tree when it is decorative": "passed",
+      "writes no decorative attribute when it means something": "passed",
+      "takes a tone and a spacing": "passed",
+      "names the separator from its visible label": "passed",
+      "hides the two rules, which repeat nothing the label does not say": "passed",
+      "gives every instance its own label id": "passed"
     },
     "packages/react/src/components/sidebar.test.tsx": {
       "collapses uncontrolled and reports the change": "passed",
@@ -910,6 +946,19 @@
       "dispatches the contract remove event on the host when the control is used": "passed",
       "renders a navigable tag as a link and never as dismissible": "passed",
       "removes with a real small icon-only button, not a lookalike": "passed"
+    },
+    "packages/react/src/components/tags-input.test.tsx": {
+      "renders the tags it starts with, as composed Tags": "passed",
+      "names the entry, which is the control a reader lands on": "passed",
+      "commits what was typed on Enter, whatever it is": "passed",
+      "commits on the delimiter too, which is what a pasted list has between its values": "passed",
+      "removes a tag from its own delete control": "passed",
+      "drops a duplicate rather than adding it, and clears the entry anyway": "passed",
+      "takes duplicates when it was asked to": "passed",
+      "refuses a tag past max and leaves the text in the entry": "passed",
+      "carries the value on the hidden input, so a plain form submit works": "passed",
+      "dispatches the contract's own event beside the React callback": "passed",
+      "reflects read-only and invalid on the root, and leaves disabled off": "passed"
     },
     "packages/react/src/components/tile.test.tsx": {
       "satisfies the core shared checkbox state contract": "passed",
@@ -1018,8 +1067,19 @@
       "opens the panel modally, and the close button inside shuts it and collapses the trigger": "passed"
     },
     "packages/vanilla/src/components/accordion.svelte.test.ts": {
-      "keeps exactly one item open in single mode and emits": "passed",
-      "allows independent open items in multiple mode": "passed"
+      "renders the contract's anatomy, and pairs each trigger with its own panel": "passed",
+      "keeps the authored heading wrapper, and binds the button inside it": "passed",
+      "keeps exactly one item open in single mode": "passed",
+      "allows independent open items in multiple mode": "passed",
+      "opens every value a multiple defaultValue names": "passed",
+      "refuses to close the last open section when collapsible is false": "passed",
+      "hides the closed section's panel instead of leaving it in the accessibility tree": "passed",
+      "seeds open state from item defaultOpen when the root has no defaultValue": "passed",
+      "lets root defaultValue win over item defaultOpen": "passed",
+      "ignores a click on a disabled section, whether the root or the item disabled it": "passed",
+      "dispatches the contract valueChange event on the root, carrying the shape its type promises": "passed",
+      "enhances an authored root, once": "passed",
+      "binds the section's own panel, not the TileContent inside its trigger": "passed"
     },
     "packages/vanilla/src/components/annotation.test.ts": {
       "makes the specimen a specimen: inert, and nothing inside it a tab stop": "passed",
@@ -1084,7 +1144,12 @@
       "accepts a name the author put in a slot rather than beside the icon": "passed",
       "enhances an authored anchor without changing its navigation semantics": "passed",
       "refuses an anchor without href": "passed",
-      "refuses a disabled link that could still navigate": "passed"
+      "refuses a disabled link that could still navigate": "passed",
+      "clears an aria-disabled the author left behind on an enabled button": "passed",
+      "treats aria-disabled alone as disabled, without inventing the native attribute": "passed",
+      "never replaces a type the author wrote": "passed",
+      "accepts an icon-only button named by aria-labelledby": "passed",
+      "can be torn down and mounted again": "passed"
     },
     "packages/vanilla/src/components/calendar.svelte.test.ts": {
       "generates the whole grid from an empty authored root, once": "passed",
@@ -1458,6 +1523,19 @@
     "packages/vanilla/src/components/slider.test.ts": {
       "mounts the Zag slider machine over authored markup": "passed"
     },
+    "packages/vanilla/src/components/tags-input.test.ts": {
+      "enhances an authored root, once": "passed",
+      "takes the authored tags over as its own value": "passed",
+      "keeps the authored accessible name on the entry": "passed",
+      "commits what was typed on Enter, whatever it is": "passed",
+      "commits on the delimiter too": "passed",
+      "removes a tag from its own delete control": "passed",
+      "drops a duplicate rather than adding it": "passed",
+      "takes duplicates when the markup asked for them": "passed",
+      "refuses a tag past max and leaves the text in the entry": "passed",
+      "dispatches the contract's own event on the root": "passed",
+      "carries the value on the hidden input, so a plain form submit works": "passed"
+    },
     "packages/vanilla/src/components/tile-checkbox.svelte.test.ts": {
       "toggles checked state and root data-state on click, emitting sk:tilecheckedchange": "passed",
       "sets checked from sk:tilesetchecked and reports the change": "passed",
@@ -1544,6 +1622,133 @@
       "Home/End jump to the resized pair's min/max extent": "passed",
       "Enter (and double-click) resets the pair to an even split": "passed",
       "reports its position as a percentage of the pair's REACHABLE travel, not a flat 0-100": "passed"
+    },
+    "packages/react/src/components/state-button.test.tsx": {
+      "stacks every face as an icon and marks the current one active": "passed",
+      "writes data-current on the button itself": "passed",
+      "marks no face active when current is absent": "passed",
+      "forwards a click handler, same as any other button": "passed"
+    },
+    "packages/core/src/diagram.test.ts": {
+      "gives a rectangle the whole of the edge that faces the asked-for side": "passed",
+      "parametrizes every side the same way, left to right and top to bottom": "passed",
+      "gives a decision its two facing rhombus faces instead of the empty box edge": "passed",
+      "treats a terminal as the rectangle it is, since its straight edges are most of its outline": "passed",
+      "measures the halfway point by arc length, not by counting segments": "passed",
+      "clamps past either end and survives a polyline with no length at all": "passed",
+      "puts a single connector at the middle of its side and spreads several inside the band": "passed",
+      "writes a two-point run as one straight line with no curve in it": "passed",
+      "rounds an interior corner into a quadratic through the vertex": "passed",
+      "clamps a corner to half of each arm, so a short jog softens instead of overshooting": "passed",
+      "drops a repeated point rather than curving through it": "passed",
+      "drops a point that only sits on the line between its neighbours": "passed",
+      "keeps a point that genuinely turns": "passed",
+      "points the arrowhead the way the line was travelling, and keeps both base corners even": "passed",
+      "draws no arrowhead for a heading with no direction in it": "passed",
+      "takes the middle of the line when nothing is in the way": "passed",
+      "takes the middle when no chip has been measured, since nothing has a size to clash": "passed",
+      "slides clear of a node parked across the middle of its own connector": "passed",
+      "keeps the clearance, so clearing a box means visibly apart and not merely touching": "passed",
+      "stays on the line rather than jumping off it to find room": "passed",
+      "prefers a straight stretch over parking on a bend": "passed",
+      "returns the least bad spot rather than nothing when the line is boxed in": "passed",
+      "boxes an arrowhead by its own triangle, so the same rule keeps a chip off it": "passed",
+      "never lets a chip land on the arrowhead of its own edge": "passed",
+      "goes down out of one node and into the top of the one below it": "passed",
+      "calls the reverse of that a back edge, which is what makes a cycle a cycle": "passed",
+      "goes across when the two overlap vertically, toward whichever one is on the far side": "passed",
+      "falls back to the ordinary downward answer for two nodes sharing a cell": "passed",
+      "asks whether the target is below BEFORE asking which way the centres point": "passed",
+      "draws one straight run between two nodes in the same column": "passed",
+      "puts the label in the middle of the stroke, leaving the arrowhead uncovered": "passed",
+      "centres on the whole line when neither end carries a head": "passed",
+      "keeps clear of both heads when the edge runs both ways": "passed",
+      "puts one arrowhead at the arrival by default": "passed",
+      "draws a second arrowhead at the departure when the edge runs both ways": "passed",
+      "meets both nodes when the relationship has no direction and no head to keep clear": "passed",
+      "leaves a decision's two lower faces rather than both leaving one vertex": "passed",
+      "keeps the two origins symmetric about the decision's own centre line": "passed",
+      "orders the origins by where each branch sits, so the two connectors never cross": "passed",
+      "draws a nearly straight corridor straight, instead of wiggling through it": "passed",
+      "turns halfway between the two ranks, so sibling connectors share one rail": "passed",
+      "arrives above the top of each branch, in the middle of it": "passed",
+      "pulls back along the last segment, not toward the other end of the line": "passed",
+      "touches the node's own side at the row's height, not at the middle of the box": "passed",
+      "comes in from the side even when the geometry would otherwise go down": "passed",
+      "goes out the near side when the target is to the left": "passed",
+      "keeps a pinned port where the row is while the unpinned ones spread around it": "passed",
+      "drops the anchor rather than lie when the two nodes share a column": "passed",
+      "ignores a row name no row has, and draws the edge as though none were given": "passed",
+      "keeps a row off the corners, where a rounded box has no straight edge": "passed",
+      "names the row in the reading, because that is what the edge points at": "passed",
+      "sends the return line out past the widest node it passes": "passed",
+      "leaves and arrives on the same inline side, so the return is one bracket": "passed",
+      "leaves the forward edge exactly where it was, in its own corridor": "passed",
+      "gives up its preferred margin rather than cross a node that is not its own end": "passed",
+      "keeps every return on one margin when nothing is in the way": "passed",
+      "returns through the other margin when the document reads right to left": "passed",
+      "loops a node that transitions to itself out beside it and back in at the top": "passed",
+      "returns nothing for an edge naming a node the drawing does not have": "passed",
+      "keeps the result index-aligned with the edges, gaps included": "passed",
+      "refuses a node with no box rather than drawing to the frame's corner": "passed",
+      "takes the first of two nodes that claim the same name, the way a selector would": "passed",
+      "leaves the rail where it is when no band is in the way": "passed",
+      "pushes the rail below a band it would otherwise run along": "passed",
+      "ignores a band the rail never runs across": "passed",
+      "goes above a band rather than land the rail on top of its own target": "passed",
+      "keeps the rail it had rather than turn the elbow inside out": "passed",
+      "never moves a vertical rail, which crosses a band rather than running along it": "passed",
+      "turns each placed zone's name strip into a band a rail can avoid": "passed",
+      "reaches an outer zone through the inner one a node actually named": "passed",
+      "counts a zone's depth by what nests inside it, so the outer one draws wider": "passed",
+      "draws the outer boundary outside the inner one, though they hold the same nodes": "passed",
+      "leaves room at the top for the name and hugs the other three sides": "passed",
+      "gives a zone that holds nothing no box at all, rather than a dot at the origin": "passed",
+      "ignores a node whose zone no zone declares": "passed",
+      "stops rather than hangs on a zone declared inside itself": "passed",
+      "names the condition and then the destination, with nothing invented between them": "passed",
+      "says only the destination when the relationship has no name": "passed",
+      "gives each node the ways OUT of it, in authoring order": "passed",
+      "gives a node with nowhere to go no lines at all, rather than an empty sentence": "passed",
+      "drops a route whose destination is not in the drawing, the same as the connector does": "passed"
+    },
+    "packages/react/src/components/diagram.test.tsx": {
+      "renders the frame, the node list and an overlay to draw into": "passed",
+      "writes the same attributes on a node and an edge that authored markup carries": "passed",
+      "gives a node's mark a box of its own, and a node without one no box at all": "passed",
+      "takes any tree as a mark, not a source, so an icon and an image land the same way": "passed",
+      "puts the column count on the frame as the hook the stylesheet reads": "passed",
+      "draws the same connector the enhancer draws, in the same shape": "passed",
+      "anchors each edge label to a point on its own stroke, clear of the arrowhead": "passed",
+      "flips the frame out of its no-JavaScript flow only once it has measured something": "passed",
+      "writes into each node the ways out of it, announced and clipped out of sight": "passed",
+      "does not quote the reading it wrote last time, however many passes run": "passed",
+      "keeps a group for an edge that could not be routed, and hides its label": "passed",
+      "stops re-measuring once a pass decides what the last one did": "passed",
+      "measures nothing at all while the frame has no box": "passed"
+    },
+    "packages/vanilla/src/components/diagram.test.ts": {
+      "draws one connector group per edge, with the line first and the arrowhead after it": "passed",
+      "measures in the frame's own coordinates, so the path meets the boxes it was given": "passed",
+      "subtracts the frame's own offset rather than writing page coordinates": "passed",
+      "anchors each edge label to a point on its own stroke, clear of the arrowhead": "passed",
+      "flips the frame out of its no-JavaScript flow only once it has measured something": "passed",
+      "measures nothing at all while the frame has no box, rather than drawing to its corner": "passed",
+      "reads the authored shape, so a decision's connector leaves its face and not the empty corner": "passed",
+      "keeps a group for an edge naming a node the drawing does not have, and hides its label": "passed",
+      "reads a node's own words past its mark, so a logo's alt never lands in the reading": "passed",
+      "writes into each node the ways out of it, announced and clipped out of sight": "passed",
+      "re-derives that reading without quoting the reading it wrote last time": "passed",
+      "follows a node whose words changed, because the reading is derived and not copied once": "passed",
+      "writes nothing on a second pass that decided the same thing": "passed",
+      "watches the frame, the grid, every node and every label chip": "passed",
+      "keeps a labelled chip off the arrowhead of its own connector": "passed",
+      "stops observing when it is torn down": "passed",
+      "does nothing at all to a frame that lost a part": "passed",
+      "mounts every authored frame below the target and is idempotent": "passed",
+      "reads a node's own words and skips the route list written into it": "passed",
+      "collapses the whitespace authored markup indents a node with": "passed",
+      "keeps the words of a composition slotted into a node": "passed"
     }
   }
 }

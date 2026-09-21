@@ -62,9 +62,7 @@ const styles = `@import "@skryensya/core/tokens.scss";
   contractId="qr-code"
   testFiles={["packages/core/src/qr-code.test.ts", "packages/react/src/components/qr-code.test.tsx"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("qrCodePage.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("qrCodePage.anatomyBody")} />
     <ComponentPreview
       tree={qrCodeAnatomyTree(t, locale)}
@@ -74,8 +72,10 @@ const styles = `@import "@skryensya/core/tokens.scss";
       hideSource
       chrome={false}
     />
+  </Fragment>
 
-
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("qrCodePage.lede")} />
     <h3>{t("qrCodePage.basicTitle")}</h3>
     <p set:html={t("qrCodePage.basicBody")} />
     <ComponentPreview tree={qrCodeTree(locale)} label={t("qrCodePage.basicLabel")} note={t("qrCodePage.basicNote")} />

@@ -1,0 +1,90 @@
+---
+import "@skryensya/core/components/description-list.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
+/* The rich row puts a Tag and a Link in the value, and a frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/tag.css";
+import "@skryensya/core/components/typography.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import {
+  descriptionListAnatomyTree,
+  descriptionListColumnsTree,
+  descriptionListDividedTree,
+  descriptionListRichTree,
+  descriptionListTree,
+} from "../../demos/description-list";
+import { annotationDemoCss } from "../../demos/annotation";
+import { getLocale, useTranslations } from "../../i18n";
+
+const t = useTranslations(getLocale(Astro.url));
+const install = `pnpm add @skryensya/core @skryensya/react`;
+const styles = `@import "@skryensya/core/components/description-list.css";`;
+---
+
+<ComponentPageShell
+  title="DescriptionList"
+  description={t("descriptionListPage.description")}
+  contractId="description-list"
+  testFiles={["packages/react/src/components/description-list.test.tsx"]}
+>
+  <Fragment slot="anatomy">
+    <p set:html={t("descriptionListPage.anatomyBody")} />
+    <ComponentPreview
+      tree={descriptionListAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("descriptionListPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+  </Fragment>
+
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("descriptionListPage.lede")} />
+    <ComponentPreview tree={descriptionListTree(t)} label="DescriptionList" />
+
+    <h3>{t("descriptionListPage.groupTitle")}</h3>
+    <p set:html={t("descriptionListPage.groupBody")} />
+
+    <h3>{t("descriptionListPage.columnsTitle")}</h3>
+    <p set:html={t("descriptionListPage.columnsBody")} />
+    <ComponentPreview
+      tree={descriptionListColumnsTree(t)}
+      label={t("descriptionListPage.columnsPreviewLabel")}
+    />
+
+    <h3>{t("descriptionListPage.dividedTitle")}</h3>
+    <p set:html={t("descriptionListPage.dividedBody")} />
+    <ComponentPreview
+      tree={descriptionListDividedTree(t)}
+      label={t("descriptionListPage.dividedPreviewLabel")}
+    />
+
+    <h3>{t("descriptionListPage.richTitle")}</h3>
+    <p set:html={t("descriptionListPage.richBody")} />
+    <ComponentPreview tree={descriptionListRichTree(t)} label={t("descriptionListPage.richPreviewLabel")} />
+
+    <h3>{t("descriptionListPage.whenTitle")}</h3>
+    <ul>
+      <li set:html={t("descriptionListPage.whenItem1")} />
+      <li set:html={t("descriptionListPage.whenItem2")} />
+      <li set:html={t("descriptionListPage.whenItem3")} />
+      <li set:html={t("descriptionListPage.whenItem4")} />
+    </ul>
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("descriptionListPage.contractItem1")} />
+      <li set:html={t("descriptionListPage.contractItem2")} />
+      <li set:html={t("descriptionListPage.contractItem3")} />
+      <li set:html={t("descriptionListPage.contractItem4")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+    <CodeBlock code={styles} label="CSS" />
+  </Fragment>
+</ComponentPageShell>

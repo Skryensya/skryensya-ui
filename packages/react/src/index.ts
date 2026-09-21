@@ -68,6 +68,14 @@ export type {
   ListProps,
 } from "./components/list.js";
 export { ProcessList, ProcessListItem } from "./components/process-list.js";
+export { DescriptionItem, DescriptionList } from "./components/description-list.js";
+export type { DescriptionItemProps, DescriptionListProps } from "./components/description-list.js";
+export { LabelledSeparator, Separator } from "./components/separator.js";
+export type { LabelledSeparatorProps, SeparatorProps } from "./components/separator.js";
+export { TagsInput } from "./components/tags-input.js";
+export type { TagsInputProps } from "./components/tags-input.js";
+export { Quote } from "./components/quote.js";
+export type { QuoteProps } from "./components/quote.js";
 export { Timeline, TimelineItem } from "./components/timeline.js";
 export type { TimelineItemProps, TimelineProps } from "./components/timeline.js";
 export type {
@@ -88,8 +96,8 @@ export { Steps } from "./components/steps.js";
 export type { StepsProps } from "./components/steps.js";
 export { Tag } from "./components/tag.js";
 export type { TagProps } from "./components/tag.js";
-export { IconStateButton } from "./components/icon-state-button.js";
-export type { IconStateButtonProps } from "./components/icon-state-button.js";
+export { StateButton } from "./components/state-button.js";
+export type { StateButtonProps } from "./components/state-button.js";
 export { Button } from "./components/button.js";
 export type { ButtonProps } from "./components/button.js";
 export { Toast, ToastRegion } from "./components/content.js";

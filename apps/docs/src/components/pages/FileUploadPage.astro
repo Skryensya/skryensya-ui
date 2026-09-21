@@ -28,13 +28,7 @@ const t = useTranslations(getLocale(Astro.url));
     "packages/react/src/components/file-upload.test.tsx",
   ]}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("fileUploadPage.description")} />
-
-    <p set:html={t("fileUploadPage.anatomyBody")} />
-    {/* Ten labels need the whole track, and `breakout` is how a preview asks for it. It was a no-op
-        until the `justify-self` rule in site.css: the panel placed every preview on that track and
-        then centred it, so the room was there and nothing took it. */}
+  <Fragment slot="anatomy">
     <ComponentPreview
       html={fileUploadAnatomyHtml(t)}
       css={fileUploadAnatomyCss}
@@ -44,7 +38,15 @@ const t = useTranslations(getLocale(Astro.url));
       chrome={false}
       width="breakout"
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("fileUploadPage.description")} />
+
+    <p set:html={t("fileUploadPage.anatomyBody")} />
+    {/* Ten labels need the whole track, and `breakout` is how a preview asks for it. It was a no-op
+        until the `justify-self` rule in site.css: the panel placed every preview on that track and
+        then centred it, so the room was there and nothing took it. */}
     {/*
       * A FLOOR, NOT A MEASUREMENT. `preview-heights.json` reserves what a demo settles at, and this
       * one settles EMPTY: the whole point of the control is that you add files to it, and each row

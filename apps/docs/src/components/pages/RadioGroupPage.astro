@@ -38,9 +38,7 @@ root.addEventListener("sk:tilevaluechange", (event) => {
   styleGroups={[{ file: "components/radio-group.css", probe: "sk-radio-group" }]}
   testFiles={["packages/vanilla/src/components/tile-radio-group.svelte.test.ts"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("radioGroupPage.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("radioGroupPage.anatomyBody")} />
     <ComponentPreview
       tree={radioGroupAnatomyTree(t)}
@@ -50,7 +48,10 @@ root.addEventListener("sk:tilevaluechange", (event) => {
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("radioGroupPage.lede")} />
     <ComponentPreview tree={radioGroupTree(t)} label="RadioGroup" />
 
     <h3>{t("radioGroupPage.likertTitle")}</h3>

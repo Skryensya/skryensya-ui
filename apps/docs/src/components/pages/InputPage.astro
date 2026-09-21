@@ -35,15 +35,7 @@ const css = `@import "@skryensya/core/tokens.scss";
     "packages/vanilla/src/components/input.test.ts",
   ]}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("inputPage.lede")} />
-    <ComponentPreview tree={inputTree(t)} label="Input" />
-    <p set:html={t("inputPage.densityBody")} />
-
-    <h3>{t("inputPage.oneClassTitle")}</h3>
-    <p set:html={t("inputPage.oneClassBody")} />
-    <ComponentPreview tree={textareaTree(t)} label="Textarea" />
-
+  <Fragment slot="anatomy">
     <p set:html={t("inputPage.anatomyBody")} />
     <ComponentPreview
       tree={inputAnatomyTree(t)}
@@ -53,7 +45,16 @@ const css = `@import "@skryensya/core/tokens.scss";
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("inputPage.lede")} />
+    <ComponentPreview tree={inputTree(t)} label="Input" />
+    <p set:html={t("inputPage.densityBody")} />
+
+    <h3>{t("inputPage.oneClassTitle")}</h3>
+    <p set:html={t("inputPage.oneClassBody")} />
+    <ComponentPreview tree={textareaTree(t)} label="Textarea" />
     <h3>{t("inputPage.formFieldTitle")}</h3>
     <p set:html={t("inputPage.formFieldBody")} />
 

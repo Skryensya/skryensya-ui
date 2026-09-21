@@ -36,9 +36,7 @@ const styles = `@import "@skryensya/core/components/placeholder.css";
   contractId="placeholder"
   testFiles={["packages/react/src/components/placeholder.test.tsx"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("placeholderPage.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("placeholderPage.anatomyBody")} />
     <ComponentPreview
       tree={placeholderAnatomyTree(t)}
@@ -48,7 +46,10 @@ const styles = `@import "@skryensya/core/components/placeholder.css";
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("placeholderPage.lede")} />
     <div class="sk-callout" data-tone="info">
       <div class="sk-callout__content">
         <div class="sk-callout__description" set:html={t("placeholderPage.calloutBody")} />

@@ -14,10 +14,10 @@
  *
  * THE DISPLAY IS ONE ELEMENT, and that is what makes a fractional average exact. The strip repeats
  * the mask `--sk-rating-max` times and paints underneath it with a hard colour stop at
- * `--sk-rating-fill`, so 4.3 of 5 stops 86% across: four whole symbols and three tenths of the
- * fifth, with nothing rounded and no element per symbol. The alternative, one box per symbol each
- * clipped to its own percentage, needs the emitter to compute a value per step and gets the same
- * picture for more markup.
+ * `--sk-rating-fill`, so 4.3 of 5 stops four tiles and three tenths of a symbol across, with
+ * nothing rounded and no element per symbol. The alternative, one box per symbol each clipped to
+ * its own percentage, needs the emitter to compute a value per step and gets the same picture for
+ * more markup.
  *
  * THE INPUT IS N ELEMENTS, because each one is a real radio a person can point at. There the fill
  * is binary, so it needs no arithmetic at all: a step is "on" when it IS the checked one or when a
@@ -35,11 +35,16 @@
     --sk-rating-on-color: var(--color-text-warning);
     --sk-rating-off-color: var(--color-border-default);
     --sk-rating-max: 5;
-    --sk-rating-fill: 0%;
+    /* The reading itself, written by both bindings from the `value` option. Declared here so a
+       strip in markup that never set it paints an empty scale instead of an invalid gradient. */
+    --sk-rating-value: 0;
 
     display: inline-flex;
     align-items: center;
-    gap: var(--space-inline-xs);
+    /* The hook, not the raw token behind it: the control's steps are laid out by THIS gap now that
+       each one is a button with no margin of its own, so one declaration still spaces both
+       signatures the same way. Same value as before (`--space-inline-xs`). */
+    gap: var(--sk-rating-gap);
   }
 
   .sk-rating[data-size="sm"] {
@@ -58,11 +63,33 @@
 
   /*
    * THE DISPLAY STRIP. One tile is the symbol plus its trailing gap, so `repeat-x` produces evenly
-   * spaced symbols without a gap property; the strip is exactly `max` tiles wide, minus the last
-   * gap, which is what keeps the hard colour stop landing where the arithmetic says it should.
+   * spaced symbols without a gap property, and the strip is exactly `max` tiles wide minus the
+   * last gap - the gap after the last symbol belongs to no symbol, so the row ends on ink.
    */
   .sk-rating__symbols {
     --sk-rating-tile: calc(var(--sk-rating-size) + var(--sk-rating-gap));
+    /*
+     * WHERE THE COLOUR STOPS, IN GLYPH SPACE AND NOT IN STRIP SPACE.
+     *
+     * The whole symbols a value covers are worth a TILE each (the gap after a filled symbol is
+     * filled too, or the row would read as dashes); the fraction left over is worth that much of
+     * ONE SYMBOL, because the gap after it belongs to a symbol nobody earned. A percentage of the
+     * strip cannot say that: 4.3 of 5 is 86% of 116px = 99.8px, which is 2px short of the fifth
+     * star's own three tenths, and two pixels is exactly the difference between 3.8 and 4.3 in
+     * this picture - they drew the SAME strip, which is the one thing this display exists not to
+     * do. Hence `round(down, …)` twice rather than an intermediate hook nobody would override.
+     *
+     * Still a hook: a consumer who paints a strip the contract never measured can re-declare it
+     * with any length or percentage, and the gradient below takes either.
+     */
+    --sk-rating-fill: clamp(
+      0px,
+      calc(
+        round(down, var(--sk-rating-value), 1) * var(--sk-rating-tile) +
+          (var(--sk-rating-value) - round(down, var(--sk-rating-value), 1)) * var(--sk-rating-size)
+      ),
+      100%
+    );
 
     inline-size: calc(var(--sk-rating-max) * var(--sk-rating-tile) - var(--sk-rating-gap));
     block-size: var(--sk-rating-size);
@@ -73,14 +100,31 @@
     );
     -webkit-mask-image: var(--sk-rating-symbol);
     mask-image: var(--sk-rating-symbol);
-    -webkit-mask-size: var(--sk-rating-size) 100%;
-    mask-size: var(--sk-rating-size) 100%;
+    /*
+     * THE MASK TILE IS THE TILE, NOT THE GLYPH, and that is the whole count.
+     *
+     * `repeat-x` repeats every MASK-SIZE, so sizing the mask to the glyph (20px) across a strip
+     * sized in tiles (5 x 24 - 4 = 116px) fits 5.8 of them: a `max` of five drew SIX stars, the
+     * last one clipped, and the hard colour stop at 86% then landed inside the sixth rather than
+     * inside the fifth. Sizing the mask to the tile puts one glyph per tile and exactly `max` of
+     * them on the strip.
+     *
+     * The glyph does not stretch to fill that wider box: the symbol is an SVG with a square
+     * `viewBox` and the default `preserveAspectRatio`, so it scales to the SHORTER axis (the
+     * strip's own block size) and centres itself in the tile, leaving half a gap on each side.
+     * Half a gap is also what the offset below takes back, so the first glyph starts flush with
+     * the strip's leading edge and every one after it lands on a whole tile.
+     *
+     * `space` was the other way to do this and is the fragile one: it divides whatever is left
+     * over after a WHOLE number of glyphs fit, so it only agrees with `--sk-rating-gap` while
+     * `(max - 1) x gap` stays under one glyph. At `sm` (16px glyph, 4px gap) it already does not.
+     */
+    -webkit-mask-size: var(--sk-rating-tile) 100%;
+    mask-size: var(--sk-rating-tile) 100%;
     -webkit-mask-repeat: repeat-x;
     mask-repeat: repeat-x;
-    /* The tile is wider than the glyph, so the repeat interval has to be the TILE. `space` would
-       distribute the remainder instead of honouring the gap the strip was sized for. */
-    -webkit-mask-position: 0 0;
-    mask-position: 0 0;
+    -webkit-mask-position: calc(-0.5 * var(--sk-rating-gap)) 0;
+    mask-position: calc(-0.5 * var(--sk-rating-gap)) 0;
   }
 
   /* One symbol, for the input's steps. Same mask, no repeat. */
@@ -99,20 +143,39 @@
     mask-position: center;
   }
 
-  .sk-rating__item {
-    display: inline-flex;
-    /* The visible symbol is icon-sized; the TARGET is not. Same floor every other control in the
-     * kit keeps, and it matters more here than most: five of these sit side by side. */
-    min-inline-size: var(--sk-rating-size);
-    min-block-size: var(--sk-rating-size);
-    align-items: center;
-    justify-content: center;
-    margin-inline-end: var(--sk-rating-gap);
-    cursor: pointer;
+  /*
+   * A STEP IS AN ICON-ONLY BUTTON, borrowed whole from `button.css` (`also: ["sk-button", …]` in
+   * the contract): the square, its radius, the ghost face and the state layer are all that
+   * component's, so nothing here re-draws them. What is left is the one thing a rating knows and a
+   * button does not: how big the face should be for the glyph it holds. The contract writes
+   * `data-size="sm"` on every step, and these two rules move it a rung when the SYMBOL moves a
+   * rung, so a `lg` star never sits in the same square as a `sm` one.
+   */
+  .sk-rating[data-size="sm"] .sk-rating__item {
+    --sk-button-height: var(--size-control-xs);
   }
 
-  .sk-rating__item:last-of-type {
-    margin-inline-end: 0;
+  .sk-rating[data-size="lg"] .sk-rating__item {
+    /* `--size-control-md`, not the `md` BUTTON size: that one is `max(control-md, touch-target)`,
+     * a 44px square, and the row of five would read as a toolbar. The hit area is covered below. */
+    --sk-button-height: var(--size-control-md);
+  }
+
+  /*
+   * THE HIT AREA GROWS DOWN AND UP, NEVER SIDEWAYS. `.sk-button::after` reaches out to
+   * `--size-touch-target` on every axis, which is right for a button standing on its own and wrong
+   * for five sitting shoulder to shoulder: at a 32px face and a 4px gap the neighbour's expander
+   * reaches 2px INTO this one's star, so the right edge of the fourth star would select the fifth.
+   * The inline axis is pinned to the face, which at every size clears WCAG 2.2's 24px minimum
+   * (2.5.8), and the block axis keeps the full 44px because nothing sits above or below.
+   *
+   * Both classes in the selector, deliberately: `.sk-button::after` is (0,1,0) and so is
+   * `.sk-rating__item::after`, so on a tie the cascade would hand it to whichever sheet the
+   * consumer happened to import second. Naming the borrowed class says what the rule is about AND
+   * settles the order.
+   */
+  .sk-rating__item.sk-button::after {
+    inset-inline: 0;
   }
 
   /*
@@ -125,6 +188,27 @@
   }
 
   /*
+   * EXCEPT THE PHANTOM. `@zag-js/rating-group` marks the FIRST step `aria-checked` whenever the
+   * value is 0 or less, so a radiogroup nobody has answered still has one tab stop (its own
+   * `getItemState`: `checked: equal || (value <= 0 && index === 1)`). That is a focus fact and not
+   * a reading, and painting it the way the rule above paints a real answer makes an untouched
+   * rating claim one star - loudly, now that the step is a tile.
+   *
+   * `data-highlighted` is the machine's OWN answer to "is this symbol filled" (it tracks the value
+   * and, while pointing, the hovered value), and it is absent on exactly that phantom. Reading the
+   * projected state off the item is the shape `state-layer.css` already documents for a
+   * Zag-driven component; `[data-scope]` keeps it to items a machine is actually on, so authored
+   * markup that was never enhanced still paints from `aria-checked` alone.
+   */
+  .sk-rating__item[data-scope][aria-checked="true"]:not([data-highlighted]) {
+    --state-layer-opacity: 0;
+  }
+
+  .sk-rating__item[data-scope][aria-checked="true"]:not([data-highlighted]) .sk-rating__symbol {
+    background: var(--sk-rating-off-color);
+  }
+
+  /*
    * HOVER PREVIEWS THE WHOLE RUN, not the one symbol under the pointer: pointing at the fourth star
    * means "four", so four light up. Same sibling logic, read from the hovered item backwards.
    */
@@ -133,11 +217,8 @@
     background: var(--sk-rating-on-color);
   }
 
-  .sk-rating__item:focus-visible {
-    outline: var(--focus-ring-width) solid var(--focus-ring-color);
-    outline-offset: var(--focus-ring-offset);
-    border-radius: var(--radius-control);
-  }
+  /* No focus rule of its own: `sk-interactive` already paints the ring, on the same box and with
+     the same `--focus-ring-*` family this used to restate. */
 
   .sk-rating[data-readonly] .sk-rating__item,
   .sk-rating[data-disabled] .sk-rating__item {

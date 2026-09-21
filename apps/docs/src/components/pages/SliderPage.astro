@@ -19,9 +19,7 @@ const t = useTranslations(getLocale(Astro.url));
   contractId="slider"
   testFiles={["packages/react/src/components/slider.test.tsx", "packages/vanilla/src/components/slider.test.ts", "packages/core/src/slider-range.test.ts", "packages/react/src/components/slider-range.test.tsx", "packages/vanilla/src/components/slider-range.test.ts"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("sliderPage.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("sliderPage.anatomyBody")} />
     <ComponentPreview
       tree={sliderAnatomyTree(t)}
@@ -31,7 +29,10 @@ const t = useTranslations(getLocale(Astro.url));
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("sliderPage.lede")} />
     <ComponentPreview tree={sliderTree(t)} label="Slider" />
     <p set:html={t("sliderPage.body1")} />
     <p set:html={t("sliderPage.body2")} />

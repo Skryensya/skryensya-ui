@@ -1,12 +1,42 @@
 ---
-import { probeProp, slugId, tokens } from "../lib/tokens";
+/*
+ * A COMPONENT'S STYLING HOOKS, AS A PLAIN TABLE: the hook and the value its stylesheet gives it.
+ *
+ * NO RUNTIME COLUMN. There used to be a third one showing what each hook evaluates to in the
+ * reader's live browser, under whatever brand / mode / contrast / density they had set. That needs
+ * JavaScript, because a custom property is only evaluated when it is USED in a real property:
+ * `used-values.ts` assigned every token to a hidden probe element carrying the component's class,
+ * set a real property on it to `var(--the-hook)`, read that property back and restored it. It is a
+ * good trick and it earned its place on the token reference, where you are shopping for values.
+ * Here it answered a question nobody on a component page was asking, and it answered it badly for
+ * the hooks it could not reach: a hook declared in this sheet but scoped to another element (a Tile
+ * hook listed under Accordion) came back empty and printed a bare "-".
+ *
+ * What is left is what the page is for: which hooks exist, and what they default to. The authored
+ * value is also the one that is true in every theme at once.
+ *
+ * NO COPY AFFORDANCE EITHER, and that is the same subtraction one step earlier. Every cell used to
+ * be a `--copy` cell: `CopyCells` put one travelling CopyButton on the page and moved it into
+ * whichever cell the pointer or the arrow keys were on. What that bought here was a reserved strip
+ * of padding on every column whether the button was in it or not, a control appearing under the
+ * pointer on a page that is being read rather than harvested, and `copy-cells.ts` loaded on every
+ * component page in the site. Selecting a hook name is what a reader actually does, and the browser
+ * has always done that. The token reference dropped the same machinery straight after, which is why
+ * none of it exists any more.
+ */
+import { tokens } from "../lib/tokens";
 import { getLocale, useTranslations } from "../i18n";
-import CopyCells from "./CopyCells.astro";
 
 export type HookGroup = {
   /** CSS file path as emitted by @skryensya/core. */
   file: string;
-  /** The real element that scopes each hook at runtime. */
+  /**
+   * The class that scopes this sheet's hooks at runtime.
+   *
+   * It no longer resolves anything (there is no runtime column left to resolve). It stays because it
+   * NAMES the group: a page documenting several component surfaces at once gets one table per sheet,
+   * and this is the fallback heading when the page passes no `title`.
+   */
   probe: string;
   /** Needed only when one documentation page owns several component surfaces. */
   title?: string;
@@ -21,11 +51,9 @@ const { groups, heading = "Styling hooks" } = Astro.props;
 const t = useTranslations(getLocale(Astro.url));
 const resolvedGroups = groups.map((group) => ({
   ...group,
-  hooks: tokens.filter((token) => token.file === group.file).map((token) => ({ ...token, prop: probeProp(token.value) })),
+  hooks: tokens.filter((token) => token.file === group.file),
 }));
 ---
-
-<CopyCells />
 
 <h2>{heading}</h2>
 <p>
@@ -41,36 +69,18 @@ const resolvedGroups = groups.map((group) => ({
           <thead class="sk-table__head">
             <tr class="sk-table__row">
               <th class="sk-table__header" scope="col">Hook</th>
-              <th class="sk-table__header" scope="col">
-                {t("hooks.definition")} <span class="count">build</span>
-              </th>
-              <th class="sk-table__header" scope="col">
-                {t("hooks.resolvedValue")} <span class="count">runtime</span>
-              </th>
+              {/* No `build` qualifier any more: there is no second, runtime column to tell it apart from. */}
+              <th class="sk-table__header" scope="col">{t("hooks.value")}</th>
             </tr>
           </thead>
           <tbody class="sk-table__body">
             {
-              group.hooks.map((hook) => {
-                const nameId = slugId("hook-name", group.file, hook.name);
-                const defId = slugId("hook-def", group.file, hook.name);
-                const valId = slugId("hook-val", group.file, hook.name);
-                return (
-                  <tr class="sk-table__row">
-                    <td class="sk-table__cell mono sk-table__cell--copy">
-                      <span id={nameId}>{hook.name}</span>
-                    </td>
-                    <td class="sk-table__cell mono sk-table__cell--copy">
-                      <span id={defId} data-authored>{hook.value}</span>
-                    </td>
-                    <td class="sk-table__cell mono sk-table__cell--copy">
-                      <span id={valId} data-token={hook.name} data-prop={hook.prop} data-probe={group.probe}>
-                        …
-                      </span>
-                    </td>
-                  </tr>
-                );
-              })
+              group.hooks.map((hook) => (
+                <tr class="sk-table__row">
+                  <td class="sk-table__cell mono">{hook.name}</td>
+                  <td class="sk-table__cell mono">{hook.value}</td>
+                </tr>
+              ))
             }
           </tbody>
         </table>

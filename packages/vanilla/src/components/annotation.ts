@@ -25,7 +25,7 @@ import { createConnectMount } from "../runtime/svelte-hydrate.js";
 
 const rootSelector = `[${annotationAttrs.root}]`;
 const SVG_NS = "http://www.w3.org/2000/svg";
-/* Matches annotation.css: mobile turns the four gutters into two stacked label groups. */
+/* Matches annotation.css: narrow screens turn the four gutters into two wrapping label clusters. */
 const stackedLabelsQuery = "(max-width: 40rem)";
 
 type Cleanup = () => void;
@@ -163,7 +163,6 @@ export function connectAnnotated(root: HTMLElement): Cleanup {
       ringInset,
       ringRadius: frameRadius,
       distribute: !stacked,
-      leaderRoute: stacked ? "right-elbow" : "direct",
     });
 
     /* A pass that decided nothing new writes nothing: a `ResizeObserver` fires for every observed

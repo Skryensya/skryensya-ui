@@ -7,8 +7,28 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "d2bb469d739b6c5c"
+surface: "f52b47fc00e201d9"
 entries:
+  - date: 2026-09-21
+    kind: rework
+    es:
+      title: Details deja de ser un contrato aparte y pasa a ser parte de Accordion
+      body: >-
+        <code>DetailsGroup</code>, <code>Details</code>, <code>Details.Summary</code> y
+        <code>Details.Content</code> viven ahora dentro del contrato <code>accordion</code>, con los
+        mismos nombres, las mismas clases <code>sk-details*</code> y el mismo módulo de React. Eran
+        un componente propio en el catálogo, y obligaban a elegir entre dos entradas antes de saber
+        que respondían la misma pregunta (mismo movimiento que Popup dentro de Popover). Las
+        entradas de su changelog bajan acá; nada que se componga hoy cambia.
+    en:
+      title: Details stops being its own contract and becomes part of Accordion
+      body: >-
+        <code>DetailsGroup</code>, <code>Details</code>, <code>Details.Summary</code> and
+        <code>Details.Content</code> now live inside the <code>accordion</code> contract, under the
+        same names, the same <code>sk-details*</code> classes and the same React module. They were
+        their own row in the catalogue, which made a reader choose between two entries before
+        learning they answered the same question (the same dissolve Popup got into Popover). Their
+        changelog entries move here; nothing you compose today changes.
   - date: 2026-09-18
     kind: feature
     es:
@@ -250,3 +270,103 @@ entries:
       title: The contract declares the range of its numbers
       body: >-
         <code>headingLevel</code> takes whole numbers from 1 to 6. React already clamped it; now a tree with 7 does not validate.
+  - date: 2026-09-17
+    kind: feature
+    es:
+      title: Firmas interactivas declaran forward
+      body: >-
+        Las firmas host interactivas o de formulario publican <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> y attrs de enlace o formulario cuando aplica).
+        Un attr fuera de la lista es <code>unknown-attr</code>.
+    en:
+      title: Interactive signatures declare forward
+      body: >-
+        Interactive or form host signatures publish <code>forward</code>
+        (<code>id</code>/<code>aria-*</code> and link or form attrs where relevant).
+        An attr outside the list is <code>unknown-attr</code>.
+  - date: 2026-09-17
+    kind: feature
+    target: Details.Summary
+    es:
+      title: Details.Summary declara compose del chevron Icon
+      body: >-
+        El indicador chevron-down/up queda documentado como <code>compose</code> de
+        <code>icon</code> con <code>systemOwned</code> (ya estaba horneado vía
+        <code>data-sk-icon</code>).
+    en:
+      title: Details.Summary declares compose of the chevron Icon
+      body: >-
+        The chevron-down/up indicator is documented as <code>compose</code> of
+        <code>icon</code> with <code>systemOwned</code> (already baked via
+        <code>data-sk-icon</code>).
+  - date: 2026-08-11
+    kind: feature
+    es:
+      title: Details se publica como contrato, con 4 signatures
+      body: >-
+        Entra al catálogo con <code>DetailsGroup</code>, <code>Details</code>,
+        <code>Details.Summary</code>, <code>Details.Content</code>: los dos bindings lo realizan, y la
+        referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene
+        enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos
+        veces. Opciones: <code>name</code>, <code>open</code>. La hoja es
+        <code>components/details.css</code>.
+    en:
+      title: Details is published as a contract, with 4 signatures
+      body: >-
+        It joins the catalogue with <code>DetailsGroup</code>, <code>Details</code>,
+        <code>Details.Summary</code>, <code>Details.Content</code>: both bindings realize it, and this
+        page's reference is rendered from the compiled contract rather than from prose written beside
+        it. There is no enhancer: the markup is complete on its own, so both bindings are the same
+        markup twice. Options: <code>name</code>, <code>open</code>. Its stylesheet is
+        <code>components/details.css</code>.
+  - date: 2026-09-12
+    kind: feature
+    es:
+      title: Los styling hooks de details quedan declarados en el contrato
+      body: >-
+        El contrato ahora publica los <code>20</code> styling hooks de este componente. Nada
+        de lo que hayas escrito cambia: son los mismos hooks, con los mismos nombres, y la hoja de
+        estilos no se tocó. Lo nuevo es que el contrato los declara, así que el compilador falla si
+        la hoja declara uno que el contrato no publica, o si el contrato promete uno que la hoja no
+        declara. Esa segunda mitad es la que importa: hasta ahora, redeclarar un hook que ya no
+        existía no daba error, daba silencio.
+    en:
+      title: details's styling hooks are now declared in the contract
+      body: >-
+        The contract now publishes this component's <code>20</code> styling hooks. Nothing you
+        wrote changes: the same hooks, under the same names, and the stylesheet was not touched.
+        What is new is that the contract declares them, so the compiler fails when the stylesheet
+        declares one the contract does not publish, or the contract promises one the stylesheet
+        never declares. That second half is the one that matters: until now, re-declaring a hook
+        that no longer existed was not an error, it was silence.
+  - date: 2026-09-17
+    kind: bugfix
+    es:
+      title: Details ya no exige vivir dentro de DetailsGroup
+      body: >-
+        Un disclosure suelto es el caso común; el grupo sólo coordina exclusividad vía
+        <code>name</code>. El contrato dejaba de validar un <code>Details</code> en la raíz, aunque
+        React y el HTML nativo sí lo permiten.
+    en:
+      title: Details no longer requires a DetailsGroup ancestor
+      body: >-
+        A lone disclosure is the common case; the group only coordinates exclusivity via
+        <code>name</code>. The contract rejected a top-level <code>Details</code> even though React
+        and native HTML allow it.
+  - date: 2026-09-17
+    kind: breaking
+    es:
+      title: Se van las clases de título que ningún árbol usaba
+      body: >-
+        <code>sk-details__heading</code>, <code>sk-details__title</code> y
+        <code>sk-details__description</code> tenían estilo pero no eran partes del contrato ni las usaba
+        nadie: un título dentro del summary se compone con Typography. Salen con los hooks que sólo
+        ellas leían, <code>--sk-details-title-font-size</code> y
+        <code>--sk-details-description-font-size</code>.
+    en:
+      title: The title classes no tree used are gone
+      body: >-
+        <code>sk-details__heading</code>, <code>sk-details__title</code> and
+        <code>sk-details__description</code> were styled but were not contract parts and nothing used
+        them: a title inside the summary is composed with Typography. They go with the hooks only they
+        read, <code>--sk-details-title-font-size</code> and <code>--sk-details-description-font-size</code>.

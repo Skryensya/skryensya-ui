@@ -84,6 +84,7 @@ export function contractDoc(id: string): ContractDoc {
   return entry;
 }
 
+
 /**
  * A component's history, by version, which the manifest keeps beside the contract rather than
  * inside it.

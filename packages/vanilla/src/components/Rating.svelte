@@ -11,8 +11,9 @@
    * already has one radio per step, and this scans it and patches on what `connect` returns.
    *
    * ONLY THE INPUT SIGNATURE IS ENHANCED. `RatingDisplay` has no machine and needs none: its whole
-   * state is one percentage the emitter already wrote into `--sk-rating-fill`, so there is nothing
-   * for an enhancer to do to it and no selector here that would match it.
+   * state is the value the emitter already wrote into `--sk-rating-value`, which the stylesheet
+   * turns into a colour stop on its own, so there is nothing for an enhancer to do to it and no
+   * selector here that would match it.
    */
   const root = getRoot();
 

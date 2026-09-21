@@ -42,9 +42,7 @@ mountFolder();`;
   contractId="folder"
   testFiles={["packages/core/src/folder.test.ts", "packages/react/src/components/folder.test.tsx", "packages/vanilla/src/components/folder.test.ts"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("folderPage.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("folderPage.anatomyBody")} />
     <ComponentPreview
       tree={folderAnatomyTree(t)}
@@ -55,7 +53,10 @@ mountFolder();`;
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("folderPage.lede")} />
     <ComponentPreview tree={folderTree(t)} js={js} label="FolderStack" viewport="auto" />
 
     <h3>{t("folderPage.revealTitle")}</h3>

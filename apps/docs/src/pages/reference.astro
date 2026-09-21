@@ -1,19 +1,111 @@
 ---
+/*
+ * THE TOKEN REFERENCE, AS PLAIN TABLES.
+ *
+ * WHAT THIS REPLACED, because the deletion is the point. `TokenTable.astro` was a 333-line
+ * component: a search box, a tier select and a family select wired to a filter script, a travelling
+ * copy button serving 3.135 copyable cells, and a fourth column that resolved every token in the
+ * live browser. All of it to answer "what is this token set to". What is left is the answer: the
+ * name, its tier, and the value the stylesheet gives it, read out of the corpus at build time.
+ *
+ * NO RUNTIME COLUMN. It used to sit beside the authored one and show what the token evaluates to
+ * right now, under the reader's brand / mode / contrast / density, which needs JavaScript: a custom
+ * property is only evaluated when it is USED in a real property, so the old column assigned each
+ * token to a hidden probe element and read the property back (`scripts/used-values.ts`, still there
+ * for `Used.astro` and for the component pages' Styling hooks tables). This page shows the authored
+ * value, which is the one you write and the one that is true in every theme at once.
+ *
+ * MARKUP INLINE, NOT A COMPONENT, AND ITS TWIN IS `es/referencia.astro`. That is a real cost and it
+ * is the one this page is choosing: two locales, two copies of the same twenty lines, and nothing
+ * forcing a change here to land there (see `AccordionPage.astro`'s header for where that has bitten
+ * this site before). The shaping stays shared in `lib/tokens.ts`, so what is duplicated is a table
+ * and three words of heading, not a decision.
+ */
 import Base from "../layouts/Base.astro";
-import TokenTable from "../components/TokenTable.astro";
+import { groupedTokens, tokens } from "../lib/tokens";
+
+const toneByTier = { primitive: "warning", semantic: "accent", component: "success" } as const;
+const tierLabel = { primitive: "Primitives", semantic: "Semantic", component: "By component" } as const;
+
+const tiers = (["primitive", "semantic", "component"] as const).map((tier) => ({
+  tier,
+  label: tierLabel[tier],
+  groups: groupedTokens.filter((s) => s.group.tier === tier),
+  count: tokens.filter((t) => t.tier === tier).length,
+}));
+
+/*
+ * `content-visibility: auto` (site.css, `.token-group`) skips the families that are off screen, and
+ * it needs a height guess per family or the scrollbar jumps on a page whose families run from two
+ * rows to sixty. Rows are one line each, so the guess is the row count. Kept from the old component
+ * because it is four lines and the page is three thousand rows; it changes nothing a reader sees.
+ */
+const groupBlockSize = (rows: number) => `${(rows * 2.6 + 6.5).toFixed(1)}rem`;
+
+/*
+ * A value longer than its track ends in an ellipsis (site.css, `.token-group`), so the full string
+ * moves to `title`, and only where it is actually needed: a `title` on all three thousand rows
+ * would be the same information twice in the HTML for the ~10% that get cut. The threshold is the
+ * narrowest the column gets at the document's own width, in characters of the mono face.
+ */
+const fullText = (value: string) => (value.length > 40 ? value : undefined);
 ---
 
 <Base
   title="Token reference"
   documentLayout="grid"
-  description="All system tokens: token read from CSS in build, value resolved read from live browser."
+  description="All system tokens: name, tier and the value written in CSS."
 >
   <h1>Token reference</h1>
   <p class="lede">
-    Each token in its two forms: the token that was written and the value that resolves right now, in the dimensions selected above.
+    Every token in the system, with the tier it belongs to and the value its stylesheet gives it.
   </p>
 
-  <TokenTable />
+  {
+    tiers.map((t) => (
+      <section class="token-tier">
+        <h2 class="token-tier__title" id={`tier-${t.tier}`}>
+          <span class="sk-badge" data-tone={toneByTier[t.tier]}>{t.tier}</span>
+          {t.label}
+          <span class="token-tier__count">{t.count} tokens</span>
+        </h2>
+
+        {t.groups.map((s) => (
+          <div
+            class="sk-table-scroll token-group"
+            style={`--token-group-block-size: ${groupBlockSize(s.tokens.length)}`}
+          >
+            <table class="sk-table" data-layout="fixed">
+              <caption class="sk-table__caption">
+                <span class="token-group__label">{s.group.label}</span>
+                <span class="token-group__count">{s.tokens.length}</span>
+                <span class="token-group__source mono">{s.group.source}</span>
+              </caption>
+              <thead class="sk-table__head">
+                <tr class="sk-table__row">
+                  <th class="sk-table__header" scope="col">Token</th>
+                  <th class="sk-table__header" scope="col">Tier</th>
+                  <th class="sk-table__header" scope="col">Value</th>
+                </tr>
+              </thead>
+              <tbody class="sk-table__body">
+                {s.tokens.map((r) => (
+                  <tr class="sk-table__row">
+                    {/* The name identifies the row, so it is the row's header, not a cell. */}
+                    <th class="sk-table__header mono" scope="row" title={fullText(r.name)}>{r.name}</th>
+                    <td class="sk-table__cell">
+                      <span class="sk-badge" data-tone={toneByTier[r.tier]}>{r.tier}</span>
+                    </td>
+                    <td class="sk-table__cell mono" title={fullText(r.value)}>{r.value}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ))}
+      </section>
+    ))
+  }
 
   <h2>How to read the tiers</h2>
   <p>
@@ -21,8 +113,8 @@ import TokenTable from "../components/TokenTable.astro";
   </p>
   <p>
     The <span class="sk-badge" data-tone="success">component</span> tokens live on the element rather than on
-    <code>:root</code>, so they are resolved here against a test element carrying the class. If one reads
-    <em>unresolved in this context</em>, that is not a bug but tier 3 scoping showing through: the token does
-    not exist until an element opts into it.
+    <code>:root</code>, which is why they read as a <code>var()</code> chain here rather than a literal: the token
+    does not exist until an element opts into it. A component page's <strong>Style hooks</strong> tab resolves them
+    against that element.
   </p>
 </Base>

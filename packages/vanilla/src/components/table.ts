@@ -5,7 +5,13 @@ import {
   SPLITTER_MIN_COLUMN_WIDTH as MIN_COLUMN_WIDTH,
 } from "@skryensya/core/splitter";
 import { createConnectMount } from "../runtime/svelte-hydrate.js";
-import { attachColumnResizer, measureColumnContentWidth, watchColumnLayout, watchSplitterExtent } from "../splitter.js";
+import {
+  attachColumnResizer,
+  createColumnWidths,
+  measureColumnContentWidth,
+  watchColumnLayout,
+  watchSplitterExtent,
+} from "../splitter.svelte.js";
 
 /*
  * TABLE, opt-in resizable columns only. A plain table needs no JavaScript at all otherwise
@@ -75,11 +81,18 @@ function connect(root: HTMLElement): () => void {
   const cols: HTMLTableColElement[] = [];
   for (let i = 0; i < colCount; i++) {
     const col = root.ownerDocument.createElement("col");
-    col.style.width = `${seedWidths[i]}px`;
     colgroup.append(col);
     cols.push(col);
   }
   root.insertBefore(colgroup, root.firstChild);
+  /*
+   * `createColumnWidths` seeds the `<col>`s (its own `setWidths(seed)` call) AND is what
+   * `attachColumnResizer`'s drag/keyboard/reset paths and `watchColumnLayout`'s re-seed below both
+   * write through: `splitter.svelte.ts`'s own header comment explains why the width array has to be
+   * Svelte `$state`, not just inline styles, for `@zag-js/svelte`'s cached machine props to ever see
+   * a change made outside `attachColumnResizer` itself.
+   */
+  const { getWidths: widths, setWidths } = createColumnWidths(cols, seedWidths);
   /*
    * An explicit pixel WIDTH on the table itself, not left at `table.css`'s implicit `width: 100%`
    *; see `treegrid.css`'s own note on why `auto`/`100%` is not safe for a `table-layout: fixed`
@@ -95,8 +108,8 @@ function connect(root: HTMLElement): () => void {
    * `display: none` (a docs preview panel not yet the selected binding tab, a closed accordion, an
    * inactive tab panel) measures 0 the whole time it stays hidden, and the floor above stands in
    * forever unless something re-measures once real layout exists: `watchColumnLayout`
-   * (`../splitter.ts`, shared with `treegrid.ts`) is that one re-measurement, a no-op if this read
-   * already succeeded.
+   * (`../splitter.svelte.ts`, shared with `treegrid.ts`) is that one re-measurement, a no-op if this
+   * read already succeeded.
    */
   const cleanupLayoutWatch = watchColumnLayout({
     measured,
@@ -105,14 +118,12 @@ function connect(root: HTMLElement): () => void {
     weights,
     adjustTotal: availableWidth,
     apply: (nextWidths) => {
-      cols.forEach((col, i) => (col.style.width = `${nextWidths[i]}px`));
+      setWidths(nextWidths);
       root.style.width = `${nextWidths.reduce((sum, width) => sum + width, 0)}px`;
     },
   });
 
   const resizeLabel = root.getAttribute("data-resize-label") ?? "";
-  const widths = () => cols.map((col) => Number.parseFloat(col.style.width) || 0);
-  const setWidths = (next: readonly number[]) => next.forEach((w, i) => (cols[i]!.style.width = `${w}px`));
 
   const cleanups: (() => void)[] = [
     cleanupLayoutWatch,

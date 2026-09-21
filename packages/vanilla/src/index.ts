@@ -1,5 +1,6 @@
 export { mountAccordion } from "./components/accordion.js";
 export { connectAnnotated, mountAnnotated } from "./components/annotation.js";
+export { connectDiagram, mountDiagram } from "./components/diagram.js";
 export { connectBackToTop, mountBackToTop } from "./components/back-to-top.js";
 export { mountButton } from "./components/button.js";
 export { connectLoader, mountLoader } from "./components/loader.js";
@@ -16,6 +17,7 @@ export {
 } from "./components/table-pager.js";
 export type { TablePagerChangeDetail } from "./components/table-pager.js";
 export { mountTabs } from "./components/tabs.js";
+export { mountTagsInput } from "./components/tags-input.js";
 export { mountTileCheckbox } from "./components/tile-checkbox.js";
 export { mountTileSwitch } from "./components/tile-switch.js";
 export { mountTileRadioGroup } from "./components/tile-radio-group.js";

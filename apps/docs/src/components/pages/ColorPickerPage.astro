@@ -37,9 +37,7 @@ const styles = `@import "@skryensya/core/patterns/anchored.css";
   ]}
   testFiles={["packages/vanilla/src/components/color-picker.svelte.test.ts"]}}
 >
-  <Fragment slot="usage">
-    <p class="lede" set:html={t("colorPicker.lede")} />
-
+  <Fragment slot="anatomy">
     <p set:html={t("colorPicker.anatomyBody")} />
     <ComponentPreview
       html={colorPickerAnatomyHtml(t)}
@@ -49,7 +47,10 @@ const styles = `@import "@skryensya/core/patterns/anchored.css";
       hideSource
       chrome={false}
     />
+  </Fragment>
 
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("colorPicker.lede")} />
     <h3>{t("colorPicker.nativeTitle")}</h3>
     <p set:html={t("colorPicker.nativeBody")} />
     <ComponentPreview tree={nativeColorPickerTree(t)} label={t("demo.colorPicker.nativeLabel")} />

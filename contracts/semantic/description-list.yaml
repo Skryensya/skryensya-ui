@@ -1,0 +1,24 @@
+# The structure lives in packages/core/src/description-list.ts. Here, only why it is chosen.
+
+DescriptionList:
+  useWhen:
+    - "the details of ONE record are shown as name and value: a summary, metadata, specs, key facts"
+    - "each row is a complete statement on its own and nothing is compared across rows"
+    - "the names are short and repeat the same shape: Status, Placed, Total, Tracking"
+  avoidWhen:
+    - "the same fields are shown for SEVERAL records; a cell that means something because of its row
+       and its column is a Table"
+    - "the pairs are form controls a person fills in; that is FormField"
+    - "it is a list of things rather than of facts about one thing; that is List"
+  alternatives:
+    - Table
+    - List
+    - FormField
+
+DescriptionItem:
+  useWhen:
+    - "one name and its value; the name is text, the value takes markup (a Tag, a link, a date)"
+  avoidWhen:
+    - "the name needs markup of its own; a name that is a heading means this should be a section"
+  alternatives:
+    - Table

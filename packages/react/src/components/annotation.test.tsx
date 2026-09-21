@@ -186,7 +186,9 @@ describe("Annotated", () => {
     expect(labelsOf(container)[1]!.style.translate).toBe("0px 220px");
   });
 
-  it("keeps stacked mobile labels in their flow positions", () => {
+  /* Vanilla's twin: the narrow cluster packs itself, so the binding skips lane distribution and
+     draws the same leader every other label gets. Same path string, deliberately. */
+  it("keeps clustered narrow-screen labels in their flow positions", () => {
     vi.stubGlobal("matchMedia", () => ({ matches: true }));
     const { container } = render(
       <Annotated
@@ -202,7 +204,7 @@ describe("Annotated", () => {
 
     expect(labelsOf(container)[0]!.style.translate).toBe("0px 0px");
     expect(labelsOf(container)[1]!.style.translate).toBe("0px 0px");
-    expect(overlayOf(container).querySelector("path")!.getAttribute("d")).toContain("L 208 10 L 208 102");
+    expect(overlayOf(container).querySelector("path")!.getAttribute("d")).toBe("M 140 10 L 202 72 L 202 108");
   });
 
   it("draws the same marks the enhancer draws, in the same shape", () => {

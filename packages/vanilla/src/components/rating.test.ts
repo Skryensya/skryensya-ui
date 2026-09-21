@@ -16,7 +16,7 @@ function mount(options: { defaultValue?: number; readOnly?: boolean; disabled?: 
   const items = Array.from(
     { length: 5 },
     (_, index) =>
-      `<span class="sk-rating__item sk-interactive" data-sk-rating-item role="radio"${
+      `<span class="sk-rating__item sk-button sk-interactive" data-sk-rating-item role="radio" data-icon-only data-size="sm" data-variant="ghost"${
         options.defaultValue === index + 1 ? ' aria-checked="true"' : ""
       }><span class="sk-rating__symbol" aria-hidden="true"></span></span>`,
   ).join("");
@@ -112,8 +112,8 @@ describe("Rating enhancer", () => {
   });
 
   it("leaves a RatingDisplay alone, because it has no machine to run", () => {
-    document.body.innerHTML = `<span class="sk-rating" role="img" aria-label="4,3 de 5">
-      <span class="sk-rating__symbols" aria-hidden="true" style="--sk-rating-fill: 86%;"></span>
+    document.body.innerHTML = `<span class="sk-rating" role="img" aria-label="4,3 de 5" style="--sk-rating-value: 4.3; --sk-rating-max: 5;">
+      <span class="sk-rating__symbols" aria-hidden="true"></span>
     </span>`;
     expect(mountRating(document.body.firstElementChild as HTMLElement)).toBe(0);
   });

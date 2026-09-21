@@ -283,6 +283,23 @@ type NodeContext = {
   readonly signature: ContractSignature;
   /** The collection entry being emitted, while inside a repeated node. */
   readonly item?: ItemInput;
+  /**
+   * WHICH collection that entry came from, as a PATH from the signature down.
+   *
+   * Most signatures have exactly one `accepts: "items"` slot one level deep, and for those this
+   * changes nothing. It exists for the two shapes that are not that:
+   *
+   *   TWO COLLECTIONS SIDE BY SIDE. Diagram's nodes and the edges between them are genuinely
+   *   different entries; without a name here `itemShapeOf` answers with whichever slot is declared
+   *   first, so every edge option is looked up against the node shape, found missing, and silently
+   *   dropped.
+   *   A COLLECTION INSIDE AN ENTRY. Diagram's rows live inside a node, which is a second level, so
+   *   one name could not reach them either. `["nodes", "rows"]` can.
+   *
+   * A RECURSIVE slot appends its own name and keeps the shape it already had, which is what
+   * `recursive` means: a folder inside a folder is the same entry shape one level down.
+   */
+  readonly itemSlot?: readonly string[];
   /** Ids this signature owns, when it declares wiring. */
   readonly wiring?: Wiring;
   /** Attributes the PARENT computed for this signature, because the parent owns the ids. */
@@ -318,7 +335,7 @@ function renderTemplate(
     return entries.flatMap((item, index) =>
       renderTemplate(
         { ...node, repeat: undefined },
-        { ...ctx, item, last: index === entries.length - 1 },
+        { ...ctx, item, itemSlot: [node.repeat!], last: index === entries.length - 1 },
         depth,
       ),
     );
@@ -331,7 +348,12 @@ function renderTemplate(
     return entries.flatMap((item, index) =>
       renderTemplate(
         { ...node, repeatItemSlot: undefined },
-        { ...ctx, item, last: index === entries.length - 1 },
+        {
+          ...ctx,
+          item,
+          itemSlot: [...(ctx.itemSlot ?? []), node.repeatItemSlot!],
+          last: index === entries.length - 1,
+        },
         depth,
       ),
     );
@@ -677,6 +699,17 @@ function computedWindow(
     }));
   }
 
+  /*
+   * An OTP's segments: `count` entries, no options and no slots. There is nothing per segment to
+   * carry (unlike Rating's own steps, which each need their 1-based number for `selectedBy`): every
+   * segment is the same empty input, and which one is focused/filled is DOM state the machine owns,
+   * never something the emitter marks.
+   */
+  if (spec.window === "otp-segments") {
+    const count = Math.max(1, Math.trunc(args[0] ?? 1));
+    return Array.from({ length: count }, (): ItemInput => ({ slots: {} }));
+  }
+
   if (spec.window === "skeleton-lines") {
     return Array.from({ length: placeholderLines(args[0] ?? 1) }, (): ItemInput => ({ slots: {} }));
   }
@@ -823,7 +856,7 @@ function attributesFor(node: ContractTemplate, ctx: NodeContext): string[] {
   if (node.selectedBy && ctx.item) {
     // The key comes from the collection's declared shape, or, for a computed window, which has no
     // authored slot to declare one, from the computation itself.
-    const keyName = itemShapeOf(signature)?.key ?? computedKeyOf(signature);
+    const keyName = itemShapeOf(signature, ctx.itemSlot)?.key ?? computedKeyOf(signature);
     const key = keyName ? ctx.item.options?.[keyName] : undefined;
     if (key !== undefined && tree.options?.[node.selectedBy.option] === key) {
       out.push(attr(node.selectedBy.attr, node.selectedBy.value ?? ""));
@@ -833,7 +866,7 @@ function attributesFor(node: ContractTemplate, ctx: NodeContext): string[] {
   // Values that belong to the entry, not to the composition: the key that pairs this element with
   // its twin elsewhere in the markup, and whatever else the entry carries.
   if (node.itemOptions && ctx.item) {
-    const itemOptions = itemShapeOf(signature)?.options ?? {};
+    const itemOptions = itemShapeOf(signature, ctx.itemSlot)?.options ?? {};
     for (const name of node.itemOptions) {
       const option = itemOptions[name];
       const value = ctx.item.options?.[name] ?? option?.default;
@@ -979,9 +1012,29 @@ function attributesFor(node: ContractTemplate, ctx: NodeContext): string[] {
 }
 
 /** The collection shape a signature declares, if it has one. At most one slot may be a collection. */
-function itemShapeOf(signature: ContractSignature): ContractSlot["item"] {
-  return Object.values(signature.slots).find((slot) => slot.accepts === "items")
-    ?.item;
+/**
+ * The entry shape of one collection slot, or of the signature's only one.
+ *
+ * `path` is the chain of collection slots the current node is repeating through, which is the honest
+ * answer whenever a signature has more than one collection or nests one inside an entry. Falling
+ * back to the first collection is what keeps every one-collection signature working exactly as it
+ * did, and stopping the walk at a slot with no `item` of its own is what keeps a RECURSIVE slot
+ * working: a folder inside a folder has no second shape, it has the same one again.
+ */
+function itemShapeOf(signature: ContractSignature, path?: readonly string[]): ContractSlot["item"] {
+  const fallback = Object.values(signature.slots).find((slot) => slot.accepts === "items")?.item;
+  if (!path || path.length === 0) return fallback;
+
+  const root = signature.slots[path[0]!];
+  if (root?.accepts !== "items") return fallback;
+
+  let shape = root.item;
+  for (const name of path.slice(1)) {
+    const nested = shape?.slots[name];
+    if (!nested || nested.accepts !== "items" || !nested.item) break;
+    shape = nested.item;
+  }
+  return shape;
 }
 
 /** Every other node of the template, so the host can tell which options are already spoken for. */

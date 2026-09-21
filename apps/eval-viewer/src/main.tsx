@@ -35,13 +35,13 @@ import "@skryensya/core/patterns/box.css";
 import "@skryensya/core/components/details.css";
 import "@skryensya/core/components/code-preview.css";
 import "@skryensya/core/components/navbar.css";
-import "@skryensya/core/components/icon-state-button.css";
+import "@skryensya/core/components/state-button.css";
 /*
- * `button.css`, NOT named by `get_contract("icon-state-button")`'s own `css` field or by
+ * `button.css`, NOT named by `get_contract("state-button")`'s own `css` field or by
  * `validate_ui`'s aggregated `css` array for a tree using it  -  confirmed live: without this import,
  * the toggle rendered as a real `<button>` (correct element, correct classes) but with the browser's
  * bare UA button chrome (`2px outset` border, `cursor: default`), because `.sk-button` is the class
- * `IconStateButton`'s own template borrows via `also: ["sk-button", ...]`, and a class borrowed from
+ * `StateButton`'s own template borrows via `also: ["sk-button", ...]`, and a class borrowed from
  * ANOTHER contract's `also` isn't reflected in either tool's own "here's what you need" answer. Filed
  * as a real gap in `validate_ui`'s css-aggregation, not routed around silently  -  this import is the
  * actual fix, but the tool that was supposed to name it for me didn't.

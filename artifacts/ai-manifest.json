@@ -3095,6 +3095,19 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-21",
+            "en": {
+              "body": "<code>footerAlign</code> no longer declares a default: the stylesheet already aligns the footer to the end and there is no <code>=\"end\"</code> rule, so the attribute was noise on every dialog. Leaving it unset renders identically; <code>start</code> is unchanged. Both bindings now agree - React dropped <code>end</code> and the emitter did not.",
+              "title": "data-footer-align is emitted only when asked for"
+            },
+            "es": {
+              "body": "<code>footerAlign</code> ya no declara un valor por defecto: la hoja de estilos ya alinea el footer al final y no existe regla <code>=\"end\"</code>, asi que el atributo sobraba en cada dialogo. Sin declararlo el resultado es identico; <code>start</code> no cambia. Las dos bindings ahora coinciden: React omitia <code>end</code> y el emisor no.",
+              "title": "data-footer-align solo se emite cuando se pide"
+            },
+            "kind": "bugfix",
+            "target": "footerAlign"
+          },
+          {
             "date": "2026-09-20",
             "en": {
               "body": "<code>footerAlign</code> (<code>start</code> | <code>end</code>, default <code>end</code>) moves the <code>&lt;form method=\"dialog\"&gt;</code> action row to the inline-start or inline-end via <code>data-footer-align</code> on the host.",
@@ -21826,7 +21839,6 @@
         },
         "footerAlign": {
           "attr": "data-footer-align",
-          "default": "end",
           "type": "enum",
           "values": [
             "start",
@@ -46176,7 +46188,7 @@
     "working": "0.0.1"
   },
   "schemaVersion": "2.3",
-  "sourceHash": "88e2b71b4d06f74b",
+  "sourceHash": "b06943ad736ec504",
   "vocabulary": {
     "a11y": "When `when` holds, one of `requiresOneOf` must be given: an option, a raw attribute, a filled slot, or a child signature by name.",
     "atLeastOneOf": "At least one member of each group counts: a filled slot, a boolean option set to true, or an option other than its default.",

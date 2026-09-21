@@ -86,17 +86,22 @@ export const dialogContract = {
      */
     alert: { type: "boolean", default: false, attr: "role", trueValue: "alertdialog" },
     /**
-     * Where the footer action row sits on the inline axis. The default groups controls at the
-     * inline-end (today's behaviour). `start` moves the whole row to the inline-start.
+     * Where the footer action row sits on the inline axis. `start` moves the whole row to the
+     * inline-start; leaving it unset groups the controls at the inline-end.
+     *
+     * NO `default`, because the stylesheet already holds one: `.sk-dialog__footer` justifies to
+     * `end` in its base rule and only `[data-footer-align="start"]` overrides it, so there is no
+     * `="end"` rule for an emitted default to match. Declaring one had both bindings stamping a
+     * no-op attribute on every dialog in the system - or worse, disagreeing about it, since React
+     * special-cased `end` back out again and the emitter did not.
      *
      * DOM order still controls which button sits left of which; this option only moves the group.
      * To pin Cancel and Confirm to opposite edges, that is a different layout (`between`) and is
-     * not this option: keep `end` and order the buttons, or compose with a hook override.
+     * not this option: leave it unset and order the buttons, or compose with a hook override.
      */
     footerAlign: {
       type: "enum",
       values: ["start", "end"],
-      default: "end",
       attr: "data-footer-align",
     },
   },

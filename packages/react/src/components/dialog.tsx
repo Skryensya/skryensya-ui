@@ -7,7 +7,6 @@ import { Icon } from "./icon.js";
 const {
   alert: alertOption,
   closeLabel: closeLabelOption,
-  footerAlign: footerAlignOption,
   vaul: vaulOption,
 } = dialogContract.options;
 
@@ -53,7 +52,7 @@ export function Dialog({
   className,
   closeLabel = closeLabelOption.default,
   footer,
-  footerAlign = footerAlignOption.default,
+  footerAlign,
   title,
   vaul = vaulOption.default,
   ...props
@@ -68,7 +67,7 @@ export function Dialog({
       aria-labelledby={titleId}
       aria-modal={alert ? "true" : undefined}
       className={className ? `${dialogParts.root} ${className}` : dialogParts.root}
-      data-footer-align={footerAlign === "end" ? undefined : footerAlign}
+      data-footer-align={footerAlign}
       data-sk-dialog-vaul={vaul ? "" : undefined}
       // The enhancer's drag axis is generic and defaults to `inline-start` with nothing to read;
       // `dialog-vaul.css` only ever slides from the bottom, so this is not a choice: see core.

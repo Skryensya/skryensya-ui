@@ -1,5 +1,5 @@
 /*
- * StateButton docs previews: cycle faces on click. No imports — `runAuthoredScript()` in
+ * StateButton docs previews: cycle faces on click. No imports: `runAuthoredScript()` in
  * `component-preview-frame.ts` evaluates this body with `Function(...)`, not as a module.
  */
 const CURRENT = "data-current";

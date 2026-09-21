@@ -3,8 +3,25 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "8dab4e06d79297d2"
+surface: "c64b870cc1a2db55"
 entries:
+  - date: 2026-09-21
+    kind: bugfix
+    target: footerAlign
+    es:
+      title: data-footer-align solo se emite cuando se pide
+      body: >-
+        <code>footerAlign</code> ya no declara un valor por defecto: la hoja de estilos ya alinea
+        el footer al final y no existe regla <code>="end"</code>, asi que el atributo sobraba en
+        cada dialogo. Sin declararlo el resultado es identico; <code>start</code> no cambia. Las
+        dos bindings ahora coinciden: React omitia <code>end</code> y el emisor no.
+    en:
+      title: data-footer-align is emitted only when asked for
+      body: >-
+        <code>footerAlign</code> no longer declares a default: the stylesheet already aligns the
+        footer to the end and there is no <code>="end"</code> rule, so the attribute was noise on
+        every dialog. Leaving it unset renders identically; <code>start</code> is unchanged. Both
+        bindings now agree - React dropped <code>end</code> and the emitter did not.
   - date: 2026-09-20
     kind: feature
     target: footerAlign

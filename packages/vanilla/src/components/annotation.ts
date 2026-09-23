@@ -6,14 +6,19 @@ import {
   annotationHitIndex,
   annotationParts,
   annotationRingInset,
+  annotationRoomProperty,
+  annotationScale,
+  annotationSides,
   annotationTranslate,
   watchAnnotationSpecimenFocus,
+  isAnnotationMarkKind,
   isAnnotationRingPlacement,
   isAnnotationSide,
-  placeAnnotations,
+  layoutAnnotations,
   readAnnotationTranslate,
   type AnnotationBox,
   type AnnotationDirection,
+  type AnnotationLayout,
   type AnnotationMark,
   type AnnotationMeasurement,
   type AnnotationPlacement,
@@ -27,6 +32,8 @@ const rootSelector = `[${annotationAttrs.root}]`;
 const SVG_NS = "http://www.w3.org/2000/svg";
 /* Matches annotation.css: narrow screens turn the four gutters into two wrapping label clusters. */
 const stackedLabelsQuery = "(max-width: 40rem)";
+/* What owns its own reveal: the frame's hit-test stands down while the pointer is over one. */
+const readerSelector = `.${annotationParts.label}, .${annotationParts.legendItem}`;
 
 type Cleanup = () => void;
 
@@ -60,10 +67,28 @@ type Cleanup = () => void;
  * drawing where a few pixels read as a mistake.
  */
 export function connectAnnotated(root: HTMLElement): Cleanup {
-  const subject = root.querySelector<HTMLElement>(`.${annotationParts.subject}`);
-  const overlay = root.querySelector<SVGSVGElement>(`.${annotationParts.leaders}`);
+  /* The mount point is the FIGURE, which holds the drawing and, beside it, the legend. Markup
+     authored before the figure existed mounts on the frame itself, and that is still a whole
+     diagram: it simply has nowhere to put a legend. */
+  /* A `zoomable` figure holds its frame one canvas deeper; either way it is the figure's own frame,
+     never one inside the specimen. */
+  const frame = root.classList.contains(annotationParts.root)
+    ? root
+    : root.querySelector<HTMLElement>(
+        `:scope > .${annotationParts.root}, :scope > .sk-canvas > .${annotationParts.viewport} > .${annotationParts.content} > .${annotationParts.root}`,
+      );
+  if (!frame) return () => {};
+  const subject = frame.querySelector<HTMLElement>(`.${annotationParts.subject}`);
+  const overlay = frame.querySelector<SVGSVGElement>(`.${annotationParts.leaders}`);
   const labels = Array.from(
-    root.querySelectorAll<HTMLElement>(`:scope > .${annotationParts.label}`),
+    frame.querySelectorAll<HTMLElement>(`:scope > .${annotationParts.label}`),
+  );
+  /* A `numbered` frame's legend, one entry per label in the same order. Empty otherwise, which is
+     what lets everything below treat the two modes as one. */
+  const entries = Array.from(
+    root.querySelectorAll<HTMLElement>(
+      `:scope > .${annotationParts.legend} > .${annotationParts.legendItem}`,
+    ),
   );
 
   /* Nothing to draw between: a frame with no specimen or no overlay is authored markup that lost a
@@ -105,20 +130,32 @@ export function connectAnnotated(root: HTMLElement): Cleanup {
       : undefined,
   }));
 
-  let previous: AnnotationPlacement[] | null = null;
-  let frame = 0;
+  let previous: AnnotationLayout | null = null;
+  let raf = 0;
 
   const sync = (): void => {
-    frame = 0;
-    const stacked = window.matchMedia(stackedLabelsQuery).matches;
-    const rootRect = root.getBoundingClientRect();
+    raf = 0;
+    /* A numbered frame never stacks: a bubble is one digit wide, so its gutters fit any screen. */
+    /* Nor does one on a canvas: it is laid out at its own width and shown scaled. */
+    const stacked =
+      !frame.hasAttribute(annotationAttrs.numbered) &&
+      !frame.parentElement?.classList.contains(annotationParts.content) &&
+      window.matchMedia(stackedLabelsQuery).matches;
+    const rootRect = frame.getBoundingClientRect();
     /* The overlay resolves `inset: 0` against the PADDING box, so the origin every coordinate is
        written in is the border box shifted in by the border itself. */
-    const originX = rootRect.left + root.clientLeft;
-    const originY = rootRect.top + root.clientTop;
+    /* On a zoomed canvas every rect is in screen pixels; the leaders are drawn in the frame's own. */
+    const scale = annotationScale(frame, rootRect);
+    const originX = rootRect.left + frame.clientLeft * scale;
+    const originY = rootRect.top + frame.clientTop * scale;
     const relative = (element: Element): AnnotationBox => {
       const rect = element.getBoundingClientRect();
-      return { x: rect.left - originX, y: rect.top - originY, width: rect.width, height: rect.height };
+      return {
+        x: (rect.left - originX) / scale,
+        y: (rect.top - originY) / scale,
+        width: rect.width / scale,
+        height: rect.height / scale,
+      };
     };
     /* A target carries its own corner along with its box, so a ring wraps a pill as a pill and a
        card as a card. Read on every pass rather than once, because a part's radius is not a
@@ -137,8 +174,10 @@ export function connectAnnotated(root: HTMLElement): Cleanup {
         label.getAttribute(annotationAttrs.match) === "all",
       );
       for (const element of found) watch(element, index);
+      const mark = label.getAttribute(annotationAttrs.mark);
       return {
         side: sideOf(label),
+        mark: isAnnotationMarkKind(mark) ? mark : undefined,
         ...labelRings[index],
         label: { ...live, x: live.x - offset.x, y: live.y - offset.y },
         targets: found.map(asTarget),
@@ -157,19 +196,27 @@ export function connectAnnotated(root: HTMLElement): Cleanup {
     if (subjectBox.width === 0 && subjectBox.height === 0) return;
 
     const direction: AnnotationDirection =
-      getComputedStyle(root).direction === "rtl" ? "rtl" : "ltr";
-    const placements = placeAnnotations(measurements, subjectBox, {
+      getComputedStyle(frame).direction === "rtl" ? "rtl" : "ltr";
+    const layout = layoutAnnotations(measurements, subjectBox, {
       direction,
       ringInset,
       ringRadius: frameRadius,
       distribute: !stacked,
     });
+    const { placements } = layout;
 
     /* A pass that decided nothing new writes nothing: a `ResizeObserver` fires for every observed
        element, so one resize of the frame arrives once per label plus twice more, and each of those
        would otherwise rewrite the whole overlay. */
-    if (previous && placements.every((placement, index) => same(placement, previous![index]!))) return;
-    previous = placements;
+    if (previous && sameLayout(layout, previous)) return;
+    previous = layout;
+
+    /* Only the gutters that hold brackets get a floor; the rest stay plain `auto`. */
+    for (const side of annotationSides) {
+      const room = layout.room[side];
+      if (room > 0) frame.style.setProperty(annotationRoomProperty(side), `${room}px`);
+      else frame.style.removeProperty(annotationRoomProperty(side));
+    }
 
     placements.forEach((placement, index) => {
       const label = labels[index]!;
@@ -184,8 +231,8 @@ export function connectAnnotated(root: HTMLElement): Cleanup {
   };
 
   const schedule = (): void => {
-    if (frame) return;
-    frame = requestAnimationFrame(sync);
+    if (raf) return;
+    raf = requestAnimationFrame(sync);
   };
 
   /*
@@ -209,12 +256,16 @@ export function connectAnnotated(root: HTMLElement): Cleanup {
       if (at === null) continue;
       const on = at === index;
       labels[at]?.toggleAttribute(annotationAttrs.active, on);
+      entries[at]?.toggleAttribute(annotationAttrs.active, on);
       overlay.children[at]?.toggleAttribute(annotationAttrs.active, on);
     }
     active = index;
   };
 
-  const listeners = labels.flatMap((label, index) => {
+  /* The number and its legend entry are the same reader: either one lights the mark. A numbered
+     bubble never takes focus, so its focus listeners simply never fire. */
+  const listeners = [...labels, ...entries].flatMap((label, at) => {
+    const index = at < labels.length ? at : at - labels.length;
     const enter = () => setActive(index);
     const leave = () => setActive(null);
     label.addEventListener("pointerenter", enter);
@@ -232,8 +283,8 @@ export function connectAnnotated(root: HTMLElement): Cleanup {
   /* Targets registered for hit-testing (and resize), not for their own pointer listeners. */
   const hitTargets: { element: Element; index: number }[] = [];
   const onFramePointer = (event: PointerEvent): void => {
-    /* Over a label: the label's own listeners own the reveal. Do not clear from a miss on targets. */
-    if ((event.target as Element | null)?.closest?.(`.${annotationParts.label}`)) return;
+    /* Over a label or a legend entry: its own listeners own the reveal. Do not clear from a miss. */
+    if ((event.target as Element | null)?.closest?.(readerSelector)) return;
     const hit = annotationHitIndex(
       { x: event.clientX, y: event.clientY },
       hitTargets.map(({ element, index }) => {
@@ -244,15 +295,15 @@ export function connectAnnotated(root: HTMLElement): Cleanup {
     setActive(hit);
   };
   const onFrameLeave = (): void => setActive(null);
-  root.addEventListener("pointermove", onFramePointer);
-  root.addEventListener("pointerleave", onFrameLeave);
+  frame.addEventListener("pointermove", onFramePointer);
+  frame.addEventListener("pointerleave", onFrameLeave);
   listeners.push(
-    () => root.removeEventListener("pointermove", onFramePointer),
-    () => root.removeEventListener("pointerleave", onFrameLeave),
+    () => frame.removeEventListener("pointermove", onFramePointer),
+    () => frame.removeEventListener("pointerleave", onFrameLeave),
   );
 
   const observer = new ResizeObserver(schedule);
-  observer.observe(root);
+  observer.observe(frame);
   observer.observe(subject);
   for (const label of labels) observer.observe(label);
 
@@ -302,7 +353,7 @@ export function connectAnnotated(root: HTMLElement): Cleanup {
 
   return () => {
     cancelled = true;
-    if (frame) cancelAnimationFrame(frame);
+    if (raf) cancelAnimationFrame(raf);
     observer.disconnect();
     mutations.disconnect();
     unwatchFocus();
@@ -368,10 +419,16 @@ const sameMark = (a: AnnotationMark, b: AnnotationMark): boolean =>
 
 const same = (a: AnnotationPlacement, b: AnnotationPlacement): boolean =>
   a.side === b.side &&
+  a.mark === b.mark &&
   a.translate.x === b.translate.x &&
   a.translate.y === b.translate.y &&
   a.marks.length === b.marks.length &&
   a.marks.every((mark, index) => sameMark(mark, b.marks[index]!));
+
+const sameLayout = (a: AnnotationLayout, b: AnnotationLayout): boolean =>
+  annotationSides.every((side) => a.room[side] === b.room[side]) &&
+  a.placements.length === b.placements.length &&
+  a.placements.every((placement, index) => same(placement, b.placements[index]!));
 
 /**
  * The overlay's children, reconciled rather than replaced.

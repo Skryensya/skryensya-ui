@@ -3,7 +3,7 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribe la entrada y pega el
 # hash nuevo.
-surface: "c00312f000345eb0"
+surface: "19551c5c83e4397d"
 entries:
   - date: 2026-09-20
     kind: rework
@@ -214,3 +214,100 @@ entries:
         in the labels stands for ("* = sk-file-upload"). It exists because a part name is a block plus an element, and a diagram of ten parts repeats that
         block ten times in its margins, where every repetition is charged to the subject's width: measured on FileUpload, the repeated prefix alone squeezed
         the specimen from 480px to 292px. Labels go to the four edge midpoints, so all four corners are free by construction and a key cannot collide with one.
+  - date: 2026-09-22
+    kind: feature
+    target: Annotated
+    es:
+      title: Modo numerado, con los nombres en una leyenda debajo
+      body: >-
+        Opción <code>numbered</code> y partes <code>sk-annotated__legend</code> y <code>sk-annotated__legend-item</code>: cada burbuja lleva sólo su número
+        (un contador de CSS) y los nombres pasan a un <code>&lt;ol&gt;</code> debajo del marco. Las guías y los anillos no cambian, y leer una entrada de la
+        lista enciende su número, su guía y su parte. Las burbujas quedan <code>aria-hidden</code> y el foco pasa a las entradas. Un marco numerado no se
+        apila en pantallas angostas: sus márgenes miden una burbuja, así que cada número se queda al lado de su parte.
+    en:
+      title: A numbered mode, with the names in a legend below
+      body: >-
+        A <code>numbered</code> option and <code>sk-annotated__legend</code> and <code>sk-annotated__legend-item</code> parts: each bubble carries only its
+        number (a CSS counter) and the names move to an <code>&lt;ol&gt;</code> under the frame. Leaders and rings are unchanged, and reading a list entry
+        lights its number, its leader and its part. The bubbles become <code>aria-hidden</code> and focus moves to the entries. A numbered frame does not
+        stack on narrow screens: its gutters are one bubble wide, so every number stays beside its part.
+  - date: 2026-09-22
+    kind: rework
+    target: Annotated
+    es:
+      title: El anillo sólo aparece en la marca que se está leyendo
+      body: >-
+        En reposo ya no se dibuja ningún anillo; queda sólo la guía en gris. El anillo aparece, en acento, al pasar el puntero por la etiqueta o por la parte,
+        o al enfocar la etiqueta.
+    en:
+      title: The ring only appears on the mark being read
+      body: >-
+        No ring is drawn at rest any more; only the grey leader remains. The ring appears, in accent, when the label or the part is hovered, or the label is
+        focused.
+  - date: 2026-09-23
+    kind: rework
+    target: Annotated
+    es:
+      title: Las etiquetas prefieren una guía recta
+      body: >-
+        Al repartir las etiquetas de un margen, cada una se mantiene, si hay lugar, en el tramo desde el cual su guía llega al anillo en un solo segmento, y
+        es la vecina con más holgura la que se corre. Una guía sólo dobla cuando ninguna distribución deja recta a todas.
+    en:
+      title: Labels prefer a straight leader
+      body: >-
+        When a gutter's labels are distributed, each one stays, where there is room, within the stretch from which its leader reaches the ring in a single
+        segment, and the neighbour with more slack is the one that moves. A leader only bends when no arrangement keeps them all straight.
+  - date: 2026-09-23
+    kind: feature
+    target: Annotated
+    es:
+      title: Corchetes para las partes que son un área
+      body: >-
+        Opción por etiqueta <code>mark</code>: con <code>bracket</code>, la parte se marca con una línea paralela a su lado, del mismo largo, con un tick
+        perpendicular en cada extremo y la etiqueta sobre su centro, en lugar de una guía hacia el hijo que caiga en el medio. Es para contenedores: un
+        acordeón, uno de sus ítems, un panel abierto. Los corchetes que se solaparían se apilan en pistas hacia afuera, y un contenedor queda siempre por
+        fuera de lo que contiene; dos partes que sólo se tocan en un extremo comparten pista, encadenadas. El margen reserva su espacio con <code>--sk-annotated-room-*</code>. En el layout apilado de pantallas angostas, vuelve
+        a ser un anillo.
+    en:
+      title: Brackets for parts that are an area
+      body: >-
+        A per-label <code>mark</code> option: with <code>bracket</code>, the part is marked by a line parallel to its side, exactly as long, with a
+        perpendicular tick at each end and the label on its middle, instead of a leader into whichever child sits there. It is for containers: an
+        accordion, one of its items, an open panel. Brackets that would overlap stack outward in tracks, and a container always sits outside what it
+        contains; two parts that only meet end to end share a track, chained. The gutter reserves their room through <code>--sk-annotated-room-*</code>. In the narrow-screen stacked layout it falls back to a ring.
+  - date: 2026-09-23
+    kind: breaking
+    target: Annotated
+    es:
+      title: El host es una figura, y la leyenda vive fuera del marco
+      body: >-
+        El host pasa a ser <code>sk-annotated-figure</code>, que contiene el marco <code>sk-annotated</code> (la grilla del dibujo) y, como hermana y no
+        como celda de esa grilla, la leyenda de <code>numbered</code>. La leyenda se lee en columnas hacia abajo (1, 2, 3 por la primera y sigue arriba de
+        la segunda), con un máximo de dos. Los hooks se declaran en la figura para que la leyenda los herede; el markup escrito a mano que monta
+        <code>data-sk-annotated</code> sobre el marco sigue funcionando. Con leyenda, la figura es una tarjeta de dos bandas: el dibujo sobre la superficie y,
+        debajo de una línea, la leyenda sobre un fondo hundido (<code>--sk-annotated-surface-bg</code>, <code>--sk-annotated-legend-bg</code>, <code>--sk-annotated-figure-inset</code>).
+    en:
+      title: The host is a figure, and the legend lives outside the frame
+      body: >-
+        The host is now <code>sk-annotated-figure</code>, holding the <code>sk-annotated</code> frame (the drawing's grid) and, as a sibling rather than a
+        cell of that grid, the <code>numbered</code> legend. The legend reads in columns downward (1, 2, 3 down the first, carrying on at the top of the
+        second), two at most. Hooks are declared on the figure so the legend inherits them; hand-written markup that mounts <code>data-sk-annotated</code>
+        on the frame keeps working. With a legend, the figure is a card of two bands: the drawing on the surface and, below a hairline, the legend on a sunken
+        ground (<code>--sk-annotated-surface-bg</code>, <code>--sk-annotated-legend-bg</code>, <code>--sk-annotated-figure-inset</code>).
+  - date: 2026-09-23
+    kind: feature
+    target: Annotated
+    es:
+      title: Un diagrama con zoom para leerlo en el teléfono
+      body: >-
+        Opción <code>zoomable</code>: el marco se pone dentro de un <code>Canvas</code>, se diseña a su propio ancho y se muestra ajustado, con zoom y
+        desplazamiento (arrastrar, Ctrl/Cmd + rueda, dos dedos, <code>+</code>/<code>-</code>/<code>0</code>). La leyenda queda afuera, sin escalar. Las
+        guías se miden en las coordenadas propias del marco, así que siguen sobre sus partes a cualquier zoom. Etiquetas <code>zoomInLabel</code>,
+        <code>zoomOutLabel</code>, <code>fitLabel</code> y avisos <code>touchHint</code>, <code>wheelHint</code>.
+    en:
+      title: A zoomable diagram, legible on a phone
+      body: >-
+        A <code>zoomable</code> option: the frame goes inside a <code>Canvas</code>, laid out at its own width and shown fitted, with zoom and pan (drag,
+        Ctrl/Cmd + wheel, two fingers, <code>+</code>/<code>-</code>/<code>0</code>). The legend stays outside, unscaled. Leaders are measured in the
+        frame's own coordinates, so they stay on their parts at any zoom. <code>zoomInLabel</code>, <code>zoomOutLabel</code>, <code>fitLabel</code>
+        labels and <code>touchHint</code>, <code>wheelHint</code> hints.

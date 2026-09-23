@@ -308,6 +308,84 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-23",
+            "en": {
+              "body": "When a gutter's labels are distributed, each one stays, where there is room, within the stretch from which its leader reaches the ring in a single segment, and the neighbour with more slack is the one that moves. A leader only bends when no arrangement keeps them all straight.",
+              "title": "Labels prefer a straight leader"
+            },
+            "es": {
+              "body": "Al repartir las etiquetas de un margen, cada una se mantiene, si hay lugar, en el tramo desde el cual su guía llega al anillo en un solo segmento, y es la vecina con más holgura la que se corre. Una guía sólo dobla cuando ninguna distribución deja recta a todas.",
+              "title": "Las etiquetas prefieren una guía recta"
+            },
+            "kind": "rework",
+            "target": "Annotated"
+          },
+          {
+            "date": "2026-09-23",
+            "en": {
+              "body": "A per-label <code>mark</code> option: with <code>bracket</code>, the part is marked by a line parallel to its side, exactly as long, with a perpendicular tick at each end and the label on its middle, instead of a leader into whichever child sits there. It is for containers: an accordion, one of its items, an open panel. Brackets that would overlap stack outward in tracks, and a container always sits outside what it contains; two parts that only meet end to end share a track, chained. The gutter reserves their room through <code>--sk-annotated-room-*</code>. In the narrow-screen stacked layout it falls back to a ring.",
+              "title": "Brackets for parts that are an area"
+            },
+            "es": {
+              "body": "Opción por etiqueta <code>mark</code>: con <code>bracket</code>, la parte se marca con una línea paralela a su lado, del mismo largo, con un tick perpendicular en cada extremo y la etiqueta sobre su centro, en lugar de una guía hacia el hijo que caiga en el medio. Es para contenedores: un acordeón, uno de sus ítems, un panel abierto. Los corchetes que se solaparían se apilan en pistas hacia afuera, y un contenedor queda siempre por fuera de lo que contiene; dos partes que sólo se tocan en un extremo comparten pista, encadenadas. El margen reserva su espacio con <code>--sk-annotated-room-*</code>. En el layout apilado de pantallas angostas, vuelve a ser un anillo.",
+              "title": "Corchetes para las partes que son un área"
+            },
+            "kind": "feature",
+            "target": "Annotated"
+          },
+          {
+            "date": "2026-09-23",
+            "en": {
+              "body": "The host is now <code>sk-annotated-figure</code>, holding the <code>sk-annotated</code> frame (the drawing's grid) and, as a sibling rather than a cell of that grid, the <code>numbered</code> legend. The legend reads in columns downward (1, 2, 3 down the first, carrying on at the top of the second), two at most. Hooks are declared on the figure so the legend inherits them; hand-written markup that mounts <code>data-sk-annotated</code> on the frame keeps working. With a legend, the figure is a card of two bands: the drawing on the surface and, below a hairline, the legend on a sunken ground (<code>--sk-annotated-surface-bg</code>, <code>--sk-annotated-legend-bg</code>, <code>--sk-annotated-figure-inset</code>).",
+              "title": "The host is a figure, and the legend lives outside the frame"
+            },
+            "es": {
+              "body": "El host pasa a ser <code>sk-annotated-figure</code>, que contiene el marco <code>sk-annotated</code> (la grilla del dibujo) y, como hermana y no como celda de esa grilla, la leyenda de <code>numbered</code>. La leyenda se lee en columnas hacia abajo (1, 2, 3 por la primera y sigue arriba de la segunda), con un máximo de dos. Los hooks se declaran en la figura para que la leyenda los herede; el markup escrito a mano que monta <code>data-sk-annotated</code> sobre el marco sigue funcionando. Con leyenda, la figura es una tarjeta de dos bandas: el dibujo sobre la superficie y, debajo de una línea, la leyenda sobre un fondo hundido (<code>--sk-annotated-surface-bg</code>, <code>--sk-annotated-legend-bg</code>, <code>--sk-annotated-figure-inset</code>).",
+              "title": "El host es una figura, y la leyenda vive fuera del marco"
+            },
+            "kind": "breaking",
+            "target": "Annotated"
+          },
+          {
+            "date": "2026-09-23",
+            "en": {
+              "body": "A <code>zoomable</code> option: the frame goes inside a <code>Canvas</code>, laid out at its own width and shown fitted, with zoom and pan (drag, Ctrl/Cmd + wheel, two fingers, <code>+</code>/<code>-</code>/<code>0</code>). The legend stays outside, unscaled. Leaders are measured in the frame's own coordinates, so they stay on their parts at any zoom. <code>zoomInLabel</code>, <code>zoomOutLabel</code>, <code>fitLabel</code> labels and <code>touchHint</code>, <code>wheelHint</code> hints.",
+              "title": "A zoomable diagram, legible on a phone"
+            },
+            "es": {
+              "body": "Opción <code>zoomable</code>: el marco se pone dentro de un <code>Canvas</code>, se diseña a su propio ancho y se muestra ajustado, con zoom y desplazamiento (arrastrar, Ctrl/Cmd + rueda, dos dedos, <code>+</code>/<code>-</code>/<code>0</code>). La leyenda queda afuera, sin escalar. Las guías se miden en las coordenadas propias del marco, así que siguen sobre sus partes a cualquier zoom. Etiquetas <code>zoomInLabel</code>, <code>zoomOutLabel</code>, <code>fitLabel</code> y avisos <code>touchHint</code>, <code>wheelHint</code>.",
+              "title": "Un diagrama con zoom para leerlo en el teléfono"
+            },
+            "kind": "feature",
+            "target": "Annotated"
+          },
+          {
+            "date": "2026-09-22",
+            "en": {
+              "body": "A <code>numbered</code> option and <code>sk-annotated__legend</code> and <code>sk-annotated__legend-item</code> parts: each bubble carries only its number (a CSS counter) and the names move to an <code>&lt;ol&gt;</code> under the frame. Leaders and rings are unchanged, and reading a list entry lights its number, its leader and its part. The bubbles become <code>aria-hidden</code> and focus moves to the entries. A numbered frame does not stack on narrow screens: its gutters are one bubble wide, so every number stays beside its part.",
+              "title": "A numbered mode, with the names in a legend below"
+            },
+            "es": {
+              "body": "Opción <code>numbered</code> y partes <code>sk-annotated__legend</code> y <code>sk-annotated__legend-item</code>: cada burbuja lleva sólo su número (un contador de CSS) y los nombres pasan a un <code>&lt;ol&gt;</code> debajo del marco. Las guías y los anillos no cambian, y leer una entrada de la lista enciende su número, su guía y su parte. Las burbujas quedan <code>aria-hidden</code> y el foco pasa a las entradas. Un marco numerado no se apila en pantallas angostas: sus márgenes miden una burbuja, así que cada número se queda al lado de su parte.",
+              "title": "Modo numerado, con los nombres en una leyenda debajo"
+            },
+            "kind": "feature",
+            "target": "Annotated"
+          },
+          {
+            "date": "2026-09-22",
+            "en": {
+              "body": "No ring is drawn at rest any more; only the grey leader remains. The ring appears, in accent, when the label or the part is hovered, or the label is focused.",
+              "title": "The ring only appears on the mark being read"
+            },
+            "es": {
+              "body": "En reposo ya no se dibuja ningún anillo; queda sólo la guía en gris. El anillo aparece, en acento, al pasar el puntero por la etiqueta o por la parte, o al enfocar la etiqueta.",
+              "title": "El anillo sólo aparece en la marca que se está leyendo"
+            },
+            "kind": "rework",
+            "target": "Annotated"
+          },
+          {
             "date": "2026-09-20",
             "en": {
               "body": "Below 40rem the four margins no longer stack one per line: they become two clusters that wrap into rows above and below the specimen, and the key drops to a line of its own. FileUpload's fifteen names went from 543px of column to four rows, and the diagram from 1058px to 593px. <code>mobileAlign=\"end\"</code> now pushes a label to the end of ITS row (<code>margin-inline-start: auto</code>) rather than aligning it on the cross axis.",
@@ -1337,6 +1415,27 @@
               "title": "Callout se publica como contrato, con una signature"
             },
             "kind": "feature"
+          }
+        ],
+        "version": "0.0.1-dev"
+      }
+    ],
+    "canvas": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-09-23",
+            "en": {
+              "body": "New <code>Canvas</code> contract: the content is laid out at its own width and shown fitted to the view, never enlarged. Drag pans; Ctrl/Cmd + wheel and a trackpad pinch zoom around the pointer; on touch, two fingers pan and zoom while one finger keeps scrolling the page, with a brief hint when someone tries with one. Keyboard: <code>+</code>, <code>-</code>, <code>0</code> fits, <code>1</code> is 100% and the arrows pan. Three icon-only buttons at the smallest size: zoom in, zoom out and fit, in a vertical bar in the top corner over the drawing, or a strip of their own under it on narrow screens. Dragging works at rest too, as long as half the drawing stays in view; once the reader has zoomed or dragged, a plain wheel pans the canvas and hands the scroll back to the page at an edge, and fit returns it to rest. The ground is a board ruled with hairlines barely off its own tone, between the surface and the sunken ground, and the grid slides and spreads with pan and zoom (<code>--sk-canvas-viewport-bg</code>, <code>--sk-canvas-grid-color</code>, <code>--sk-canvas-grid-size</code>).",
+              "title": "A zoomable canvas for drawings bigger than the screen"
+            },
+            "es": {
+              "body": "Nuevo contrato <code>Canvas</code>: el contenido se diseña a su propio ancho y se muestra ajustado a la vista, sin agrandarlo nunca. Arrastrar mueve; Ctrl/Cmd + rueda y el pellizco del trackpad acercan alrededor del puntero; en táctil, dos dedos mueven y hacen zoom mientras un dedo sigue haciendo scroll de la página, con un aviso breve si alguien intenta con uno. Teclado: <code>+</code>, <code>-</code>, <code>0</code> ajusta, <code>1</code> es 100% y las flechas mueven. Tres botones de solo icono, en el tamaño más chico: acercar, alejar y ajustar, en una barra vertical arriba a la derecha sobre el dibujo, o en una franja propia debajo de él en pantallas angostas. Arrastrar funciona también en reposo, siempre que quede a la vista la mitad del dibujo; una vez que se hizo zoom o se arrastró, la rueda sola mueve el canvas y devuelve el scroll a la página al llegar al borde, y ajustar lo vuelve al reposo. El fondo es un tablero con una grilla de líneas finas apenas distinta de su tono, entre la superficie y el fondo hundido, y la grilla se mueve y se espacia con el pan y el zoom (<code>--sk-canvas-viewport-bg</code>, <code>--sk-canvas-grid-color</code>, <code>--sk-canvas-grid-size</code>).",
+              "title": "Un canvas con zoom para dibujos más grandes que la pantalla"
+            },
+            "kind": "feature",
+            "target": "Canvas"
           }
         ],
         "version": "0.0.1-dev"
@@ -3039,6 +3138,78 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-22",
+            "en": {
+              "body": "Some ports cannot move: a gate's pins belong to the notation, and a row-anchored edge is a claim about which column it leaves from. The other end of those edges is ordinary and <code>portOffsets</code> spreads it knowing nothing about what it is aiming at, so on the half adder all four wires left with a six pixel kink a few pixels clear of the box: the exits spread to the ends of the band, the XOR's pins at the thirds. Neither number was wrong and the pair was unreadable. The free end is now pulled onto the fixed one's line when its own side reaches that far, and keeps its jog when it does not.",
+              "title": "A wire aimed at a fixed pin now leaves at that pin's height"
+            },
+            "es": {
+              "body": "Hay puertos que no se pueden mover: los pines de una compuerta son de la notación, y una arista anclada a una fila dice de qué columna sale. El otro extremo de esas aristas es común y <code>portOffsets</code> lo reparte sin saber a dónde apunta, así que en el semisumador los cuatro cables salían con un codo de seis píxeles a pocos píxeles de la caja: las salidas repartidas a los extremos de la banda, los pines de la XOR en los tercios. Ninguno de los dos números estaba mal y el par era ilegible. Ahora el extremo libre se alinea con el fijo cuando su propio lado llega hasta ahí, y conserva su codo cuando no.",
+              "title": "Un cable que apunta a un pin fijo ahora sale a la altura de ese pin"
+            },
+            "kind": "bugfix"
+          },
+          {
+            "date": "2026-09-22",
+            "en": {
+              "body": "Masking the line behind the caption was half the fix, and on its own it was the wrong half: the line still went there, it was merely hidden. Where a connector touches down now slides along that side of the box until it clears the name's plate, which is the same freedom <code>portOffsets</code> already uses to spread several connectors. It moves as little as it can, and when the name is wider than the whole box it keeps the place it asked for and the caption's own ground is the backstop.",
+              "title": "A connector entering a zone now lands beside its name instead of over it"
+            },
+            "es": {
+              "body": "Taparle la línea al rótulo con un fondo era la mitad de la solución, y sola era la mitad equivocada: la línea seguía pasando por ahí, sólo que escondida. Ahora el punto donde el conector toca la caja se corre a lo largo de ese lado hasta quedar fuera de la placa del nombre, que es la misma libertad que ya usa <code>portOffsets</code> para repartir varios conectores. Se mueve lo mínimo, y si el nombre es más ancho que la caja entera se queda donde estaba y el fondo del rótulo hace de red.",
+              "title": "El conector que entra a una zona ahora aterriza al lado del nombre, no encima"
+            },
+            "kind": "bugfix"
+          },
+          {
+            "date": "2026-09-22",
+            "en": {
+              "body": "A zone is drawn behind everything, because everything is inside it, and its name inherited that depth: the connector descending into the region's first node crosses exactly where the caption sits, and the stroke ran over the word. A name is a label, so it is now drawn over the lines and on a ground of its own (<code>--sk-diagram-zone-label-bg</code>), which is what an edge label already did. The boundary itself did not move: what changed underneath is that a zone is placed with <code>left</code>/<code>top</code> rather than <code>translate</code>, because <code>translate</code> made every zone a stacking context and nothing inside one could be painted over the connectors.",
+              "title": "A zone's name is no longer covered by the connector that enters it"
+            },
+            "es": {
+              "body": "Una zona se dibuja detrás de todo, porque todo está adentro de ella, y su nombre heredaba esa profundidad: el conector que baja hacia el primer nodo de la región cruza justo por donde está el rótulo, y el trazo pasaba por encima de la palabra. El nombre es una etiqueta, así que ahora se dibuja sobre las líneas y con fondo propio (<code>--sk-diagram-zone-label-bg</code>), que es lo mismo que ya hacía la etiqueta de una arista. El borde de la zona no se movió: lo que cambió por dentro es que una zona se posiciona con <code>left</code>/<code>top</code> en vez de <code>translate</code>, porque <code>translate</code> la volvía un contexto de apilado y ningún hijo suyo podía dibujarse sobre los conectores.",
+              "title": "El nombre de una zona ya no queda tapado por el conector que entra a ella"
+            },
+            "kind": "bugfix"
+          },
+          {
+            "date": "2026-09-21",
+            "en": {
+              "body": "<code>shape</code> gains <code>and</code>, <code>or</code>, <code>xor</code>, <code>nand</code>, <code>nor</code>, <code>xnor</code> and <code>not</code>: not a box with AND written in it, but the IEEE 91 / IEC 60617-12 symbol. A gate has <strong>no inside</strong> (the node's words stay for whoever is listening; the stylesheet clips them) and the notation fixes its ports: operands land on the back plane and the result leaves <em>one</em> point, so a fan-out leaves the same pin. The <code>designator</code> slot is where the <code>U1</code> goes: under the box and never measured, because the box is what every port comes from. Operands have to come from earlier columns; a cross-coupled latch is not a drawing this makes.",
+              "title": "The seven logic gates, drawn the way the standard draws them"
+            },
+            "es": {
+              "body": "<code>shape</code> suma <code>and</code>, <code>or</code>, <code>xor</code>, <code>nand</code>, <code>nor</code>, <code>xnor</code> y <code>not</code>: no una caja que dice AND adentro, sino el símbolo de IEEE 91 / IEC 60617-12. Una compuerta <strong>no tiene adentro</strong> (las palabras del nodo siguen ahí para quien lee con lector de pantalla, la hoja las recorta) y sus puertos los fija la notación: los operandos llegan al plano de atrás y el resultado sale de <em>un</em> punto, así que un fan-out sale del mismo pin. El slot <code>designator</code> es dónde va el <code>U1</code>: debajo de la caja y sin medirse, porque la caja es de donde sale cada puerto. Los operandos tienen que venir de columnas anteriores; un latch cruzado no se dibuja acá.",
+              "title": "Las siete compuertas lógicas, con la forma que les da la norma"
+            },
+            "kind": "feature"
+          },
+          {
+            "date": "2026-09-21",
+            "en": {
+              "body": "A node with <code>rows</code> now reads as what it is: the title sits in a band with a ground of its own, on the same leading edge as the cells under it (it used to sit eight pixels further in, because the rule asked for a negative <code>padding</code> and the browser dropped it), and every rule between cells is drawn at one weight. Two new hooks, <code>--sk-diagram-record-header-bg</code> and <code>--sk-diagram-record-header-font-weight</code>, are the whole of retuning it. No markup and no contract changed: it is the same box, read as a table.",
+              "title": "A record is drawn as a table, with a header band and one rule per row"
+            },
+            "es": {
+              "body": "Un nodo con <code>rows</code> ahora se lee como lo que es: el título va en una banda con fondo propio, alineado al mismo borde que las filas de abajo (antes quedaba ocho pixeles más adentro, porque la regla pedía un <code>padding</code> negativo y el navegador la descartaba), y las rayas entre celdas se dibujan todas al mismo peso. Dos ganchos nuevos, <code>--sk-diagram-record-header-bg</code> y <code>--sk-diagram-record-header-font-weight</code>, son todo lo que hay que tocar para cambiarla. Nada de esto cambia el markup ni el contrato: es la misma caja, leída como tabla.",
+              "title": "Un registro se dibuja como una tabla, con encabezado y una raya por fila"
+            },
+            "kind": "rework"
+          },
+          {
+            "date": "2026-09-21",
+            "en": {
+              "body": "A chip has a ground, so a line running under one simply vanished: what was left was two dead stubs against a word, and the drawing claimed a junction nobody had written. Every connector is now routed before any label is placed, and each chip misses the other lines the way it already missed the boxes and the arrowheads. It slides along its own line before stepping off it, and steps off it before covering somebody else's.",
+              "title": "A label no longer sits on top of another connector"
+            },
+            "es": {
+              "body": "Las etiquetas tienen fondo, así que una línea que pasaba por debajo de una simplemente desaparecía: quedaban dos puntas muertas contra una palabra, y el dibujo afirmaba un cruce que nadie había escrito. Ahora todos los conectores se trazan antes de ubicar cualquier etiqueta, y cada una esquiva las líneas de las demás como ya esquivaba las cajas y las puntas de flecha. Se corre sobre su propia línea antes que salirse de ella, y se sale antes que taparle la línea a otro.",
+              "title": "Una etiqueta ya no se sienta encima de otro conector"
+            },
+            "kind": "bugfix"
+          },
+          {
             "date": "2026-09-21",
             "en": {
               "body": "A node's <code>logo</code> slot takes a tree: an <code>ImageFrame</code> pointing at an SVG or a PNG, an <code>Icon</code> from whichever set is installed, or anything else the catalogue renders. All the component supplies is the box, one size for the whole drawing (<code>--sk-diagram-logo-size</code>): twenty nodes with twenty hand-sized images are twenty chances for one to be a different height. The kit ships no brand marks and never will.",
@@ -4214,6 +4385,32 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-23",
+            "en": {
+              "body": "<code>zoom-in</code>, the pair of <code>zoom-out</code>, and <code>fit</code>, \"show all of it in the view\": the first names no magnifying glass and the second is not <code>maximize</code>, which is about the window. <code>Canvas</code>'s zoom bar consumes them. Lucide <code>ZoomIn</code> and <code>Scan</code>, Phosphor <code>magnifying-glass-plus</code> and <code>corners-out</code>, Material <code>zoom_in</code> and <code>fit_screen</code>; all three sets in this repo ship them.",
+              "title": "The stable vocabulary gains zoom-in and fit"
+            },
+            "es": {
+              "body": "<code>zoom-in</code>, el par de <code>zoom-out</code>, y <code>fit</code>, \"mostrar todo en la vista\": el primero no nombra una lupa y el segundo no es <code>maximize</code>, que habla de la ventana. Los consume la barra de zoom de <code>Canvas</code>. Lucide <code>ZoomIn</code> y <code>Scan</code>, Phosphor <code>magnifying-glass-plus</code> y <code>corners-out</code>, Material <code>zoom_in</code> y <code>fit_screen</code>; los tres sets del repo ya los traen.",
+              "title": "El vocabulario estable gana zoom-in y fit"
+            },
+            "kind": "feature",
+            "target": "name"
+          },
+          {
+            "date": "2026-09-21",
+            "en": {
+              "body": "A role for the icon that has not been chosen: the hole a glyph goes in. All three sets draw it as an empty dashed box (Lucide <code>SquareDashed</code>, Phosphor <code>rectangle-dashed</code>, Material <code>select</code>), and that emptiness is the whole drawing, so the name survives a change of set more easily than any other on the list. It is the twin of the <code>placeholder</code> primitive: both are the shape of something that is not there. The docs anatomy diagrams consume it, where the subject must not say anything of its own. Because <code>IconSet</code> is complete, adding a role is additive for a consumer and new work for whoever draws a set; all three in this repo already ship it.",
+              "title": "The stable vocabulary gains placeholder"
+            },
+            "es": {
+              "body": "Un rol para el icono que todavía no se eligió: el hueco donde va un glifo. Los tres sets lo dibujan como una caja vacía punteada (Lucide <code>SquareDashed</code>, Phosphor <code>rectangle-dashed</code>, Material <code>select</code>), y ese vacío es todo el dibujo, así que el nombre sobrevive al cambio de set más fácil que cualquier otro de la lista. Es el gemelo del primitive <code>placeholder</code>: los dos son la forma de algo que no está. Lo consumen los diagramas de anatomía de la documentación, donde el sujeto no tiene que decir nada propio. Como <code>IconSet</code> es completo, agregar un rol es aditivo para quien consume y trabajo nuevo para quien dibuja un set; los tres del repo ya lo traen.",
+              "title": "El vocabulario estable gana placeholder"
+            },
+            "kind": "feature",
+            "target": "name"
+          },
           {
             "date": "2026-09-14",
             "en": {
@@ -8162,6 +8359,30 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-23",
+            "en": {
+              "body": "<code>stableIconNames</code> gained <code>zoom-in</code> and <code>fit</code>, and an IconStateButton's faces are named from that vocabulary, so the enum widens on its own. Nothing that compiled before stops compiling.",
+              "title": "Faces accept zoom-in and fit"
+            },
+            "es": {
+              "body": "<code>stableIconNames</code> sumó <code>zoom-in</code> y <code>fit</code>, y las faces de IconStateButton se nombran con ese vocabulario, así que el enum se ensancha solo. Nada que ya compilaba deja de compilar.",
+              "title": "Las faces aceptan zoom-in y fit"
+            },
+            "kind": "feature"
+          },
+          {
+            "date": "2026-09-21",
+            "en": {
+              "body": "<code>stableIconNames</code> gained the <code>placeholder</code> role, and an IconStateButton's faces are named from that same vocabulary, so the enum widens on its own. Nothing that compiled before stops compiling.",
+              "title": "Faces accept placeholder"
+            },
+            "es": {
+              "body": "<code>stableIconNames</code> sumó el rol <code>placeholder</code>, y las faces de IconStateButton se nombran con ese mismo vocabulario, así que el enum se ensancha solo. Nada que ya compilaba deja de compilar.",
+              "title": "Las faces aceptan placeholder"
+            },
+            "kind": "feature"
+          },
+          {
             "date": "2026-09-20",
             "en": {
               "body": "The stylesheet uses <code>.sk-state-button</code> and <code>--sk-state-button-*</code> hooks, matching the contract; it previously pointed at the old <code>icon-state-button</code> id.",
@@ -11428,32 +11649,58 @@
       "category": "content",
       "css": "@skryensya/core/components/annotation.css",
       "hookDetails": {
+        "--sk-annotated-figure-inset": {
+          "default": "var(--space-inset-md)",
+          "output": false,
+          "part": "legend",
+          "sheet": "@skryensya/core/components/annotation.css"
+        },
         "--sk-annotated-gap": {
           "default": "var(--space-inline-lg)",
           "output": false,
-          "part": "root",
+          "part": "figure",
           "sheet": "@skryensya/core/components/annotation.css"
         },
         "--sk-annotated-key-color": {
           "default": "var(--color-text-tertiary)",
           "output": false,
-          "part": "root",
+          "part": "figure",
+          "sheet": "@skryensya/core/components/annotation.css"
+        },
+        "--sk-annotated-legend-bg": {
+          "default": "var(--color-bg-surface-sunken)",
+          "output": false,
+          "part": "figure",
           "sheet": "@skryensya/core/components/annotation.css"
         },
         "--sk-annotated-subject-filter": {
           "default": "grayscale(1)",
           "output": false,
-          "part": "root",
+          "part": "figure",
+          "sheet": "@skryensya/core/components/annotation.css"
+        },
+        "--sk-annotated-surface-bg": {
+          "default": "var(--color-bg-surface)",
+          "output": false,
+          "part": "figure",
           "sheet": "@skryensya/core/components/annotation.css"
         }
       },
       "hooks": [
         "--sk-annotated-gap",
         "--sk-annotated-key-color",
-        "--sk-annotated-subject-filter"
+        "--sk-annotated-subject-filter",
+        "--sk-annotated-surface-bg",
+        "--sk-annotated-legend-bg",
+        "--sk-annotated-figure-inset"
       ],
       "id": "annotation",
       "options": {
+        "fitLabel": {
+          "attr": "aria-label",
+          "default": "Fit to view",
+          "type": "string"
+        },
         "inert": {
           "attr": "inert",
           "default": true,
@@ -11463,6 +11710,12 @@
         "label": {
           "attr": "aria-label",
           "type": "string"
+        },
+        "numbered": {
+          "attr": "data-numbered",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
         },
         "ringDistance": {
           "attr": "data-ring-distance",
@@ -11486,17 +11739,41 @@
           "machineInput": true,
           "min": 0,
           "type": "number"
+        },
+        "zoomable": {
+          "attr": "data-zoomable",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "zoomInLabel": {
+          "attr": "aria-label",
+          "default": "Zoom in",
+          "type": "string"
+        },
+        "zoomOutLabel": {
+          "attr": "aria-label",
+          "default": "Zoom out",
+          "type": "string"
         }
       },
       "parts": {
+        "content": "sk-canvas__content",
+        "control": "sk-canvas__control",
+        "controls": "sk-canvas__controls",
+        "figure": "sk-annotated-figure",
+        "hint": "sk-canvas__hint",
         "key": "sk-annotated__key",
         "label": "sk-annotation",
         "leader": "sk-annotated__leader",
         "leaders": "sk-annotated__leaders",
+        "legend": "sk-annotated__legend",
+        "legendItem": "sk-annotated__legend-item",
         "mark": "sk-annotated__mark",
         "ring": "sk-annotated__ring",
         "root": "sk-annotated",
-        "subject": "sk-annotated__subject"
+        "subject": "sk-annotated__subject",
+        "viewport": "sk-canvas__viewport"
       },
       "semantics": {
         "Annotated": {
@@ -11506,7 +11783,7 @@
             "List"
           ],
           "avoidWhen": [
-            "lo que se quiere es una leyenda numerada debajo de la imagen: eso es una List o una Table, y hace que quien lee tenga que sostener seis números en la cabeza mientras el ojo viaja",
+            "lo que se quiere es una leyenda numerada debajo de una imagen estática, sin guías ni anillos: eso es una List o una Table. Si los nombres no caben en los márgenes, es `numbered` de este mismo componente, que conserva las guías",
             "la etiqueta tiene que aparecer al pasar el puntero o al enfocar: eso es Tooltip, que es chrome flotante y efímero; esto está siempre dibujado",
             "hay que explicar un dato al lado de un control dentro de un formulario real: eso es el `hint` de FormField, que además queda enlazado por aria-describedby",
             "el sujeto tiene que seguir siendo usable: `inert` es todo o nada, así que un diagrama sobre una UI viva es dos cosas peleando por el mismo markup",
@@ -11517,6 +11794,8 @@
             "las etiquetas no pueden taparlo: viven en los cuatro márgenes de una grilla y el sujeto ocupa la celda del medio, así que el solape no se evita, no se puede representar",
             "cada etiqueta llega a su parte por una línea guía de uno o dos tramos, sólo rectos o de 45 grados: la menor cantidad que alcanza",
             "el dibujo se recalcula solo cuando cambia el tamaño del contenedor, cuando el sujeto reflowea o cuando llega una tipografía: dónde cae una parte no es un valor que se pueda escribir al componer",
+            "los nombres son largos o muchos y en los márgenes le comen el ancho al sujeto: `numbered` deja sólo el número en cada burbuja y pasa los nombres a una lista ordenada debajo, con la misma guía y el mismo anillo",
+            "algunas partes son áreas que contienen otras (un acordeón, uno de sus ítems, un panel): `mark: bracket` las marca con un corchete del largo de la parte, anidado hacia afuera, en vez de una guía que caería sobre un hijo cualquiera",
             "el sujeto es una muestra y no un control: `inert` viene prendido, no toma puntero, ni foco, ni teclado, y sale del árbol de accesibilidad"
           ]
         }
@@ -11540,7 +11819,12 @@
             "inert",
             "ringPlacement",
             "ringDistance",
-            "ringRadius"
+            "ringRadius",
+            "numbered",
+            "zoomable",
+            "zoomInLabel",
+            "zoomOutLabel",
+            "fitLabel"
           ],
           "react": {
             "from": "@skryensya/react/annotation",
@@ -11555,6 +11839,14 @@
                   "for": {
                     "attr": "data-for",
                     "type": "string"
+                  },
+                  "mark": {
+                    "attr": "data-mark",
+                    "type": "enum",
+                    "values": [
+                      "ring",
+                      "bracket"
+                    ]
                   },
                   "match": {
                     "attr": "data-match",
@@ -11623,6 +11915,12 @@
             "subject": {
               "accepts": "node",
               "required": true
+            },
+            "touchHint": {
+              "accepts": "text"
+            },
+            "wheelHint": {
+              "accepts": "text"
             }
           },
           "template": {
@@ -11637,49 +11935,318 @@
             ],
             "children": [
               {
+                "children": [
+                  {
+                    "element": "div",
+                    "options": [
+                      "inert"
+                    ],
+                    "part": "subject",
+                    "slot": "subject"
+                  },
+                  {
+                    "element": "p",
+                    "part": "key",
+                    "slot": "key",
+                    "whenGiven": "key"
+                  },
+                  {
+                    "attrs": {
+                      "tabindex": "0"
+                    },
+                    "element": "span",
+                    "itemOptions": [
+                      "for",
+                      "side",
+                      "mark",
+                      "mobileAlign",
+                      "match",
+                      "ringPlacement",
+                      "ringDistance",
+                      "ringRadius"
+                    ],
+                    "itemSlot": "children",
+                    "part": "label",
+                    "repeat": "items",
+                    "whenMissing": "numbered"
+                  },
+                  {
+                    "attrs": {
+                      "aria-hidden": "true"
+                    },
+                    "element": "span",
+                    "itemOptions": [
+                      "for",
+                      "side",
+                      "mark",
+                      "mobileAlign",
+                      "match",
+                      "ringPlacement",
+                      "ringDistance",
+                      "ringRadius"
+                    ],
+                    "part": "label",
+                    "repeat": "items",
+                    "whenGiven": "numbered"
+                  },
+                  {
+                    "attrs": {
+                      "aria-hidden": "true",
+                      "focusable": "false"
+                    },
+                    "element": "svg",
+                    "part": "leaders"
+                  }
+                ],
                 "element": "div",
                 "options": [
-                  "inert"
+                  "numbered"
                 ],
-                "part": "subject",
-                "slot": "subject"
+                "part": "root",
+                "whenMissing": "zoomable"
               },
               {
-                "element": "p",
-                "part": "key",
-                "slot": "key",
-                "whenGiven": "key"
-              },
-              {
-                "attrs": {
-                  "tabindex": "0"
-                },
-                "element": "span",
-                "itemOptions": [
-                  "for",
-                  "side",
-                  "mobileAlign",
-                  "match",
-                  "ringPlacement",
-                  "ringDistance",
-                  "ringRadius"
+                "also": [
+                  "sk-canvas"
                 ],
-                "itemSlot": "children",
-                "part": "label",
-                "repeat": "items"
+                "children": [
+                  {
+                    "attrs": {
+                      "tabindex": "0"
+                    },
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "children": [
+                              {
+                                "element": "div",
+                                "options": [
+                                  "inert"
+                                ],
+                                "part": "subject",
+                                "slot": "subject"
+                              },
+                              {
+                                "element": "p",
+                                "part": "key",
+                                "slot": "key",
+                                "whenGiven": "key"
+                              },
+                              {
+                                "attrs": {
+                                  "tabindex": "0"
+                                },
+                                "element": "span",
+                                "itemOptions": [
+                                  "for",
+                                  "side",
+                                  "mark",
+                                  "mobileAlign",
+                                  "match",
+                                  "ringPlacement",
+                                  "ringDistance",
+                                  "ringRadius"
+                                ],
+                                "itemSlot": "children",
+                                "part": "label",
+                                "repeat": "items",
+                                "whenMissing": "numbered"
+                              },
+                              {
+                                "attrs": {
+                                  "aria-hidden": "true"
+                                },
+                                "element": "span",
+                                "itemOptions": [
+                                  "for",
+                                  "side",
+                                  "mark",
+                                  "mobileAlign",
+                                  "match",
+                                  "ringPlacement",
+                                  "ringDistance",
+                                  "ringRadius"
+                                ],
+                                "part": "label",
+                                "repeat": "items",
+                                "whenGiven": "numbered"
+                              },
+                              {
+                                "attrs": {
+                                  "aria-hidden": "true",
+                                  "focusable": "false"
+                                },
+                                "element": "svg",
+                                "part": "leaders"
+                              }
+                            ],
+                            "element": "div",
+                            "options": [
+                              "numbered"
+                            ],
+                            "part": "root"
+                          }
+                        ],
+                        "element": "div",
+                        "part": "content"
+                      }
+                    ],
+                    "element": "div",
+                    "part": "viewport"
+                  },
+                  {
+                    "children": [
+                      {
+                        "also": [
+                          "sk-button",
+                          "sk-interactive"
+                        ],
+                        "attrs": {
+                          "data-canvas-action": "zoom-in",
+                          "data-icon-only": "",
+                          "data-size": "xs",
+                          "data-variant": "ghost",
+                          "type": "button"
+                        },
+                        "children": [
+                          {
+                            "attrs": {
+                              "data-sk-icon": "zoom-in",
+                              "data-sk-icon-size": "sm"
+                            },
+                            "element": "span"
+                          }
+                        ],
+                        "element": "button",
+                        "options": [
+                          "zoomInLabel"
+                        ],
+                        "part": "control"
+                      },
+                      {
+                        "also": [
+                          "sk-button",
+                          "sk-interactive"
+                        ],
+                        "attrs": {
+                          "data-canvas-action": "zoom-out",
+                          "data-icon-only": "",
+                          "data-size": "xs",
+                          "data-variant": "ghost",
+                          "type": "button"
+                        },
+                        "children": [
+                          {
+                            "attrs": {
+                              "data-sk-icon": "zoom-out",
+                              "data-sk-icon-size": "sm"
+                            },
+                            "element": "span"
+                          }
+                        ],
+                        "element": "button",
+                        "options": [
+                          "zoomOutLabel"
+                        ],
+                        "part": "control"
+                      },
+                      {
+                        "also": [
+                          "sk-button",
+                          "sk-interactive"
+                        ],
+                        "attrs": {
+                          "data-canvas-action": "fit",
+                          "data-icon-only": "",
+                          "data-size": "xs",
+                          "data-variant": "ghost",
+                          "type": "button"
+                        },
+                        "children": [
+                          {
+                            "attrs": {
+                              "data-sk-icon": "fit",
+                              "data-sk-icon-size": "sm"
+                            },
+                            "element": "span"
+                          }
+                        ],
+                        "element": "button",
+                        "options": [
+                          "fitLabel"
+                        ],
+                        "part": "control"
+                      }
+                    ],
+                    "element": "div",
+                    "part": "controls"
+                  },
+                  {
+                    "attrs": {
+                      "aria-hidden": "true",
+                      "data-canvas-hint": "touch"
+                    },
+                    "children": [
+                      {
+                        "element": "span",
+                        "slot": "touchHint",
+                        "whenGiven": "touchHint"
+                      },
+                      {
+                        "element": "span",
+                        "text": "Use two fingers to move the view",
+                        "whenMissing": "touchHint"
+                      }
+                    ],
+                    "element": "p",
+                    "part": "hint"
+                  },
+                  {
+                    "attrs": {
+                      "aria-hidden": "true",
+                      "data-canvas-hint": "wheel"
+                    },
+                    "children": [
+                      {
+                        "element": "span",
+                        "slot": "wheelHint",
+                        "whenGiven": "wheelHint"
+                      },
+                      {
+                        "element": "span",
+                        "text": "Use Ctrl + scroll to zoom",
+                        "whenMissing": "wheelHint"
+                      }
+                    ],
+                    "element": "p",
+                    "part": "hint"
+                  }
+                ],
+                "element": "div",
+                "mount": "data-sk-canvas",
+                "whenGiven": "zoomable"
               },
               {
-                "attrs": {
-                  "aria-hidden": "true",
-                  "focusable": "false"
-                },
-                "element": "svg",
-                "part": "leaders"
+                "children": [
+                  {
+                    "attrs": {
+                      "tabindex": "0"
+                    },
+                    "element": "li",
+                    "itemSlot": "children",
+                    "part": "legendItem",
+                    "repeat": "items"
+                  }
+                ],
+                "element": "ol",
+                "part": "legend",
+                "whenGiven": "numbered"
               }
             ],
             "element": "div",
             "host": true,
-            "part": "root"
+            "part": "figure"
           }
         }
       },
@@ -13997,6 +14564,351 @@
                 "element": "div",
                 "part": "actions",
                 "whenGiven": "actions"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
+    "canvas": {
+      "bindings": {
+        "Canvas": {
+          "enhancer": "data-sk-canvas",
+          "markup": true,
+          "portals": false,
+          "react": "@skryensya/react/canvas#Canvas"
+        }
+      },
+      "category": "content",
+      "css": "@skryensya/core/components/canvas.css",
+      "hookDetails": {
+        "--sk-canvas-bg": {
+          "default": "var(--color-bg-surface)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/canvas.css"
+        },
+        "--sk-canvas-border-color": {
+          "default": "var(--color-border-subtle)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/canvas.css"
+        },
+        "--sk-canvas-content-inline-size": {
+          "default": "max-content",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/canvas.css"
+        },
+        "--sk-canvas-grid-color": {
+          "default": "color-mix(in oklab, var(--color-border-subtle) 25%, transparent)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/canvas.css"
+        },
+        "--sk-canvas-grid-size": {
+          "default": "24px",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/canvas.css"
+        },
+        "--sk-canvas-max-block-size": {
+          "default": "min(80vh, 48rem)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/canvas.css"
+        },
+        "--sk-canvas-radius": {
+          "default": "var(--radius-surface)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/canvas.css"
+        },
+        "--sk-canvas-viewport-bg": {
+          "default": "color-mix(in oklab, var(--color-bg-surface) 50%, var(--color-bg-canvas))",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/canvas.css"
+        }
+      },
+      "hooks": [
+        "--sk-canvas-bg",
+        "--sk-canvas-border-color",
+        "--sk-canvas-radius",
+        "--sk-canvas-content-inline-size",
+        "--sk-canvas-max-block-size",
+        "--sk-canvas-viewport-bg",
+        "--sk-canvas-grid-color",
+        "--sk-canvas-grid-size"
+      ],
+      "id": "canvas",
+      "options": {
+        "fitLabel": {
+          "attr": "aria-label",
+          "default": "Fit to view",
+          "type": "string"
+        },
+        "label": {
+          "attr": "aria-label",
+          "type": "string"
+        },
+        "maxZoom": {
+          "attr": "data-max-zoom",
+          "default": 4,
+          "machineInput": true,
+          "min": 1,
+          "type": "number"
+        },
+        "minZoom": {
+          "attr": "data-min-zoom",
+          "default": 0.25,
+          "machineInput": true,
+          "min": 0.05,
+          "type": "number"
+        },
+        "zoomInLabel": {
+          "attr": "aria-label",
+          "default": "Zoom in",
+          "type": "string"
+        },
+        "zoomOutLabel": {
+          "attr": "aria-label",
+          "default": "Zoom out",
+          "type": "string"
+        }
+      },
+      "parts": {
+        "content": "sk-canvas__content",
+        "control": "sk-canvas__control",
+        "controls": "sk-canvas__controls",
+        "hint": "sk-canvas__hint",
+        "root": "sk-canvas",
+        "viewport": "sk-canvas__viewport"
+      },
+      "semantics": {
+        "Canvas": {
+          "alternatives": [
+            "Annotated",
+            "ImageFrame",
+            "Dialog"
+          ],
+          "avoidWhen": [
+            "el contenido entra en la pantalla o se puede reacomodar sin perder sentido: un canvas agrega un gesto que nadie necesitaba",
+            "es una imagen que sólo hay que ver más grande: eso es ImageFrame con un enlace a la imagen completa, o un Dialog con la imagen",
+            "el contenido es interactivo y tiene que seguir usándose: arrastrar para mover compite con cada clic y cada selección de texto adentro",
+            "es una tabla o una lista ancha: eso es scroll horizontal nativo dentro de su propio contenedor, que ya sabe hacer el teclado y el lector de pantalla"
+          ],
+          "useWhen": [
+            "hay un dibujo más grande que la pantalla que lo muestra (un diagrama, una anatomía, un plano) y reescalarlo es mejor que reacomodarlo: se diseña a su ancho y se muestra ajustado",
+            "en un teléfono el contenido se reescribiría palabra por palabra: acá se ve entero y chico, y quien lee hace zoom en la parte que le interesa",
+            "el zoom tiene que sentirse como en una herramienta de diseño: arrastrar mueve, Ctrl/Cmd + rueda y el pellizco del trackpad acercan alrededor del puntero, `+`/`-`/`0` desde el teclado",
+            "no puede secuestrar el scroll de la página: un dedo y la rueda sola siguen siendo de la página; dos dedos y Ctrl + rueda son del canvas, y un aviso breve lo explica cuando alguien intenta lo otro",
+            "para un Annotated no hace falta envolverlo: `zoomable` pone el mismo canvas alrededor del marco y deja la leyenda afuera, sin escalar"
+          ]
+        }
+      },
+      "signatures": {
+        "Canvas": {
+          "compose": [
+            {
+              "of": "icon",
+              "systemOwned": true
+            }
+          ],
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "pan-zoom",
+            "zoomable-view",
+            "canvas",
+            "zoom-diagram",
+            "large-figure-on-mobile",
+            "figma-like-view"
+          ],
+          "mount": "data-sk-canvas",
+          "options": [
+            "label",
+            "minZoom",
+            "maxZoom",
+            "zoomInLabel",
+            "zoomOutLabel",
+            "fitLabel"
+          ],
+          "react": {
+            "from": "@skryensya/react/canvas",
+            "name": "Canvas"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            },
+            "touchHint": {
+              "accepts": "text"
+            },
+            "wheelHint": {
+              "accepts": "text"
+            }
+          },
+          "template": {
+            "attrsWhen": [
+              {
+                "attrs": {
+                  "role": "group"
+                },
+                "given": true,
+                "option": "label"
+              }
+            ],
+            "children": [
+              {
+                "attrs": {
+                  "tabindex": "0"
+                },
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "slot": "children"
+                      }
+                    ],
+                    "element": "div",
+                    "part": "content"
+                  }
+                ],
+                "element": "div",
+                "part": "viewport"
+              },
+              {
+                "children": [
+                  {
+                    "also": [
+                      "sk-button",
+                      "sk-interactive"
+                    ],
+                    "attrs": {
+                      "data-canvas-action": "zoom-in",
+                      "data-icon-only": "",
+                      "data-size": "xs",
+                      "data-variant": "ghost",
+                      "type": "button"
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "data-sk-icon": "zoom-in",
+                          "data-sk-icon-size": "sm"
+                        },
+                        "element": "span"
+                      }
+                    ],
+                    "element": "button",
+                    "options": [
+                      "zoomInLabel"
+                    ],
+                    "part": "control"
+                  },
+                  {
+                    "also": [
+                      "sk-button",
+                      "sk-interactive"
+                    ],
+                    "attrs": {
+                      "data-canvas-action": "zoom-out",
+                      "data-icon-only": "",
+                      "data-size": "xs",
+                      "data-variant": "ghost",
+                      "type": "button"
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "data-sk-icon": "zoom-out",
+                          "data-sk-icon-size": "sm"
+                        },
+                        "element": "span"
+                      }
+                    ],
+                    "element": "button",
+                    "options": [
+                      "zoomOutLabel"
+                    ],
+                    "part": "control"
+                  },
+                  {
+                    "also": [
+                      "sk-button",
+                      "sk-interactive"
+                    ],
+                    "attrs": {
+                      "data-canvas-action": "fit",
+                      "data-icon-only": "",
+                      "data-size": "xs",
+                      "data-variant": "ghost",
+                      "type": "button"
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "data-sk-icon": "fit",
+                          "data-sk-icon-size": "sm"
+                        },
+                        "element": "span"
+                      }
+                    ],
+                    "element": "button",
+                    "options": [
+                      "fitLabel"
+                    ],
+                    "part": "control"
+                  }
+                ],
+                "element": "div",
+                "part": "controls"
+              },
+              {
+                "attrs": {
+                  "aria-hidden": "true",
+                  "data-canvas-hint": "touch"
+                },
+                "children": [
+                  {
+                    "element": "span",
+                    "slot": "touchHint",
+                    "whenGiven": "touchHint"
+                  },
+                  {
+                    "element": "span",
+                    "text": "Use two fingers to move the view",
+                    "whenMissing": "touchHint"
+                  }
+                ],
+                "element": "p",
+                "part": "hint"
+              },
+              {
+                "attrs": {
+                  "aria-hidden": "true",
+                  "data-canvas-hint": "wheel"
+                },
+                "children": [
+                  {
+                    "element": "span",
+                    "slot": "wheelHint",
+                    "whenGiven": "wheelHint"
+                  },
+                  {
+                    "element": "span",
+                    "text": "Use Ctrl + scroll to zoom",
+                    "whenMissing": "wheelHint"
+                  }
+                ],
+                "element": "p",
+                "part": "hint"
               }
             ],
             "element": "div",
@@ -21042,6 +21954,24 @@
           "part": "root",
           "sheet": "@skryensya/core/components/diagram.css"
         },
+        "--sk-diagram-designator-color": {
+          "default": "var(--color-text-secondary)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-designator-font-size": {
+          "default": "var(--font-size-caption)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-designator-gap": {
+          "default": "var(--space-stack-xs)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
         "--sk-diagram-edge-bg": {
           "default": "var(--color-bg-canvas)",
           "output": false,
@@ -21086,6 +22016,12 @@
         },
         "--sk-diagram-edge-radius": {
           "default": "var(--radius-pill)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-gate-inline-size": {
+          "default": "3.75rem",
           "output": false,
           "part": "root",
           "sheet": "@skryensya/core/components/diagram.css"
@@ -21186,6 +22122,18 @@
           "part": "root",
           "sheet": "@skryensya/core/components/diagram.css"
         },
+        "--sk-diagram-record-header-bg": {
+          "default": "var(--color-bg-surface-sunken)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
+        "--sk-diagram-record-header-font-weight": {
+          "default": "var(--font-weight-emphasis)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
         "--sk-diagram-row-color": {
           "default": "var(--color-text-secondary)",
           "output": false,
@@ -21276,6 +22224,12 @@
           "part": "root",
           "sheet": "@skryensya/core/components/diagram.css"
         },
+        "--sk-diagram-zone-label-bg": {
+          "default": "color-mix(\n      in oklab,\n      var(--color-bg-surface-sunken) 55%,\n      var(--color-bg-canvas)\n    )",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
         "--sk-diagram-zone-padding-block": {
           "default": "var(--space-inset-xs)",
           "output": false,
@@ -21321,8 +22275,14 @@
         "--sk-diagram-row-padding-block",
         "--sk-diagram-row-padding-inline",
         "--sk-diagram-row-rule-color",
+        "--sk-diagram-record-header-bg",
+        "--sk-diagram-record-header-font-weight",
         "--sk-diagram-decision-aspect",
         "--sk-diagram-decision-stroke-scale",
+        "--sk-diagram-gate-inline-size",
+        "--sk-diagram-designator-color",
+        "--sk-diagram-designator-font-size",
+        "--sk-diagram-designator-gap",
         "--sk-diagram-connector-color",
         "--sk-diagram-connector-width",
         "--sk-diagram-zone-bg",
@@ -21330,6 +22290,7 @@
         "--sk-diagram-zone-border-style",
         "--sk-diagram-zone-border-width",
         "--sk-diagram-zone-color",
+        "--sk-diagram-zone-label-bg",
         "--sk-diagram-zone-font-size",
         "--sk-diagram-zone-inset",
         "--sk-diagram-zone-inset-block-start",
@@ -21365,6 +22326,7 @@
         "arrow": "sk-diagram__arrow",
         "connector": "sk-diagram__connector",
         "connectors": "sk-diagram__connectors",
+        "designator": "sk-diagram__node-designator",
         "edge": "sk-diagram__edge",
         "edges": "sk-diagram__edges",
         "line": "sk-diagram__line",
@@ -21394,7 +22356,9 @@
             "el contenido es una secuencia sin ramas y sin ciclos: eso es ProcessList si son instrucciones, o Steps si lo primario es el progreso; un diagrama de una sola columna sin bifurcaciones es una lista con líneas de más",
             "la jerarquía es de contención y no de flujo (carpetas, un árbol de archivos): eso es TreeView o Folder, donde lo que importa es qué está adentro de qué",
             "el grafo es grande, viene de datos, o hay que explorarlo, hacer zoom o arrastrar nodos: esto no resuelve disposición, dibuja diagramas chicos escritos a mano",
-            "lo que se necesita es notación UML completa, swimlanes o tipos de caja por convención (cilindro, paralelogramo): son convenciones que hay que enseñarle a quien lee, y acá sólo viven las tres formas que se entienden sin leyenda"
+            "lo que se necesita es notación UML completa, swimlanes o tipos de caja por convención (cilindro, paralelogramo, hexágono): son convenciones que hay que enseñarle a quien lee, y de las formas de prosa acá sólo viven las tres que se entienden sin leyenda. Las compuertas lógicas son la excepción y pasan la misma prueba por el otro lado: no son una caja que significa AND, son el símbolo que la norma le asigna a la conjunción, y quien lee la notación la lee sin leyenda",
+            "hace falta un esquemático de verdad: esto dibuja las siete compuertas y nada más. No hay flip-flops, ni buses, ni multiplexores, ni componentes con patas numeradas, ni nodos de unión, ni netlist; una compuerta tampoco lleva nada adentro, así que un designador visible (`U1`) no tiene dónde ir",
+            "el dibujo lógico necesita realimentación: un latch de compuertas cruzadas no se puede dibujar acá. Los operandos tienen que venir de columnas anteriores, que es el orden en el que un esquemático se dibuja igual; un cable que va hacia atrás dobla a mitad de camino entre sus dos puntas, y si las dos compuertas comparten columna ese punto queda adentro de las dos y el cable pasa por debajo del símbolo que alimentaba"
           ],
           "useWhen": [
             "hay que explicar cómo se relacionan varias cosas: un flujo lineal, un if/else, un árbol de decisión, una máquina de estados con un ciclo. Los cuatro salen de las mismas dos piezas, no son cuatro modos",
@@ -21403,7 +22367,9 @@
             "la relación tiene que llegarle a un lector de pantalla: el SVG es `aria-hidden` y el binding escribe adentro de cada nodo una lista anunciada de a dónde lleva, así que el dibujo se puede leer sin verlo",
             "hace falta un ciclo: una arista hacia un nodo que está más arriba sale por el margen y vuelve, que es como se dibuja \"y vuelve a empezar\" desde siempre",
             "las aristas no son una secuencia sino una relación entre cosas (un modelo, un esquema): `arrow: \"none\"` dibuja la línea sin punta y la etiqueta lleva la cardinalidad",
-            "un nodo tiene que decir más que una línea de texto: su slot acepta una composición, así que adentro entra cualquier árbol del catálogo"
+            "un nodo tiene que decir más que una línea de texto: su slot acepta una composición, así que adentro entra cualquier árbol del catálogo",
+            "lo que hay que dibujar es lógica booleana: `shape` trae las siete compuertas de la notación IEEE 91 / IEC 60617-12 (`and`, `or`, `xor`, `nand`, `nor`, `xnor`, `not`), con la forma real y no una caja que dice AND adentro",
+            "una compuerta y un paso van en el mismo dibujo: son un solo `Diagram`, así que el resultado de una compuerta puede entrar a una caja de proceso y la salida de un paso puede ser un operando, sin cambiar de componente a mitad de camino"
           ]
         }
       },
@@ -21501,7 +22467,14 @@
                     "values": [
                       "process",
                       "decision",
-                      "terminal"
+                      "terminal",
+                      "and",
+                      "or",
+                      "xor",
+                      "nand",
+                      "nor",
+                      "xnor",
+                      "not"
                     ]
                   },
                   "span": {
@@ -21526,6 +22499,9 @@
                   "children": {
                     "accepts": "node",
                     "required": true
+                  },
+                  "designator": {
+                    "accepts": "node"
                   },
                   "logo": {
                     "accepts": "node"
@@ -21642,6 +22618,12 @@
                         "element": "span",
                         "itemSlot": "children",
                         "part": "title"
+                      },
+                      {
+                        "element": "span",
+                        "itemSlot": "designator",
+                        "part": "designator",
+                        "whenItemSlotGiven": "designator"
                       },
                       {
                         "children": [
@@ -24777,12 +25759,15 @@
             "filter",
             "refresh",
             "zoom-out",
+            "zoom-in",
+            "fit",
             "more",
             "menu",
             "info",
             "success",
             "warning",
             "danger",
+            "placeholder",
             "calendar",
             "clock",
             "upload",
@@ -38269,12 +39254,15 @@
                       "filter",
                       "refresh",
                       "zoom-out",
+                      "zoom-in",
+                      "fit",
                       "more",
                       "menu",
                       "info",
                       "success",
                       "warning",
                       "danger",
+                      "placeholder",
                       "calendar",
                       "clock",
                       "upload",
@@ -46188,7 +47176,7 @@
     "working": "0.0.1"
   },
   "schemaVersion": "2.3",
-  "sourceHash": "b06943ad736ec504",
+  "sourceHash": "56c4e33a64cd8fbe",
   "vocabulary": {
     "a11y": "When `when` holds, one of `requiresOneOf` must be given: an option, a raw attribute, a filled slot, or a child signature by name.",
     "atLeastOneOf": "At least one member of each group counts: a filled slot, a boolean option set to true, or an option other than its default.",

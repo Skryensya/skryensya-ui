@@ -13,7 +13,7 @@ export const statAnatomyTree = (t: Translate): UsageTree => ({
       signature: "Stat",
       options: { trend: "up" },
       slots: {
-        label: t("demo.stat.income"),
+        label: t("anatomy.label"),
         value: "48,200",
         change: [
           { contract: "icon", signature: "Icon", options: { name: "arrow-up", size: "sm" } },

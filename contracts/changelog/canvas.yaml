@@ -1,0 +1,31 @@
+# Qué cambió en canvas, en las palabras que lee quien lo usa. Sólo se agrega, nunca se reescribe.
+#
+# `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
+# que no coincide, algo de lo que un consumidor depende se movió: escribe la entrada y pega el
+# hash nuevo.
+surface: "cf1cfaf1b92e32cb"
+entries:
+  - date: 2026-09-23
+    kind: feature
+    target: Canvas
+    es:
+      title: Un canvas con zoom para dibujos más grandes que la pantalla
+      body: >-
+        Nuevo contrato <code>Canvas</code>: el contenido se diseña a su propio ancho y se muestra ajustado a la vista, sin agrandarlo nunca. Arrastrar
+        mueve; Ctrl/Cmd + rueda y el pellizco del trackpad acercan alrededor del puntero; en táctil, dos dedos mueven y hacen zoom mientras un dedo sigue
+        haciendo scroll de la página, con un aviso breve si alguien intenta con uno. Teclado: <code>+</code>, <code>-</code>, <code>0</code> ajusta,
+        <code>1</code> es 100% y las flechas mueven. Tres botones de solo icono, en el tamaño más chico: acercar, alejar y ajustar, en una barra vertical arriba a la derecha sobre el dibujo, o en una franja propia debajo de él en pantallas angostas. Arrastrar funciona también
+        en reposo, siempre que quede a la vista la mitad del dibujo; una vez que se hizo zoom o se arrastró, la rueda sola mueve el canvas y devuelve el
+        scroll a la página al llegar al borde, y ajustar lo vuelve al reposo. El fondo es un tablero con una grilla de líneas finas apenas distinta de su tono, entre la superficie y el fondo
+        hundido, y la grilla se mueve y se espacia con el pan y el zoom (<code>--sk-canvas-viewport-bg</code>, <code>--sk-canvas-grid-color</code>,
+        <code>--sk-canvas-grid-size</code>).
+    en:
+      title: A zoomable canvas for drawings bigger than the screen
+      body: >-
+        New <code>Canvas</code> contract: the content is laid out at its own width and shown fitted to the view, never enlarged. Drag pans; Ctrl/Cmd +
+        wheel and a trackpad pinch zoom around the pointer; on touch, two fingers pan and zoom while one finger keeps scrolling the page, with a brief hint
+        when someone tries with one. Keyboard: <code>+</code>, <code>-</code>, <code>0</code> fits, <code>1</code> is 100% and the arrows pan. Three icon-only buttons at the smallest size: zoom in, zoom out and fit,
+        in a vertical bar in the top corner over the drawing, or a strip of their own under it on narrow screens. Dragging works at rest too, as long as half the drawing stays in view; once the reader has
+        zoomed or dragged, a plain wheel pans the canvas and hands the scroll back to the page at an edge, and fit returns it to rest. The ground is a board ruled with hairlines barely off its own tone, between the surface and
+        the sunken ground, and the grid slides and spreads with pan and zoom (<code>--sk-canvas-viewport-bg</code>, <code>--sk-canvas-grid-color</code>,
+        <code>--sk-canvas-grid-size</code>).

@@ -179,7 +179,7 @@
             "List"
           ],
           "avoidWhen": [
-            "lo que se quiere es una leyenda numerada debajo de la imagen: eso es una List o una Table, y hace que quien lee tenga que sostener seis números en la cabeza mientras el ojo viaja",
+            "lo que se quiere es una leyenda numerada debajo de una imagen estática, sin guías ni anillos: eso es una List o una Table. Si los nombres no caben en los márgenes, es `numbered` de este mismo componente, que conserva las guías",
             "la etiqueta tiene que aparecer al pasar el puntero o al enfocar: eso es Tooltip, que es chrome flotante y efímero; esto está siempre dibujado",
             "hay que explicar un dato al lado de un control dentro de un formulario real: eso es el `hint` de FormField, que además queda enlazado por aria-describedby",
             "el sujeto tiene que seguir siendo usable: `inert` es todo o nada, así que un diagrama sobre una UI viva es dos cosas peleando por el mismo markup",
@@ -201,6 +201,8 @@
             "las etiquetas no pueden taparlo: viven en los cuatro márgenes de una grilla y el sujeto ocupa la celda del medio, así que el solape no se evita, no se puede representar",
             "cada etiqueta llega a su parte por una línea guía de uno o dos tramos, sólo rectos o de 45 grados: la menor cantidad que alcanza",
             "el dibujo se recalcula solo cuando cambia el tamaño del contenedor, cuando el sujeto reflowea o cuando llega una tipografía: dónde cae una parte no es un valor que se pueda escribir al componer",
+            "los nombres son largos o muchos y en los márgenes le comen el ancho al sujeto: `numbered` deja sólo el número en cada burbuja y pasa los nombres a una lista ordenada debajo, con la misma guía y el mismo anillo",
+            "algunas partes son áreas que contienen otras (un acordeón, uno de sus ítems, un panel): `mark: bracket` las marca con un corchete del largo de la parte, anidado hacia afuera, en vez de una guía que caería sobre un hijo cualquiera",
             "el sujeto es una muestra y no un control: `inert` viene prendido, no toma puntero, ni foco, ni teclado, y sale del árbol de accesibilidad"
           ]
         }
@@ -568,6 +570,44 @@
           "useWhen": [
             "hay que contar algo que pasó: un error, una confirmación, una advertencia, o simplemente una nota al margen",
             "el mensaje queda en la página, no desaparece solo"
+          ]
+        }
+      ]
+    },
+    {
+      "category": "content",
+      "css": "@skryensya/core/components/canvas.css",
+      "id": "canvas",
+      "signatures": [
+        {
+          "alternatives": [
+            "Annotated",
+            "ImageFrame",
+            "Dialog"
+          ],
+          "avoidWhen": [
+            "el contenido entra en la pantalla o se puede reacomodar sin perder sentido: un canvas agrega un gesto que nadie necesitaba",
+            "es una imagen que sólo hay que ver más grande: eso es ImageFrame con un enlace a la imagen completa, o un Dialog con la imagen",
+            "el contenido es interactivo y tiene que seguir usándose: arrastrar para mover compite con cada clic y cada selección de texto adentro",
+            "es una tabla o una lista ancha: eso es scroll horizontal nativo dentro de su propio contenedor, que ya sabe hacer el teclado y el lector de pantalla"
+          ],
+          "host": "div",
+          "id": "Canvas",
+          "intent": [
+            "pan-zoom",
+            "zoomable-view",
+            "canvas",
+            "zoom-diagram",
+            "large-figure-on-mobile",
+            "figma-like-view"
+          ],
+          "parents": [],
+          "useWhen": [
+            "hay un dibujo más grande que la pantalla que lo muestra (un diagrama, una anatomía, un plano) y reescalarlo es mejor que reacomodarlo: se diseña a su ancho y se muestra ajustado",
+            "en un teléfono el contenido se reescribiría palabra por palabra: acá se ve entero y chico, y quien lee hace zoom en la parte que le interesa",
+            "el zoom tiene que sentirse como en una herramienta de diseño: arrastrar mueve, Ctrl/Cmd + rueda y el pellizco del trackpad acercan alrededor del puntero, `+`/`-`/`0` desde el teclado",
+            "no puede secuestrar el scroll de la página: un dedo y la rueda sola siguen siendo de la página; dos dedos y Ctrl + rueda son del canvas, y un aviso breve lo explica cuando alguien intenta lo otro",
+            "para un Annotated no hace falta envolverlo: `zoomable` pone el mismo canvas alrededor del marco y deja la leyenda afuera, sin escalar"
           ]
         }
       ]
@@ -1324,7 +1364,9 @@
             "el contenido es una secuencia sin ramas y sin ciclos: eso es ProcessList si son instrucciones, o Steps si lo primario es el progreso; un diagrama de una sola columna sin bifurcaciones es una lista con líneas de más",
             "la jerarquía es de contención y no de flujo (carpetas, un árbol de archivos): eso es TreeView o Folder, donde lo que importa es qué está adentro de qué",
             "el grafo es grande, viene de datos, o hay que explorarlo, hacer zoom o arrastrar nodos: esto no resuelve disposición, dibuja diagramas chicos escritos a mano",
-            "lo que se necesita es notación UML completa, swimlanes o tipos de caja por convención (cilindro, paralelogramo): son convenciones que hay que enseñarle a quien lee, y acá sólo viven las tres formas que se entienden sin leyenda"
+            "lo que se necesita es notación UML completa, swimlanes o tipos de caja por convención (cilindro, paralelogramo, hexágono): son convenciones que hay que enseñarle a quien lee, y de las formas de prosa acá sólo viven las tres que se entienden sin leyenda. Las compuertas lógicas son la excepción y pasan la misma prueba por el otro lado: no son una caja que significa AND, son el símbolo que la norma le asigna a la conjunción, y quien lee la notación la lee sin leyenda",
+            "hace falta un esquemático de verdad: esto dibuja las siete compuertas y nada más. No hay flip-flops, ni buses, ni multiplexores, ni componentes con patas numeradas, ni nodos de unión, ni netlist; una compuerta tampoco lleva nada adentro, así que un designador visible (`U1`) no tiene dónde ir",
+            "el dibujo lógico necesita realimentación: un latch de compuertas cruzadas no se puede dibujar acá. Los operandos tienen que venir de columnas anteriores, que es el orden en el que un esquemático se dibuja igual; un cable que va hacia atrás dobla a mitad de camino entre sus dos puntas, y si las dos compuertas comparten columna ese punto queda adentro de las dos y el cable pasa por debajo del símbolo que alimentaba"
           ],
           "host": "div",
           "id": "Diagram",
@@ -1346,7 +1388,9 @@
             "la relación tiene que llegarle a un lector de pantalla: el SVG es `aria-hidden` y el binding escribe adentro de cada nodo una lista anunciada de a dónde lleva, así que el dibujo se puede leer sin verlo",
             "hace falta un ciclo: una arista hacia un nodo que está más arriba sale por el margen y vuelve, que es como se dibuja \"y vuelve a empezar\" desde siempre",
             "las aristas no son una secuencia sino una relación entre cosas (un modelo, un esquema): `arrow: \"none\"` dibuja la línea sin punta y la etiqueta lleva la cardinalidad",
-            "un nodo tiene que decir más que una línea de texto: su slot acepta una composición, así que adentro entra cualquier árbol del catálogo"
+            "un nodo tiene que decir más que una línea de texto: su slot acepta una composición, así que adentro entra cualquier árbol del catálogo",
+            "lo que hay que dibujar es lógica booleana: `shape` trae las siete compuertas de la notación IEEE 91 / IEC 60617-12 (`and`, `or`, `xor`, `nand`, `nor`, `xnor`, `not`), con la forma real y no una caja que dice AND adentro",
+            "una compuerta y un paso van en el mismo dibujo: son un solo `Diagram`, así que el resultado de una compuerta puede entrar a una caja de proceso y la salida de un paso puede ser un operando, sin cambiar de componente a mitad de camino"
           ]
         }
       ]
@@ -5060,5 +5104,5 @@
     }
   ],
   "schemaVersion": "2.3",
-  "sourceHash": "b06943ad736ec504"
+  "sourceHash": "56c4e33a64cd8fbe"
 }

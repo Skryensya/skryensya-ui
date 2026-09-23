@@ -30,6 +30,7 @@ import * as marqueeModule from "./components/marquee.js";
 import * as treeViewModule from "./components/tree-view.js";
 import * as sidebarModule from "./components/sidebar.js";
 import * as backToTopModule from "./components/back-to-top.js";
+import * as canvasModule from "./components/canvas.js";
 import * as annotationModule from "./components/annotation.js";
 import * as diagramModule from "./components/diagram.js";
 import * as skipLinkModule from "./components/skip-link.js";
@@ -150,6 +151,7 @@ const modules: Record<string, Record<string, unknown>> = {
   "@skryensya/react/accordion": accordionModule,
   "@skryensya/react/sidebar": sidebarModule,
   "@skryensya/react/back-to-top": backToTopModule,
+  "@skryensya/react/canvas": canvasModule,
   "@skryensya/react/skip-link": skipLinkModule,
   "@skryensya/react/carousel": carouselModule,
   "@skryensya/react/marquee": marqueeModule,

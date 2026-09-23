@@ -14,12 +14,19 @@
  * else's media query re-routes itself and its author writes no JavaScript: the drawing follows the
  * layout, the layout never has to tell the drawing.
  *
- * THE PAINT ORDER IS THE DOM ORDER AND THERE IS NO `z-index` IN THIS FILE. All three children of the
- * frame are positioned, so they stack in document order: connectors first (behind, because a line
+ * THE PAINT ORDER IS THE DOM ORDER, AND THERE IS ONE `z-index` IN THIS FILE. All four children of
+ * the frame are positioned, so they stack in document order: zones first (a boundary is behind
+ * everything, because everything is inside it), then connectors (behind the boxes, because a line
  * crossing OVER a box reads as passing through it), the nodes over them, the edge labels over both
  * (a label has to be legible where it sits on its own line). Every hand-rolled version of this
  * component ends up with a z-index ladder; the ladder is what you write when the elements are in the
  * wrong order.
+ *
+ * THE EXCEPTION IS A ZONE'S NAME, and it is the same rule rather than a hole in it. The name is a
+ * LABEL, so by the order above it belongs over the lines; it is also a child of the boundary, which
+ * belongs under them. One positive `z-index` on that one caption is what reconciles the two, and it
+ * is not the first rung of a ladder because there is nothing else to order: everything else on the
+ * frame is `auto` and stays in document order. See `.sk-diagram__zone-label`.
  *
  * NOTHING HERE IS INTERACTIVE, and unlike Annotation that is not a near miss. Annotation has to
  * reveal one mark at a time (seven outlines at once is a cage over the specimen), so its labels are
@@ -92,6 +99,50 @@
     --sk-diagram-logo-gap: var(--space-inline-xs);
 
     /*
+     * A LOGIC GATE'S MEASURE, and the whole family's: the symbols keep a fixed 5:4 and this is the
+     * one number that scales them.
+     *
+     * It is a LENGTH and not a floor-and-ceiling pair like the boxes above, which is the difference
+     * between a shape and a symbol. A box is as wide as its words and the range keeps a rank from
+     * looking ragged; a gate has no words in it, and two AND gates of different widths on one sheet
+     * read as two different parts to anyone who knows the notation. In `rem` so the drawing scales
+     * with the page's type rather than pinning itself to device pixels, and at the default root size
+     * it comes out at exactly the symbol's own 60 by 48 units, which is where the 1.5-unit stroke in
+     * each silhouette was chosen to sit a touch heavier than the 1px box border beside it.
+     */
+    --sk-diagram-gate-inline-size: 3.75rem;
+
+    /*
+     * A NODE'S DESIGNATOR: the `U1` under a gate. Caption-sized and quiet, because it is a handle
+     * for prose to point at rather than a second name for the part - the symbol above it is what
+     * says what the part IS, and a designator competing with it for weight would be two labels on
+     * one object. Same register the record rows use, for the same reason.
+     */
+    --sk-diagram-designator-color: var(--color-text-secondary);
+    --sk-diagram-designator-font-size: var(--font-size-caption);
+    --sk-diagram-designator-gap: var(--space-stack-xs);
+
+    /*
+     * THE ROOM A DESIGNATOR NEEDS AND CANNOT ASK FOR, zero until one exists.
+     *
+     * NO `--sk-` PREFIX: internal, and the house mark for a property that is not part of the
+     * override surface. A consumer tunes the gap and the font size above; this is the arithmetic
+     * that follows from them, and a knob that let someone set it to zero would only let them clip
+     * their own designators.
+     */
+    --designator-reserve: 0px;
+
+    /*
+     * A DESIGNATOR IS DRAWN OUTSIDE THE NODE, SO THE FRAME IS WHAT RESERVES ITS ROOM.
+     *
+     * Nothing inside the drawing can: a box that claimed the space would be a box the ports moved
+     * with, which is the whole reason the designator is positioned in the first place. So the LAST
+     * rank's designator hangs past the bottom of the frame, and without this it is simply cut off -
+     * which is exactly what it did, on the one rank where it is most likely to be looked at.
+     */
+    padding-block-end: var(--designator-reserve);
+
+    /*
      * A RECORD: a node with named rows under a rule. The rule is the whole of the convention, which
      * is why the rows need no shape of their own: a reader takes "a title, a line, then a list" as
      * a thing with parts, whether the parts are a class's members or a table's columns.
@@ -108,6 +159,18 @@
      */
     --sk-diagram-row-padding-inline: var(--space-inline-sm);
     --sk-diagram-row-rule-color: var(--color-border-subtle);
+    /*
+     * AND THE HEADER BAND, which is what makes a record read as a TABLE rather than as a box with a
+     * list in it. A table's head is a different register from its body - tinted, heavier, ruled off
+     * at the weight of the box's own border - and those three together are the whole convention: a
+     * reader who has seen a table knows what the first line of this box is without being told.
+     *
+     * A SUNKEN GROUND ON A RAISED NODE, so the band is the one part of the box that is not the
+     * surface. Both are tokens, so a themed drawing keeps the relationship in either scheme: light
+     * puts a hair of grey over white, dark puts a well under the node's own lighter face.
+     */
+    --sk-diagram-record-header-bg: var(--color-bg-surface-sunken);
+    --sk-diagram-record-header-font-weight: var(--font-weight-emphasis);
 
     /*
      * THE DECISION'S PROPORTIONS. Wide, because a question is a line of text and a rhombus as tall
@@ -146,6 +209,30 @@
     --sk-diagram-zone-bg: color-mix(in oklab, var(--color-bg-surface-sunken) 55%, transparent);
     --sk-diagram-zone-radius: var(--radius-surface);
     --sk-diagram-zone-color: var(--color-text-tertiary);
+    /*
+     * A ZONE'S NAME NEEDS A GROUND, for exactly the reason an edge label does: it is a word laid on
+     * a drawing, and a connector crossing a boundary crosses wherever its target happens to be. In
+     * the infrastructure demo the load balancer's wire descends into the private subnet at the API's
+     * own centre line, which is under the "Private subnet" caption, and the stroke went straight
+     * through the word.
+     *
+     * THE WASH, MIXED OPAQUE, rather than either of the two obvious answers. The wash itself is
+     * translucent by design, so a second coat of it over the first is a visibly darker patch; the
+     * bare canvas is a visibly lighter one, because the label sits inside a region that is already
+     * a coat down. Mixed against the canvas instead of against transparency, the ground is exactly
+     * one wash over the page, which is what is behind an outermost zone's name.
+     *
+     * AND IT CANNOT BE EXACT EVERYWHERE, which is worth saying rather than pretending: a ground has
+     * to be opaque to mask a line, an opaque colour is a guess about what is behind it, and what is
+     * behind it is the consumer's page. A drawing on something other than the canvas gets a plate
+     * that is visible rather than invisible - the same trade `--sk-diagram-edge-bg` already makes
+     * for every edge chip in the kit - and this hook is how that consumer corrects it.
+     */
+    --sk-diagram-zone-label-bg: color-mix(
+      in oklab,
+      var(--color-bg-surface-sunken) 55%,
+      var(--color-bg-canvas)
+    );
     --sk-diagram-zone-font-size: var(--font-size-caption);
     --sk-diagram-zone-padding-inline: var(--space-inset-sm);
     --sk-diagram-zone-padding-block: var(--space-inset-xs);
@@ -241,7 +328,10 @@
    * move.
    */
   .sk-diagram:has(.sk-diagram__zone) {
-    padding-block: var(--sk-diagram-zone-inset-block-start) var(--sk-diagram-zone-inset);
+    /* The shorthand would drop the designator reserve the base rule set, so it is added back here
+       rather than restated: a zoned drawing whose nodes carry designators needs both. */
+    padding-block: var(--sk-diagram-zone-inset-block-start)
+      calc(var(--sk-diagram-zone-inset) + var(--designator-reserve));
     padding-inline: var(--sk-diagram-zone-inset);
   }
 
@@ -257,35 +347,85 @@
 
   .sk-diagram[data-sk-placed] .sk-diagram__zone {
     /*
-     * Physical for the reason the edge chips are (the numbers come out of
-     * `getBoundingClientRect`), and `box-sizing: border-box` because the binding writes the
-     * OUTSIDE of the boundary: the rectangle it computed is where the line goes, not where the
-     * padding starts.
+     * The binding writes `left` and `top` here, and `box-sizing: border-box` because what it writes
+     * is the OUTSIDE of the boundary: the rectangle the geometry computed is where the line goes,
+     * not where the padding starts. Physical for the reason the edge chips are physical - the
+     * numbers came out of `getBoundingClientRect`.
+     *
+     * INSETS AND NOT `translate`, which is what both bindings wrote first. A non-none `translate`
+     * makes its element a stacking context, and a stacking context is a lid: nothing inside a zone
+     * can then be painted above anything outside it, which cost the zone's own NAME its place over
+     * the connectors. See `.sk-diagram__zone-label`.
      */
     position: absolute;
-    top: 0;
-    left: 0;
     box-sizing: border-box;
     padding: 0;
   }
 
-  /* A zone that holds nothing has no box to draw: the binding leaves it unplaced and it stays out
-     of the drawing rather than collapsing to a dot at the origin. */
-  .sk-diagram[data-sk-placed] .sk-diagram__zone:not([style*="translate"]) {
+  /* A zone that holds nothing has no box to draw: the binding leaves it unplaced - no `left`, no
+     size - and it stays out of the drawing rather than collapsing to a dot at the origin. The colon
+     is load-bearing: `left` alone is a substring of `padding-left`, and a consumer who set one
+     inline would have an empty zone claiming to be placed. */
+  .sk-diagram[data-sk-placed] .sk-diagram__zone:not([style*="left:"]) {
     display: none;
   }
 
+  /*
+   * THE BOUNDARY IS THE BOTTOM LAYER AND ITS NAME IS THE TOP ONE, which is not a contradiction: a
+   * region is drawn behind everything because everything is inside it, and a NAME is a label, and
+   * this file's paint order already says labels go over the lines they sit on.
+   *
+   * `z-index: 1` IS THE ONE IN THE FILE, and it is worth saying what it does not do. Nothing here
+   * is a ladder of competing layers: every other element is `z-index: auto` and stacks in document
+   * order, and this single positive value lifts one caption out of the bottom layer into the top
+   * one. The alternative was moving the labels into a fourth list of their own, rendered after the
+   * connectors - a markup change in both bindings, and a second element for the binding to place,
+   * to say something one declaration says.
+   *
+   * THE GROUND IS WHAT MAKES THE LIFT WORTH ANYTHING. Raised and transparent, the stroke would run
+   * between the glyphs instead of over them, which is not legibility. The padding puts the ground a
+   * few pixels past the word and the inset takes the same few back, so the caption sits exactly
+   * where it always sat and only its mask is bigger.
+   */
   .sk-diagram[data-sk-placed] .sk-diagram__zone-label {
     position: absolute;
-    inset-block-start: var(--sk-diagram-zone-padding-block);
-    inset-inline-start: var(--sk-diagram-zone-padding-inline);
+    z-index: 1;
+    inset-block-start: calc(var(--sk-diagram-zone-padding-block) - var(--space-inline-xs));
+    inset-inline-start: calc(var(--sk-diagram-zone-padding-inline) - var(--space-inline-xs));
+    padding: var(--space-inline-xs);
+    /*
+     * AND THE GROUND IS ROUNDED CONCENTRIC WITH THE BOUNDARY IT SITS IN, rather than square. A hard
+     * rectangle behind a caption reads as a hole cut in the drawing; a radius says the plate is an
+     * object the drawing meant to put there.
+     *
+     * The number is derived and not chosen: the plate is inset from the region's own corner by the
+     * outset above, so the curve that stays parallel to the boundary's is the boundary's radius
+     * less that inset. It is the same arithmetic the record's body does against its node. `max()`
+     * because a consumer who squares their zones (`--sk-diagram-zone-radius: 0`) would otherwise
+     * ask for a negative radius, and a square boundary wants a square plate anyway.
+     */
+    border-radius: max(0px, calc(var(--sk-diagram-zone-radius) - var(--space-inline-xs)));
+    background: var(--sk-diagram-zone-label-bg);
   }
 
   .sk-diagram__nodes {
     position: relative;
     display: grid;
     grid-template-columns: repeat(var(--sk-diagram-columns), minmax(0, 1fr));
-    gap: var(--sk-diagram-row-gap) var(--sk-diagram-column-gap);
+    /*
+     * THE RANK GAP CARRIES THE DESIGNATORS TOO, and it has to, for the same reason the frame's
+     * bottom padding does: a designator is drawn outside its node and measured by nothing, so the
+     * only thing between it and the rank below is this gap. Left to the authored value it landed on
+     * the next rank - measured on the half adder, U1 under the XOR sat on the top-right corner of
+     * the AND directly below it and read as labelling the AND.
+     *
+     * ADDED RATHER THAN MAXED, because the two are for different things and a drawing wants both:
+     * the authored gap is what the connectors need, and this is one line of caption on top of it.
+     * `--designator-reserve` is 0px unless the frame has a designator, so every drawing that does
+     * not is spaced exactly as it was.
+     */
+    gap: calc(var(--sk-diagram-row-gap) + var(--designator-reserve))
+      var(--sk-diagram-column-gap);
     justify-items: center;
     /*
      * STRETCH, so a rank of boxes is a rank and not a row of different objects. Three leaves whose
@@ -353,18 +493,28 @@
    */
 
   /*
-   * A RECORD'S TITLE SITS OVER ITS ROWS, not over the middle of the box.
+   * A RECORD'S TITLE IS ITS HEADER CELL, and it sits over the first column of its own rows.
    *
    * Every other node centres its words, and a record centring its title while its rows start at
    * the leading edge is what made the rows look arbitrarily indented: there was nothing above the
    * indent to explain it. Sharing one leading edge is the explanation, and it is also what a class
    * box and a table header have always done.
+   *
+   * A NEGATIVE MARGIN AND NOT PADDING, which is the whole of why the drawing did not already look
+   * like this. The rule asked for `padding-inline: calc(row-padding - node-padding)`, and a record's
+   * row padding (8px) is SMALLER than its node padding (16px), so that calc is -8px, so the
+   * declaration is invalid and the browser drops it: the title kept the node's 16px, the rows kept
+   * their own 8px, and a header indented eight pixels past every cell under it reads as centred.
+   * Margins take a negative, which is what makes the two edges actually line up.
+   *
+   * NOT WHEN THERE IS A MARK, because then the leading edge belongs to the mark: pulling the title
+   * out from under it would put a name in the logo's own column.
    */
-  .sk-diagram__node:has(.sk-diagram__rows) > .sk-diagram__node-title {
+  .sk-diagram__node:has(.sk-diagram__rows):not(:has(.sk-diagram__node-logo))
+    > .sk-diagram__node-title {
     justify-self: stretch;
-    padding-inline: calc(
-      var(--sk-diagram-row-padding-inline) - var(--node-fit-inline)
-    );
+    margin-inline: calc(var(--sk-diagram-row-padding-inline) - var(--node-fit-inline));
+    font-weight: var(--sk-diagram-record-header-font-weight);
     text-align: start;
   }
 
@@ -397,8 +547,34 @@
     justify-self: stretch;
     margin: var(--sk-diagram-node-padding-block) calc(var(--node-fit-inline) * -1)
       calc(var(--sk-diagram-node-padding-block) * -1);
-    border-block-start: var(--sk-diagram-node-border-width) solid var(--sk-diagram-row-rule-color);
+    /*
+     * THE HEADER RULE IS THE NODE'S OWN BORDER, drawn across the middle of the box, and it is a
+     * heavier line than the ones between the cells under it on purpose: a table has one rule that
+     * separates the head from the body and a fainter one between rows, and drawing both at the same
+     * weight is what makes a record read as four lines of equal importance.
+     */
+    border-block-start: var(--sk-diagram-node-border-width) solid
+      var(--sk-diagram-node-border-color);
     padding: 0;
+    /*
+     * THE BODY PAINTS ITSELF, which is how the band above it exists at all: the record's own
+     * background is the header tint, and this covers everything below the rule with the surface.
+     * Two backgrounds and no extra element, so the band is exactly "whatever is above the rows" -
+     * the title, and the mark beside it when there is one.
+     *
+     * AND ROUNDS ITS OWN TWO CORNERS, concentric with the box: the body is full bleed, so its
+     * bottom corners land exactly on the inside of the node's border, and squared off they paint
+     * over the curve. The node's radius less its border width IS that inner curve. Clipping the
+     * node would do the same in one declaration and would also delete the designator hanging below
+     * it, which is why this is four properties instead of one.
+     */
+    background: var(--sk-diagram-node-bg);
+    border-end-start-radius: calc(
+      var(--sk-diagram-node-radius) - var(--sk-diagram-node-border-width)
+    );
+    border-end-end-radius: calc(
+      var(--sk-diagram-node-radius) - var(--sk-diagram-node-border-width)
+    );
     list-style: none;
     color: var(--sk-diagram-row-color);
     font-size: var(--sk-diagram-row-font-size);
@@ -416,9 +592,15 @@
     padding: var(--sk-diagram-row-padding-block) var(--sk-diagram-row-padding-inline);
   }
 
+  /*
+   * ONE HAIRLINE BETWEEN CELLS, at full strength rather than at half of it. The rules were 50%
+   * transparent so the record would not read as a grid; drawn against the header rule above them
+   * they read instead as a table whose lines fade out down the box, which is a gradient nothing in
+   * the drawing means. A table has two weights - the head's and the body's - and this is the body's.
+   */
   .sk-diagram__row + .sk-diagram__row {
     border-block-start: var(--sk-diagram-node-border-width) solid
-      color-mix(in oklab, var(--sk-diagram-row-rule-color) 50%, transparent);
+      var(--sk-diagram-row-rule-color);
   }
 
   /*
@@ -432,6 +614,33 @@
    */
   .sk-diagram__node:has(.sk-diagram__rows) {
     align-self: start;
+    /*
+     * A RECORD IS A TABLE, and these three declarations are the whole of saying so.
+     *
+     * THE NODE'S OWN GROUND IS THE HEADER BAND. The rows paint the surface back over everything
+     * below the rule (see `.sk-diagram__rows`), so what is left tinted is the head: no wrapper
+     * element, no second rule to keep in step with the first, and a record that grows a mark gets
+     * the mark inside its band for free.
+     *
+     * `text-align: start` against the node's own centring, because every cell under the head is
+     * read down its leading edge and a centred head over left-aligned columns is the arbitrary
+     * indent this anatomy is trying to explain.
+     *
+     * AND NO `overflow: clip`, although clipping is the one-line way to make the square body meet
+     * the round box, and this rule had it. A node's designator is positioned OUTSIDE the node
+     * (`inset-block-start: calc(100% + gap)`), so a record that clipped its overflow would delete
+     * its own designator and say nothing about it. The body rounds its own two corners instead;
+     * see `.sk-diagram__rows`.
+     */
+    background: var(--sk-diagram-record-header-bg);
+    text-align: start;
+    /*
+     * AND THE BAND KEEPS THE NODE'S OWN BLOCK PADDING, which is the one measurement a header band is
+     * easy to get wrong. That padding is the head's inset here, and it is also what the body's
+     * negative margin hands back at the bottom, so one number gives the band its height and the last
+     * cell its border. Deepened to make the head "important" it stops being a header: a table head
+     * is a row of the same table, set apart by its ground and its weight, not by being twice as tall.
+     */
   }
 
   /*
@@ -658,6 +867,258 @@
   .sk-diagram__node[data-shape="decision"]::after {
     inset: calc(var(--sk-diagram-node-border-width) * var(--sk-diagram-decision-stroke-scale));
     background: var(--sk-diagram-node-bg);
+  }
+
+  /*
+   * THE LOGIC GATES: seven silhouettes that are not three more flavours of box.
+   *
+   * WHY THEY ARE MASKS AND NOT `clip-path`, which is what the rhombus above uses. A decision is a
+   * polygon, so one `polygon()` draws it and a second inset copy draws its outline. Every gate on this
+   * list has a curve in it - the AND's nose is a true semicircle, the OR family's flanks and back are
+   * cubics, four of them carry a bubble - and the inset-copy trick does not survive that: insetting a
+   * masked box SCALES the silhouette about its centre, which on a shape 60 wide and 48 tall thins the
+   * outline unevenly, and on the XOR's detached back arc (a stroke, not a filled region) it does not
+   * thin it at all, it MOVES it. So the two layers carry two different pictures instead of one picture
+   * twice: `--gate-fill` is the solid silhouette and `--gate-edge` is the same outline stroked, which
+   * is also the only way the back arc and the bubble get drawn at all.
+   *
+   * `mask-image` and not `background-image`, for the reason `input.css` gives at the one other data
+   * URI in this kit: a mask paints through `background-color`, so the symbol takes the node's own
+   * border and surface tokens and follows the theme. A background image would bake two hex values per
+   * gate into fourteen URLs and go black-on-black in dark mode.
+   *
+   * THE VIEWBOX IS BIGGER THAN THE SYMBOL, AND `mask-size` GIVES THE DIFFERENCE BACK. The symbol
+   * occupies 0..60 by 0..48 and the viewBox is `-2 -2 64 52`, i.e. two units of air on every side, so
+   * a stroke centred on the outline has room instead of being cut in half by the viewport - which is
+   * exactly what a clipped nose looks like: flattened. Scaling the mask to 64/60 by 52/48 of the box
+   * and centring it puts the SYMBOL back on the box's own edges to the pixel, at any size, which is
+   * what the geometry in `@skryensya/core/diagram` assumes: a gate's output port is the box's middle
+   * right point, and that point has to be the nose.
+   *
+   * THE BOX IS THE SYMBOL, which is the other half of the same bargain and the reason a gate opts out
+   * of nearly every node declaration above. No padding, because nothing goes inside. No border or
+   * shadow, because the box has no visible edges of its own. A fixed measure and aspect rather than a
+   * floor and a ceiling, because two AND gates of different widths on one sheet are two different
+   * parts to a reader who knows the notation. `align-self` and `justify-self` centre it in whatever
+   * cell the grid gave it, since unlike a box it will not fill one.
+   */
+  .sk-diagram__node[data-shape="and"] {
+    --gate-fill: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-2 -2 64 52'%3E%3Cpath d='M0 0H36A24 24 0 0 1 36 48H0Z' fill='black'/%3E%3C/svg%3E");
+    --gate-edge: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-2 -2 64 52'%3E%3Cpath d='M0 0H36A24 24 0 0 1 36 48H0Z' fill='none' stroke='black' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E");
+  }
+  .sk-diagram__node[data-shape="nand"] {
+    --gate-fill: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-2 -2 64 52'%3E%3Cpath d='M0 0H28A24 24 0 0 1 28 48H0Z' fill='black'/%3E%3Ccircle cx='56' cy='24' r='4' fill='black'/%3E%3C/svg%3E");
+    --gate-edge: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-2 -2 64 52'%3E%3Cpath d='M0 0H28A24 24 0 0 1 28 48H0Z' fill='none' stroke='black' stroke-width='1.5' stroke-linejoin='round'/%3E%3Ccircle cx='56' cy='24' r='4' fill='none' stroke='black' stroke-width='1.5'/%3E%3C/svg%3E");
+  }
+  .sk-diagram__node[data-shape="or"] {
+    --gate-fill: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-2 -2 64 52'%3E%3Cpath d='M0 0C20 1 42 7 60 24C42 41 20 47 0 48C12 34 12 14 0 0Z' fill='black'/%3E%3C/svg%3E");
+    --gate-edge: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-2 -2 64 52'%3E%3Cpath d='M0 0C20 1 42 7 60 24C42 41 20 47 0 48C12 34 12 14 0 0Z' fill='none' stroke='black' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E");
+  }
+  .sk-diagram__node[data-shape="nor"] {
+    --gate-fill: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-2 -2 64 52'%3E%3Cpath d='M0 0C17 1 36 7 52 24C36 41 17 47 0 48C12 34 12 14 0 0Z' fill='black'/%3E%3Ccircle cx='56' cy='24' r='4' fill='black'/%3E%3C/svg%3E");
+    --gate-edge: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-2 -2 64 52'%3E%3Cpath d='M0 0C17 1 36 7 52 24C36 41 17 47 0 48C12 34 12 14 0 0Z' fill='none' stroke='black' stroke-width='1.5' stroke-linejoin='round'/%3E%3Ccircle cx='56' cy='24' r='4' fill='none' stroke='black' stroke-width='1.5'/%3E%3C/svg%3E");
+  }
+  .sk-diagram__node[data-shape="xor"] {
+    --gate-fill: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-2 -2 64 52'%3E%3Cpath d='M6 0C26 1 46 7 60 24C46 41 26 47 6 48C18 34 18 14 6 0Z' fill='black'/%3E%3C/svg%3E");
+    --gate-edge: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-2 -2 64 52'%3E%3Cpath d='M6 0C26 1 46 7 60 24C46 41 26 47 6 48C18 34 18 14 6 0Z' fill='none' stroke='black' stroke-width='1.5' stroke-linejoin='round'/%3E%3Cpath d='M0 0C12 14 12 34 0 48' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  }
+  .sk-diagram__node[data-shape="xnor"] {
+    --gate-fill: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-2 -2 64 52'%3E%3Cpath d='M6 0C24 1 40 7 52 24C40 41 24 47 6 48C18 34 18 14 6 0Z' fill='black'/%3E%3Ccircle cx='56' cy='24' r='4' fill='black'/%3E%3C/svg%3E");
+    --gate-edge: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-2 -2 64 52'%3E%3Cpath d='M6 0C24 1 40 7 52 24C40 41 24 47 6 48C18 34 18 14 6 0Z' fill='none' stroke='black' stroke-width='1.5' stroke-linejoin='round'/%3E%3Ccircle cx='56' cy='24' r='4' fill='none' stroke='black' stroke-width='1.5'/%3E%3Cpath d='M0 0C12 14 12 34 0 48' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  }
+  .sk-diagram__node[data-shape="not"] {
+    --gate-fill: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-2 -2 64 52'%3E%3Cpath d='M0 0L52 24L0 48Z' fill='black'/%3E%3Ccircle cx='56' cy='24' r='4' fill='black'/%3E%3C/svg%3E");
+    --gate-edge: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-2 -2 64 52'%3E%3Cpath d='M0 0L52 24L0 48Z' fill='none' stroke='black' stroke-width='1.5' stroke-linejoin='round'/%3E%3Ccircle cx='56' cy='24' r='4' fill='none' stroke='black' stroke-width='1.5'/%3E%3C/svg%3E");
+  }
+
+  .sk-diagram__node[data-shape="and"],
+  .sk-diagram__node[data-shape="nand"],
+  .sk-diagram__node[data-shape="or"],
+  .sk-diagram__node[data-shape="nor"],
+  .sk-diagram__node[data-shape="xor"],
+  .sk-diagram__node[data-shape="xnor"],
+  .sk-diagram__node[data-shape="not"] {
+    /*
+     * `isolation`, for the reason the rhombus needs it: the two mask layers sit at `z-index: -1` so
+     * they paint behind this node's own content, and without an isolated stacking context that -1
+     * escapes the node and lands behind the connector overlay, where every lead arriving at the gate
+     * would be drawn straight across the symbol.
+     */
+    isolation: isolate;
+    align-self: center;
+    justify-self: center;
+    inline-size: var(--sk-diagram-gate-inline-size);
+    /* 60 by 48, the symbol's own proportions. Written as the ratio rather than as a second length so
+       one hook resizes the whole family. */
+    aspect-ratio: 5 / 4;
+    /* The node's floor is 6rem and would otherwise win outright. */
+    min-inline-size: 0;
+    max-inline-size: none;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+  }
+
+  .sk-diagram__node[data-shape="and"]::before,
+  .sk-diagram__node[data-shape="nand"]::before,
+  .sk-diagram__node[data-shape="or"]::before,
+  .sk-diagram__node[data-shape="nor"]::before,
+  .sk-diagram__node[data-shape="xor"]::before,
+  .sk-diagram__node[data-shape="xnor"]::before,
+  .sk-diagram__node[data-shape="not"]::before,
+  .sk-diagram__node[data-shape="and"]::after,
+  .sk-diagram__node[data-shape="nand"]::after,
+  .sk-diagram__node[data-shape="or"]::after,
+  .sk-diagram__node[data-shape="nor"]::after,
+  .sk-diagram__node[data-shape="xor"]::after,
+  .sk-diagram__node[data-shape="xnor"]::after,
+  .sk-diagram__node[data-shape="not"]::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    /* 64/60 and 52/48: the air around the symbol, handed back. See the note above. */
+    -webkit-mask-size: 106.6667% 108.3333%;
+    mask-size: 106.6667% 108.3333%;
+  }
+
+  /* The surface, under the outline. */
+  .sk-diagram__node[data-shape="and"]::before,
+  .sk-diagram__node[data-shape="nand"]::before,
+  .sk-diagram__node[data-shape="or"]::before,
+  .sk-diagram__node[data-shape="nor"]::before,
+  .sk-diagram__node[data-shape="xor"]::before,
+  .sk-diagram__node[data-shape="xnor"]::before,
+  .sk-diagram__node[data-shape="not"]::before {
+    background: var(--sk-diagram-node-bg);
+    -webkit-mask-image: var(--gate-fill);
+    mask-image: var(--gate-fill);
+  }
+
+  /* The outline, over it. */
+  .sk-diagram__node[data-shape="and"]::after,
+  .sk-diagram__node[data-shape="nand"]::after,
+  .sk-diagram__node[data-shape="or"]::after,
+  .sk-diagram__node[data-shape="nor"]::after,
+  .sk-diagram__node[data-shape="xor"]::after,
+  .sk-diagram__node[data-shape="xnor"]::after,
+  .sk-diagram__node[data-shape="not"]::after {
+    background: var(--sk-diagram-node-border-color);
+    -webkit-mask-image: var(--gate-edge);
+    mask-image: var(--gate-edge);
+  }
+
+  /*
+   * A SCHEMATIC FLOWS THE WAY ITS LANGUAGE READS, so in an RTL locale the symbols face the other way.
+   *
+   * This is not a stylistic mirror: the grid has already mirrored, `edgeSides` in the core module
+   * already takes `direction` and sends a gate's output out of its inline-END side, and a symbol left
+   * pointing the old way would have its nose on the side the operands arrive from. Only the two mask
+   * layers flip - the node's own box, its text and its ports are all direction-agnostic already.
+   */
+  .sk-diagram__node[data-shape="and"]:dir(rtl)::before,
+  .sk-diagram__node[data-shape="and"]:dir(rtl)::after,
+  .sk-diagram__node[data-shape="nand"]:dir(rtl)::before,
+  .sk-diagram__node[data-shape="nand"]:dir(rtl)::after,
+  .sk-diagram__node[data-shape="or"]:dir(rtl)::before,
+  .sk-diagram__node[data-shape="or"]:dir(rtl)::after,
+  .sk-diagram__node[data-shape="nor"]:dir(rtl)::before,
+  .sk-diagram__node[data-shape="nor"]:dir(rtl)::after,
+  .sk-diagram__node[data-shape="xor"]:dir(rtl)::before,
+  .sk-diagram__node[data-shape="xor"]:dir(rtl)::after,
+  .sk-diagram__node[data-shape="xnor"]:dir(rtl)::before,
+  .sk-diagram__node[data-shape="xnor"]:dir(rtl)::after,
+  .sk-diagram__node[data-shape="not"]:dir(rtl)::before,
+  .sk-diagram__node[data-shape="not"]:dir(rtl)::after {
+    transform: scaleX(-1);
+  }
+
+  /*
+   * A GATE'S WORDS ARE HEARD AND NOT READ.
+   *
+   * The node's children are still required and still the author's - they are what the route list
+   * quotes and what a screen reader announces when it reaches this node - but a word written inside a
+   * gate is a thing no schematic has ever drawn, and drawing one would also be claiming the symbol
+   * needs a legend, which is the entire argument for the symbol.
+   *
+   * The recipe is `sk-visually-hidden`'s, applied here rather than borrowed by class because this
+   * element is the contract's own `title` part and nothing in the markup knows which shape it is
+   * inside. Same declarations, same reason they are those declarations: `display: none` and
+   * `visibility: hidden` would take the name out of the accessibility tree, which is the one thing it
+   * is here for.
+   */
+  .sk-diagram__node[data-shape="and"] > .sk-diagram__node-title,
+  .sk-diagram__node[data-shape="nand"] > .sk-diagram__node-title,
+  .sk-diagram__node[data-shape="or"] > .sk-diagram__node-title,
+  .sk-diagram__node[data-shape="nor"] > .sk-diagram__node-title,
+  .sk-diagram__node[data-shape="xor"] > .sk-diagram__node-title,
+  .sk-diagram__node[data-shape="xnor"] > .sk-diagram__node-title,
+  .sk-diagram__node[data-shape="not"] > .sk-diagram__node-title {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    white-space: nowrap;
+    clip-path: inset(50%);
+  }
+
+  /*
+   * Only a frame that HAS a designator pays for one, which is the bargain `:has()` already makes for
+   * the zones above and holds for the same reason: the room has to be reserved before the first
+   * pass, or the first pass measures a grid that is about to move.
+   *
+   * One line of caption, plus the gap it sits below the node by. It is a RESERVE rather than a
+   * padding of its own so that a drawing with zones AND designators gets both - the zone rule adds
+   * this to its own inset rather than overwriting it, which a second `padding-block-end` here
+   * would have done silently.
+   */
+  .sk-diagram:has(.sk-diagram__node-designator) {
+    --designator-reserve: calc(
+      var(--sk-diagram-designator-gap) + var(--sk-diagram-designator-font-size) *
+        var(--font-line-height-caption)
+    );
+  }
+
+  /*
+   * THE DESIGNATOR: drawn under the node, and NEVER part of it.
+   *
+   * `position: absolute` is the whole rule and it is load-bearing rather than cosmetic. Every port
+   * on this drawing is measured from the node's border box - `sideOutline` reads it, and a gate's
+   * output pin IS its middle-right point - and the gate silhouette is two mask layers pinned to
+   * `inset: 0`. Text in normal flow would grow that box on the block axis, which would move the nose
+   * off the symbol's own centre line and stretch the silhouette out of its 5:4 at the same time. Out
+   * of flow, the designator is drawn without being measured, so it cannot move anything.
+   *
+   * WHICH MEANS IT HANGS INTO THE RANK GAP, and there is no way for it not to: a box that claimed
+   * the space would be a box the ports moved with. `--sk-diagram-row-gap` is what makes room for it,
+   * exactly as it makes room for the connectors, and a drawing whose designators collide with the
+   * rank below wants a wider one.
+   *
+   * `max-inline-size` keeps a long one from spreading over its neighbours: a designator is an
+   * identifier, and one that needs more than about two symbol-widths is a label that belongs in the
+   * prose the designator exists to point at.
+   */
+  .sk-diagram__node > .sk-diagram__node-designator {
+    position: absolute;
+    inset-block-start: calc(100% + var(--sk-diagram-designator-gap));
+    inset-inline-start: 50%;
+    translate: -50% 0;
+    max-inline-size: calc(var(--sk-diagram-gate-inline-size) * 2);
+    color: var(--sk-diagram-designator-color);
+    font-size: var(--sk-diagram-designator-font-size);
+    line-height: var(--font-line-height-caption);
+    text-align: center;
+    text-wrap: balance;
+    white-space: nowrap;
   }
 
   /*

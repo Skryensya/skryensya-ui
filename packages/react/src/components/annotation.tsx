@@ -1,7 +1,17 @@
-import { ANNOTATION_RING_DISTANCE, annotationAttrs, annotationElementRadius, annotationHitIndex, annotationParts, annotationRingInset, annotationTranslate, watchAnnotationSpecimenFocus, placeAnnotations, readAnnotationTranslate, type AnnotationBox, type AnnotationDirection, type AnnotationMeasurement, type AnnotationMatch, type AnnotationMobileAlign, type AnnotationPlacement, type AnnotationRingPlacement, type AnnotationSide, type AnnotationTarget, annotationContract } from "@skryensya/core/annotation";
+import { ANNOTATION_RING_DISTANCE, annotationAttrs, annotationElementRadius, annotationHitIndex, annotationParts, annotationRingInset, annotationRoomProperty, annotationScale, annotationSides, annotationTranslate, watchAnnotationSpecimenFocus, layoutAnnotations, readAnnotationTranslate, type AnnotationBox, type AnnotationDirection, type AnnotationLayout, type AnnotationMarkKind, type AnnotationMeasurement, type AnnotationMatch, type AnnotationMobileAlign, type AnnotationPlacement, type AnnotationRingPlacement, type AnnotationSide, type AnnotationTarget, annotationContract } from "@skryensya/core/annotation";
+import { canvasParts } from "@skryensya/core/canvas";
+import { CanvasParts, useCanvasView } from "./canvas.js";
 
 /* Derived, never restated: the default lives in the contract. */
-const { inert: inertOption, ringPlacement: ringPlacementOption } = annotationContract.options;
+const {
+  inert: inertOption,
+  numbered: numberedOption,
+  zoomable: zoomableOption,
+  zoomInLabel: zoomInOption,
+  zoomOutLabel: zoomOutOption,
+  fitLabel: fitOption,
+  ringPlacement: ringPlacementOption,
+} = annotationContract.options;
 import {
   Fragment,
   useCallback,
@@ -16,6 +26,8 @@ const cx = (base: string, className: string | undefined) => (className ? `${base
 
 /* Matches annotation.css: narrow screens turn the four gutters into two wrapping label clusters. */
 const stackedLabelsQuery = "(max-width: 40rem)";
+/* What owns its own reveal: the frame's hit-test stands down while the pointer is over one. */
+const readerSelector = `.${annotationParts.label}, .${annotationParts.legendItem}`;
 
 /** One label: what it says, what it points at, and which margin it asks for. */
 export type AnnotationEntry = {
@@ -27,6 +39,8 @@ export type AnnotationEntry = {
   mobileAlign?: AnnotationMobileAlign;
   /** Whether the selector names the first match or every one. `all` for a genuinely plural name. */
   match?: AnnotationMatch;
+  /** `bracket` for an area that holds other parts: a dimension line along it instead of a leader. */
+  mark?: AnnotationMarkKind;
   /** This mark's own ring placement, overriding the frame's. For the part unlike its neighbours. */
   ringPlacement?: AnnotationRingPlacement;
   /** The same, for the distance. */
@@ -53,6 +67,23 @@ export type AnnotatedProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & 
    * a ring takes the `border-radius` of the element it wraps, so it outlines a pill as a pill.
    */
   ringRadius?: number;
+  /**
+   * Numbers in the gutters and the names in a legend under the frame, for a diagram whose names
+   * would otherwise cost the specimen its width. Leaders, rings and the reveal are unchanged.
+   */
+  numbered?: boolean;
+  /**
+   * The drawing becomes a pannable, zoomable canvas, laid out at its own width and shown fitted:
+   * for a diagram that has to be legible on a phone. The legend stays outside it.
+   */
+  zoomable?: boolean;
+  zoomInLabel?: string;
+  zoomOutLabel?: string;
+  fitLabel?: string;
+  /** A `zoomable` canvas's hint for a one-finger drag. */
+  touchHint?: ReactNode;
+  /** A `zoomable` canvas's hint for a plain wheel. */
+  wheelHint?: ReactNode;
 };
 
 /*
@@ -83,6 +114,13 @@ export function Annotated({
   className,
   inert = inertOption.default,
   label,
+  numbered = numberedOption.default,
+  zoomable = zoomableOption.default,
+  zoomInLabel = zoomInOption.default,
+  zoomOutLabel = zoomOutOption.default,
+  fitLabel = fitOption.default,
+  touchHint,
+  wheelHint,
   ringDistance = ANNOTATION_RING_DISTANCE,
   ringPlacement = ringPlacementOption.default,
   /* NOT defaulted to a number: `undefined` is what says nobody above the part has an opinion, which
@@ -93,8 +131,11 @@ export function Annotated({
 }: AnnotatedProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const subjectRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLDivElement>(null);
+  useCanvasView(canvasRef, zoomable);
   const labelRefs = useRef<(HTMLSpanElement | null)[]>([]);
-  const [placements, setPlacements] = useState<readonly AnnotationPlacement[]>([]);
+  const [layout, setLayout] = useState<AnnotationLayout | null>(null);
+  const placements = layout?.placements ?? [];
   /*
    * WHICH MARK IS BEING READ. One at a time: a diagram showing every ring at once is a cage over the
    * specimen, and the ring's whole job is to answer "which part is this name about?", which is a
@@ -124,16 +165,25 @@ export function Annotated({
     const root = rootRef.current;
     const subjectElement = subjectRef.current;
     if (!root || !subjectElement) return;
-    const stacked = window.matchMedia(stackedLabelsQuery).matches;
+    /* A numbered frame never stacks: a bubble is one digit wide, so its gutters fit any screen. */
+    /* Nor does one on a canvas: it is laid out at its own width and shown scaled. */
+    const stacked = !numbered && !zoomable && window.matchMedia(stackedLabelsQuery).matches;
 
     const rect = root.getBoundingClientRect();
     /* `inset: 0` on the overlay resolves against the PADDING box, which is the border box shifted in
        by the border itself: one origin for the measurements and for the path data. */
-    const originX = rect.left + root.clientLeft;
-    const originY = rect.top + root.clientTop;
+    /* On a zoomed canvas every rect is in screen pixels; the leaders are drawn in the frame's own. */
+    const scale = annotationScale(root, rect);
+    const originX = rect.left + root.clientLeft * scale;
+    const originY = rect.top + root.clientTop * scale;
     const relative = (element: Element): AnnotationBox => {
       const box = element.getBoundingClientRect();
-      return { x: box.left - originX, y: box.top - originY, width: box.width, height: box.height };
+      return {
+        x: (box.left - originX) / scale,
+        y: (box.top - originY) / scale,
+        width: box.width / scale,
+        height: box.height / scale,
+      };
     };
     /* A target carries its own corner along with its box, so a ring wraps a pill as a pill and a
        card as a card. Read on every pass rather than once, because a part's radius is not a
@@ -161,6 +211,7 @@ export function Annotated({
           : undefined;
       return {
         side: annotation.side ?? "inline-start",
+        mark: annotation.mark,
         ringInset: overridden,
         ringRadius: annotation.ringRadius,
         label: { ...live, x: live.x - offset.x, y: live.y - offset.y },
@@ -180,15 +231,21 @@ export function Annotated({
 
     const direction: AnnotationDirection =
       getComputedStyle(root).direction === "rtl" ? "rtl" : "ltr";
-    const next = placeAnnotations(measurements, subjectBox, {
+    const next = layoutAnnotations(measurements, subjectBox, {
       direction,
       ringInset: annotationRingInset(ringPlacement, ringDistance),
       ringRadius,
       distribute: !stacked,
     });
 
-    setPlacements((current) => (samePlacements(current, next) ? current : next));
-  }, [annotations, ringDistance, ringPlacement, ringRadius]);
+    setLayout((current) =>
+      current &&
+      annotationSides.every((side) => current.room[side] === next.room[side]) &&
+      samePlacements(current.placements, next.placements)
+        ? current
+        : next,
+    );
+  }, [annotations, numbered, ringDistance, ringPlacement, ringRadius, zoomable]);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -232,7 +289,7 @@ export function Annotated({
      * the pointer is over a label: those handlers own the reveal themselves.
      */
     const onFramePointer = (event: PointerEvent): void => {
-      if ((event.target as Element | null)?.closest?.(`.${annotationParts.label}`)) return;
+      if ((event.target as Element | null)?.closest?.(readerSelector)) return;
       const hit = annotationHitIndex(
         { x: event.clientX, y: event.clientY },
         hitTargets.current.map(({ element, index }) => {
@@ -266,85 +323,145 @@ export function Annotated({
     };
   }, [inert, measure]);
 
+  /* The tab stop and its reveal, on whichever element carries the name: the label, or the legend
+     entry once the label is only a number. */
+  const reveal = (index: number) => ({
+    tabIndex: 0,
+    onBlur: () => setActive((current) => (current === index ? null : current)),
+    onFocus: () => setActive(index),
+  });
+
+  /* Only the gutters that hold brackets get a floor, in the order the enhancer writes them. */
+  const rooms = annotationSides.filter((side) => (layout?.room[side] ?? 0) > 0);
+  const frameStyle =
+    rooms.length > 0
+      ? Object.fromEntries(
+          rooms.map((side) => [annotationRoomProperty(side), `${layout!.room[side]}px`]),
+        )
+      : undefined;
+
+  const frame = (
+        <div
+          className={annotationParts.root}
+          ref={rootRef}
+          style={frameStyle}
+          {...(numbered ? { [annotationAttrs.numbered]: "" } : {})}
+        >
+          <div className={annotationParts.subject} inert={inert} ref={subjectRef}>
+            {subject}
+          </div>
+          {annotations.map((annotation, index) => {
+            const placement = placements[index];
+            return (
+              <span
+                className={annotationParts.label}
+                data-for={annotation.for}
+                data-mark={annotation.mark}
+                data-match={annotation.match}
+                data-ring-distance={annotation.ringDistance}
+                data-ring-placement={annotation.ringPlacement}
+                data-ring-radius={annotation.ringRadius}
+                data-mobile-align={annotation.mobileAlign}
+                data-side={annotation.side ?? "inline-start"}
+                data-sk-active={index === active ? "" : undefined}
+                data-sk-side={placement?.side}
+                key={`${annotation.for}-${index}`}
+                /* Focusable so the reveal is reachable without a pointer; see the contract's own note
+                   on this attribute for why a tab stop per label is worth it. Numbered, the legend
+                   entry is the tab stop and this bubble is only a drawn number. */
+                {...(numbered ? { "aria-hidden": true } : reveal(index))}
+                /* `pointerEnter`/`pointerLeave` rather than `mouseOver`/`mouseOut`: they do not fire
+                   again as the pointer crosses the bubble's own text node, which would otherwise
+                   flicker the ring on every character boundary. */
+                onPointerEnter={() => setActive(index)}
+                onPointerLeave={() => setActive((current) => (current === index ? null : current))}
+                ref={(element) => {
+                  labelRefs.current[index] = element;
+                }}
+                style={placement ? { translate: annotationTranslate(placement.translate) } : undefined}
+              >
+                {numbered ? null : annotation.children}
+              </span>
+            );
+          })}
+          {/* Empty until something has been measured, exactly as the authored markup is empty until the
+              enhancer runs: every number in here is a measurement, so there is nothing to render first.
+              ONE `<g>` PER LABEL once it has, including labels with nothing to point at, so the reveal
+              can pair a label with its mark by index; see `drawLeaders` in the Vanilla enhancer for
+              what a shorter list costs. The index is the key because the marks ARE an ordered drawing. */}
+          <svg aria-hidden="true" className={annotationParts.leaders} focusable="false">
+            {placements.map((placement, index) => (
+              <g
+                className={annotationParts.mark}
+                data-sk-active={index === active ? "" : undefined}
+                key={index}
+              >
+                {/* Two elements per thing named, because one label can name several: a breadcrumb's
+                    crumbs are all `sk-breadcrumb__item`. A Fragment and not a nested `<g>`, to match
+                    what the enhancer appends. */}
+                {placement.marks.map((mark, at) => (
+                  <Fragment key={at}>
+                    <path className={annotationParts.leader} d={mark.path} />
+                    <rect
+                      className={annotationParts.ring}
+                      height={mark.ring.height}
+                      rx={mark.ring.radius}
+                      width={mark.ring.width}
+                      x={mark.ring.x}
+                      y={mark.ring.y}
+                    />
+                  </Fragment>
+                ))}
+              </g>
+            ))}
+          </svg>
+        </div>
+  );
+
+  /* THE FIGURE holds the drawing and, beside it rather than inside its grid, the legend. The frame
+     is what gets measured: every coordinate is in its padding box. */
   return (
     <div
       {...props}
       aria-label={label}
-      className={cx(annotationParts.root, className)}
-      ref={rootRef}
+      className={cx(annotationParts.figure, className)}
       /* Only when there is a name for it: an unnamed group is one more level a screen reader
          announces and nobody asked for. */
       role={label ? "group" : undefined}
       {...{ [annotationAttrs.root]: "" }}
     >
-      <div className={annotationParts.subject} inert={inert} ref={subjectRef}>
-        {subject}
-      </div>
-      {annotations.map((annotation, index) => {
-        const placement = placements[index];
-        return (
-          <span
-            className={annotationParts.label}
-            data-for={annotation.for}
-            data-match={annotation.match}
-            data-ring-distance={annotation.ringDistance}
-            data-ring-placement={annotation.ringPlacement}
-            data-ring-radius={annotation.ringRadius}
-            data-mobile-align={annotation.mobileAlign}
-            data-side={annotation.side ?? "inline-start"}
-            data-sk-active={index === active ? "" : undefined}
-            data-sk-side={placement?.side}
-            key={`${annotation.for}-${index}`}
-            /* Focusable so the reveal is reachable without a pointer; see the contract's own note
-               on this attribute for why a tab stop per label is worth it. */
-            tabIndex={0}
-            onBlur={() => setActive((current) => (current === index ? null : current))}
-            onFocus={() => setActive(index)}
-            /* `pointerEnter`/`pointerLeave` rather than `mouseOver`/`mouseOut`: they do not fire
-               again as the pointer crosses the bubble's own text node, which would otherwise
-               flicker the ring on every character boundary. */
-            onPointerEnter={() => setActive(index)}
-            onPointerLeave={() => setActive((current) => (current === index ? null : current))}
-            ref={(element) => {
-              labelRefs.current[index] = element;
-            }}
-            style={placement ? { translate: annotationTranslate(placement.translate) } : undefined}
+      {zoomable ? (
+        /* The same structure the template embeds: a canvas around the frame, the legend outside. */
+        <div className={canvasParts.root} ref={canvasRef}>
+          <CanvasParts
+            fitLabel={fitLabel}
+            touchHint={touchHint}
+            wheelHint={wheelHint}
+            zoomInLabel={zoomInLabel}
+            zoomOutLabel={zoomOutLabel}
           >
-            {annotation.children}
-          </span>
-        );
-      })}
-      {/* Empty until something has been measured, exactly as the authored markup is empty until the
-          enhancer runs: every number in here is a measurement, so there is nothing to render first.
-          ONE `<g>` PER LABEL once it has, including labels with nothing to point at, so the reveal
-          can pair a label with its mark by index; see `drawLeaders` in the Vanilla enhancer for
-          what a shorter list costs. The index is the key because the marks ARE an ordered drawing. */}
-      <svg aria-hidden="true" className={annotationParts.leaders} focusable="false">
-        {placements.map((placement, index) => (
-          <g
-            className={annotationParts.mark}
-            data-sk-active={index === active ? "" : undefined}
-            key={index}
-          >
-            {/* Two elements per thing named, because one label can name several: a breadcrumb's
-                crumbs are all `sk-breadcrumb__item`. A Fragment and not a nested `<g>`, to match
-                what the enhancer appends. */}
-            {placement.marks.map((mark, at) => (
-              <Fragment key={at}>
-                <path className={annotationParts.leader} d={mark.path} />
-                <rect
-                  className={annotationParts.ring}
-                  height={mark.ring.height}
-                  rx={mark.ring.radius}
-                  width={mark.ring.width}
-                  x={mark.ring.x}
-                  y={mark.ring.y}
-                />
-              </Fragment>
-            ))}
-          </g>
-        ))}
-      </svg>
+            {frame}
+          </CanvasParts>
+        </div>
+      ) : (
+        frame
+      )}
+      {numbered ? (
+        <ol className={annotationParts.legend}>
+          {annotations.map((annotation, index) => (
+            <li
+              className={annotationParts.legendItem}
+              data-sk-active={index === active ? "" : undefined}
+              key={`${annotation.for}-${index}`}
+              onPointerEnter={() => setActive(index)}
+              onPointerLeave={() => setActive((current) => (current === index ? null : current))}
+              {...reveal(index)}
+            >
+              {annotation.children}
+            </li>
+          ))}
+        </ol>
+      ) : null}
     </div>
   );
 }
@@ -387,6 +504,7 @@ function samePlacements(
   return a.every(
     (placement, index) =>
       placement.side === b[index]!.side &&
+      placement.mark === b[index]!.mark &&
       placement.translate.x === b[index]!.translate.x &&
       placement.translate.y === b[index]!.translate.y &&
       placement.marks.length === b[index]!.marks.length &&

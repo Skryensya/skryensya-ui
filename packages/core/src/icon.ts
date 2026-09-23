@@ -107,6 +107,11 @@ export const stableIconNames = [
   /* Zooms the view out, it does not name a magnifying glass: a set may draw a minus in a circle or
    * arrows pointing inward, and the role stays true. */
   "zoom-out",
+  /* Its pair, for a canvas's zoom control. */
+  "zoom-in",
+  /* Fits the whole of something into the view it is shown in: a canvas's "show me all of it". A set
+   * may draw four outward corners or a frame; not "maximize", which is about the WINDOW. */
+  "fit",
   "more",
   "menu",
 
@@ -115,6 +120,16 @@ export const stableIconNames = [
   "success",
   "warning",
   "danger",
+
+  /* THE ROLE THAT NAMES NO ROLE, which is precisely the role it names. It stands in for a glyph that
+   * has not been chosen: an anatomy diagram whose subject must not say anything of its own, a slot a
+   * consumer will fill, a specimen that is about structure and not about content.
+   *
+   * Every set draws it as an empty dashed box (Lucide `SquareDashed`, Phosphor `rectangle-dashed`,
+   * Material `select`), and the emptiness IS the drawing, so the name survives the change of set
+   * more easily than any other name here. It is the icon twin of the `placeholder` primitive: both
+   * are the shape of something that is not there yet. */
+  "placeholder",
 
   // contenido y sistema
   "calendar",

@@ -1,3 +1,6 @@
+/* A `zoomable` figure wraps its frame in a canvas, which brings its own sheet. */
+@import url("./canvas.css");
+
 /*
  * TIER 3, ANNOTATION
  *
@@ -29,13 +32,27 @@
  *
  * NOTHING HERE IS INTERACTIVE. There is no hover, no focus and no state: a diagram is a drawing.
  * Whether the specimen itself responds to anything is the `inert` option's decision, one level up.
+ *
+ * `[data-numbered]` trades each label's name for a number and lists the names in a legend under the
+ * frame, in the figure beside it rather than in its grid; see `.sk-annotated-figure`.
  */
 @layer components {
-  .sk-annotated {
+  /*
+   * THE HOOKS LIVE ON THE OUTERMOST ELEMENT: the figure when there is one, the frame when markup
+   * mounts on it directly. The legend sits beside the frame rather than inside it, so a hook declared
+   * on the frame would never reach the legend; declared on the figure, both inherit it. The frame
+   * inside a figure does NOT redeclare them, or it would shadow whatever a consumer set on the
+   * figure. `:where()` so a consumer's plain `.sk-annotated` or `.sk-annotated-figure` rule wins.
+   */
+  :where(.sk-annotated-figure, .sk-annotated:not(.sk-annotated-figure .sk-annotated)) {
     /* The clearance between the specimen and its margins. It is the grid's `gap`, so it is also the
        shortest a leader can ever be. */
     --sk-annotated-gap: var(--space-inline-lg);
     --sk-annotated-key-color: var(--color-text-tertiary);
+    /* The two bands of a figure with a legend: the drawing on the surface, the legend below it on a
+       ground one step down, so the list reads as apparatus under the figure and not as more of it. */
+    --sk-annotated-surface-bg: var(--color-bg-surface);
+    --sk-annotated-legend-bg: var(--color-bg-surface-sunken);
     /*
      * THE SPECIMEN IS DESATURATED, so that colour in a diagram means exactly one thing: annotation.
      *
@@ -73,7 +90,7 @@
      * on an Accordion is a cage laid over the specimen, and it answers a question nobody asked.
      * "Which part is this name about?" is a question about ONE name.
      *
-     * So at rest the whole thing is chrome-grey, rings included and faded besides. Hovering or
+     * So at rest the whole thing is chrome-grey and no ring is drawn at all. Hovering or
      * focusing a label brings up its ring, its leader and its own bubble, in accent, together. One
      * mark, one question, one answer.
      */
@@ -135,7 +152,81 @@
     /* Same hairline as the leader: the ring and the line into it are one mark, so they are one
        weight. */
     --sk-annotation-ring-width: 1px;
+  }
 
+  /*
+   * THE FIGURE: the drawing, then what explains it from outside. A column, and the legend is its
+   * own row of it, never a cell of the frame's grid.
+   */
+  .sk-annotated-figure {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sk-annotated-gap);
+    inline-size: 100%;
+    max-inline-size: 100%;
+  }
+
+  /*
+   * A FIGURE WITH A LEGEND IS A CARD OF TWO BANDS. The drawing sits in the first, on the surface; the
+   * legend in the second, on a sunken ground behind a hairline, tighter and quieter. Two containers
+   * because they are two kinds of content: the drawing is what the reader looks at, the legend is
+   * what they look things UP in, and letting them share one ground made the list read as a second
+   * drawing competing with the first.
+   *
+   * Keyed on the legend being there rather than on `numbered`, so a figure with nothing under it
+   * stays exactly the unframed drawing every other anatomy diagram is.
+   */
+  .sk-annotated-figure:has(> .sk-annotated__legend) {
+    gap: 0;
+    overflow: clip;
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-surface);
+    background: var(--sk-annotated-surface-bg);
+  }
+
+  /*
+   * THE CARD'S PADDING IS CHARGED TO THE SPECIMEN, so it is the smallest that still reads as a
+   * margin, and smaller again on a narrow screen: at `lg` a phone-width Accordion lost enough width
+   * to break its title mid-word.
+   */
+  .sk-annotated-figure:has(> .sk-annotated__legend) {
+    --sk-annotated-figure-inset: var(--space-inset-md);
+  }
+
+  @media (max-width: 40rem) {
+    .sk-annotated-figure:has(> .sk-annotated__legend) {
+      --sk-annotated-figure-inset: var(--space-inset-sm);
+    }
+  }
+
+  .sk-annotated-figure:has(> .sk-annotated__legend) > .sk-annotated {
+    box-sizing: border-box;
+    padding: var(--sk-annotated-figure-inset);
+  }
+
+  /*
+   * A ZOOMABLE FIGURE: the frame sits on a canvas. The frame keeps a margin inside it (scaled with
+   * everything else), and inside a card the canvas drops its own border, since the card already has
+   * one and the legend band below is the only division the figure wants.
+   */
+  .sk-canvas__content > .sk-annotated {
+    box-sizing: border-box;
+    padding: var(--space-inset-md);
+  }
+
+  .sk-annotated-figure:has(> .sk-annotated__legend) > .sk-canvas {
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .sk-annotated-figure > .sk-annotated__legend {
+    border-block-start: 1px solid var(--color-border-subtle);
+    padding: var(--sk-annotated-figure-inset, var(--space-inset-md));
+    background: var(--sk-annotated-legend-bg);
+  }
+
+  .sk-annotated {
     /*
      * `relative` is STRUCTURE: the leader overlay is `position: absolute` and this is the containing
      * block it resolves against, which is also the coordinate space the binding measures in. Written
@@ -167,8 +258,20 @@
      * `minmax(0, auto)` rather than bare `auto` so a specimen with an intrinsic minimum (a table, a
      * long unbroken string) can still shrink instead of pushing the frame past its container.
      */
-    grid-template-columns: auto minmax(0, auto) auto;
-    grid-template-rows: auto minmax(0, auto) auto;
+    /*
+     * A GUTTER WITH BRACKETS IS AT LEAST AS WIDE AS THEY REACH. Bracket labels are out of flow (they
+     * sit on their lines), so nothing in the track would size it; the binding writes how far from
+     * the subject each gutter's contents reach, and the track's floor is that minus the grid gap
+     * already standing between them. Unset, the floor is zero and the track is plain `auto`.
+     */
+    grid-template-columns:
+      minmax(max(0px, var(--sk-annotated-room-inline-start, 0px) - var(--sk-annotated-gap)), auto)
+      minmax(0, auto)
+      minmax(max(0px, var(--sk-annotated-room-inline-end, 0px) - var(--sk-annotated-gap)), auto);
+    grid-template-rows:
+      minmax(max(0px, var(--sk-annotated-room-block-start, 0px) - var(--sk-annotated-gap)), auto)
+      minmax(0, auto)
+      minmax(max(0px, var(--sk-annotated-room-block-end, 0px) - var(--sk-annotated-gap)), auto);
     gap: var(--sk-annotated-gap);
     justify-content: center;
     align-content: center;
@@ -274,6 +377,124 @@
   }
 
   /*
+   * A BRACKET LABEL SITS ON ITS LINE, so it leaves the grid: pinned to the frame's origin, the
+   * binding translates it onto the middle of its bracket. Above the overlay, because the line runs
+   * under it and the bubble's own ground is what interrupts it, the way a dimension line breaks for
+   * its figure.
+   */
+  .sk-annotation[data-mark="bracket"] {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    z-index: 1;
+  }
+
+  /*
+   * NUMBERED: the bubble keeps its gutter, its leader and its reveal, and trades its name for its
+   * position. A COUNTER, not text: the number is the label's place in the markup, the legend's
+   * `<li>` is the same place in the same order, and nothing an author typed can make the two
+   * disagree.
+   *
+   * The counter counts in DOM order and the narrow layout reorders with flex `order`, which is the
+   * behaviour wanted: the number names an entry, not a position on screen.
+   */
+  .sk-annotated[data-numbered] {
+    counter-reset: sk-annotation;
+  }
+
+  .sk-annotated[data-numbered] > .sk-annotation {
+    counter-increment: sk-annotation;
+    /* Round for one digit, a short pill for two: at least as wide as it is tall. */
+    min-inline-size: calc(
+      var(--sk-annotation-line-height) * 1em + var(--sk-annotation-bubble-padding-block) * 2 + 2px
+    );
+    padding-inline: var(--space-inline-xs);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .sk-annotated[data-numbered] > .sk-annotation::before {
+    content: counter(sk-annotation);
+  }
+
+  /*
+   * THE LEGEND sits under the drawing, in the figure and outside the frame, so no name it holds can
+   * widen a gutter or pull a number away from its part.
+   *
+   * COLUMNS FILLED DOWNWARD, never across: the numbers read 1, 2, 3 down the first column and carry
+   * on at the top of the next, the way a reader scans a numbered list. Multi-column rather than a
+   * grid, because a grid fills rows first and would put 2 beside 1. At most two, and only when each
+   * can be `12rem` wide; narrower, it is one column.
+   */
+  .sk-annotated__legend {
+    columns: 12rem 2;
+    column-gap: var(--space-inline-md);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: sk-annotation-legend;
+  }
+
+  /*
+   * An entry is the bubble's number followed by the name, and it reveals the same way a label does:
+   * `:hover`, `:focus-visible` and the binding's `[data-sk-active]`, so reading the legend lights the
+   * number, the leader and the part together.
+   */
+  .sk-annotated__legend-item {
+    counter-increment: sk-annotation-legend;
+    /* One entry never splits across the bottom of one column and the top of the next. */
+    break-inside: avoid;
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-inline-xs);
+    min-inline-size: 0;
+    border-radius: var(--radius-control);
+    color: var(--sk-annotation-color);
+    font-family: var(--sk-annotation-font-family);
+    font-size: var(--sk-annotation-font-size);
+    line-height: var(--sk-annotation-line-height);
+    overflow-wrap: anywhere;
+    cursor: default;
+    transition: color var(--motion-state-change-duration) var(--motion-state-change-easing);
+  }
+
+  .sk-annotated__legend-item + .sk-annotated__legend-item {
+    margin-block-start: var(--space-inline-xs);
+  }
+
+  .sk-annotated__legend-item::before {
+    content: counter(sk-annotation-legend);
+    flex: none;
+    box-sizing: border-box;
+    min-inline-size: calc(
+      var(--sk-annotation-line-height) * 1em + var(--sk-annotation-bubble-padding-block) * 2 + 2px
+    );
+    border: 1px solid var(--sk-annotation-bubble-border-color);
+    border-radius: var(--sk-annotation-bubble-radius);
+    padding: var(--sk-annotation-bubble-padding-block) var(--space-inline-xs);
+    background: var(--sk-annotation-bubble-wash), var(--sk-annotation-bubble-bg);
+    font-weight: var(--sk-annotation-font-weight);
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    transition:
+      background-color var(--motion-state-change-duration) var(--motion-state-change-easing),
+      border-color var(--motion-state-change-duration) var(--motion-state-change-easing);
+  }
+
+  .sk-annotated__legend-item:is(:hover, :focus-visible, [data-sk-active]) {
+    color: var(--sk-annotation-color-active);
+  }
+
+  .sk-annotated__legend-item:is(:hover, :focus-visible, [data-sk-active])::before {
+    border-color: var(--sk-annotation-bubble-border-color-active);
+    background: var(--sk-annotation-bubble-wash), var(--sk-annotation-bubble-bg-active);
+  }
+
+  .sk-annotated__legend-item:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  /*
    * On the block axis a label is one item in a row of them, so it starts at the inline start and the
    * binding slides it sideways. `justify-self: start` (not `stretch`) for the same reason the inline
    * gutters use `align-self: start`.
@@ -307,9 +528,14 @@
    * container readable as three bands rather than a bag of items: every `order: 0` label fills rows
    * above it, the subject can never share a row with a label, and the `order: 2` labels start a
    * fresh row under it. No wrapper element, and therefore nothing new in the authored markup.
+   *
+   * A NUMBERED FRAME IS EXEMPT, AND SO IS ONE ON A CANVAS (which is laid out at its own width and
+   * shown scaled, so the narrow screen never reaches it). Its gutters are one bubble wide, so they fit any screen, and keeping
+   * them is what keeps each number level with its part: clustered, every leader crosses the whole
+   * specimen to reach it. Both bindings skip the same query for it, so they keep distributing.
    */
   @media (max-width: 40rem) {
-    .sk-annotated {
+    .sk-annotated:not([data-numbered], .sk-canvas__content > *) {
       display: flex;
       flex-flow: row wrap;
       align-items: flex-start;
@@ -320,7 +546,7 @@
       gap: var(--space-inline-xs) var(--space-inline-sm);
     }
 
-    .sk-annotated__subject {
+    .sk-annotated:not([data-numbered], .sk-canvas__content > *) > .sk-annotated__subject {
       order: 1;
       /* `100%` basis: a line of its own, whatever the row above it was doing. */
       flex: 1 0 100%;
@@ -330,7 +556,9 @@
       z-index: 0;
     }
 
-    .sk-annotation {
+    /* `position: relative` here also returns a bracket label to the cluster: there is no gutter for
+       its line to run in, and the binding draws it as a ring. */
+    .sk-annotated:not([data-numbered], .sk-canvas__content > *) > .sk-annotation {
       /*
        * The subject's filter creates a stacking context. Above it, labels remain readable even where
        * their expanded mobile stack reaches the specimen's visual edge; leaders sit below the labels.
@@ -345,11 +573,11 @@
       line-height: calc(var(--sk-annotation-line-height) * 0.875);
     }
 
-    .sk-annotation:is([data-side="inline-start"], [data-side="block-start"]) {
+    .sk-annotated:not([data-numbered], .sk-canvas__content > *) > .sk-annotation:is([data-side="inline-start"], [data-side="block-start"]) {
       order: 0;
     }
 
-    .sk-annotation:is([data-side="inline-end"], [data-side="block-end"]) {
+    .sk-annotated:not([data-numbered], .sk-canvas__content > *) > .sk-annotation:is([data-side="inline-end"], [data-side="block-end"]) {
       order: 2;
     }
 
@@ -360,18 +588,18 @@
      * row. An auto inline margin says the thing the option has always meant: take the rest of the
      * row, and sit at its end.
      */
-    .sk-annotation[data-mobile-align="end"] {
+    .sk-annotated:not([data-numbered], .sk-canvas__content > *) > .sk-annotation[data-mobile-align="end"] {
       margin-inline-start: auto;
     }
 
     /* Last, and on a line of its own: a footnote about the drawing belongs under all of it, not
        wrapped into the cluster of names above. */
-    .sk-annotated__key {
+    .sk-annotated:not([data-numbered], .sk-canvas__content > *) > .sk-annotated__key {
       order: 3;
       flex: 1 0 100%;
     }
 
-    .sk-annotated__leaders {
+    .sk-annotated:not([data-numbered], .sk-canvas__content > *) > .sk-annotated__leaders {
       z-index: 1;
     }
   }
@@ -419,9 +647,8 @@
    * two shapes this replaced and what went wrong with each, and why it is drawn inside rather than
    * outside.
    *
-   * QUIET AT REST, ACCENT ON REQUEST: see the accent note on the root for why it is drawn at all
-   * when nothing is being read, why it is a hairline, and why the fade lives in the colour rather
-   * than in an `opacity` of its own.
+   * HIDDEN AT REST, ACCENT ON REQUEST: see the rule below. The leader keeps the quiet rest colour;
+   * the ring only exists for the mark being read.
    *
    * ITS CORNER FOLLOWS THE PART IT WRAPS by default, read off that element's own `border-radius`
    * (see `annotationElementRadius`). A shared constant is what this did, and it drew square marks
@@ -429,15 +656,23 @@
    * the thing inside it stops reading as that thing's outline and starts reading as a box laid over
    * it. `ringRadius` still overrides, on the frame or on the one label that needs it.
    */
+  /*
+   * NOT DRAWN AT REST. The leader already says where each name points; a ring on every part at once
+   * is an outline over the whole specimen, and the specimen is what the reader came to look at. The
+   * ring appears for the ONE mark being read (its label or its part under the pointer, or its label
+   * focused) and nowhere else. Faded by `opacity`, not by a transparent stroke, so the colour hook
+   * keeps meaning the colour.
+   */
   .sk-annotated__ring {
     fill: none;
-    stroke: var(--sk-annotation-ring-color-rest);
+    stroke: var(--sk-annotation-ring-color);
     stroke-width: var(--sk-annotation-ring-width);
-    transition: stroke var(--motion-state-change-duration) var(--motion-state-change-easing);
+    opacity: 0;
+    transition: opacity var(--motion-state-change-duration) var(--motion-state-change-easing);
   }
 
   .sk-annotated__mark[data-sk-active] .sk-annotated__ring {
-    stroke: var(--sk-annotation-ring-color);
+    opacity: 1;
   }
 
   /*

@@ -3,8 +3,50 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "036e266e300b4588"
+surface: "3b385b2dd8d18c4b"
 entries:
+  - date: 2026-09-23
+    kind: feature
+    target: name
+    es:
+      title: El vocabulario estable gana zoom-in y fit
+      body: >-
+        <code>zoom-in</code>, el par de <code>zoom-out</code>, y <code>fit</code>, "mostrar todo en la vista": el primero no nombra una lupa y el
+        segundo no es <code>maximize</code>, que habla de la ventana. Los consume la barra de zoom de <code>Canvas</code>. Lucide <code>ZoomIn</code> y
+        <code>Scan</code>, Phosphor <code>magnifying-glass-plus</code> y <code>corners-out</code>, Material <code>zoom_in</code> y
+        <code>fit_screen</code>; los tres sets del repo ya los traen.
+    en:
+      title: The stable vocabulary gains zoom-in and fit
+      body: >-
+        <code>zoom-in</code>, the pair of <code>zoom-out</code>, and <code>fit</code>, "show all of it in the view": the first names no magnifying glass
+        and the second is not <code>maximize</code>, which is about the window. <code>Canvas</code>'s zoom bar consumes them. Lucide <code>ZoomIn</code>
+        and <code>Scan</code>, Phosphor <code>magnifying-glass-plus</code> and <code>corners-out</code>, Material <code>zoom_in</code> and
+        <code>fit_screen</code>; all three sets in this repo ship them.
+  - date: 2026-09-21
+    kind: feature
+    target: name
+    es:
+      title: El vocabulario estable gana placeholder
+      body: >-
+        Un rol para el icono que todavía no se eligió: el hueco donde va un glifo. Los tres sets lo
+        dibujan como una caja vacía punteada (Lucide <code>SquareDashed</code>, Phosphor
+        <code>rectangle-dashed</code>, Material <code>select</code>), y ese vacío es todo el dibujo,
+        así que el nombre sobrevive al cambio de set más fácil que cualquier otro de la lista. Es el
+        gemelo del primitive <code>placeholder</code>: los dos son la forma de algo que no está. Lo
+        consumen los diagramas de anatomía de la documentación, donde el sujeto no tiene que decir
+        nada propio. Como <code>IconSet</code> es completo, agregar un rol es aditivo para quien
+        consume y trabajo nuevo para quien dibuja un set; los tres del repo ya lo traen.
+    en:
+      title: The stable vocabulary gains placeholder
+      body: >-
+        A role for the icon that has not been chosen: the hole a glyph goes in. All three sets draw
+        it as an empty dashed box (Lucide <code>SquareDashed</code>, Phosphor
+        <code>rectangle-dashed</code>, Material <code>select</code>), and that emptiness is the whole
+        drawing, so the name survives a change of set more easily than any other on the list. It is
+        the twin of the <code>placeholder</code> primitive: both are the shape of something that is
+        not there. The docs anatomy diagrams consume it, where the subject must not say anything of
+        its own. Because <code>IconSet</code> is complete, adding a role is additive for a consumer
+        and new work for whoever draws a set; all three in this repo already ship it.
   - date: 2026-09-14
     kind: feature
     target: name

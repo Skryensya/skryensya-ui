@@ -28,15 +28,15 @@ export const toastAnatomyTree = (t: Translate): UsageTree => ({
         },
         slots: {
           icon: { contract: "icon", signature: "Icon", options: { name: "info" } },
-          title: t("demo.toast.documentArchived"),
+          title: t("anatomy.title"),
           actions: {
             contract: "button",
             signature: "Button.action",
             options: { size: "sm", variant: "solid" },
-            children: t("demo.toast.undo"),
+            children: t("anatomy.action"),
           },
         },
-        children: t("demo.toast.movedToArchived"),
+        children: t("anatomy.description"),
       },
     },
     items: [

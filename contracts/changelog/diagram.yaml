@@ -3,8 +3,142 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribe la entrada y pega el
 # hash nuevo.
-surface: "5a9108f7bbf589d4"
+surface: "278d191e513e8716"
 entries:
+  - date: 2026-09-22
+    kind: bugfix
+    es:
+      title: Un cable que apunta a un pin fijo ahora sale a la altura de ese pin
+      body: >-
+        Hay puertos que no se pueden mover: los pines de una compuerta son de la notación, y una
+        arista anclada a una fila dice de qué columna sale. El otro extremo de esas aristas es
+        común y <code>portOffsets</code> lo reparte sin saber a dónde apunta, así que en el
+        semisumador los cuatro cables salían con un codo de seis píxeles a pocos píxeles de la caja:
+        las salidas repartidas a los extremos de la banda, los pines de la XOR en los tercios.
+        Ninguno de los dos números estaba mal y el par era ilegible. Ahora el extremo libre se
+        alinea con el fijo cuando su propio lado llega hasta ahí, y conserva su codo cuando no.
+    en:
+      title: A wire aimed at a fixed pin now leaves at that pin's height
+      body: >-
+        Some ports cannot move: a gate's pins belong to the notation, and a row-anchored edge is a
+        claim about which column it leaves from. The other end of those edges is ordinary and
+        <code>portOffsets</code> spreads it knowing nothing about what it is aiming at, so on the
+        half adder all four wires left with a six pixel kink a few pixels clear of the box: the
+        exits spread to the ends of the band, the XOR's pins at the thirds. Neither number was
+        wrong and the pair was unreadable. The free end is now pulled onto the fixed one's line
+        when its own side reaches that far, and keeps its jog when it does not.
+  - date: 2026-09-22
+    kind: bugfix
+    es:
+      title: El conector que entra a una zona ahora aterriza al lado del nombre, no encima
+      body: >-
+        Taparle la línea al rótulo con un fondo era la mitad de la solución, y sola era la mitad
+        equivocada: la línea seguía pasando por ahí, sólo que escondida. Ahora el punto donde el
+        conector toca la caja se corre a lo largo de ese lado hasta quedar fuera de la placa del
+        nombre, que es la misma libertad que ya usa <code>portOffsets</code> para repartir varios
+        conectores. Se mueve lo mínimo, y si el nombre es más ancho que la caja entera se queda donde
+        estaba y el fondo del rótulo hace de red.
+    en:
+      title: A connector entering a zone now lands beside its name instead of over it
+      body: >-
+        Masking the line behind the caption was half the fix, and on its own it was the wrong half:
+        the line still went there, it was merely hidden. Where a connector touches down now slides
+        along that side of the box until it clears the name's plate, which is the same freedom
+        <code>portOffsets</code> already uses to spread several connectors. It moves as little as it
+        can, and when the name is wider than the whole box it keeps the place it asked for and the
+        caption's own ground is the backstop.
+  - date: 2026-09-22
+    kind: bugfix
+    es:
+      title: El nombre de una zona ya no queda tapado por el conector que entra a ella
+      body: >-
+        Una zona se dibuja detrás de todo, porque todo está adentro de ella, y su nombre heredaba esa
+        profundidad: el conector que baja hacia el primer nodo de la región cruza justo por donde está
+        el rótulo, y el trazo pasaba por encima de la palabra. El nombre es una etiqueta, así que
+        ahora se dibuja sobre las líneas y con fondo propio
+        (<code>--sk-diagram-zone-label-bg</code>), que es lo mismo que ya hacía la etiqueta de una
+        arista. El borde de la zona no se movió: lo que cambió por dentro es que una zona se posiciona
+        con <code>left</code>/<code>top</code> en vez de <code>translate</code>, porque
+        <code>translate</code> la volvía un contexto de apilado y ningún hijo suyo podía dibujarse
+        sobre los conectores.
+    en:
+      title: A zone's name is no longer covered by the connector that enters it
+      body: >-
+        A zone is drawn behind everything, because everything is inside it, and its name inherited
+        that depth: the connector descending into the region's first node crosses exactly where the
+        caption sits, and the stroke ran over the word. A name is a label, so it is now drawn over
+        the lines and on a ground of its own (<code>--sk-diagram-zone-label-bg</code>), which is what
+        an edge label already did. The boundary itself did not move: what changed underneath is that a
+        zone is placed with <code>left</code>/<code>top</code> rather than <code>translate</code>,
+        because <code>translate</code> made every zone a stacking context and nothing inside one
+        could be painted over the connectors.
+  - date: 2026-09-21
+    kind: feature
+    es:
+      title: Las siete compuertas lógicas, con la forma que les da la norma
+      body: >-
+        <code>shape</code> suma <code>and</code>, <code>or</code>, <code>xor</code>,
+        <code>nand</code>, <code>nor</code>, <code>xnor</code> y <code>not</code>: no una caja que
+        dice AND adentro, sino el símbolo de IEEE 91 / IEC 60617-12. Una compuerta <strong>no tiene
+        adentro</strong> (las palabras del nodo siguen ahí para quien lee con lector de pantalla, la
+        hoja las recorta) y sus puertos los fija la notación: los operandos llegan al plano de atrás
+        y el resultado sale de <em>un</em> punto, así que un fan-out sale del mismo pin. El slot
+        <code>designator</code> es dónde va el <code>U1</code>: debajo de la caja y sin medirse,
+        porque la caja es de donde sale cada puerto. Los operandos tienen que venir de columnas
+        anteriores; un latch cruzado no se dibuja acá.
+    en:
+      title: The seven logic gates, drawn the way the standard draws them
+      body: >-
+        <code>shape</code> gains <code>and</code>, <code>or</code>, <code>xor</code>,
+        <code>nand</code>, <code>nor</code>, <code>xnor</code> and <code>not</code>: not a box with
+        AND written in it, but the IEEE 91 / IEC 60617-12 symbol. A gate has <strong>no
+        inside</strong> (the node's words stay for whoever is listening; the stylesheet clips them)
+        and the notation fixes its ports: operands land on the back plane and the result leaves
+        <em>one</em> point, so a fan-out leaves the same pin. The <code>designator</code> slot is
+        where the <code>U1</code> goes: under the box and never measured, because the box is what
+        every port comes from. Operands have to come from earlier columns; a cross-coupled latch is
+        not a drawing this makes.
+  - date: 2026-09-21
+    kind: rework
+    es:
+      title: Un registro se dibuja como una tabla, con encabezado y una raya por fila
+      body: >-
+        Un nodo con <code>rows</code> ahora se lee como lo que es: el título va en una banda con
+        fondo propio, alineado al mismo borde que las filas de abajo (antes quedaba ocho pixeles más
+        adentro, porque la regla pedía un <code>padding</code> negativo y el navegador la
+        descartaba), y las rayas entre celdas se dibujan todas al mismo peso. Dos ganchos nuevos,
+        <code>--sk-diagram-record-header-bg</code> y
+        <code>--sk-diagram-record-header-font-weight</code>, son todo lo que hay que tocar para
+        cambiarla. Nada de esto cambia el markup ni el contrato: es la misma caja, leída como tabla.
+    en:
+      title: A record is drawn as a table, with a header band and one rule per row
+      body: >-
+        A node with <code>rows</code> now reads as what it is: the title sits in a band with a
+        ground of its own, on the same leading edge as the cells under it (it used to sit eight
+        pixels further in, because the rule asked for a negative <code>padding</code> and the
+        browser dropped it), and every rule between cells is drawn at one weight. Two new hooks,
+        <code>--sk-diagram-record-header-bg</code> and
+        <code>--sk-diagram-record-header-font-weight</code>, are the whole of retuning it. No markup
+        and no contract changed: it is the same box, read as a table.
+  - date: 2026-09-21
+    kind: bugfix
+    es:
+      title: Una etiqueta ya no se sienta encima de otro conector
+      body: >-
+        Las etiquetas tienen fondo, así que una línea que pasaba por debajo de una simplemente
+        desaparecía: quedaban dos puntas muertas contra una palabra, y el dibujo afirmaba un cruce
+        que nadie había escrito. Ahora todos los conectores se trazan antes de ubicar cualquier
+        etiqueta, y cada una esquiva las líneas de las demás como ya esquivaba las cajas y las
+        puntas de flecha. Se corre sobre su propia línea antes que salirse de ella, y se sale antes
+        que taparle la línea a otro.
+    en:
+      title: A label no longer sits on top of another connector
+      body: >-
+        A chip has a ground, so a line running under one simply vanished: what was left was two dead
+        stubs against a word, and the drawing claimed a junction nobody had written. Every connector
+        is now routed before any label is placed, and each chip misses the other lines the way it
+        already missed the boxes and the arrowheads. It slides along its own line before stepping
+        off it, and steps off it before covering somebody else's.
   - date: 2026-09-21
     kind: feature
     es:

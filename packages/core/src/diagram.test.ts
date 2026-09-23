@@ -13,6 +13,7 @@ import {
   diagramRoutes,
   diagramZoneDepths,
   diagramZoneHeaders,
+  diagramZoneNames,
   diagramZoneMembers,
   placeDiagramZones,
   edgeSides,
@@ -23,6 +24,11 @@ import {
   portOffsets,
   routeDiagram,
   sideOutline,
+  DIAGRAM_GATE_BACK_BOW,
+  DIAGRAM_GATE_PORT_BAND,
+  diagramGates,
+  isDiagramGate,
+  isDiagramShape,
   type DiagramBox,
   type DiagramNodeMeasurement,
 } from "./diagram.js";
@@ -119,6 +125,67 @@ describe("diagram geometry: the outline a connector may touch", () => {
     expect(sideOutline(box(0, 0, 100, 40), "terminal", "top")).toEqual(
       sideOutline(box(0, 0, 100, 40), "process", "top"),
     );
+  });
+
+  it("gives every gate a single OUTPUT POINT rather than a face to spread along", () => {
+    /* One pin, so three edges leaving a gate leave from the same place. A face would draw three
+       outputs, which is a claim about the part rather than about the drawing. */
+    for (const gate of diagramGates) {
+      expect(sideOutline(box(0, 0, 60, 48), gate, "right")).toEqual([{ x: 60, y: 24 }]);
+    }
+  });
+
+  it("puts a flat-backed gate's input plane on the box edge", () => {
+    for (const gate of ["and", "nand", "not"] as const) {
+      expect(sideOutline(box(0, 0, 60, 48), gate, "left")).toEqual([
+        { x: 0, y: 0 },
+        { x: 0, y: 48 },
+      ]);
+    }
+  });
+
+  it("walks the OR family's bowed back, so a lead touches the symbol and not the air behind it", () => {
+    /* The same correction the rhombus needed: the bounding box's left edge is not where the shape
+       is. The V's depth is the silhouette's own, which is why the constant is shared. */
+    for (const gate of ["or", "nor", "xor", "xnor"] as const) {
+      expect(sideOutline(box(0, 0, 60, 48), gate, "left")).toEqual([
+        { x: 0, y: 0 },
+        { x: 60 * DIAGRAM_GATE_BACK_BOW, y: 24 },
+        { x: 0, y: 48 },
+      ]);
+    }
+  });
+
+  it("lands a gate's two inputs on the third-heights the notation puts them at", () => {
+    const outline = sideOutline(box(0, 0, 60, 48), "and", "left");
+    const [first, second] = portOffsets(2, DIAGRAM_GATE_PORT_BAND).map((t) =>
+      pointAlong(outline, t),
+    );
+    expect(first!.y).toBeCloseTo(16, 5);
+    expect(second!.y).toBeCloseTo(32, 5);
+  });
+
+  it("keeps every t on the pin when a gate's output is asked for several times over", () => {
+    const outline = sideOutline(box(0, 0, 60, 48), "or", "right");
+    for (const t of portOffsets(3, DIAGRAM_GATE_PORT_BAND)) {
+      expect(pointAlong(outline, t)).toEqual({ x: 60, y: 24 });
+    }
+  });
+});
+
+describe("diagram vocabulary: which shapes are gates", () => {
+  it("admits every gate as a shape, so a binding reading the attribute needs no second list", () => {
+    for (const gate of diagramGates) expect(isDiagramShape(gate)).toBe(true);
+  });
+
+  it("holds the whole notation, inversions included", () => {
+    expect([...diagramGates]).toEqual(["and", "or", "xor", "nand", "nor", "xnor", "not"]);
+  });
+
+  it("does not call a prose shape a gate", () => {
+    for (const shape of ["process", "decision", "terminal"] as const) {
+      expect(isDiagramGate(shape)).toBe(false);
+    }
   });
 });
 
@@ -294,6 +361,30 @@ describe("diagram geometry: where a label chip may sit", () => {
     });
   });
 
+  it("steps along its own line rather than cover a connector that crosses it", () => {
+    /* A second relationship running across the middle of this one: at the midpoint the chip's own
+       ground would swallow it, and what the reader is left with is a word between two stubs. */
+    const crossing = [
+      { x: 0, y: 100 },
+      { x: 200, y: 100 },
+    ];
+    const at = placeDiagramLabel(straight, chip, [], { strokes: [crossing] });
+    /* Still on its own stroke - sliding is cheap, stepping aside is not - and clear of the other. */
+    expect(at.x).toBe(100);
+    expect(Math.abs(at.y - 100)).toBeGreaterThan(chip.height / 2);
+  });
+
+  it("pays nothing for a connector that passes nowhere near the chip", () => {
+    const elsewhere = [
+      { x: 0, y: 190 },
+      { x: 200, y: 190 },
+    ];
+    expect(placeDiagramLabel(straight, chip, [], { strokes: [elsewhere] })).toEqual({
+      x: 100,
+      y: 100,
+    });
+  });
+
   it("never lets a chip land on the arrowhead of its own edge", () => {
     const short = [
       { x: 100, y: 0 },
@@ -339,6 +430,171 @@ describe("diagram geometry: which sides an edge uses", () => {
     /* An if/else: the branch is further sideways than it is down, so an angle-based rule would send
        the connector out of the decision's side and U-turn it back down. */
     expect(edgeSides(ask.box, left.box)).toEqual({ exit: "bottom", enter: "top", back: false });
+  });
+
+  it("ignores the ladder entirely when a gate is at either end", () => {
+    /* The gate is ABOVE its operand, which the ladder alone calls a BACK edge and routes out to a
+       margin - and a margin lane asks both ends for a port on the same physical side, which at a
+       gate means feeding the nose. The arrival is pinned to the back plane and the detour is off. */
+    const operand = box(0, 200, 100, 40);
+    const gate = box(200, 0, 60, 48);
+    expect(edgeSides(operand, gate, { from: "process", to: "and" })).toEqual({
+      exit: "right",
+      enter: "left",
+      back: false,
+    });
+    /* The ladder on its own would have made that a back edge, and "top" was its answer only because
+       a detour was going to use it. */
+    expect(edgeSides(operand, gate)).toEqual({ exit: "top", enter: "bottom", back: true });
+    /* And the other way round: the result leaves the nose, and the box below it - which is not a
+       gate and has no opinion - still takes the arrival the ladder chose for it. */
+    expect(edgeSides(gate, operand, { from: "and", to: "process" })).toEqual({
+      exit: "right",
+      enter: "top",
+      back: false,
+    });
+  });
+
+  it("sends an operand out of the side facing its gate, so the wire arrives ALONG the back plane", () => {
+    /*
+     * The half adder's own geometry: `A` is a rank above and a column left of the AND it feeds. The
+     * ladder alone says "below, so let go downwards", and a corridor's last segment follows the side
+     * it LEFT - so the wire reached a correct pin by running down the gate's own back plane, which
+     * on the page reads as an operand arriving through the roof.
+     */
+    const a = box(23, 0, 96, 48);
+    const and = box(194, 98, 60, 48);
+    expect(edgeSides(a, and, { from: "terminal", to: "and" })).toEqual({
+      exit: "right",
+      enter: "left",
+      back: false,
+    });
+
+    const placed = routeDiagram(
+      [node("a", a, "terminal"), node("and", and, "and")],
+      [{ from: "a", to: "and", arrow: "none" }],
+    );
+    const points = coordsOf(placed[0]!.path);
+    /* The last two points of the run share a y: the wire comes in level with the pin it touches,
+       rather than down the edge the pin sits on. */
+    const [, lastButOneY, , lastY] = points.slice(-4);
+    expect(lastY).toBe(lastButOneY);
+    /* And it touches the back plane, not the top. */
+    expect(points[points.length - 2]).toBe(and.x);
+  });
+
+  it("keeps the ladder's answer for a wire that runs BACKWARDS, which has no gap to turn in", () => {
+    /* A gate whose result is read by a box in an EARLIER column. Facing the gate would send the
+       wire out of the nose and back into the same side of the box; the feedback route that would
+       draw properly is four bends, which this module does not have. */
+    const gate = box(200, 0, 60, 48);
+    const behind = box(0, 200, 100, 40);
+    expect(edgeSides(gate, behind, { from: "and", to: "process" })).toEqual({
+      exit: "right",
+      enter: "top",
+      back: false,
+    });
+  });
+
+  it("pins only the end that IS a gate, and leaves the other one to the ladder", () => {
+    /* The box sits above, so it still lets go downwards: the drawing keeps flowing the way the grid
+       laid it out, and only the arrival is forced onto the back plane. */
+    const step = box(0, 0, 100, 40);
+    const gate = box(0, 200, 60, 48);
+    expect(edgeSides(step, gate, { from: "process", to: "or" })).toEqual({
+      exit: "bottom",
+      enter: "left",
+      back: false,
+    });
+  });
+
+  it("turns a suppressed back edge's orphaned side toward the gate instead of out the roof", () => {
+    /* The operand is BELOW the gate it feeds, which is the rung that answers "top" so a detour can
+       run up the margin. There is no detour, so the line would have left the top of the box and come
+       straight back down into a gate beside it. */
+    const operand = box(0, 200, 100, 40);
+    const gate = box(200, 0, 60, 48);
+    expect(edgeSides(operand, gate, { from: "process", to: "and" }).exit).toBe("right");
+
+    const mirrored = box(400, 200, 100, 40);
+    expect(edgeSides(mirrored, gate, { from: "process", to: "and" }).exit).toBe("left");
+  });
+
+  it("mirrors a gate's ports in an RTL drawing, because the grid has already mirrored", () => {
+    const a = box(200, 0, 60, 48);
+    const b = box(0, 0, 60, 48);
+    expect(edgeSides(a, b, { from: "and", to: "or", direction: "rtl" })).toEqual({
+      exit: "left",
+      enter: "right",
+      back: false,
+    });
+  });
+
+  it("never calls an edge that touches a gate a back edge", () => {
+    /* A margin lane asks both ends for a port on the SAME physical side, i.e. a signal into the nose
+       or an output off the back plane. A backwards wire is drawn as an ordinary connector instead -
+       readably only while the two gates are in different columns, which is the limit `edgeSides`
+       states and the semantic overlay tells an author about. */
+    const later = box(200, 0, 60, 48);
+    const earlier = box(0, 200, 60, 48);
+    expect(edgeSides(later, earlier, { from: "nor", to: "nor" }).back).toBe(false);
+  });
+
+  it("leaves every shapeless call answering exactly as it did before gates existed", () => {
+    expect(edgeSides(bottom.box, top.box)).toEqual(
+      edgeSides(bottom.box, top.box, { from: "process", to: "process" }),
+    );
+  });
+});
+
+describe("diagram routing: a gate", () => {
+  const a = node("a", box(0, 0, 100, 40));
+  const b = node("b", box(0, 120, 100, 40));
+  const gate = node("gate", box(200, 40, 60, 48), "and");
+  const out = node("out", box(360, 40, 100, 40), "terminal");
+
+  const placements = routeDiagram(
+    [a, b, gate, out],
+    [
+      { from: "a", to: "gate", arrow: "none" },
+      { from: "b", to: "gate", arrow: "none" },
+      { from: "gate", to: "out", arrow: "none" },
+    ],
+  );
+
+  it("brings both operands in on the back plane and takes the result off the nose", () => {
+    const [first, second, result] = placements;
+    /* `arrow: "none"`, so nothing is retracted and the first and last coordinates ARE the ports. */
+    const ends = (path: string) => {
+      const c = coordsOf(path);
+      return { start: { x: c[0], y: c[1] }, end: { x: c[c.length - 2], y: c[c.length - 1] } };
+    };
+    expect(ends(first!.path).end.x).toBe(200);
+    expect(ends(second!.path).end.x).toBe(200);
+    expect(ends(result!.path).start).toEqual({ x: 260, y: 64 });
+  });
+
+  it("spreads the two operands onto the gate's own third-heights, not onto the band a box uses", () => {
+    const ends = placements
+      .slice(0, 2)
+      .map((placement) => coordsOf(placement!.path).slice(-1)[0]!);
+    /* 48 tall from y = 40: a third and two thirds are 56 and 72. The general 0.6 band would have
+       put them at 49.6 and 78.4, out at the corners of the back plane. */
+    expect(ends.map(Math.round).sort((x, y) => x - y)).toEqual([56, 72]);
+  });
+
+  it("fans a gate's output out of ONE point however many edges read it", () => {
+    const second = node("second", box(360, 140, 100, 40), "terminal");
+    const fanned = routeDiagram(
+      [gate, out, second],
+      [
+        { from: "gate", to: "out", arrow: "none" },
+        { from: "gate", to: "second", arrow: "none" },
+      ],
+    );
+    const starts = fanned.map((placement) => coordsOf(placement!.path).slice(0, 2));
+    expect(starts[0]).toEqual([260, 64]);
+    expect(starts[1]).toEqual([260, 64]);
   });
 });
 
@@ -562,6 +818,117 @@ describe("diagram routing: an edge anchored to a row", () => {
   });
 });
 
+describe("diagram routing: a wire aimed at a fixed pin", () => {
+  /*
+   * `A` feeds a gate a rank away. The gate's pins are the notation's (the thirds of its back plane)
+   * and cannot move; `A`'s exit is an ordinary port and `portOffsets` spreads it across its own side
+   * knowing nothing about what it is aiming at, which is how four wires end up with a six pixel kink
+   * a few pixels clear of their boxes.
+   */
+  const source = node("source", box(0, 0, 100, 48));
+  const gate = node("gate", box(200, 0, 60, 48), "and");
+  const second = node("second", box(0, 200, 100, 48));
+
+  it("leaves the free end on the pin's own line, so the wire is drawn straight", () => {
+    const placed = routeDiagram(
+      [source, gate],
+      [{ from: "source", to: "gate", arrow: "none" }],
+    );
+    const points = coordsOf(placed[0]!.path);
+    /* One straight run: two points, and both at the pin's height. */
+    expect(points).toHaveLength(4);
+    expect(points[1]).toBe(points[3]);
+  });
+
+  it("keeps the jog when its own side cannot reach that high", () => {
+    /* A rank below its gate: the pin is above everything this side offers, so the wire bends, which
+       is the honest drawing of an operand that really is a rank away. */
+    const placed = routeDiagram(
+      [second, gate],
+      [{ from: "second", to: "gate", arrow: "none" }],
+    );
+    const points = coordsOf(placed[0]!.path);
+    expect(points.length).toBeGreaterThan(4);
+  });
+
+  it("never moves a pin to meet another pin, when BOTH ends are the notation's", () => {
+    /*
+     * The guard the whole pass hangs on. Two gates wired together: each end is fixed, neither may
+     * give, and a rule that aligned "whenever either end is fixed" would pull one symbol's inputs
+     * off its own back plane. The wire bends instead.
+     */
+    const downstream = node("downstream", box(360, 100, 60, 48), "or");
+    const placed = routeDiagram(
+      [gate, downstream],
+      [{ from: "gate", to: "downstream", arrow: "none" }],
+    );
+    const points = coordsOf(placed[0]!.path);
+    /* Off the first gate's nose, at its own middle. */
+    expect(points.slice(0, 2)).toEqual([260, 24]);
+    /*
+     * And onto the second's back plane where the notation puts a single operand: the middle of it,
+     * 124 on a gate spanning 100 to 148. NOT 24, which is where aligning would have dragged it.
+     * The x is past the box's own left edge because an OR's back plane is bowed and its pins sit on
+     * the curve, which is the notation's business and not this pass's.
+     */
+    const [endX, endY] = points.slice(-2);
+    expect(endY).toBe(124);
+    expect(endX).toBeGreaterThanOrEqual(360);
+  });
+});
+
+describe("diagram routing: a label on a crowded frame", () => {
+  /*
+   * TWO RELATIONSHIPS THAT CROSS, and the labelled one is written FIRST. That order is the test:
+   * a label placed while the rest of the drawing is still unrouted can only miss the part of it
+   * that exists, which is why every connector is routed before any chip is placed.
+   *
+   *   above  at (100,   0), 100 x 40     feed: above -> below, down the middle, labelled
+   *   below  at (100, 200), 100 x 40
+   *   west   at (-200, 100), 60 x 40     span: west -> east, straight across at y = 120
+   *   east   at ( 340, 100), 60 x 40
+   */
+  const above = node("above", box(100, 0, 100, 40));
+  const below = node("below", box(100, 200, 100, 40));
+  const west = node("west", box(-200, 100, 60, 40));
+  const east = node("east", box(340, 100, 60, 40));
+  const chip = { width: 60, height: 20 };
+
+  it("puts the chip at the middle of its own run when nothing crosses it", () => {
+    const alone = routeDiagram([above, below], [{ from: "above", to: "below", label: chip }]);
+    expect(alone[0]!.label).toEqual({ x: 150, y: 116 });
+  });
+
+  it("keeps a chip off a connector that is only routed after it", () => {
+    const crowded = routeDiagram(
+      [above, below, west, east],
+      [
+        { from: "above", to: "below", label: chip },
+        { from: "west", to: "east" },
+      ],
+    );
+    /* `span` runs at y = 120, and the middle of `feed` is y = 116: at its preferred place the chip
+       covers the other line entirely. It slides, rather than stepping off its own stroke. */
+    expect(crowded[0]!.label.x).toBe(150);
+    /* Clear of it, to the edge of the chip: what is priced is a line running UNDER the label, and
+       the clearance band is deliberately not part of that test (see the note in `placeDiagramLabel`). */
+    expect(Math.abs(crowded[0]!.label.y - 120)).toBeGreaterThanOrEqual(chip.height / 2);
+  });
+
+  it("moves the label and not the line, so the drawing is the same drawing", () => {
+    const alone = routeDiagram([above, below], [{ from: "above", to: "below", label: chip }]);
+    const crowded = routeDiagram(
+      [above, below, west, east],
+      [
+        { from: "above", to: "below", label: chip },
+        { from: "west", to: "east" },
+      ],
+    );
+    expect(crowded[0]!.path).toBe(alone[0]!.path);
+    expect(crowded[0]!.arrows).toEqual(alone[0]!.arrows);
+  });
+});
+
 describe("diagram routing: a cycle", () => {
   const placements = routeDiagram(
     [top, bottom],
@@ -747,6 +1114,113 @@ describe("diagram routing: keeping a rail off a region's name", () => {
   it("turns each placed zone's name strip into a band a rail can avoid", () => {
     const placed = [{ box: box(10, 20, 200, 300), depth: 0 }, null];
     expect(diagramZoneHeaders(placed, 28)).toEqual([{ x: 10, y: 20, width: 200, height: 28 }]);
+  });
+});
+
+describe("diagram zones: keeping a connector off a region's name", () => {
+  /*
+   * The infrastructure drawing's own shape, cut down to the two boxes that matter:
+   *
+   *   alb    at (100,   0), 100 x 40   feeding
+   *   api    at ( 60, 140),  96 x 40   which is the first node of a region whose name is
+   *   plate  at ( 40, 100),  85 x 28   the strip's leading corner, over the api's own centre line.
+   */
+  const alb = node("alb", box(100, 0, 100, 40));
+  const api = node("api", box(60, 140, 96, 40));
+  const plate = box(40, 100, 85, 28);
+  const xOf = (path: string): number => coordsOf(path).slice(-2)[0]!;
+
+  it("lands the arrival beside the words when the descent would cross them", () => {
+    const through = routeDiagram([alb, api], [{ from: "alb", to: "api" }]);
+    /* Untold, it touches down at the node's own middle, which is inside the name. */
+    expect(xOf(through[0]!.path)).toBe(108);
+
+    const beside = routeDiagram([alb, api], [{ from: "alb", to: "api" }], {
+      keepPortsOut: [plate],
+    });
+    expect(xOf(beside[0]!.path)).toBeGreaterThan(plate.x + plate.width);
+  });
+
+  it("leaves a port alone when its own run never reaches the name", () => {
+    /* The same plate, but the connector runs between two boxes BELOW it: a name three ranks up is
+       not in this wire's corridor, and a port that dodged it would be moving for nothing. */
+    const below = node("below", box(60, 300, 96, 40));
+    const placed = routeDiagram(
+      [api, below],
+      [{ from: "api", to: "below" }],
+      { keepPortsOut: [plate] },
+    );
+    expect(xOf(placed[0]!.path)).toBe(108);
+  });
+
+  it("keeps the place it asked for when the whole side is under the name", () => {
+    /* A name wider than the node it sits over: there is nowhere clear to slide to, so the drawing
+       says so rather than inventing a port off the box. The label's own ground is what saves the
+       words in that case. */
+    const wide = box(0, 100, 400, 28);
+    const placed = routeDiagram([alb, api], [{ from: "alb", to: "api" }], { keepPortsOut: [wide] });
+    expect(xOf(placed[0]!.path)).toBe(108);
+  });
+
+  it("does not slide one arrival onto another that was already there", () => {
+    /*
+     * Two sources feeding the region's first node, on a box wide enough for both to stand clear of
+     * the name. One of them is already past the plate and does not move; the other has to, and the
+     * place it wants is where the first one is standing.
+     */
+    const wide = node("wide", box(60, 140, 260, 40));
+    const second = node("second", box(0, 0, 80, 40));
+    const placed = routeDiagram(
+      [alb, second, wide],
+      [
+        { from: "alb", to: "wide" },
+        { from: "second", to: "wide" },
+      ],
+      { keepPortsOut: [plate] },
+    );
+    const first = xOf(placed[0]!.path);
+    const other = xOf(placed[1]!.path);
+    expect(first).toBeGreaterThan(plate.x + plate.width);
+    expect(other).toBeGreaterThan(plate.x + plate.width);
+    /* Two, and visibly two: the same separation the rails are pulled apart by. */
+    expect(Math.abs(first - other)).toBeGreaterThanOrEqual(DIAGRAM_CORRIDOR_GAP);
+  });
+
+  it("gives up the separation before it gives up the name, when the band holds only one", () => {
+    /*
+     * The same pair on a box with barely a finger's width clear of the caption. Both ends cannot be
+     * had, and the two failures are not equal: two wires a few pixels apart are still two wires, a
+     * wire through a word is a word nobody can read. So both stay off the plate.
+     */
+    const second = node("second", box(0, 0, 80, 40));
+    const placed = routeDiagram(
+      [alb, second, api],
+      [
+        { from: "alb", to: "api" },
+        { from: "second", to: "api" },
+      ],
+      { keepPortsOut: [plate] },
+    );
+    expect(xOf(placed[0]!.path)).toBeGreaterThan(plate.x + plate.width);
+    expect(xOf(placed[1]!.path)).toBeGreaterThan(plate.x + plate.width);
+  });
+
+  it("builds a name plate at each region's leading corner, and none for a region with no name", () => {
+    const regions = [
+      { box: box(10, 20, 300, 200), depth: 0 },
+      null,
+      { box: box(40, 60, 100, 80), depth: 0 },
+    ];
+    expect(diagramZoneNames(regions, [64, 40, 0])).toEqual([
+      { x: 10, y: 20, width: 64, height: DIAGRAM_ZONE_HEADER },
+    ]);
+  });
+
+  it("puts the plate at the other corner when the drawing reads right to left", () => {
+    const regions = [{ box: box(10, 20, 300, 200), depth: 0 }];
+    expect(diagramZoneNames(regions, [64], { direction: "rtl" })).toEqual([
+      { x: 246, y: 20, width: 64, height: DIAGRAM_ZONE_HEADER },
+    ]);
   });
 });
 

@@ -47,13 +47,13 @@ export const sidebarAnatomyTree = (t: Translate): UsageTree => ({
         {
           contract: "sidebar",
           signature: "SidebarContent",
-          children: t("demo.sidebar.nav"),
+          children: t("anatomy.item1"),
         },
         { contract: "sidebar", signature: "SidebarSeparator" },
         {
           contract: "sidebar",
           signature: "SidebarFooter",
-          children: t("demo.sidebar.workspace"),
+          children: t("anatomy.item2"),
         },
       ],
     },

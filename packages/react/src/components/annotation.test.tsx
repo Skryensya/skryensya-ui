@@ -95,10 +95,12 @@ describe("Annotated", () => {
       />,
     );
 
-    const root = container.querySelector(`.${annotationParts.root}`)!;
-    expect(root.hasAttribute("data-sk-annotated")).toBe(true);
-    expect(root.getAttribute("role")).toBe("group");
-    expect(root.getAttribute("aria-label")).toBe("Anatomy");
+    /* The figure is the host: it carries the mount point and the name, and holds the frame. */
+    const figure = container.querySelector(`.${annotationParts.figure}`)!;
+    expect(figure.hasAttribute("data-sk-annotated")).toBe(true);
+    expect(figure.getAttribute("role")).toBe("group");
+    expect(figure.getAttribute("aria-label")).toBe("Anatomy");
+    expect(figure.querySelector(`:scope > .${annotationParts.root}`)).not.toBeNull();
     expect(container.querySelector(".part-a")).not.toBeNull();
     expect(labelsOf(container)).toHaveLength(1);
     expect(overlayOf(container).getAttribute("aria-hidden")).toBe("true");
@@ -220,6 +222,25 @@ describe("Annotated", () => {
     expect(path!.getAttribute("d")).toBe("M 140 130 L 202 130");
     expect(ring!.getAttribute("x")).toBe("202");
     expect(ring!.getAttribute("width")).toBe("396");
+  });
+
+  it("brackets an area along its side and reserves the gutter room it takes, as the enhancer does", () => {
+    const { container } = render(
+      <Annotated
+        annotations={[{ for: ".part-a", side: "inline-end", mark: "bracket", children: "part a" }]}
+        subject={specimen}
+      />,
+    );
+    layOut(container);
+    act(() => fire!());
+
+    const root = container.querySelector<HTMLElement>(`.${annotationParts.root}`)!;
+    expect(labelsOf(container)[0]!.getAttribute("data-mark")).toBe("bracket");
+    expect(overlayOf(container).querySelector("path")!.getAttribute("d")).toBe(
+      "M 670 100 L 676 100 L 676 160 L 670 160",
+    );
+    expect(labelsOf(container)[0]!.style.translate).toBe("606px 120px");
+    expect(root.style.getPropertyValue("--sk-annotated-room-inline-end")).toBe("146px");
   });
 
   it("gives the ring the corner of the part it wraps, and lets the frame override it", () => {
@@ -470,6 +491,81 @@ describe("Annotated", () => {
     expect(label.getAttribute("tabindex")).toBe("0");
     fireEvent.focus(label);
     expect(overlayOf(container).children[0]!.hasAttribute("data-sk-active")).toBe(true);
+  });
+
+  it("moves the names into a legend when numbered, leaving each bubble a bare number", () => {
+    const { container } = render(
+      <Annotated
+        annotations={[
+          { for: ".part-a", children: "part a" },
+          { for: ".part-b", children: "part b" },
+        ]}
+        label="Anatomy"
+        numbered
+        subject={specimen}
+      />,
+    );
+    const root = container.querySelector(`.${annotationParts.root}`)!;
+    expect(root.hasAttribute("data-numbered")).toBe(true);
+
+    const bubbles = labelsOf(container);
+    expect(bubbles.map((bubble) => bubble.textContent)).toEqual(["", ""]);
+    for (const bubble of bubbles) {
+      expect(bubble.getAttribute("aria-hidden")).toBe("true");
+      expect(bubble.hasAttribute("tabindex")).toBe(false);
+    }
+
+    const legend = container.querySelector(`.${annotationParts.legend}`)!;
+    expect(legend.tagName).toBe("OL");
+    const entries = [...legend.querySelectorAll(`.${annotationParts.legendItem}`)];
+    expect(entries.map((entry) => entry.textContent)).toEqual(["part a", "part b"]);
+    expect(entries.every((entry) => entry.getAttribute("tabindex") === "0")).toBe(true);
+  });
+
+  it("renders no legend and names in the bubbles when not numbered", () => {
+    const { container } = render(
+      <Annotated annotations={[{ for: ".part-a", children: "part a" }]} subject={specimen} />,
+    );
+    expect(container.querySelector(`.${annotationParts.root}`)!.hasAttribute("data-numbered")).toBe(false);
+    expect(container.querySelector(`.${annotationParts.legend}`)).toBeNull();
+    expect(labelsOf(container)[0]!.textContent).toBe("part a");
+  });
+
+  it("reveals from the legend in a numbered frame, lighting its number and its mark together", () => {
+    const { container } = render(
+      <Annotated
+        annotations={[
+          { for: ".part-a", children: "part a" },
+          { for: ".part-b", children: "part b" },
+        ]}
+        numbered
+        subject={specimen}
+      />,
+    );
+    layOut(container);
+    act(() => fire!());
+
+    const entries = [
+      ...container.querySelectorAll<HTMLElement>(`.${annotationParts.legendItem}`),
+    ];
+    const marks = () => [...overlayOf(container).children];
+    // The bubbles are still what the leaders leave from: one mark each, as without a legend.
+    expect(marks()).toHaveLength(2);
+
+    fireEvent.focus(entries[1]!);
+    expect(entries[1]!.hasAttribute("data-sk-active")).toBe(true);
+    expect(labelsOf(container)[1]!.hasAttribute("data-sk-active")).toBe(true);
+    expect(marks()[1]!.hasAttribute("data-sk-active")).toBe(true);
+    expect(marks()[0]!.hasAttribute("data-sk-active")).toBe(false);
+
+    // Hovering the number hands the reveal to its own entry, not to the one still focused.
+    fireEvent.pointerEnter(labelsOf(container)[0]!);
+    expect(entries[0]!.hasAttribute("data-sk-active")).toBe(true);
+    expect(entries[1]!.hasAttribute("data-sk-active")).toBe(false);
+
+    // A pointer moving over the legend is not a miss on the specimen: the reveal stays.
+    fireEvent.pointerMove(entries[0]!, { clientX: 0, clientY: 0 });
+    expect(marks()[0]!.hasAttribute("data-sk-active")).toBe(true);
   });
 
   it("writes back which gutter the label actually landed in", () => {

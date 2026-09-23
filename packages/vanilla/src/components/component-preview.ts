@@ -111,30 +111,45 @@ function releaseStage(frame: HTMLIFrameElement): void {
   frame.srcdoc = "";
 }
 
-/**
- * Remounts one stage from its cached document, or, the FIRST time the VANILLA one ever enters
- * view, from {@link componentPreviewAttrs.doc}: `ComponentPreview.astro` never sets `srcdoc`
- * directly on it (see its own comment on the stage - `loading="lazy"` does nothing for inline
- * `srcdoc` content, so eagerly setting it there defeats the whole point of this observer). A no-op
- * on a stage already live, or one authored with no vanilla stage to begin with.
+/*
+ * A STAGE BEHIND A TAB NOBODY PICKED MUST NOT BOOT, and `hidden` alone does not achieve that.
  *
- * The React stage matches the SAME `.sk-component-preview__stage` selector (`stagesOf`'s own
- * comment: "both bindings render an iframe stage now"), but never falls into that path: `srcDoc`
- * is a React-controlled prop there (`framed.tsx`'s own effect owns promoting it, gated by
- * `client:visible`), so this shared, binding-agnostic observer promoting it FIRST raced React's
- * hydration and read as a hydration mismatch - `aria-busy`/`srcdoc` on the server snapshot no
- * longer matched what the client just diffed against. Only `ComponentPreview.astro`'s own iframe
- * carries `data-sk-component-preview-binding="vanilla"` on itself (`framed.tsx` deliberately does
- * not, see its own comment), which is what tells the two apart here.
+ * `hidden` stops an element RENDERING; it does not stop an `<iframe>` inside it LOADING. Both
+ * bindings render a stage, exactly one of them is visible, and until this check existed the
+ * invisible one booted a whole second realm anyway - for React that is its own copy of React plus
+ * `render-tree`'s 82 component modules, per preview, per page. See `framed.tsx` for the numbers.
+ *
+ * `closest`, not a binding comparison: what decides whether a stage is wanted is whether the panel
+ * it sits in is on screen, which is the same question for both bindings and stays true if a third
+ * ever appears.
  */
-function restoreStage(frame: HTMLIFrameElement): void {
+function stageIsBehindAHiddenPanel(frame: HTMLIFrameElement): boolean {
+  return frame.closest("[hidden]") !== null;
+}
+
+/**
+ * Remounts one stage from its cached document, or, the first time it is ever wanted, from
+ * {@link componentPreviewAttrs.doc}. Neither binding sets `srcdoc` directly in its markup:
+ * `loading="lazy"` does nothing for inline `srcdoc` content, so authoring it eagerly defeats the
+ * whole point of this observer. A no-op on a stage already live, or one with no document to mount.
+ *
+ * BOTH BINDINGS COME THROUGH HERE NOW. The React stage used to be excluded, because `srcDoc` was a
+ * React-controlled prop on it and this shared observer promoting it first raced hydration and read
+ * as a mismatch. It is a plain `data-` attribute there now (`framed.tsx`), so there is nothing for
+ * React to diff `srcdoc` against and nothing left to race.
+ *
+ * `includeHidden` is the idle prewarm's door in: the scroll path promotes only what the reader can
+ * actually see, so a Vanilla reader never pays for the React realm, while the prewarm below boots
+ * the other binding once the page is quiet so that switching is instant.
+ */
+function restoreStage(frame: HTMLIFrameElement, includeHidden = false): void {
   if (frame.srcdoc) return;
+  if (!includeHidden && stageIsBehindAHiddenPanel(frame)) return;
   const cached = stageSrcdocCache.get(frame);
   if (cached !== undefined) {
     frame.srcdoc = cached;
     return;
   }
-  if (frame.getAttribute(componentPreviewAttrs.binding) !== "vanilla") return;
   const doc = frame.getAttribute(componentPreviewAttrs.doc);
   if (doc) frame.srcdoc = doc;
 }
@@ -155,12 +170,62 @@ export function releaseComponentPreviewStages(root: HTMLElement): void {
   }
 }
 
-/** Restores every stage under `root` that `releaseComponentPreviewStages` had released. */
+/** Restores every stage under `root` that a reader could actually see. */
 export function restoreComponentPreviewStages(root: HTMLElement): void {
   for (const stage of stagesOf(root)) {
     if (stage.tagName !== "IFRAME") continue;
     restoreStage(stage as HTMLIFrameElement);
   }
+}
+
+/*
+ * THE OTHER BINDING, BOOTED WHILE NOBODY IS WAITING.
+ *
+ * `restoreComponentPreviewStages` deliberately skips the hidden binding, which is what makes
+ * arrival fast: nothing boots but the stage in front of the reader. The cost of that, on its own,
+ * lands on whoever clicks the other tab - they wait for a realm that has not started yet, and for
+ * React that realm is expensive enough to feel.
+ *
+ * So the page buys it back in the gap: once the preview is in view and the browser has nothing
+ * else to do, the hidden stage boots too. Idle and not a timer, because this is the definition of
+ * work that must never compete with the reader's own scrolling; `requestIdleCallback` is absent
+ * in Safari and in jsdom, where a slow macrotask is the honest fallback rather than an eager one.
+ *
+ * The reader who never switches pays these bytes anyway, and that is the trade chosen here on
+ * purpose: they arrive on an idle connection, after everything visible is done, and they make the
+ * switch itself instant.
+ */
+const idle = (fn: () => void): void => {
+  const ric = (globalThis as { requestIdleCallback?: (cb: () => void) => void }).requestIdleCallback;
+  if (ric) ric(fn);
+  else setTimeout(fn, 1200);
+};
+
+/*
+ * STILL NEAR VIEW when the callback finally runs, re-checked rather than assumed.
+ *
+ * Idle work is queued, not immediate, and a reader keeps scrolling in the meantime. Without this
+ * the prewarm boots a realm for a preview that has already left, which the very next release pass
+ * tears down again: wasted on both ends, and worst exactly when the reader is scrolling fast, which
+ * is when idle time is scarcest.
+ *
+ * The same `100%` band the observer uses, so "near view" means one thing on this page and not two.
+ */
+function stillNearView(root: HTMLElement): boolean {
+  if (!root.isConnected) return false;
+  const box = root.getBoundingClientRect();
+  const margin = window.innerHeight;
+  return box.bottom >= -margin && box.top <= window.innerHeight + margin;
+}
+
+export function prewarmComponentPreviewStages(root: HTMLElement): void {
+  idle(() => {
+    if (!stillNearView(root)) return;
+    for (const stage of stagesOf(root)) {
+      if (stage.tagName !== "IFRAME") continue;
+      restoreStage(stage as HTMLIFrameElement, true);
+    }
+  });
 }
 
 /**
@@ -807,8 +872,12 @@ function stageObserver(): IntersectionObserver | null {
       (entries) => {
         for (const entry of entries) {
           const previewRoot = entry.target as HTMLElement;
-          if (entry.isIntersecting) restoreComponentPreviewStages(previewRoot);
-          else releaseComponentPreviewStages(previewRoot);
+          if (entry.isIntersecting) {
+            /* Visible first, then the other binding once the page is quiet: the reader waits for
+               one realm, never two. */
+            restoreComponentPreviewStages(previewRoot);
+            prewarmComponentPreviewStages(previewRoot);
+          } else releaseComponentPreviewStages(previewRoot);
         }
       },
       // One generous band, not a tighter release margin plus a separate restore margin: a reader
@@ -856,6 +925,13 @@ export function connectComponentPreview(root: HTMLElement): Cleanup {
     panels.forEach((panel) => {
       panel.hidden = panel.getAttribute(componentPreviewAttrs.binding) !== binding;
     });
+    /*
+     * The panel that just became visible may hold a stage that was never booted, because the scroll
+     * path skips whatever is behind a hidden panel (`restoreStage`). Usually the idle prewarm got
+     * there first and this is a no-op; when the reader switches faster than the browser goes idle,
+     * this is what starts the realm instead of leaving a blank stage under a spinner.
+     */
+    restoreComponentPreviewStages(root);
   };
 
   const showSource = (source: ComponentPreviewSource) => {

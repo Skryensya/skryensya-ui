@@ -281,6 +281,10 @@
       "types": "./src/splitter.ts",
       "default": "./src/splitter.ts"
     },
+    "./canvas": {
+      "types": "./src/canvas.ts",
+      "default": "./src/canvas.ts"
+    },
     "./back-to-top": {
       "types": "./src/back-to-top.ts",
       "default": "./src/back-to-top.ts"

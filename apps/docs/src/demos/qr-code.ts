@@ -1,6 +1,7 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Locale, Translate } from "../i18n";
 import { namePart } from "./annotation-parts";
+import { genericIcon } from "./anatomy-subject";
 
 /*
  * THE QRCODE EXAMPLES, AS USAGE TREES.
@@ -60,7 +61,7 @@ export const qrCodeAnatomyTree = (t: Translate, locale: Locale): UsageTree => ({
         qrSize: "lg",
       },
       slots: {
-        logo: { contract: "icon", signature: "Icon", options: { name: "settings", size: "lg" } },
+        logo: genericIcon("lg"),
       },
     },
     items: [

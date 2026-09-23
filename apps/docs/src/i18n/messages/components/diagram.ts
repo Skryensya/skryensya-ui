@@ -42,7 +42,7 @@ export const diagramMessages = {
 
     "diagram.treeTitle": "Un árbol de decisión",
     "diagram.treeBody":
-      "Lo mismo, un nivel más abajo, y sin una sola opción que el ejemplo anterior no haya usado ya. Cuatro columnas, una hoja por columna, y cada pregunta abarca el par que gobierna. Así se dibuja un árbol acá: un nodo abarca las ramas que tiene debajo. No hay <code>depth</code>, no hay <code>parent</code>, no hay anidamiento en los datos, porque un árbol no es otra clase de diagrama, y en el momento en que el contrato dijera que sí, le debería una respuesta a cada dibujo que está a mitad de camino.",
+      "Lo mismo, un nivel más abajo, y sin una sola opción que el ejemplo anterior no haya usado ya. Cuatro columnas, una hoja por columna, y cada pregunta abarca el par que gobierna. Así se dibuja un árbol acá: un nodo abarca las ramas que tiene debajo. No hay <code>depth</code>, no hay <code>parent</code>, no hay anidamiento en los datos, porque un árbol no es otra clase de diagrama, y en el momento en que el contrato dijera que sí, le debería una respuesta a cada dibujo que está a mitad de camino. El selector de pantalla abre en teléfono, donde cuatro hojas seguidas no entran: la hoja de estilos del propio ejemplo (la pestaña <strong>CSS</strong>) baja una fila cada segunda hoja y achata los dos rombos, y con eso una caja puede ser más ancha que su columna sin tocar a la de al lado. La composición no cambió en nada: se reacomodó la grilla, y los recorridos, las puntas de flecha y las etiquetas se recalcularon desde donde quedó cada caja.",
     "diagram.treePreviewLabel": "Triaje de un reclamo",
     "diagram.treeLabel": "Triaje de un reclamo",
     "diagram.treeNode1": "Reclamo",
@@ -93,13 +93,6 @@ export const diagramMessages = {
       "Y hay que decir qué <em>no</em> es, porque es la mitad del valor de tenerlo acá: son <strong>registros y líneas de asociación, no UML</strong>. No hay triángulo hueco para la herencia, ni rombo para la composición, ni estereotipos, ni marcas de visibilidad. Un diagrama de secuencia directamente no se puede expresar: sus líneas de vida no son nodos y sus mensajes no son aristas entre nodos. Si hace falta notación UML completa, esto no es la herramienta, y agregarle esas puntas de flecha sería empezar a deberle una a cada notación que existe.",
     "diagram.modelPreviewLabel": "Claves foráneas de un pedido",
     "diagram.modelDiagramLabel": "Modelo de pedidos",
-    "diagram.modelNode1": "Cliente",
-
-    "diagram.modelNode2": "Pedido",
-
-    "diagram.modelNode3": "Renglón",
-
-    "diagram.modelNode4": "Producto",
 
     "diagram.modelMany": "N a 1",
     "diagram.modelOne": "N a 1",
@@ -117,6 +110,25 @@ export const diagramMessages = {
     "diagram.logicYes": "sí",
     "diagram.logicNo": "no",
 
+    "diagram.gateTitle": "Compuertas lógicas",
+    "diagram.gateBody":
+      "Las tres formas de prosa (<code>process</code>, <code>decision</code>, <code>terminal</code>) existen porque se entienden sin leyenda. Las siete compuertas entran por la misma puerta, desde el otro lado: <code>and</code>, <code>or</code>, <code>xor</code>, <code>nand</code>, <code>nor</code>, <code>xnor</code> y <code>not</code> no son una caja que <em>significa</em> AND, son el símbolo que la norma (IEEE 91 / IEC 60617-12) le asigna a la conjunción, y quien lee la notación lo lee sin leyenda mientras que a quien no la lee no lo iba a salvar un rectángulo más redondeado.",
+    "diagram.gateBody2":
+      "Una compuerta <strong>no tiene adentro</strong>: el símbolo <em>es</em> el operador, así que las palabras del nodo siguen siendo obligatorias pero la hoja de estilos las recorta. Son lo que anuncia un lector de pantalla y lo que cita la lista de rutas; un texto escrito adentro de una compuerta es algo que ningún esquemático dibujó nunca. Y sus puertos los fija la notación, no la grilla: los operandos llegan al plano de atrás y el resultado sale de la punta, siempre, así que tres aristas que salen de una compuerta salen del <em>mismo</em> punto, que es como se dibuja un fan-out. Lo único que un esquemático sí escribe sobre una compuerta es su designador (<code>U1</code>, <code>G3</code>), y para eso está el slot <code>designator</code>: se dibuja <em>debajo</em> de la caja y no se mide, porque la caja es de donde sale cada puerto y un texto en el flujo correría la punta fuera del símbolo. Cuelga dentro del espacio entre rangos, y la hoja de estilos le reserva ahí una línea de texto, y otra debajo del último rango, así que no hay nada que ajustar: un dibujo sin designadores queda espaciado exactamente igual que antes.",
+    "diagram.gatePreviewLabel": "Un semisumador",
+    "diagram.gateLabel": "Semisumador",
+    "diagram.gateSum": "Suma",
+    "diagram.gateCarry": "Acarreo",
+    "diagram.gateBody3":
+      "Esto es lo único que los dibujos de más arriba no hacen: <strong>una señal leída dos veces</strong>. <code>A</code> y <code>B</code> alimentan las dos compuertas, así que cuatro cables salen de dos cajas y llegan a cuatro tercios distintos de dos planos de atrás, y los dos que se cruzan se cruzan porque el circuito se cruza. Todo lo de arriba en esta página es un árbol. Las aristas van con <code>arrow: \"none\"</code>, que es la notación y no un gusto: un esquemático dibuja cables, no flechas, porque la dirección ya la lleva el símbolo, que tiene atrás y punta.",
+    "diagram.gateRuleTitle": "La misma regla, en la notación",
+    "diagram.gateRuleBody":
+      "El dibujo de arriba le pregunta a un rombo «¿las dos?» y deja salir dos respuestas. Este dice lo mismo con un AND, le agrega la cláusula que el rombo no podía sostener sin una segunda pregunta (<code>NOT revocado</code>), y deja los operandos como cajas <code>process</code> y el desenlace como <code>terminal</code>. Esa mezcla es el punto: las compuertas no son un segundo componente con marco propio, así que una regla puede ser mitad prosa y mitad notación sin que nada se convierta en otra cosa.",
+    "diagram.gateRuleBody2":
+      "El inversor está en su propia columna y eso sostiene el dibujo, no lo ordena. Los operandos de una compuerta llegan por atrás, así que todo cable entre compuertas tiene que ir hacia adelante: uno que vuelve dobla a mitad de camino entre sus dos puntas, y si las dos compuertas comparten columna ese punto cae adentro de las dos y el cable pasa por debajo del símbolo que alimentaba. Poner cada operador en una columna posterior a la de lo que lo alimenta es el orden en el que un esquemático se dibuja igual. Un latch de compuertas cruzadas es el dibujo que esto no hace.",
+    "diagram.gateRulePreviewLabel": "Autorizar una petición, con compuertas",
+    "diagram.gateRuleLabel": "Regla de autorización en compuertas",
+    "diagram.gateRevoked": "Revocado",
 
     "diagram.infraTitle": "Un diagrama de infraestructura",
     "diagram.infraBody":
@@ -139,7 +151,6 @@ export const diagramMessages = {
     "diagram.infraNode5": "Worker",
     "diagram.infraNode6": "Base de datos",
     "diagram.infraHttps": "https",
-
 
     "diagram.awsTitle": "Lo mismo, con nombres de servicios reales",
     "diagram.awsBody":
@@ -243,7 +254,7 @@ export const diagramMessages = {
 
     "diagram.treeTitle": "A decision tree",
     "diagram.treeBody":
-      "The same thing, one level deeper, and not one option the example above did not already use. Four columns, one leaf per column, and each question spans the pair it governs. That is the whole of how a tree is drawn here: a node spans the branches below it. There is no <code>depth</code>, no <code>parent</code>, no nesting in the data, because a tree is not a different kind of diagram, and the moment the contract said it was, it would owe an answer to every drawing that is halfway to one.",
+      "The same thing, one level deeper, and not one option the example above did not already use. Four columns, one leaf per column, and each question spans the pair it governs. That is the whole of how a tree is drawn here: a node spans the branches below it. There is no <code>depth</code>, no <code>parent</code>, no nesting in the data, because a tree is not a different kind of diagram, and the moment the contract said it was, it would owe an answer to every drawing that is halfway to one. The screen picker opens on a phone, where four leaves across do not fit: the demo's own stylesheet (the <strong>CSS</strong> tab) drops every second leaf a row and flattens the two diamonds, which lets a box be wider than its column without ever meeting the one beside it. Nothing in the composition changed: the grid re-flowed, and the routes, the arrowheads and the labels were recomputed from where each box landed.",
     "diagram.treePreviewLabel": "Triaging a complaint",
     "diagram.treeLabel": "Triaging a complaint",
     "diagram.treeNode1": "Complaint",
@@ -294,13 +305,6 @@ export const diagramMessages = {
       "And what it is <em>not</em> is half the reason it is here: these are <strong>records and association lines, not UML</strong>. There is no hollow triangle for inheritance, no diamond for composition, no stereotypes and no visibility markers. A sequence diagram is not expressible at all: its lifelines are not nodes and its messages are not edges between them. If you need full UML notation this is not the tool, and bolting those arrowheads on would start owing one to every notation there is.",
     "diagram.modelPreviewLabel": "An order's foreign keys",
     "diagram.modelDiagramLabel": "Order model",
-    "diagram.modelNode1": "Customer",
-
-    "diagram.modelNode2": "Order",
-
-    "diagram.modelNode3": "Line item",
-
-    "diagram.modelNode4": "Product",
 
     "diagram.modelMany": "many to 1",
     "diagram.modelOne": "many to 1",
@@ -318,6 +322,25 @@ export const diagramMessages = {
     "diagram.logicYes": "yes",
     "diagram.logicNo": "no",
 
+    "diagram.gateTitle": "Logic gates",
+    "diagram.gateBody":
+      "The three prose shapes (<code>process</code>, <code>decision</code>, <code>terminal</code>) exist because they read without a legend. The seven gates get in through the same door from the other side: <code>and</code>, <code>or</code>, <code>xor</code>, <code>nand</code>, <code>nor</code>, <code>xnor</code> and <code>not</code> are not a box that <em>means</em> AND, they are the symbol the standard (IEEE 91 / IEC 60617-12) assigns to conjunction, and a reader who knows the notation reads it with no legend while a reader who does not would not have been saved by a rounder rectangle.",
+    "diagram.gateBody2":
+      "A gate has <strong>no inside</strong>: the silhouette <em>is</em> the operator, so a node's words are still required but the stylesheet clips them. They are what a screen reader announces and what the route list quotes; a word written inside a gate is a thing no schematic has ever drawn. Its ports are the notation's rather than the grid's, too: operands arrive on the back plane and the result leaves the nose, always, so three edges leaving a gate leave from the <em>same</em> point, which is how fan-out is drawn. The one thing a schematic does write on a gate is its designator (<code>U1</code>, <code>G3</code>), which is what the <code>designator</code> slot is for: it is drawn <em>under</em> the box and never measured, because the box is what every port comes from and text in flow would take the nose off the symbol. It hangs into the rank gap as a result, and the stylesheet reserves a line of caption for it there and below the last rank, so there is nothing to tune: a drawing with no designators is spaced exactly as it was.",
+    "diagram.gatePreviewLabel": "A half adder",
+    "diagram.gateLabel": "Half adder",
+    "diagram.gateSum": "Sum",
+    "diagram.gateCarry": "Carry",
+    "diagram.gateBody3":
+      "This is the one thing the drawings above do not do: <strong>a signal read twice</strong>. <code>A</code> and <code>B</code> feed both gates, so four wires leave two boxes and arrive on four different thirds of two back planes, and the two that cross do so because the circuit crosses. Everything above it on this page is a tree. The edges carry <code>arrow: \"none\"</code>, which is the notation and not a preference: a schematic draws wires, not arrows, because the symbol already carries the direction - it has a back and a nose.",
+    "diagram.gateRuleTitle": "The same rule, in the notation",
+    "diagram.gateRuleBody":
+      "The drawing above asks one rhombus \"are both true?\" and lets two answers out. This one says the same thing with an AND, adds the clause the rhombus could not hold without a second question (<code>NOT revoked</code>), and keeps the operands as ordinary <code>process</code> boxes and the outcome as a <code>terminal</code>. That mixture is the point: gates are not a second component with a frame of their own, so a rule can be half prose and half notation without anything being converted.",
+    "diagram.gateRuleBody2":
+      "The inverter is in a column of its own, and that holds the drawing up rather than tidying it. A gate's operands arrive on its back plane, so every wire between gates has to run forward: one that runs back turns halfway between its two ends, and when the two gates share a column that point is inside them both and the wire is drawn under the symbol it was feeding. Putting each operator in a column after the ones feeding it is the order a schematic is drawn in anyway. A cross-coupled latch is the drawing this does not do.",
+    "diagram.gateRulePreviewLabel": "Authorizing a request, with gates",
+    "diagram.gateRuleLabel": "Authorization rule in gates",
+    "diagram.gateRevoked": "Revoked",
 
     "diagram.infraTitle": "An infrastructure diagram",
     "diagram.infraBody":
@@ -340,7 +363,6 @@ export const diagramMessages = {
     "diagram.infraNode5": "Worker",
     "diagram.infraNode6": "Database",
     "diagram.infraHttps": "https",
-
 
     "diagram.awsTitle": "The same thing, with real service names",
     "diagram.awsBody":

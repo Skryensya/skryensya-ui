@@ -788,7 +788,8 @@ const PALETTE_PRESETS = palettePresets(locale);
             <ul class="sk-nav-list__list" role="list">
               {
                 globalNavigation.map((item) => {
-                  const isDevOnly = item.href === "/templates" || item.href === "/presets";
+                  /* Canonical, so the localised twin of each (`/en/templates`) is caught too. */
+                  const isDevOnly = ["/templates", "/presets"].includes(canonicalPath(item.href));
                   const isDev = import.meta.env.DEV;
                   const isDisabled = isDevOnly && !isDev;
 

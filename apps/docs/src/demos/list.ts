@@ -1,6 +1,7 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 import { namePart } from "./annotation-parts";
+import { genericIcon } from "./anatomy-subject";
 
 /* The anatomy ladder. Each demo adds one slot to the row before it. */
 
@@ -16,20 +17,20 @@ export const listAnatomyTree = (t: Translate): UsageTree => ({
     subject: {
       contract: "list",
       signature: "List",
-      attrs: { "aria-label": t("demo.list.preferences") },
+      attrs: { "aria-label": t("anatomy.label") },
       children: [
         {
           contract: "list",
           signature: "ListItem",
           slots: {
-            leading: { contract: "icon", signature: "Icon", options: { name: "info" } },
-            title: t("demo.list.notifications.title"),
-            description: t("demo.list.notifications.description"),
+            leading: genericIcon(),
+            title: t("anatomy.title"),
+            description: t("anatomy.description"),
             trailing: {
               contract: "badge",
               signature: "Badge",
               options: { tone: "success" },
-              children: t("demo.list.active"),
+              children: t("anatomy.label"),
             },
           },
         },

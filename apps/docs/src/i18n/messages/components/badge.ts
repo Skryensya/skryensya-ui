@@ -2,7 +2,6 @@ export const badgeMessages = {
   es: {
     "demo.badge.settings": "Configuración",
     "demo.badge.unread": "Novedades sin leer",
-    "demo.badge.anatomyTag": "En revisión",
     "demo.badge.online": "En línea",
 
     "badge.description": "Badge: etiqueta estática con tonos semánticos, styling hooks y componente React.",
@@ -38,7 +37,6 @@ export const badgeMessages = {
   en: {
     "demo.badge.settings": "Settings",
     "demo.badge.unread": "Unread news",
-    "demo.badge.anatomyTag": "In review",
     "demo.badge.online": "Online",
 
     "badge.description": "Badge: static tag with semantic tones, styling hooks and a React component.",

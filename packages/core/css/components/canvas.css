@@ -1,0 +1,179 @@
+/* The zoom bar is three icon-only `sk-button`s; they bring their own sheet. */
+@import url("./button.css");
+
+/*
+ * TIER 3, CANVAS
+ *
+ * A viewport that pans and zooms over content laid out at its own width. See
+ * `@skryensya/core/canvas` for the gestures and why each one is what it is; this sheet owns the box,
+ * the clipping, the zoom bar and the hints.
+ *
+ * THE CONTENT KEEPS ITS OWN WIDTH. The viewport is `contain: inline-size`, so nothing inside can
+ * widen it (or the page), and the content is `max-content` wide by default, so a drawing laid out for
+ * a desktop margin stays laid out that way on a phone and is shown SCALED rather than rewrapped.
+ *
+ * THE VIEWPORT IS AS TALL AS THE FITTED CONTENT, which the binding writes as
+ * `--sk-canvas-fit-block-size` after measuring, capped by `--sk-canvas-max-block-size`. With no
+ * script the content simply shows at 100%, clipped at the sides: a readable degradation, not a
+ * blank box.
+ */
+@layer components {
+  .sk-canvas {
+    --sk-canvas-bg: var(--color-bg-surface);
+    --sk-canvas-border-color: var(--color-border-subtle);
+    --sk-canvas-radius: var(--radius-surface);
+    --sk-canvas-content-inline-size: max-content;
+    --sk-canvas-max-block-size: min(80vh, 48rem);
+    /*
+     * THE GROUND: a design tool's board. A tone between the surface and the sunken ground, so it
+     * reads as its own place both against the card around it and against a sunken band (an
+     * `Annotated` legend) under it, ruled with a grid of hairlines only a shade off that tone. The
+     * grid is there to say "this is a space you can move in", not to be looked at: dots were tried
+     * first and read as texture competing with the drawing.
+     */
+    --sk-canvas-viewport-bg: color-mix(in oklab, var(--color-bg-surface) 50%, var(--color-bg-canvas));
+    --sk-canvas-grid-color: color-mix(in oklab, var(--color-border-subtle) 25%, transparent);
+    --sk-canvas-grid-size: 24px;
+
+    position: relative;
+    display: block;
+    inline-size: 100%;
+    max-inline-size: 100%;
+    min-inline-size: 0;
+    overflow: clip;
+    border: 1px solid var(--sk-canvas-border-color);
+    border-radius: var(--sk-canvas-radius);
+    background: var(--sk-canvas-bg);
+  }
+
+  .sk-canvas__viewport {
+    position: relative;
+    contain: inline-size;
+    block-size: var(--sk-canvas-fit-block-size, auto);
+    max-block-size: var(--sk-canvas-max-block-size);
+    overflow: hidden;
+    /*
+     * ONE FINGER STAYS THE PAGE'S. Panning either way is left to the browser, so a finger dragged
+     * across the canvas scrolls the page exactly as it would anywhere else; only the browser's own
+     * PINCH is withheld, because two fingers here belong to the canvas (the binding takes them).
+     */
+    touch-action: pan-x pan-y;
+    /*
+     * THE GRID MOVES WITH THE DRAWING. The binding writes the view as `--sk-canvas-x`, `-y` and
+     * `-scale` on the root, so a pan slides the lines and a zoom spreads or packs them, the way a
+     * design tool's board does: the ground is part of the space being moved, not a wallpaper
+     * behind it. Never packed tighter than 12px, where a grid stops reading as lines and starts
+     * reading as a grey.
+     */
+    background-color: var(--sk-canvas-viewport-bg);
+    background-image:
+      linear-gradient(to right, var(--sk-canvas-grid-color) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--sk-canvas-grid-color) 1px, transparent 1px);
+    background-size:
+      max(12px, calc(var(--sk-canvas-grid-size) * var(--sk-canvas-scale, 1)))
+      max(12px, calc(var(--sk-canvas-grid-size) * var(--sk-canvas-scale, 1)));
+    background-position: var(--sk-canvas-x, 0px) var(--sk-canvas-y, 0px);
+    cursor: grab;
+    /* A drag is a pan, never a text selection: this is a drawing, not a document. */
+    user-select: none;
+    outline: none;
+  }
+
+  .sk-canvas__viewport:focus-visible {
+    box-shadow: inset 0 0 0 var(--focus-ring-width) var(--focus-ring-color);
+  }
+
+  .sk-canvas[data-sk-dragging] .sk-canvas__viewport {
+    cursor: grabbing;
+    user-select: none;
+  }
+
+  /*
+   * ORIGIN TOP-LEFT, and every function in `@skryensya/core/canvas` assumes it: a content point `p`
+   * is drawn at `translate + p * scale`. `will-change` because a pinch rewrites this every frame.
+   */
+  .sk-canvas__content {
+    inline-size: var(--sk-canvas-content-inline-size);
+    transform-origin: 0 0;
+    will-change: transform;
+  }
+
+  /*
+   * THE ZOOM BAR floats in the top inline-end corner over the drawing, stacked VERTICALLY: always
+   * reachable, never taking a row of its own from a figure that is already short on room, and a
+   * narrow column eats less of the drawing's width than a row would, which on a phone is the
+   * dimension that is short.
+   */
+  .sk-canvas__controls {
+    position: absolute;
+    inset-block-start: var(--space-inset-xs);
+    inset-inline-end: var(--space-inset-xs);
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(var(--space-inline-xs) / 2);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-pill);
+    padding: calc(var(--space-inset-xs) / 2);
+    background: var(--color-bg-surface-raised);
+    box-shadow: var(--elevation-raised);
+  }
+
+  .sk-canvas__control {
+    border-radius: var(--radius-pill);
+  }
+
+  /*
+   * ON A NARROW SCREEN THE BAR LEAVES THE DRAWING. Floating over a phone-width canvas it covers a
+   * real share of what is being shown, and it sits exactly where a thumb lands to pinch; so there it
+   * becomes a strip of its own under the viewport, end-aligned, and the drawing keeps every pixel.
+   */
+  @media (max-width: 40rem) {
+    .sk-canvas__controls {
+      position: static;
+      flex-direction: row;
+      justify-content: flex-end;
+      border: 0;
+      border-block-start: 1px solid var(--sk-canvas-border-color);
+      border-radius: 0;
+      padding: calc(var(--space-inset-xs) / 2) var(--space-inset-xs);
+      background: var(--sk-canvas-bg);
+      box-shadow: none;
+    }
+  }
+
+  /*
+   * THE HINTS: a scrim over the viewport with one line on it, shown for a moment when the reader
+   * tries a gesture the canvas does not take ("use two fingers", "use Ctrl + scroll"). Never in the
+   * way: no pointer events, and gone on its own.
+   */
+  .sk-canvas__hint {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    display: grid;
+    place-items: center;
+    margin: 0;
+    padding: var(--space-inset-md);
+    background: color-mix(in oklab, var(--color-bg-inverse) 55%, transparent);
+    color: var(--color-text-inverse);
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-label);
+    text-align: center;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity var(--motion-state-change-duration) var(--motion-state-change-easing);
+  }
+
+  .sk-canvas[data-sk-hint="touch"] .sk-canvas__hint[data-canvas-hint="touch"],
+  .sk-canvas[data-sk-hint="wheel"] .sk-canvas__hint[data-canvas-hint="wheel"] {
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sk-canvas__hint {
+      transition: none;
+    }
+  }
+}

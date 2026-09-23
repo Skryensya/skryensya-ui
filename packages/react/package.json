@@ -225,6 +225,10 @@
       "types": "./src/components/annotation.tsx",
       "default": "./src/components/annotation.tsx"
     },
+    "./canvas": {
+      "types": "./src/components/canvas.tsx",
+      "default": "./src/components/canvas.tsx"
+    },
     "./back-to-top": {
       "types": "./src/components/back-to-top.tsx",
       "default": "./src/components/back-to-top.tsx"

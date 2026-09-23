@@ -1,6 +1,7 @@
 import { mountAccordion } from "@skryensya/vanilla/accordion";
 import { mountAnnotated } from "@skryensya/vanilla/annotation";
 import { mountBackToTop } from "@skryensya/vanilla/back-to-top";
+import { mountCanvas } from "@skryensya/vanilla/canvas";
 import { mountBreadcrumb } from "@skryensya/vanilla/breadcrumb";
 import { initComponents } from "@skryensya/vanilla/auto";
 import { mountButton } from "@skryensya/vanilla/button";
@@ -77,6 +78,7 @@ const mounts = [
   mountBreadcrumb,
   mountButton,
   mountCalendar,
+  mountCanvas,
   mountCarousel,
   mountChart,
   mountCheckboxGroup,
@@ -129,7 +131,7 @@ const mounts = [
 describe("Vanilla public entry points", () => {
   it("publishes the lazy auto-loader and one mount for every regular enhanced module", () => {
     expect(initComponents).toBeTypeOf("function");
-    expect(mounts).toHaveLength(53);
+    expect(mounts).toHaveLength(54);
     expect(mounts.every((mount) => typeof mount === "function")).toBe(true);
   });
 
@@ -175,6 +177,7 @@ describe("Vanilla public entry points", () => {
         mountBreadcrumb,
         mountButton,
         mountCalendar,
+        mountCanvas,
         mountCarousel,
         mountChart,
         mountCheckboxGroup,

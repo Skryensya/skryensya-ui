@@ -80,6 +80,10 @@ describe("ui.ts locale parity", () => {
     "demo.codePreview.full",
     // A literal filename shown as a demo prop.
     "demo.treegridStress.formatUtil",
+    /* The filler every anatomy subject is made of (`messages/anatomy.ts`): placeholder Latin, one
+     * set of strings for both locales, because translating it would be inventing a Spanish dialect
+     * of nothing. */
+    "anatomy.description",
   ];
 
   it("flags long strings that are byte-identical across locales, a likely copy-paste", () => {

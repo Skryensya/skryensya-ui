@@ -38,11 +38,56 @@ export const diagramDemoCss = `.sk-diagram {
  * for), so the line is drawn whether or not there is room, and at a 390px preview `invalidate` hung
  * 36px off the left edge and was cut off by the stage. Padding the frame is what makes room, and
  * narrowing the node floor is what pays for it: the two margins come out of the grid's width.
+ *
+ * THE RANK GAP IS WIDENED FOR THE SAME REASON, on the other axis. The stylesheet's 40px is measured
+ * for a BARE connector (`diagram.css` says why: at 24px two thirds of it is the arrowhead, at 40px
+ * there is a line with a head on it), and these two drawings label almost every edge. A chip is
+ * 28px tall, so a labelled corridor spends 28 of its 40 on the chip and the remaining 12 on an
+ * 8px head and its standoff: `pedir` came out welded to the bottom of `Inactiva`, and the branch
+ * labels had no room on the line at all, so `placeDiagramLabel` pushed `sí` and `no` off it
+ * sideways and bent both connectors around them. It is set HERE and not in the component because
+ * the component cannot know how many of an author's edges carry a label.
+ *
+ * AND THE NODE FLOOR IS RAISED WITH IT, which is the half that no amount of gap could buy. The
+ * state chart fans TWO labelled edges out of one node, and their exit ports are spread along that
+ * node's bottom face: however tall the corridor, two chips leaving a narrow box start life on top
+ * of each other. Measured on the 340px drawing, no row gap between 3.5rem and 6.5rem was clean -
+ * `resuelve` sat either on `Cargando` or on `rechaza` at every one of them, because the search was
+ * on the wrong axis. Widening the box is the fix: `fit-content` means `--sk-diagram-node-max-inline-size`
+ * never touched it, and the FLOOR is what makes a node wider than its words. At 13rem the two
+ * ports are far enough apart that each chip gets its own column of air, and 5.5rem then gives each
+ * one a corridor to sit in rather than fill.
+ *
+ * The floor was 5rem here, narrowed to pay for the padding above, and raising it costs nothing
+ * back because the component writes it as `min(floor, 100%)` against the GRID AREA: on a phone
+ * `Cargando` is already the full width of the grid and the leaves are already their columns, so
+ * 13rem and 5rem render identically there. It only bites where there is room for it to.
  */
 export const diagramCycleCss = `.sk-diagram {
   --sk-diagram-node-max-inline-size: 11rem;
-  --sk-diagram-node-min-inline-size: 5rem;
+  --sk-diagram-node-min-inline-size: 13rem;
+  --sk-diagram-row-gap: 5.5rem;
   padding-inline: 3.5rem;
+}`;
+
+/*
+ * THE LINEAR FLOW'S ONE LABELLED CORRIDOR, which is the cycle demos' problem on a single edge and
+ * takes the same number to fix.
+ *
+ * Three corridors, one chip. `aprobado` came out welded to the bottom of `Revisión editorial` with a
+ * stub of arrow below it, for the reason spelled out on `diagramCycleCss`: a 40px corridor holding
+ * a 28px chip has 12px left for the head and its standoff. The gap is uniform across a grid, so
+ * the two BARE corridors get the same 68px, which is more than a bare connector needs and is the
+ * right trade anyway: rank gaps that differed down one drawing would read as meaning.
+ *
+ * It is its own stylesheet rather than a line in `diagramDemoCss` because that one is shared by
+ * five drawings, and the two that already reflow on a narrow screen (see `diagramTreeCss`) are
+ * spending height elsewhere.
+ */
+export const diagramFlowCss = `${diagramDemoCss}
+
+.sk-diagram {
+  --sk-diagram-row-gap: 4.25rem;
 }`;
 
 /*
@@ -107,6 +152,119 @@ export const diagramBranchTree = (t: Translate): UsageTree => ({
     ],
   },
 });
+
+/*
+ * THE DECISION TREE'S OWN STYLESHEET, and the only demo on this page that needs a rule beyond
+ * sizing. Two ranks run out of room on a phone, and they run out of it for different reasons.
+ *
+ * THE LEAVES, first. Four across is fine on a laptop and is an overlap on a phone: measured at a
+ * 377px drawing the tracks are 85px, `Redespachar` and `Ver transferencia` each want 97, so each
+ * leaf ate the 12px gap beside it and the rank read as one continuous strip with the outer boxes
+ * hanging off both edges. The component already refuses to let a node's PADDING cause that
+ * (`--node-fit-inline` caps it against the track), but nothing shrinks a box below its longest
+ * word, and `transferencia` is longer than a quarter of a phone.
+ *
+ * So the rank is split in two: the first leaf of each pair on one row, the second one row lower.
+ * Two boxes side by side at different heights may be wider than their tracks without ever meeting,
+ * which is the whole of it - the drawing buys back width with height, and on a phone height is the
+ * cheap axis.
+ *
+ * WHICH COLUMN EACH LEAF KEEPS IS LOAD-BEARING, and the obvious arrangement is the wrong one.
+ * Stacking a pair in the SAME columns (`carrier` over `warehouse`, both across 1-2) is what you
+ * reach for first, and it draws `shipped -> warehouse` straight THROUGH `carrier`: the router
+ * computes a route between two boxes and does not steer around a third, so a rank-to-rank
+ * connector goes wherever the geometry points it. Giving the lower leaf a column of its own leaves
+ * the cell above it empty, and the connector comes down that empty cell. One leaf per column, the
+ * two rows interleaved, and every corridor is clear by construction rather than by luck.
+ *
+ * `justify-self` on the two OUTER leaves only, because a node wider than its track is centred on
+ * it and overflows both sides, and in the first column that hangs off the front of the drawing.
+ * Pinning the first leaf to the start and the last to the end sends the overflow inward, into the
+ * row its neighbour has just vacated. The middle two keep centring, which is what keeps them under
+ * their questions.
+ *
+ * THE ROW GAP GOES UP WITH THEM, for the reason `diagramCycleCss` spells out at length: the
+ * stylesheet's 40px is measured for a bare connector and this drawing labels six of its seven
+ * edges. Splitting the leaves does nothing for that on its own, and it showed: at a 247px drawing
+ * `transferencia` still sat on `¿Cómo pagó?` and on `tarjeta`, and `tarjeta` hung off the frame.
+ * Inside the query and on `.sk-diagram__nodes` rather than the host, because `@container` can
+ * reach what is inside the container and never the container itself, and `row-gap` on the grid is
+ * the same declaration the hook feeds.
+ *
+ * THE QUESTIONS, second, and at a second breakpoint. A decision's padding is `1.6em * aspect` per
+ * side - the width the text gives up so it stays inside the RHOMBUS rather than inside its box -
+ * and that is the right number until the box is half a phone wide: on a 217px drawing the pair is
+ * 87px of padding on a 103px track, and the two diamonds cross tip to tip in the middle. Both
+ * terms of that product come down here. The em is a type step, which the whole drawing takes
+ * together (a diagram whose questions are smaller than its outcomes reads as a hierarchy that is
+ * not there), and the aspect gives the padding back directly, because the padding IS the aspect:
+ * at 13px and 1.35 the same pair clears by the full column gap and each question wraps a line
+ * lower instead.
+ *
+ * It is NOT folded into the query above, because it buys the fit with height and with type size
+ * and the leaves need neither: between 18rem and 26rem the questions still fit their tracks, and
+ * paying for a fit that is already there is a cost with nothing bought.
+ *
+ * BELOW ROUGHLY 12rem it stops being solvable this way and the drawing is left as it falls. Two
+ * questions side by side need `despachó?` plus its padding twice over, the words do not break, and
+ * the alternative (a question per row) is the arrangement the leaves above had to refuse: `paid`
+ * would reach the lower question straight through the upper one. That width is a 320px phone with
+ * the preview's own gutters taken out of it, and a drawing this dense is honest about not fitting.
+ *
+ * `@container` and not `@media`, because `.sk-diagram` already declares `container-type:
+ * inline-size` and the question is how wide THIS DRAWING is rather than the window: the same tree
+ * in a half-width column needs the stagger at a viewport that would never have asked for it. A
+ * container query reaches only what is INSIDE the container, which is exactly as far as these
+ * rules go - `grid-column`, `grid-row` and the aspect hook all sit on the node, and an unlayered
+ * rule here outranks `@layer components`. That is not true of `columns` and `span`, which the
+ * contract writes as INLINE custom properties; see `diagramAwsCss` for the drawing that has to
+ * set those in CSS for the same reason.
+ */
+export const diagramTreeCss = `${diagramDemoCss}
+
+@container (width < 26rem) {
+  .sk-diagram__nodes {
+    row-gap: 3.5rem;
+  }
+
+  .sk-diagram__node[data-node="carrier"] {
+    grid-row: 4;
+    grid-column: 1;
+    justify-self: start;
+  }
+
+  .sk-diagram__node[data-node="warehouse"] {
+    grid-row: 5;
+    grid-column: 2;
+  }
+
+  .sk-diagram__node[data-node="bank"] {
+    grid-row: 4;
+    grid-column: 3;
+  }
+
+  .sk-diagram__node[data-node="card"] {
+    grid-row: 5;
+    grid-column: 4;
+    justify-self: end;
+  }
+}
+
+/* Narrower still: the drawing steps down a type size and the two questions give their padding
+   back, which is what keeps each of them inside its own pair of columns. */
+@container (width < 18rem) {
+  .sk-diagram__node {
+    --sk-diagram-node-font-size: 0.8125rem;
+  }
+
+  .sk-diagram__node[data-shape="decision"] {
+    --sk-diagram-decision-aspect: 1.35;
+  }
+
+  .sk-diagram__label {
+    --sk-diagram-edge-font-size: 0.6875rem;
+  }
+}`;
 
 /*
  * A DECISION TREE: the same two nouns, one level deeper, and not one option the if/else above did
@@ -250,6 +408,41 @@ export const diagramProcessTree = (t: Translate): UsageTree => ({
  */
 const field = (row: string, label: string) => ({ options: { row }, slots: { children: label } });
 
+/*
+ * THE ORDER MODEL BUYS ITSELF A GUTTER, and it is the only drawing on the page that needs one.
+ *
+ * Every other demo here puts ONE connector between two ranks and labels few of them. This one puts
+ * three association lines into the single corridor between two columns of records, and labels all
+ * three, and a cardinality chip ("many to 1") is 84px wide. At the shared 12px column gap that
+ * corridor is 80px across on a 340px preview: every chip was wider than the space it had, so each
+ * one sat with one end over `Customer` and the other over `Order`, and the vertical that runs the
+ * height of the drawing passed behind two of them.
+ *
+ * `placeDiagramLabel` will not solve that, and it is worth saying why rather than tuning it again:
+ * it chooses the least bad of the positions it is offered, and when every position overlaps a box
+ * there is no good one to choose. Room is not a placement problem. The component asks the author
+ * how wide the gap between columns is, and this drawing's answer is "wide enough for a sentence".
+ *
+ * The node measure is left where `diagramDemoCss` puts it: a record is sized by its longest column
+ * name, which is `product_sku`, and nothing here is near the 11rem cap.
+ */
+export const diagramModelCss = `${diagramDemoCss}
+
+.sk-diagram {
+  --sk-diagram-column-gap: 3rem;
+}`;
+
+/*
+ * THE TABLE NAMES ARE NOT TRANSLATED, and they are the one demo on this page that is not.
+ *
+ * Every other drawing here is prose about a system - "Editorial review", "Paid for?" - and prose is
+ * translated. A data model is not prose: `Customer` is the name of a table, its columns are
+ * `customer_id` and `product_sku`, and those are already literals in the tree below because a
+ * schema is written in one language whatever the page around it is written in. Translating the box
+ * and not the rows inside it produced `Cliente` over `customer_id`, which is a join nobody can read
+ * and a foreign key that appears to point at a table with a different name.
+ */
+
 export const diagramModelTree = (t: Translate): UsageTree => ({
   contract: "diagram",
   signature: "Diagram",
@@ -259,21 +452,21 @@ export const diagramModelTree = (t: Translate): UsageTree => ({
       {
         options: { node: "customer" },
         slots: {
-          children: t("diagram.modelNode1"),
+          children: "Customer",
           rows: [field("id", "id"), field("email", "email"), field("name", "name")],
         },
       },
       {
         options: { node: "order" },
         slots: {
-          children: t("diagram.modelNode2"),
+          children: "Order",
           rows: [field("id", "id"), field("customer_id", "customer_id"), field("total", "total")],
         },
       },
       {
         options: { node: "line" },
         slots: {
-          children: t("diagram.modelNode3"),
+          children: "Line item",
           rows: [
             field("order_id", "order_id"),
             field("product_sku", "product_sku"),
@@ -284,7 +477,7 @@ export const diagramModelTree = (t: Translate): UsageTree => ({
       {
         options: { node: "product" },
         slots: {
-          children: t("diagram.modelNode4"),
+          children: "Product",
           rows: [field("sku", "sku"), field("name", "name")],
         },
       },
@@ -355,6 +548,203 @@ export const diagramLogicTree = (t: Translate): UsageTree => ({
       { options: { from: "scope", to: "both" }, slots: {} },
       { options: { from: "both", to: "allow" }, slots: { children: t("diagram.logicYes") } },
       { options: { from: "both", to: "deny" }, slots: { children: t("diagram.logicNo") } },
+    ],
+  },
+});
+
+/*
+ * LOGIC GATES, and the two drawings below are the notation working rather than a chart of it.
+ *
+ * A legend was the obvious first idea and the contract refuses it outright: `edges` is required, so
+ * seven disconnected symbols in a row is not a Diagram, it is a table of pictures. That refusal is
+ * right. A gate means something only in a drawing where a signal arrives and a result leaves, and
+ * the two compositions here are the smallest honest ones that show it.
+ *
+ * WHAT IS NEW TO THE PAGE IS NOT AN OPTION, again. Both are `nodes` and `edges` like everything
+ * above; the only thing that changed is which silhouette a node names, and the two structural facts
+ * that fall out of it - a gate's operands land on its back plane and its result leaves one pin -
+ * are geometry, not API.
+ */
+
+/*
+ * A HALF ADDER, which is the drawing every logic notation is introduced with, and it is here for
+ * the one thing none of the drawings above do: FAN OUT.
+ *
+ * `A` and `B` each feed BOTH gates, so four connectors leave two boxes and arrive on four different
+ * thirds of two back planes, and the two that cross do so because the circuit crosses. Everything
+ * above this point on the page is a tree: one parent, many children, no signal read twice.
+ *
+ * `arrow: "none"` on every edge, and that is the notation rather than a preference. A schematic
+ * draws wires, not arrows: direction is carried by the symbols, which have a back and a nose, so an
+ * arrowhead would be restating what the shape already said - and it would restate it eight pixels
+ * off the gate, because a head keeps its clearance (`DIAGRAM_ARROW_GAP`). Without one the wire
+ * touches the symbol, which is what a wire does.
+ */
+export const diagramGateCss = `${diagramDemoCss}
+.sk-diagram {
+  /*
+   * A ROW OF GATES NEEDS LESS AIR BETWEEN RANKS THAN A COLUMN OF STEPS DOES. The page's default gap
+   * is sized for a vertical flow, where the whole connector - clearance, arrowhead and what is left
+   * of the line - lives in it. These drawings run along the inline axis, where the rank gap is only
+   * the wire's own length, and at 40px the wires were longer than the symbols they joined.
+   */
+  /*
+   * THE DESIGNATORS NEED NO ALLOWANCE HERE, and this comment used to say the opposite.
+   *
+   * U1 under a gate is positioned rather than laid out - it has to be, or the node's box would grow
+   * and take the output pin off the symbol's centre line - so it claims no space. The first version
+   * left that to this number and the number was wrong: at 24px the designator exactly filled the
+   * gap and landed on the symbol in the rank below. A demo is the wrong place to fix that, because
+   * every other drawing with a designator would have to rediscover it, so the component adds a line
+   * of caption to its own rank gap whenever a frame has one. This is back to being what it says it
+   * is: the room the wires need.
+   */
+  --sk-diagram-row-gap: var(--space-stack-lg);
+  --sk-diagram-node-max-inline-size: 11rem;
+
+  /*
+   * AND THE DRAWING HAS A MEASURE OF ITS OWN, which is the one thing a schematic needs that a
+   * flowchart does not.
+   *
+   * Every other demo on this page is boxes of text, and a box of text uses the width it is given.
+   * A gate is a fixed silhouette: widen the frame and the symbols stay the size they were while the
+   * grid columns they sit in grow, so all the new space goes into the WIRES. Measured on the free
+   * width stage at 804px, "Revocado" reached its inverter across 250px of empty paper, the AND sat
+   * two thirds of the way across the sheet from its own operands, and the drawing read as four
+   * things that happen to be connected rather than as one circuit.
+   *
+   * 38rem is what the WIRING needs rather than what the boxes need, which is the correction this
+   * number took: at 28rem the boxes were comfortable and the corridor between the columns was about
+   * thirty pixels, which is where a schematic is actually read.
+   *
+   * Caps and not widths, so nothing changes on a narrow stage: a phone still gets the whole column.
+   *
+   * The auto inline margin is here because a capped drawing that stayed at the leading edge would
+   * read as a layout accident rather than as a figure.
+   *
+   * NO BACKTICKS ANYWHERE IN THIS COMMENT, and that is not a style rule: this block lives inside a
+   * template literal, so one backtick ends the CSS and the module stops parsing.
+   */
+  max-inline-size: 38rem;
+  margin-inline: auto;
+}`;
+
+/*
+ * THE HALF ADDER PAYS FOR ITS OWN CORRIDOR, and it is the only drawing on the page that has to.
+ *
+ * Four wires leave two boxes and two of them CROSS, because a half adder crosses: that is the fact
+ * the drawing exists to show. At the page's inline gap - sized for two sibling boxes with nothing
+ * to fit between them - all four ran through about thirty pixels and came out as a knot.
+ *
+ * NOT IN `diagramGateCss`, which the rule drawing below extends, and the reason is the whole of why
+ * this is a separate string: the gap comes out of the columns. Given to both, the rule's first
+ * column lost the width its sentences need and "Token present" wrapped to two lines, so a number
+ * that bought clarity in one drawing spent it in the other.
+ */
+export const diagramHalfAdderCss = `${diagramGateCss}
+
+.sk-diagram {
+  --sk-diagram-column-gap: 2.5rem;
+}`;
+
+export const diagramGateTree = (t: Translate): UsageTree => ({
+  contract: "diagram",
+  signature: "Diagram",
+  options: { label: t("diagram.gateLabel"), columns: 3 },
+  slots: {
+    nodes: [
+      { options: { node: "a", shape: "terminal" }, slots: { children: "A" } },
+      /* The gate's words are its name, and the stylesheet clips them: the symbol is what a reader
+         sees, and "XOR" is what a screen reader hears. Not a t() call for the same reason a table's
+         name is not one - the notation is the same in every language on this site.
+
+         `designator` is the other half of that: the box IS the symbol, so the one piece of text a
+         schematic does put on a gate goes UNDER it, positioned rather than laid out so the ports
+         stay on the silhouette. `U1`/`U2` are what a schematic calls its parts, and they are not
+         translated either. */
+      {
+        options: { node: "xor", shape: "xor" },
+        slots: { children: "XOR", designator: "U1" },
+      },
+      { options: { node: "sum", shape: "terminal" }, slots: { children: t("diagram.gateSum") } },
+      { options: { node: "b", shape: "terminal" }, slots: { children: "B" } },
+      {
+        options: { node: "and", shape: "and" },
+        slots: { children: "AND", designator: "U2" },
+      },
+      { options: { node: "carry", shape: "terminal" }, slots: { children: t("diagram.gateCarry") } },
+    ],
+    edges: [
+      { options: { from: "a", to: "xor", arrow: "none" }, slots: {} },
+      { options: { from: "b", to: "xor", arrow: "none" }, slots: {} },
+      { options: { from: "a", to: "and", arrow: "none" }, slots: {} },
+      { options: { from: "b", to: "and", arrow: "none" }, slots: {} },
+      { options: { from: "xor", to: "sum", arrow: "none" }, slots: {} },
+      { options: { from: "and", to: "carry", arrow: "none" }, slots: {} },
+    ],
+  },
+});
+
+/*
+ * THE SAME RULE AS `diagramLogicTree`, IN THE NOTATION, and the pair is the argument.
+ *
+ * The drawing above it asks one rhombus "are both true?" and lets two answers out. This one says
+ * the same thing with an AND, adds the clause the rhombus could not hold without a second question
+ * (`NOT revoked`), and keeps the operands as ordinary `process` boxes and the outcome as a
+ * `terminal`. That mixture is the point: gates are not a second component with a frame of their
+ * own, so a rule can be half prose and half notation without anything being converted.
+ *
+ * THE INVERTER IS IN ITS OWN COLUMN, and that is load-bearing rather than tidy. A gate's operands
+ * arrive on its back plane, so every gate-to-gate wire has to run FORWARD along the inline axis; an
+ * inverter sitting in the AND's own column would have to double back, and a corridor that doubles
+ * back turns halfway between its two ends, which for two boxes in one column is inside them both.
+ * The drawing would run the wire under the symbol it was feeding. Stagger is what a schematic does
+ * anyway - operators in the order they apply, left to right - so the rule costs nothing.
+ *
+ * THREE OPERANDS ON ONE GATE, which is the other thing worth showing: they land at a third, a half
+ * and two thirds of the back plane rather than fanned to its corners, because the pins belong to the
+ * symbol (`DIAGRAM_GATE_PORT_BAND`).
+ */
+export const diagramGateRuleCss = `${diagramGateCss}
+
+/* Four columns, and three of them hold one thing each, so the grid is addressed rather than flowed:
+   the operands stack in column 1, the inverter takes column 2 on its own row, and the AND and its
+   outcome sit level with the middle operand. */
+.sk-diagram__node[data-node="token"] { grid-area: 1 / 1; }
+.sk-diagram__node[data-node="scope"] { grid-area: 2 / 1; }
+.sk-diagram__node[data-node="revoked"] { grid-area: 3 / 1; }
+.sk-diagram__node[data-node="fresh"] { grid-area: 3 / 2; }
+.sk-diagram__node[data-node="both"] { grid-area: 2 / 3; }
+.sk-diagram__node[data-node="allow"] { grid-area: 2 / 4; }`;
+
+export const diagramGateRuleTree = (t: Translate): UsageTree => ({
+  contract: "diagram",
+  signature: "Diagram",
+  options: { label: t("diagram.gateRuleLabel"), columns: 4 },
+  slots: {
+    nodes: [
+      { options: { node: "token" }, slots: { children: t("diagram.logicNode1") } },
+      { options: { node: "scope" }, slots: { children: t("diagram.logicNode2") } },
+      { options: { node: "revoked" }, slots: { children: t("diagram.gateRevoked") } },
+      {
+        options: { node: "fresh", shape: "not" },
+        slots: { children: "NOT", designator: "U1" },
+      },
+      {
+        options: { node: "both", shape: "and" },
+        slots: { children: "AND", designator: "U2" },
+      },
+      {
+        options: { node: "allow", shape: "terminal" },
+        slots: { children: t("diagram.logicNode4") },
+      },
+    ],
+    edges: [
+      { options: { from: "token", to: "both", arrow: "none" }, slots: {} },
+      { options: { from: "scope", to: "both", arrow: "none" }, slots: {} },
+      { options: { from: "revoked", to: "fresh", arrow: "none" }, slots: {} },
+      { options: { from: "fresh", to: "both", arrow: "none" }, slots: {} },
+      { options: { from: "both", to: "allow", arrow: "none" }, slots: {} },
     ],
   },
 });

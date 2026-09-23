@@ -32,15 +32,15 @@ export const calloutAnatomyTree = (t: Translate): UsageTree => ({
       options: { tone: "info" },
       slots: {
         icon: { contract: "icon", signature: "Icon", options: { name: "info" } },
-        title: t("demo.callout.info.title"),
+        title: t("anatomy.title"),
         actions: {
           contract: "button",
           signature: "Button.action",
           options: { variant: "translucent" },
-          children: t("demo.callout.success.action"),
+          children: t("anatomy.action"),
         },
       },
-      children: t("demo.callout.info.body"),
+      children: t("anatomy.description"),
     },
     items: [
       /* The panel and the icon cell are the two parts with air of their own, so both keep the inset

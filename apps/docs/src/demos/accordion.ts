@@ -266,3 +266,126 @@ export const detailsGroupTree = (t: Translate): UsageTree => ({
     ],
   })),
 });
+
+/*
+ * WHICH HALF TO USE, AS A DECISION TREE.
+ *
+ * The six rows this replaced were a lookup table: six criteria, two answers, and no order between
+ * them, which leaves the reader to do the reduction. There is an order, it is two questions deep,
+ * and this is the smallest drawing that carries it.
+ *
+ * THE LIST LIVES IN THE PARAGRAPH ABOVE AND THE DRAWING ASKS ABOUT IT. Four shapes were tried with
+ * the four capabilities inside the drawing - four condition boxes, a record with four rows, a five
+ * rung ladder, and a bus with four taps - and each of them cost more than it bought: the wires had
+ * to pass boxes they did not belong to, or the box read as a data model, or the drawing grew to
+ * nine hundred pixels to say two things. A rhombus is only as wide as the diamond is at that line,
+ * so a question in one has to be short; a list belongs in prose, where a list already is.
+ *
+ * THE JAVASCRIPT QUESTION COMES FIRST, and asking it second was a real mistake rather than a
+ * layout preference. Asked second, its `yes` arm says: you need something only the machine does,
+ * and you cannot run the machine, so use the one that does not do it. That is not an answer, it is
+ * a contradiction dressed as one. Asked FIRST it is simply true - before the script runs the
+ * platform is the only thing that exists - and the reader who also needed something from the list
+ * learns it there, in the paragraph under the drawing, instead of being walked into a wall.
+ *
+ * THE LAYOUT SURVIVED THE SWAP unchanged, which is worth noting because it did not have to: the
+ * question that spans both columns is whichever one is asked first, the other takes one column, and
+ * the wire that skips it runs down the other. Both paths that end at the platform still land on the
+ * same pill, and no wire passes a box it does not belong to.
+ *
+ * ONE `Accordion` AND ONE `DetailsGroup`: both paths that end at the platform land on the same
+ * pill. Neither name is translated - they are the names of two signatures, written the way a reader
+ * will type them.
+ */
+export const accordionChoiceCss = `.sk-diagram {
+  /*
+   * THE CAP IS OFF THE SPANNING QUESTION. 16rem is the page default and it was capping the first
+   * rhombus at 256px inside a rank 340px wide, so the question was squeezed into two lines that
+   * reached its own slopes while eighty pixels of the rank stood empty. A diamond gets wider before
+   * it gets taller.
+   */
+  --sk-diagram-node-max-inline-size: 22rem;
+  /*
+   * Every edge is labelled, and a chip is 28px tall: at the stylesheet's own rank gap that leaves
+   * about twelve pixels for the arrowhead and its standoff, and each label welds itself to the box
+   * below it. Same number and same reason as the branch demos on the Diagram page.
+   */
+  --sk-diagram-row-gap: 3rem;
+  /*
+   * HOW A QUESTION FITS ITS RHOMBUS, measured rather than guessed. The text is a rectangle and the
+   * shape is a diamond, so the rectangle fits when "w / W + h / H <= 1" - the inscribed-rectangle
+   * rule - and it fits COMFORTABLY at about 0.8, which is where the corners of the words stop
+   * running along the slopes. Both of these sat at 0.97, which is the arithmetic for "just barely",
+   * and is exactly what it looked like.
+   *
+   * The lever is the diamond's height, because its width is its column: a flatter ratio is a
+   * tighter fit and a rounder one is a looser one. These two numbers are the ones that put both
+   * questions near 0.8 with the words they actually carry.
+   */
+  --sk-diagram-decision-aspect: 1.9;
+}
+
+/*
+ * A RANK HERE IS A QUESTION AND AN ANSWER, not two boxes of the same kind, so the answer keeps its
+ * own height instead of stretching to the rhombus beside it. Stretching is right for a rank of
+ * siblings - the stylesheet says why - and wrong for a pill standing next to a diamond: measured at
+ * a 180px rank, "DetailsGroup" came out a 180px circle.
+ */
+.sk-diagram__node[data-shape="terminal"] {
+  align-self: center;
+}
+
+/*
+ * THE PLATFORM'S ANSWER SITS BESIDE THE SECOND QUESTION, not under it, and that placement is what
+ * keeps all four wires short: both paths that end there arrive from a different direction, so being
+ * level with the second question turns one of them into a sideways step across one rank instead of
+ * a run down the length of the drawing.
+ */
+.sk-diagram__node[data-node="nojs"] {
+  grid-area: 1 / 1 / 2 / 3;
+  /*
+   * FLATTER THAN THE OTHER ONE, because it is twice as wide. A rhombus takes its height from its
+   * width, so the question that lies across both columns came out the tallest thing on the drawing
+   * while holding a single line of text.
+   */
+  --sk-diagram-decision-aspect: 2.3;
+}
+.sk-diagram__node[data-node="needs"] {
+  grid-area: 2 / 1;
+  /*
+   * ONE COLUMN WIDE, so its words are what had to give. Flattening or rounding it does not help on
+   * its own: the shape's inline padding is derived from the ratio, so a rounder diamond is also a
+   * wider text box and the fit stays where it was. A shorter question is the only lever that moves
+   * both terms of the sum at once, and the list it points at is three lines above it.
+   */
+  --sk-diagram-decision-aspect: 1.6;
+}
+.sk-diagram__node[data-node="native"] { grid-area: 2 / 2; }
+.sk-diagram__node[data-node="machine"] { grid-area: 3 / 1; }`;
+
+export const accordionChoiceTree = (t: Translate): UsageTree => ({
+  contract: "diagram",
+  signature: "Diagram",
+  options: { label: t("accordion.choiceDiagramLabel"), columns: 2 },
+  slots: {
+    nodes: [
+      {
+        options: { node: "needs", shape: "decision" },
+        slots: { children: t("accordion.choiceAskNeeds") },
+      },
+      {
+        options: { node: "nojs", shape: "decision" },
+        slots: { children: t("accordion.choiceAskNoJs") },
+      },
+      { options: { node: "machine", shape: "terminal" }, slots: { children: "Accordion" } },
+      { options: { node: "native", shape: "terminal" }, slots: { children: "DetailsGroup" } },
+    ],
+    edges: [
+      /* The veto, and it ends the walk: before the script runs there is nothing else to choose. */
+      { options: { from: "nojs", to: "native" }, slots: { children: t("accordion.choiceYes") } },
+      { options: { from: "nojs", to: "needs" }, slots: { children: t("accordion.choiceNo") } },
+      { options: { from: "needs", to: "machine" }, slots: { children: t("accordion.choiceYes") } },
+      { options: { from: "needs", to: "native" }, slots: { children: t("accordion.choiceNo") } },
+    ],
+  },
+});

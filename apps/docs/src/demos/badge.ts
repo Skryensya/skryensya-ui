@@ -1,6 +1,7 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 import { namePart } from "./annotation-parts";
+import { genericIcon } from "./anatomy-subject";
 
 const tones = ["neutral", "accent", "success", "warning", "danger"] as const;
 
@@ -41,8 +42,8 @@ export const badgeAnatomyTree = (t: Translate): UsageTree => ({
               contract: "button",
               signature: "Button.action",
               options: { iconOnly: true, variant: "ghost" },
-              attrs: { "aria-label": t("demo.badge.settings") },
-              children: { contract: "icon", signature: "Icon", options: { name: "settings" } },
+              attrs: { "aria-label": t("anatomy.label") },
+              children: genericIcon(),
             },
             {
               contract: "badge",
@@ -55,7 +56,7 @@ export const badgeAnatomyTree = (t: Translate): UsageTree => ({
           contract: "badge",
           signature: "Badge",
           options: { tone: "accent" },
-          children: t("demo.badge.anatomyTag"),
+          children: t("anatomy.label"),
         },
       ],
     },

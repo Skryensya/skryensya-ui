@@ -39,12 +39,17 @@ export function buildSearchIndex(locale: Locale): CommandPaletteEntry[] {
       section: t("section.components"),
       group: t("group.layout"),
     },
-    {
-      label: t("nav.presets"),
-      aliases: ["personalizar", "marca", "brand", "uc", "theming"],
-      href: localizePath("/presets", locale),
-      section: t("group.global"),
-      group: t("nav.presets"),
-    },
+    /* Presets is dev-only (its page 404s in a production build), so search only offers it there. */
+    ...(import.meta.env.DEV
+      ? [
+          {
+            label: t("nav.presets"),
+            aliases: ["personalizar", "marca", "brand", "uc", "theming"],
+            href: localizePath("/presets", locale),
+            section: t("group.global"),
+            group: t("nav.presets"),
+          },
+        ]
+      : []),
   ];
 }

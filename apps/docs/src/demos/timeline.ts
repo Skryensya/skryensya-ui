@@ -11,7 +11,7 @@ export const timelineAnatomyTree = (t: Translate): UsageTree => ({
     subject: {
       contract: "timeline",
       signature: "Timeline",
-      attrs: { "aria-label": t("demo.timeline.label") },
+      attrs: { "aria-label": t("anatomy.label") },
       children: [
         {
           contract: "timeline",
@@ -19,13 +19,13 @@ export const timelineAnatomyTree = (t: Translate): UsageTree => ({
           options: { time: "2026-03-14", tone: "success" },
           slots: {
             icon: { contract: "icon", signature: "Icon", options: { name: "success" } },
-            time: t("demo.timeline.delivered.time"),
-            heading: t("demo.timeline.delivered.heading"),
+            time: t("anatomy.item1"),
+            heading: t("anatomy.title"),
             children: {
               contract: "typography",
               signature: "Text",
               options: { tone: "secondary" },
-              children: t("demo.timeline.delivered.body"),
+              children: t("anatomy.description"),
             },
           },
         },
@@ -34,8 +34,8 @@ export const timelineAnatomyTree = (t: Translate): UsageTree => ({
           signature: "TimelineItem",
           options: { time: "2026-03-12" },
           slots: {
-            time: t("demo.timeline.outForDelivery.time"),
-            heading: t("demo.timeline.outForDelivery.heading"),
+            time: t("anatomy.item2"),
+            heading: t("anatomy.item3"),
           },
         },
       ],

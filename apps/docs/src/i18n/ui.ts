@@ -38,6 +38,7 @@ import { sourceViewerMessages } from "./messages/_chrome/source-viewer";
 import { statusMessages } from "./messages/_chrome/status";
 import { testsMessages } from "./messages/_chrome/tests";
 import { vanillaMessages } from "./messages/_chrome/vanilla";
+import { anatomyMessages } from "./messages/anatomy";
 import { architectureMessages } from "./messages/architecture";
 import { accordionMessages } from "./messages/components/accordion";
 import { avatarMessages } from "./messages/components/avatar";
@@ -172,6 +173,7 @@ export const ui = {
     ...statusMessages.es,
     ...testsMessages.es,
     ...vanillaMessages.es,
+    ...anatomyMessages.es,
     ...architectureMessages.es,
     ...accordionMessages.es,
     ...avatarMessages.es,
@@ -303,6 +305,7 @@ export const ui = {
     ...statusMessages.en,
     ...testsMessages.en,
     ...vanillaMessages.en,
+    ...anatomyMessages.en,
     ...architectureMessages.en,
     ...accordionMessages.en,
     ...avatarMessages.en,

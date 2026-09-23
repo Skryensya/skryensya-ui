@@ -4,6 +4,7 @@ import {
   releaseComponentPreviewStages,
   resetSharedComponentPreviewBinding,
   resetSharedComponentPreviewScreen,
+  prewarmComponentPreviewStages,
   restoreComponentPreviewStages,
 } from "./component-preview.js";
 import { mountSegmented } from "./segmented.js";
@@ -33,6 +34,29 @@ function markup(id: string): string {
         <div data-sk-component-preview-source="js" hidden>JS</div>
       </div>
       <div data-sk-component-preview-binding="react" hidden>React</div>
+    </div>
+  `;
+}
+
+/*
+ * One preview, both bindings, each with a stage that has a document waiting but no `srcdoc` yet -
+ * the shape both bindings actually ship (`ComponentPreview.astro` and `react-demos/framed.tsx`
+ * both author into `data-sk-component-preview-doc`). `data-test-stage` is the test's own handle:
+ * the React stage deliberately carries no binding attribute of its own in production.
+ */
+function twoBindingStages(): string {
+  const stage = (which: string) =>
+    `<iframe class="sk-component-preview__stage" data-test-stage="${which}" aria-busy="true"
+       data-sk-component-preview-doc="&lt;!doctype html&gt;&lt;body&gt;${which}&lt;/body&gt;"></iframe>`;
+  return `
+    <div data-sk-component-preview>
+      <div class="sk-segmented" data-sk-segmented data-sk-component-preview-binding-tabs data-value="vanilla" role="radiogroup">
+        <span class="sk-segmented__indicator" aria-hidden="true"></span>
+        ${segmentedOption("vanilla", "data-sk-component-preview-binding-option", "Vanilla")}
+        ${segmentedOption("react", "data-sk-component-preview-binding-option", "React")}
+      </div>
+      <div data-sk-component-preview-binding="vanilla">${stage("vanilla")}</div>
+      <div data-sk-component-preview-binding="react" hidden>${stage("react")}</div>
     </div>
   `;
 }
@@ -316,6 +340,65 @@ describe("ComponentPreview opt-in enhancer", () => {
 
     frames.shift()?.(0);
     expect(stage.srcdoc).toContain("<body>one</body>");
+  });
+
+  /*
+   * THE REGRESSION THIS TRIO EXISTS FOR: `hidden` stops an element rendering, it does NOT stop an
+   * `<iframe>` inside it from loading. Both bindings render a stage and exactly one is visible, so
+   * a promotion pass that ignores `hidden` boots a second realm nobody asked for - measured on the
+   * production build as 80-85% of all preview bytes on a component page, at parse time, behind a
+   * tab nobody had clicked.
+   *
+   * Asserting on `srcdoc` and not on a request count is what makes these real tests: `srcdoc` IS
+   * the browsing context, so "empty" is exactly "this realm does not exist".
+   */
+  it("leaves the hidden binding's stage unbooted when a preview scrolls into view", () => {
+    resetBindingState();
+    document.body.innerHTML = twoBindingStages();
+    const root = document.querySelector<HTMLElement>("[data-sk-component-preview]");
+    const vanilla = root?.querySelector<HTMLIFrameElement>('[data-test-stage="vanilla"]');
+    const react = root?.querySelector<HTMLIFrameElement>('[data-test-stage="react"]');
+    if (!root || !vanilla || !react) throw new Error("Invalid test markup.");
+
+    restoreComponentPreviewStages(root);
+
+    expect(vanilla.srcdoc).toContain("<body>vanilla</body>");
+    expect(react.srcdoc).toBe("");
+  });
+
+  it("prewarms the hidden binding's stage once the page goes idle", async () => {
+    resetBindingState();
+    document.body.innerHTML = twoBindingStages();
+    const root = document.querySelector<HTMLElement>("[data-sk-component-preview]");
+    const react = root?.querySelector<HTMLIFrameElement>('[data-test-stage="react"]');
+    if (!root || !react) throw new Error("Invalid test markup.");
+
+    restoreComponentPreviewStages(root);
+    expect(react.srcdoc).toBe("");
+
+    prewarmComponentPreviewStages(root);
+    /* jsdom has no requestIdleCallback, so the implementation falls back to a timer. */
+    await vi.waitFor(() => expect(react.srcdoc).toContain("<body>react</body>"), { timeout: 3000 });
+  });
+
+  it("boots the hidden stage immediately when the reader switches binding", () => {
+    resetBindingState();
+    document.body.innerHTML = twoBindingStages();
+    const root = document.querySelector<HTMLElement>("[data-sk-component-preview]");
+    const react = root?.querySelector<HTMLIFrameElement>('[data-test-stage="react"]');
+    const reactOption = root?.querySelector<HTMLElement>(
+      '[data-sk-component-preview-binding-option][data-value="react"]',
+    );
+    if (!root || !react || !reactOption) throw new Error("Invalid test markup.");
+
+    expect(mountAll()).toBe(1);
+    restoreComponentPreviewStages(root);
+    expect(react.srcdoc).toBe("");
+
+    /* Faster than the idle callback: this is the path that keeps a switch from showing a blank
+       stage under a spinner. */
+    reactOption.click();
+    expect(react.srcdoc).toContain("<body>react</body>");
   });
 
   it("releases a stage's realm and restores it from the same cached document", () => {

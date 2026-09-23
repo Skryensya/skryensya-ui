@@ -1,4 +1,4 @@
-import type { UsageTree } from "@skryensya/core/usage-tree";
+import { collectionItems, type UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 
 /*
@@ -9,6 +9,8 @@ import type { Translate } from "../i18n";
  *                           renders, frozen, with a label on each. Eight labels across all four
  *                           gutters, which is also the densest case the distribution ever has to
  *                           resolve on this page.
+ *   annotationNumberedTree  the same Accordion with `numbered`: numbers in the gutters, names
+ *                           in a legend under the frame.
  *   annotationSidesTree     the four gutters on one small specimen, so "inline-start" and friends
  *                           stop being words and become positions.
  *   annotationElbowTree     the leader itself: targets deliberately bunched so their labels cannot
@@ -26,7 +28,7 @@ import type { Translate } from "../i18n";
  * the diagram is naming), and every label on this page IS one, so the page asks for the code family
  * the same way it would in prose. This is the hook doing its job, not a gap in the default.
  */
-export const annotationDemoCss = `.sk-annotated {
+export const annotationDemoCss = `.sk-annotated-figure {
   --sk-annotation-font-family: var(--font-family-code);
 }`;
 
@@ -152,6 +154,57 @@ export const annotationAnatomyTree = (t: Translate): UsageTree => ({
     ],
   },
 });
+
+/*
+ * THE SAME ACCORDION, NUMBERED. The same specimen and the same entries as the anatomy demo above, so
+ * the two previews can be compared directly, with the marks re-planned for numbers:
+ *
+ *   AREAS GET BRACKETS. The accordion, the open item, its trigger and its panel are regions that
+ *   hold other parts, so a leader into any of them lands on some child. Their numbers sit on
+ *   dimension lines along the inline-end side instead, nested outward: the trigger and the panel
+ *   share the inner track (they do not overlap), then the item, then the accordion.
+ *   THINGS GET RINGS, from the NEAREST gutter. The title and the description start at
+ *   the card's inline-start edge, so their numbers do too; the chevron takes block-start, the one
+ *   side where its leader does not cross the brackets.
+ */
+const numberedEntries: Record<string, Readonly<Record<string, string>>> = {
+  ".sk-accordion": { side: "inline-end", mark: "bracket" },
+  ".sk-tile": { side: "inline-end", mark: "bracket" },
+  ".sk-tile__trigger": { side: "inline-end", mark: "bracket" },
+  ".sk-tile__expandable-content": { side: "inline-end", mark: "bracket" },
+  ".sk-tile__title": { side: "inline-start" },
+  ".sk-tile__description": { side: "inline-start" },
+  ".sk-tile__chevron": { side: "block-start" },
+};
+
+export const annotationNumberedTree = (t: Translate): UsageTree => {
+  const tree = annotationAnatomyTree(t);
+  return {
+    ...tree,
+    /*
+     * ZOOMABLE, because this is the figure that has to survive a phone: laid out at its own width
+     * and shown fitted, with two fingers (or Ctrl + wheel, or the zoom bar) to get close to a part.
+     */
+    options: {
+      ...tree.options,
+      label: t("annotation.numberedLabel"),
+      numbered: true,
+      zoomable: true,
+      zoomInLabel: t("annotation.zoomInLabel"),
+      zoomOutLabel: t("annotation.zoomOutLabel"),
+      fitLabel: t("annotation.fitLabel"),
+    },
+    slots: {
+      ...tree.slots,
+      touchHint: t("annotation.touchHint"),
+      wheelHint: t("annotation.wheelHint"),
+      items: collectionItems(tree.slots?.items).map((item) => {
+        const entry = numberedEntries[String(item.options?.for)];
+        return entry ? { ...item, options: { ...item.options, ...entry } } : item;
+      }),
+    },
+  };
+};
 
 /*
  * The four gutters, on a specimen small enough that all four fit on screen at once.

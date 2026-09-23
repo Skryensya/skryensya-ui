@@ -5,6 +5,7 @@ import {
   diagramParts,
   diagramRoutes,
   diagramZoneHeaders,
+  diagramZoneNames,
   placeDiagramZones,
   routeDiagram,
   type DiagramArrow,
@@ -74,6 +75,17 @@ export type DiagramNodeEntry = {
    * off at both ends), and the stylesheet hides them rather than drawing half of one.
    */
   rows?: readonly DiagramRowEntry[];
+  /**
+   * This node's VISIBLE name, drawn under the box and never measured.
+   *
+   * For the shape whose box cannot hold one: a gate is a silhouette with no inside, so its
+   * `children` are clipped by the stylesheet and this is where a reference designator (`U1`, `G3`)
+   * goes. It is positioned rather than laid out, because every port is measured from the node's box
+   * and text in flow would move the nose off the symbol. It hangs into the rank gap as a result,
+   * and the stylesheet reserves a line of caption for it there and below the last rank, so nothing
+   * has to be tuned. Not announced as the node's name: the route list quotes the title alone.
+   */
+  designator?: ReactNode;
   children: ReactNode;
 };
 
@@ -156,6 +168,13 @@ export function Diagram({
    * SIZE, which is what decides where along its connector the label fits.
    */
   const edgeRefs = useRef<(HTMLLIElement | null)[]>([]);
+  /*
+   * A zone's own name, for its WIDTH alone: it is what lets a connector entering the region land
+   * beside the words rather than through them (`diagramZoneNames`). The width is the one thing
+   * about a label that is true before anything is placed, which matters because the zones are
+   * placed after this pass has routed.
+   */
+  const zoneLabelRefs = useRef<(HTMLSpanElement | null)[]>([]);
   /* Keyed `node\u0000row`, because a row name is only unique inside its own node. */
   const rowRefs = useRef<Map<string, HTMLLIElement>>(new Map());
   const [drawing, setDrawing] = useState<Drawing>(EMPTY);
@@ -229,7 +248,17 @@ export function Diagram({
           label: chip ? { width: chip.width, height: chip.height } : undefined,
         };
       }),
-      { direction, keepRailsOut: diagramZoneHeaders(regions) },
+      {
+        direction,
+        keepRailsOut: diagramZoneHeaders(regions),
+        keepPortsOut: diagramZoneNames(
+          regions,
+          (zones ?? []).map(
+            (_, index) => zoneLabelRefs.current[index]?.getBoundingClientRect().width ?? 0,
+          ),
+          { direction },
+        ),
+      },
     );
 
     /* Read off the rendered nodes rather than off the props: `children` is a ReactNode and the only
@@ -311,16 +340,28 @@ export function Diagram({
               data-zone={zone.zone}
               key={zone.zone}
               style={
+                /* Physical insets rather than `translate`, and the reason is the enhancer's:
+                   `translate` would make every zone a stacking context, and its own name could
+                   then never be painted over the connectors. See `drawZones` in the Vanilla
+                   binding, which writes exactly these four properties in exactly this order. */
                 region
                   ? {
-                      translate: `${region.box.x}px ${region.box.y}px`,
+                      left: `${region.box.x}px`,
+                      top: `${region.box.y}px`,
                       inlineSize: `${region.box.width}px`,
                       blockSize: `${region.box.height}px`,
                     }
                   : undefined
               }
             >
-              <span className={diagramParts.zoneLabel}>{zone.children}</span>
+              <span
+                className={diagramParts.zoneLabel}
+                ref={(element) => {
+                  zoneLabelRefs.current[index] = element;
+                }}
+              >
+                {zone.children}
+              </span>
             </li>
           );
         })}
@@ -366,6 +407,9 @@ export function Diagram({
                 <span className={diagramParts.logo}>{node.logo}</span>
               )}
               <span className={diagramParts.title}>{node.children}</span>
+              {node.designator !== undefined && (
+                <span className={diagramParts.designator}>{node.designator}</span>
+              )}
               {node.rows && node.rows.length > 0 && (
                 <ul className={diagramParts.rows}>
                   {node.rows.map((row) => (

@@ -3023,6 +3023,54 @@ const signatureTrees: readonly Canonical[] = [
       },
     },
   },
+  /*
+   * A canvas around ordinary content, and the same annotation with `zoomable`: the second is what
+   * proves the embedded canvas (the frame on the canvas, the legend-free figure) renders the same
+   * structure from both bindings as the standalone one.
+   */
+  {
+    name: "canvas/default",
+    enhanced: true,
+    tree: {
+      contract: "canvas",
+      signature: "Canvas",
+      options: { label: "Plano", zoomInLabel: "Acercar", zoomOutLabel: "Alejar", fitLabel: "Ajustar" },
+      slots: {
+        children: {
+          contract: "stat",
+          signature: "Stat",
+          slots: { label: "Ingresos", value: "38.2K" },
+        },
+        touchHint: "Usa dos dedos para mover el plano",
+      },
+    },
+  },
+  {
+    name: "annotation/zoomable",
+    enhanced: true,
+    tree: {
+      contract: "annotation",
+      signature: "Annotated",
+      options: { label: "Anatomía de Stat", inert: true, zoomable: true, numbered: true },
+      slots: {
+        subject: {
+          contract: "stat",
+          signature: "Stat",
+          slots: { label: "Ingresos", value: "38.2K" },
+        },
+        items: [
+          {
+            options: { for: ".sk-stat", side: "inline-end", mark: "bracket" },
+            slots: { children: "sk-stat" },
+          },
+          {
+            options: { for: ".sk-stat__label", side: "inline-start" },
+            slots: { children: "sk-stat__label" },
+          },
+        ],
+      },
+    },
+  },
 
   /*
    * Diagram is Annotation's sibling, so it sits next to it: one drawing that presents all three

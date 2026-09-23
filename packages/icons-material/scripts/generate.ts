@@ -45,9 +45,15 @@ const MAP = {
   filter: "filter_alt",
   refresh: "refresh",
   "zoom-out": "zoom_out",
+  "zoom-in": "zoom_in",
+  fit: "fit_screen",
   more: "more_horiz",
   menu: "menu",
   info: "info",
+  /* `select`, Material's marquee: the only dashed empty box it draws. Lucide and Phosphor name the
+   * shape (`SquareDashed`, `rectangle-dashed`), Material names what you do with it, and the drawing
+   * is the same. */
+  placeholder: "select",
   success: "check_circle",
   warning: "warning",
   danger: "cancel",

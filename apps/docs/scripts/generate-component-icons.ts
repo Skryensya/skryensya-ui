@@ -32,7 +32,7 @@ const { icons } = (await import(pathToFileURL(lucideEntry).href)) as {
 /* Page → Lucide's name, or `role:<stable role>`. The only part a human maintains. */
 const MAP: Record<string, string> = {
   "/components/accordion": "ListCollapse",
-  "/components/annotation": "StickyNote",
+  "/components/annotation": "ScanSearch",
   "/components/diagram": "Workflow",
   "/components/avatar": "CircleUserRound",
   "/components/back-to-top": "ArrowUpToLine",

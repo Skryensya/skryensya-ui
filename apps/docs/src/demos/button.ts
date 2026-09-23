@@ -1,5 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { genericIcon } from "./anatomy-subject";
 
 /*
  * Each preview isolates one decision. The page is a teaching sequence, not
@@ -232,10 +233,10 @@ export const buttonAnatomyTree = (t: Translate): UsageTree => ({
          icons' own rings clear of the button's, which at `md` sit about four pixels apart. */
       options: { tone: "accent", size: "lg" },
       slots: {
-        pre: { contract: "icon", signature: "Icon", options: { name: "download" } },
-        post: { contract: "icon", signature: "Icon", options: { name: "arrow-right" } },
+        pre: genericIcon(),
+        post: genericIcon(),
       },
-      children: t("demo.button.download"),
+      children: t("anatomy.label"),
     },
     items: [
       /*

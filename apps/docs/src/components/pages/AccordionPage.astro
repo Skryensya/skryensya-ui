@@ -24,12 +24,18 @@ import "@skryensya/core/components/details.css";
 /* Structure diagram: same Annotated Accordion specimen as the Annotation page; the frame only
    clones styles this page loaded, so Annotation's sheet has to land here too. */
 import "@skryensya/core/components/annotation.css";
+/* The "which half" decision is a Diagram now, and a preview frame only clones the styles ITS page
+   loaded: without this the drawing arrives as an unstyled list of nodes with the edge labels in a
+   row underneath it, which is exactly what a reader with no JavaScript gets. */
+import "@skryensya/core/components/diagram.css";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import VanillaMount from "../VanillaMount.astro";
 import { vanillaMounts } from "../../lib/vanilla-mounts";
 import {
+  accordionChoiceCss,
+  accordionChoiceTree,
   accordionExclusiveTree,
   accordionMultipleTree,
   accordionSingleTree,
@@ -126,24 +132,33 @@ const detailsLink = `<a href="#details-nativo">${t("accordion.detailsNativoLabel
       */}
     <h3 id="que-mitad">{t("accordion.choiceTitle")}</h3>
     <p set:html={t("accordion.choiceBody")} />
-    <div class="sk-table-scroll">
-    <table class="sk-table">
-      <thead class="sk-table__head">
-        <tr class="sk-table__row">
-          <th class="sk-table__header">{t("accordion.decisionHeadNeed")}</th>
-          <th class="sk-table__header">{t("accordion.decisionHeadUse")}</th>
-        </tr>
-      </thead>
-      <tbody class="sk-table__body">
-        <tr class="sk-table__row"><td set:html={t("accordion.decisionRow1Need")} class="sk-table__cell" /><td set:html={t("accordion.decisionRow1Use")} class="sk-table__cell" /></tr>
-        <tr class="sk-table__row"><td set:html={t("accordion.decisionRow2Need")} class="sk-table__cell" /><td set:html={t("accordion.decisionRow2Use")} class="sk-table__cell" /></tr>
-        <tr class="sk-table__row"><td set:html={t("accordion.decisionRow3Need")} class="sk-table__cell" /><td set:html={t("accordion.decisionRow3Use")} class="sk-table__cell" /></tr>
-        <tr class="sk-table__row"><td set:html={t("accordion.decisionRow4Need")} class="sk-table__cell" /><td set:html={t("accordion.decisionRow4Use")} class="sk-table__cell" /></tr>
-        <tr class="sk-table__row"><td set:html={t("accordion.decisionRow5Need")} class="sk-table__cell" /><td set:html={t("accordion.decisionRow5Use")} class="sk-table__cell" /></tr>
-        <tr class="sk-table__row"><td set:html={t("accordion.decisionRow6Need")} class="sk-table__cell" /><td set:html={t("accordion.decisionRow6Use")} class="sk-table__cell" /></tr>
-      </tbody>
-    </table>
-    </div>
+    {/*
+      * A DRAWING AND NOT A TABLE, and the change is about what the six rows actually were: four
+      * capabilities the machine has that the platform does not, and one answer for needing none of
+      * them. Six lookups made the reader do that reduction; the diagram does it on the page.
+      *
+      * The no-JavaScript case is the paragraph under it rather than a fifth box, because it is a
+      * precedence and not a condition: it outranks the question instead of feeding it.
+      */}
+    {/*
+      * THE LIST IS RIGHT ABOVE THE DRAWING BECAUSE THE DRAWING POINTS AT IT. The question inside
+      * the first rhombus is "do you need any of that", and a rhombus can only hold a short question
+      * - the slopes take the corners away, so a list drawn inside one hangs off both sides. Four
+      * shapes were tried with these four items inside the drawing and each cost more than it
+      * bought; a list belongs where a list already reads, and the drawing asks about it.
+      */}
+    <ul>
+      <li set:html={t("accordion.choiceListMultiple")} />
+      <li set:html={t("accordion.choiceListValue")} />
+      <li set:html={t("accordion.choiceListChange")} />
+      <li set:html={t("accordion.choiceListDisabled")} />
+    </ul>
+    <ComponentPreview
+      tree={accordionChoiceTree(t)}
+      css={accordionChoiceCss}
+      label={t("accordion.choicePreviewLabel")}
+    />
+    <p set:html={t("accordion.choiceNoJs")} />
 
     <h3>{t("accordion.oneItemTitle")}</h3>
     <p set:html={t("accordion.oneItemBody")} />

@@ -348,6 +348,125 @@ describe("connectDiagram", () => {
 });
 
 /*
+ * A GATE THROUGH THE DOM, which is the half Core's number-level suite cannot reach: that the
+ * enhancer reads `data-shape="and"` as a shape at all, and therefore hands Core a measurement whose
+ * ports the notation fixes rather than the grid.
+ *
+ * The layout is a half adder's left half, stated rather than measured, and chosen so every claim has
+ * a round number behind it:
+ *
+ *   a     at (  0,  20),  80 x 40   (centre y  40)
+ *   b     at (  0, 100),  80 x 40   (centre y 120)
+ *   gate  at (200,  40),  60 x 48   (centre y  64 - the nose, and the thirds at 56 and 72)
+ *   sum   at (320,  44),  80 x 40   (centre y  64, level with the nose on purpose)
+ */
+describe("connectDiagram: a logic gate", () => {
+  let fire: (() => void) | null = null;
+
+  beforeEach(() => {
+    fire = null;
+    vi.stubGlobal(
+      "ResizeObserver",
+      class {
+        constructor(callback: () => void) {
+          fire = callback;
+        }
+        observe() {}
+        unobserve() {}
+        disconnect() {
+          fire = null;
+        }
+      },
+    );
+    vi.stubGlobal("requestAnimationFrame", (cb: FrameRequestCallback) => {
+      cb(0);
+      return 1;
+    });
+    vi.stubGlobal("cancelAnimationFrame", () => {});
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    document.body.replaceChildren();
+  });
+
+  const halfAdder = (): HTMLElement => {
+    const root = frame(
+      [
+        { id: "a", text: "A" },
+        { id: "b", text: "B" },
+        { id: "and", text: "AND", shape: "and" },
+        { id: "carry", text: "Carry", shape: "terminal" },
+      ],
+      [
+        { from: "a", to: "and", arrow: "none" },
+        { from: "b", to: "and", arrow: "none" },
+        { from: "and", to: "carry", arrow: "none" },
+      ],
+    );
+    withBox(root, { x: 0, y: 0, width: 400, height: 200 });
+    withBox(root.querySelector(`.${diagramParts.nodes}`)!, { x: 0, y: 0, width: 400, height: 200 });
+    const [a, b, gate, carry] = nodesOf(root);
+    withBox(a!, { x: 0, y: 20, width: 80, height: 40 });
+    withBox(b!, { x: 0, y: 100, width: 80, height: 40 });
+    withBox(gate!, { x: 200, y: 40, width: 60, height: 48 });
+    withBox(carry!, { x: 320, y: 44, width: 80, height: 40 });
+    return root;
+  };
+
+  /** Every coordinate a line names, in order. `arrow: "none"` retracts nothing, so these ARE ports. */
+  const linesOf = (root: HTMLElement): number[][] =>
+    Array.from(overlayOf(root).querySelectorAll(`.${diagramParts.line}`)).map((line) =>
+      (line.getAttribute("d") ?? "").split(/[^-\d.]+/).filter(Boolean).map(Number),
+    );
+
+  it("brings both operands onto the gate's back plane, at the thirds the notation puts them at", () => {
+    const root = halfAdder();
+    connectDiagram(root);
+
+    const [first, second] = linesOf(root);
+    expect(first!.slice(-2)).toEqual([200, 56]);
+    expect(second!.slice(-2)).toEqual([200, 72]);
+  });
+
+  it("takes the result off the nose, which is the box's own middle-right point", () => {
+    const root = halfAdder();
+    connectDiagram(root);
+
+    expect(linesOf(root)[2]!.slice(0, 2)).toEqual([260, 64]);
+  });
+
+  it("does not send the lower operand up and over, although its gate is above it", () => {
+    /* `b` is below the gate, which the geometric ladder alone calls a back edge and routes out to a
+       margin. A margin lane asks both ends for a port on the SAME side, i.e. a signal into the nose. */
+    const root = halfAdder();
+    connectDiagram(root);
+
+    const second = linesOf(root)[1]!;
+    /* Out of `b`'s inline-end side, and as high up that side as its own port band reaches: the pin
+       it is aimed at is above it, and a wire aimed at a fixed pin leaves at that pin's height when
+       it can (see the alignment pass in `routeDiagram`). `b` is 100 to 140, so its band starts at
+       108, which is as close to the gate's 72 as this side gets. */
+    expect(second.slice(0, 2)).toEqual([80, 108]);
+    /* And along: never above the gate's own top edge. */
+    const ys = second.filter((_, index) => index % 2 === 1);
+    expect(Math.min(...ys)).toBeGreaterThanOrEqual(40);
+  });
+
+  it("still announces where a gate leads, since its words are hidden by CSS and not by markup", () => {
+    const root = halfAdder();
+    connectDiagram(root);
+
+    const gate = nodesOf(root)[2]!;
+    const routes = gate.querySelector(`.${diagramParts.routes}`)!;
+    expect(routes.textContent).toContain("Carry");
+    /* The name is still IN the node: the stylesheet clips it, so `diagramNodeText` and every screen
+       reader still find it. Nothing here may be `hidden` or `display: none`. */
+    expect(diagramNodeText(gate)).toBe("AND");
+  });
+});
+
+/*
  * `diagramNodeText` lives in Core with the rest of the contract, and is proved here because Core's
  * own runner is Node by design (see `packages/core/vitest.config.ts`). Same split
  * `annotationElementRadius` sits on.
@@ -363,6 +482,16 @@ describe("diagramNodeText", () => {
     const element = document.createElement("li");
     element.textContent = "\n      Check the\n      token\n    ";
     expect(diagramNodeText(element)).toBe("Check the token");
+  });
+
+  it("reads a node's title alone, so a designator drawn beside it is not announced as its name", () => {
+    /* A gate's box is the symbol, so its `U1` is positioned under the node rather than inside it.
+       It is still a child of the node, and a route that quoted it would read "AND U1, Carry". */
+    const element = document.createElement("li");
+    element.innerHTML =
+      `<span class="${diagramParts.title}">AND</span>` +
+      `<span class="${diagramParts.designator}">U1</span>`;
+    expect(diagramNodeText(element)).toBe("AND");
   });
 
   it("keeps the words of a composition slotted into a node", () => {

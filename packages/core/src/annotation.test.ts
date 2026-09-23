@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
+  ANNOTATION_BRACKET_GAP,
+  ANNOTATION_BRACKET_JOINT,
+  ANNOTATION_BRACKET_TICK,
   ANNOTATION_LANE_GAP,
   annotationExitSide,
   annotationHitIndex,
@@ -8,7 +11,9 @@ import {
   annotationSides,
   distributeLanes,
   isAnnotationRingPlacement,
+  isAnnotationMarkKind,
   isAnnotationSide,
+  layoutAnnotations,
   leaderPoints,
   placeAnnotations,
   type AnnotationBox,
@@ -613,8 +618,9 @@ describe("placeAnnotations", () => {
   });
 
   it("turns once when the label could not reach its target's level", () => {
-    // Two labels forced apart, so the second one's leader has to climb back down to its target.
-    const [, second] = placeAnnotations(
+    // Two labels forced apart over two 4px targets: only one can sit level with its ring, and the
+    // other's leader has to climb to it.
+    const [first, second] = placeAnnotations(
       [
         measurement({ target: box(160, 100, 400, 4) }),
         measurement({ target: box(160, 102, 400, 4) }),
@@ -622,9 +628,25 @@ describe("placeAnnotations", () => {
       subject,
     );
     // Its ring is only 4 tall (too thin for the inset), with no room for the 6px corner clearance,
-    // so the leader aims at the ring's own middle and takes one 45-degree knee to get there.
+    // so the leader aims at the ring's own middle.
     expect(only(second)!.ring).toEqual({ x: 162, y: 102, width: 396, height: 4, radius: 2 });
-    expect(only(second)!.path).toBe("M 140 128 L 162 106 L 162 104");
+    // The later lane is pulled back into its straight window; the earlier one takes the one knee.
+    expect(only(second)!.path).toBe("M 140 104 L 162 104");
+    expect(only(first)!.path).toMatch(/^M \S+ \S+ L \S+ \S+ L \S+ \S+$/);
+  });
+
+  it("keeps a thin target's leader straight by moving a roomier neighbour", () => {
+    // A tall target and a one-line target want nearly the same level. Pushing the thin one down
+    // would bend its leader; the tall one has room to move and still reach its ring straight.
+    const [tall, thin] = placeAnnotations(
+      [
+        measurement({ target: box(160, 60, 400, 200) }),
+        measurement({ target: box(160, 150, 400, 24) }),
+      ],
+      subject,
+    );
+    expect(only(tall)!.path.split(" L ")).toHaveLength(2);
+    expect(only(thin)!.path.split(" L ")).toHaveLength(2);
   });
 
   it("leaves a label in the block gutter downward, and slides it sideways", () => {
@@ -664,5 +686,102 @@ describe("placeAnnotations", () => {
     expect(only(placement)!.path).toMatch(/^M (-?\d+) (-?\d+)( L -?\d+ -?\d+)+$/);
     expect(Number.isInteger(placement!.translate.y)).toBe(true);
     for (const value of Object.values(only(placement)!.ring!)) expect(Number.isInteger(value)).toBe(true);
+  });
+});
+
+describe("bracket marks", () => {
+  // The subject's inline-end edge is x=560; bracket labels are out of flow, pinned at the origin.
+  const subject = box(160, 0, 400, 300);
+  const bubble = box(0, 0, 24, 24);
+  const bracket = (target: AnnotationBox, side: AnnotationMeasurement["side"] = "inline-end") =>
+    ({ side, mark: "bracket", label: bubble, targets: [target] }) satisfies AnnotationMeasurement;
+
+  it("knows its two kinds", () => {
+    expect(isAnnotationMarkKind("bracket")).toBe(true);
+    expect(isAnnotationMarkKind("ring")).toBe(true);
+    expect(isAnnotationMarkKind("brace")).toBe(false);
+  });
+
+  it("draws a line as long as its part, ticks turned toward it, and sits its label on the middle", () => {
+    const { placements, room } = layoutAnnotations([bracket(box(200, 40, 300, 100))], subject);
+    const [placement] = placements;
+    const line = 560 + ANNOTATION_BRACKET_GAP + 12;
+    const tick = line - ANNOTATION_BRACKET_TICK;
+    expect(placement!.mark).toBe("bracket");
+    expect(placement!.side).toBe("inline-end");
+    expect(placement!.marks[0]!.path).toBe(`M ${tick} 40 L ${line} 40 L ${line} 140 L ${tick} 140`);
+    // Centred on the line, level with the part's middle (y=90).
+    expect(placement!.translate).toEqual({ x: line - 12, y: 90 - 12 });
+    expect(room["inline-end"]).toBe(ANNOTATION_BRACKET_GAP + 24);
+    expect(room["inline-start"]).toBe(0);
+  });
+
+  it("puts a container OUTSIDE the areas it contains, and siblings that do not overlap on one track", () => {
+    const [outer, first, second] = layoutAnnotations(
+      [
+        bracket(box(160, 0, 400, 300)),
+        bracket(box(160, 0, 400, 100)),
+        bracket(box(160, 200, 400, 100)),
+      ],
+      subject,
+    ).placements;
+    const lineOf = (placement: AnnotationPlacement | undefined) =>
+      Number(placement!.marks[0]!.path.split(" ")[4]);
+    expect(lineOf(first)).toBe(lineOf(second));
+    expect(lineOf(outer)).toBe(lineOf(first) + ANNOTATION_BRACKET_GAP + 24);
+  });
+
+  it("chains two parts that meet end to end on one track, each pulling its shared end back", () => {
+    const [top, bottom] = layoutAnnotations(
+      [bracket(box(160, 0, 400, 100)), bracket(box(160, 100, 400, 100))],
+      subject,
+    ).placements;
+    const line = 560 + ANNOTATION_BRACKET_GAP + 12;
+    const tick = line - ANNOTATION_BRACKET_TICK;
+    const joint = 100 - ANNOTATION_BRACKET_JOINT;
+    expect(top!.marks[0]!.path).toBe(`M ${tick} 0 L ${line} 0 L ${line} ${joint} L ${tick} ${joint}`);
+    const below = 100 + ANNOTATION_BRACKET_JOINT;
+    expect(bottom!.marks[0]!.path).toBe(`M ${tick} ${below} L ${line} ${below} L ${line} 200 L ${tick} 200`);
+  });
+
+  it("pushes an overlapping, non-nested bracket to the next track", () => {
+    const [a, b] = layoutAnnotations(
+      [bracket(box(160, 0, 400, 150)), bracket(box(160, 100, 400, 150))],
+      subject,
+    ).placements;
+    expect(Number(b!.marks[0]!.path.split(" ")[4]) - Number(a!.marks[0]!.path.split(" ")[4])).toBe(
+      ANNOTATION_BRACKET_GAP + 24,
+    );
+  });
+
+  it("runs along the width in a block gutter", () => {
+    const [placement] = layoutAnnotations(
+      [bracket(box(200, 40, 300, 100), "block-start")],
+      subject,
+    ).placements;
+    const line = 0 - ANNOTATION_BRACKET_GAP - 12;
+    const tick = line + ANNOTATION_BRACKET_TICK;
+    expect(placement!.marks[0]!.path).toBe(`M 200 ${tick} L 200 ${line} L 500 ${line} L 500 ${tick}`);
+  });
+
+  it("steps a ring label in the same gutter out past the brackets", () => {
+    const { placements, room } = layoutAnnotations(
+      [
+        bracket(box(160, 0, 400, 300)),
+        { side: "inline-end", label: box(584, 0, 60, 20), targets: [box(400, 100, 40, 40)] },
+      ],
+      subject,
+    );
+    // The bracket label reaches 6+24=30 past the edge; the ring label flows at 24 and steps to 36.
+    expect(placements[1]!.translate.x).toBe(30 + ANNOTATION_BRACKET_GAP - 24);
+    expect(room["inline-end"]).toBe(30 + ANNOTATION_BRACKET_GAP + 60);
+  });
+
+  it("is a ring where there are no gutters", () => {
+    const [placement] = layoutAnnotations([bracket(box(200, 40, 300, 100))], subject, {
+      distribute: false,
+    }).placements;
+    expect(placement!.mark).toBe("ring");
+    expect(placement!.marks[0]!.path).not.toContain(`L ${560 + ANNOTATION_BRACKET_GAP + 12}`);
   });
 });

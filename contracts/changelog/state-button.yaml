@@ -3,8 +3,34 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "4e0531a1258acc6f"
+surface: "98d68bc03ff968e6"
 entries:
+  - date: 2026-09-23
+    kind: feature
+    es:
+      title: Las faces aceptan zoom-in y fit
+      body: >-
+        <code>stableIconNames</code> sumó <code>zoom-in</code> y <code>fit</code>, y las faces de IconStateButton se nombran con ese vocabulario, así que
+        el enum se ensancha solo. Nada que ya compilaba deja de compilar.
+    en:
+      title: Faces accept zoom-in and fit
+      body: >-
+        <code>stableIconNames</code> gained <code>zoom-in</code> and <code>fit</code>, and an IconStateButton's faces are named from that vocabulary, so
+        the enum widens on its own. Nothing that compiled before stops compiling.
+  - date: 2026-09-21
+    kind: feature
+    es:
+      title: Las faces aceptan placeholder
+      body: >-
+        <code>stableIconNames</code> sumó el rol <code>placeholder</code>, y las faces de
+        IconStateButton se nombran con ese mismo vocabulario, así que el enum se ensancha solo. Nada
+        que ya compilaba deja de compilar.
+    en:
+      title: Faces accept placeholder
+      body: >-
+        <code>stableIconNames</code> gained the <code>placeholder</code> role, and an
+        IconStateButton's faces are named from that same vocabulary, so the enum widens on its own.
+        Nothing that compiled before stops compiling.
   - date: 2026-09-20
     kind: bugfix
     es:

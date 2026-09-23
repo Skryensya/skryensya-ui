@@ -19,6 +19,7 @@ import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 import { toolbarBindingItems, toolbarScreenItems } from "./data/toolbar";
 import { namePart } from "./annotation-parts";
+import { genericIcon } from "./anatomy-subject";
 
 const iconButton = (
   label: string,
@@ -51,7 +52,7 @@ export const toolbarAnatomyTree = (t: Translate): UsageTree => ({
     subject: {
       contract: "toolbar",
       signature: "Toolbar",
-      options: { label: t("demo.toolbar.actions") },
+      options: { label: t("anatomy.label") },
       children: [
         {
           contract: "toolbar",
@@ -61,15 +62,15 @@ export const toolbarAnatomyTree = (t: Translate): UsageTree => ({
               contract: "button",
               signature: "Button.action",
               options: { iconOnly: true, size: "sm", variant: "ghost" },
-              attrs: { "aria-label": t("demo.toolbar.edit") },
-              children: { contract: "icon", signature: "Icon", options: { name: "edit" } },
+              attrs: { "aria-label": t("anatomy.item1") },
+              children: genericIcon(),
             },
             {
               contract: "button",
               signature: "Button.action",
               options: { iconOnly: true, size: "sm", variant: "ghost" },
-              attrs: { "aria-label": t("demo.toolbar.copy") },
-              children: { contract: "icon", signature: "Icon", options: { name: "copy" } },
+              attrs: { "aria-label": t("anatomy.item2") },
+              children: genericIcon(),
             },
           ],
         },
@@ -78,8 +79,8 @@ export const toolbarAnatomyTree = (t: Translate): UsageTree => ({
           contract: "button",
           signature: "Button.action",
           options: { iconOnly: true, size: "sm", variant: "ghost" },
-          attrs: { "aria-label": t("demo.toolbar.delete") },
-          children: { contract: "icon", signature: "Icon", options: { name: "delete" } },
+          attrs: { "aria-label": t("anatomy.item3") },
+          children: genericIcon(),
         },
       ],
     },

@@ -1,4 +1,5 @@
-import type { ComponentContract, OptionsOf } from "./contract.js";
+import { canvasAttrs, canvasLabelOptions, canvasParts, canvasTemplateChildren } from "./canvas.js";
+import type { ComponentContract, ContractTemplate, OptionsOf } from "./contract.js";
 
 /*
  * ANNOTATION, the contract for a drawing that names the parts of another drawing.
@@ -9,6 +10,10 @@ import type { ComponentContract, OptionsOf } from "./contract.js";
  * (which makes the reader hold six numbers in their head while their eye travels). What actually
  * works is what technical illustration settled on a century ago: the label sits OUTSIDE the subject,
  * in a margin of its own, and a LEADER LINE connects the two.
+ *
+ * (`numbered` is the one concession to the legend, and it keeps what matters: the number still sits
+ * in the margin and a leader still reaches the part, so only the NAME travels below, and the reader
+ * who reads the legend entry sees its number, leader and part light up together.)
  *
  * So this contract owns exactly two invariants, and they are the two that keep getting broken:
  *
@@ -59,6 +64,16 @@ export function isAnnotationSide(value: unknown): value is AnnotationSide {
  * every one of those rules for a containment nobody is reading it for.
  */
 export const annotationParts = {
+  /**
+   * THE FIGURE, and the host: the drawing plus whatever explains it from outside, which today is a
+   * `numbered` diagram's legend. Its own block rather than an element of `sk-annotated`, because it
+   * CONTAINS that block: the legend is a sibling of the frame, not a cell of its grid, so a long
+   * name can never widen a gutter and the list flows on its own terms.
+   *
+   * Markup written before it existed mounts `data-sk-annotated` on the frame directly and is still
+   * a whole diagram; it just has no legend. The enhancer accepts either.
+   */
+  figure: "sk-annotated-figure",
   /** The frame: the grid that holds a subject and the gutters its labels live in. */
   root: "sk-annotated",
   /** The centre cell. Whatever is being diagrammed, untouched. */
@@ -98,6 +113,35 @@ export const annotationParts = {
    * rather than an `.sk-annotation` in a corner.
    */
   key: "sk-annotated__key",
+  /**
+   * THE LEGEND of a `numbered` diagram: an `<ol>` in the figure, under the frame and OUTSIDE it, one
+   * entry per label in the labels' own order, so the entry's number is the bubble's number without
+   * anyone writing either.
+   *
+   * It exists for the diagram whose NAMES are what squeeze it. The key buys back a repeated prefix;
+   * this buys back the whole name. The gutters shrink to a number's width, the specimen gets its
+   * width back, and the name moves to a list that can wrap, which a gutter label never may (see
+   * `.sk-annotation`'s `nowrap`). The leader stays, so the eye still travels from number to part
+   * along a line instead of hunting for it, which is the half of the numbered legend this component
+   * was right to reject.
+   */
+  legend: "sk-annotated__legend",
+  /**
+   * One entry in it, and in a `numbered` diagram the element a reader TABS to. The bubble keeps
+   * only its number and goes `aria-hidden`: the name is here, so the tab stop and the accessible
+   * text belong here too.
+   */
+  legendItem: "sk-annotated__legend-item",
+  /*
+   * THE CANVAS, BORROWED. A `zoomable` figure puts its frame inside the same structure `Canvas`
+   * renders (see `canvasTemplateChildren`), so the template names those parts too. They are the
+   * canvas's classes, not this block's: one stylesheet and one enhancer serve both.
+   */
+  viewport: canvasParts.viewport,
+  content: canvasParts.content,
+  controls: canvasParts.controls,
+  control: canvasParts.control,
+  hint: canvasParts.hint,
 } as const;
 
 export type AnnotationPart = keyof typeof annotationParts;
@@ -140,6 +184,10 @@ export const annotationAttrs = {
    * packing; set it only for the diagrams whose label order needs the opposite edge.
    */
   mobileAlign: "data-mobile-align",
+  /** The frame draws numbers in its gutters and names them in a legend below. */
+  numbered: "data-numbered",
+  /** How this label marks its part: a ring around it, or a bracket along it. */
+  mark: "data-mark",
 } as const;
 
 /* ---------------------------------------------------------------------------------------------- *
@@ -269,6 +317,44 @@ export const annotationMatches = ["first", "all"] as const satisfies readonly An
 export function isAnnotationMatch(value: unknown): value is AnnotationMatch {
   return typeof value === "string" && (annotationMatches as readonly string[]).includes(value);
 }
+
+/**
+ * HOW A LABEL MARKS ITS PART, and the two answers are for two different kinds of part.
+ *
+ * `ring` (the default) is for a THING: a button, a title, a chevron. The leader runs to it and the
+ * ring outlines it, and the reader's question is "which one is this?".
+ *
+ * `bracket` is for an AREA: an accordion, one of its items, an open panel, a part whose job is to
+ * hold other parts. A leader into the middle of one points at whatever child happens to sit there,
+ * which is the one thing it does not mean. What names an area is its EXTENT, so the bracket is the
+ * technical drawing's dimension line: a line parallel to the part's side in the gutter, exactly as
+ * long as the part, with a short tick at each end turned toward it, and the label sitting on the
+ * line's middle. Brackets that would overlap are stacked outward in tracks, a container always
+ * outside what it contains, so nested areas read as nested.
+ *
+ * Only in the four-gutter layout: the narrow-screen cluster has no gutter for a bracket to run in,
+ * so there a bracket label falls back to a ring.
+ */
+export type AnnotationMarkKind = "ring" | "bracket";
+
+export const annotationMarkKinds = ["ring", "bracket"] as const satisfies readonly AnnotationMarkKind[];
+
+export function isAnnotationMarkKind(value: unknown): value is AnnotationMarkKind {
+  return typeof value === "string" && (annotationMarkKinds as readonly string[]).includes(value);
+}
+
+/** How long a bracket's end ticks are, in px. Enough to read as a bracket, short of the part. */
+export const ANNOTATION_BRACKET_TICK = 6;
+
+/** Clearance between the subject and the nearest bracket label, and between two bracket tracks. */
+export const ANNOTATION_BRACKET_GAP = 6;
+
+/**
+ * How far each of two brackets that MEET on one track pulls its end back, in px. Two parts that
+ * abut (a trigger and the panel under it) share a track like a chain of dimensions, and without the
+ * pull their ticks would draw on the same pixel and read as one bracket with a notch in it.
+ */
+export const ANNOTATION_BRACKET_JOINT = 2;
 
 export const annotationRingPlacements = [
   "inset",
@@ -492,8 +578,19 @@ export function readAnnotationTranslate(value: string | null | undefined): Annot
 /** The string form of one, so the two bindings write the same bytes. */
 export const annotationTranslate = (point: AnnotationPoint): string => `${point.x}px ${point.y}px`;
 
-/** One label asking for a position along its gutter: where it wants to be, and how much room it takes. */
-export type AnnotationLane = { readonly desired: number; readonly size: number };
+/**
+ * One label asking for a position along its gutter: where it wants to be, and how much room it takes.
+ *
+ * `min`/`max` bound the positions from which its leader is still ONE STRAIGHT SEGMENT: the stretch of
+ * the gutter level with its ring's facing edge. Optional, and a preference rather than a wall: a
+ * lane is only held inside it while the neighbours leave room, and one pushed past it gets a knee.
+ */
+export type AnnotationLane = {
+  readonly desired: number;
+  readonly size: number;
+  readonly min?: number;
+  readonly max?: number;
+};
 
 /**
  * Slide labels along one gutter until none of them overlap, moving each as little as possible.
@@ -542,10 +639,25 @@ export function distributeLanes(
       cursor = at + lane.size + gap;
     }
 
+    /* The backward pass also pulls a lane the forward pass pushed past its straight window back
+       inside it, taking its predecessors along: it is a smaller lie to move a neighbour than to bend
+       a leader. */
     let ceiling = extent;
     for (let i = order.length - 1; i >= 0; i -= 1) {
-      placed[i] = Math.min(placed[i]!, ceiling - order[i]!.lane.size);
+      const { lane } = order[i]!;
+      placed[i] = Math.min(placed[i]!, ceiling - lane.size, lane.max ?? Number.POSITIVE_INFINITY);
       ceiling = placed[i]! - gap;
+    }
+
+    /* A last forward pass settles what that pull broke: nothing overlaps its predecessor, and a lane
+       dragged below its own window by a neighbour is lifted back into it where there is room. */
+    let floor = Number.NEGATIVE_INFINITY;
+    for (let i = 0; i < order.length; i += 1) {
+      const { lane } = order[i]!;
+      const lifted = Math.max(placed[i]!, floor, lane.min ?? Number.NEGATIVE_INFINITY);
+      const limit = (i + 1 < order.length ? placed[i + 1]! - gap : extent) - lane.size;
+      placed[i] = Math.max(placed[i]!, floor, Math.min(lifted, limit));
+      floor = placed[i]! + lane.size + gap;
     }
   }
 
@@ -656,6 +768,18 @@ export function watchAnnotationSpecimenFocus(subject: HTMLElement): () => void {
   return () => observer.disconnect();
 }
 
+/**
+ * How much the frame is drawn scaled by, read off its two sizes: the rect a transform scales and the
+ * layout box it does not. 1 everywhere except inside a `zoomable` canvas (or any other transformed
+ * ancestor), where every rectangle a binding reads is in SCREEN pixels while the leaders are drawn in
+ * the frame's OWN. Dividing this back out is what keeps a zoomed diagram's lines on their parts, and
+ * it is the only thing zoom costs this module: placement is scale-invariant once measured this way,
+ * so zooming never has to re-place anything.
+ */
+export function annotationScale(frame: HTMLElement, rect: { readonly width: number }): number {
+  return frame.offsetWidth > 0 && rect.width > 0 ? rect.width / frame.offsetWidth : 1;
+}
+
 /** What a binding measured for one label, before anything has been decided about it. */
 export type AnnotationMeasurement = {
   /** The gutter the author asked for. Only used when the boxes cannot answer. */
@@ -688,6 +812,8 @@ export type AnnotationMeasurement = {
    * not decided either leaves each ring to the corner of the part it wraps (`targets[n].radius`).
    */
   readonly ringRadius?: number;
+  /** How this label marks its part. Absent is `ring`. */
+  readonly mark?: AnnotationMarkKind;
 };
 
 /**
@@ -713,6 +839,8 @@ export type AnnotationMark = {
 export type AnnotationPlacement = {
   /** The gutter it ended up in, for `data-sk-side`. */
   readonly side: AnnotationSide;
+  /** How it ended up marking its part: a bracket asked for in a layout with no gutter is a ring. */
+  readonly mark: AnnotationMarkKind;
   /** The nudge from the label's flow position to where it belongs, as a `translate`. */
   readonly translate: AnnotationPoint;
   /**
@@ -733,7 +861,26 @@ export type AnnotationPlacementOptions = {
   readonly direction?: AnnotationDirection;
   /** Keep labels in their flow positions while still drawing leaders from those measured boxes. */
   readonly distribute?: boolean;
+  /** Draw `bracket` marks as brackets. Defaults to `distribute`: both mean "there are gutters". */
+  readonly brackets?: boolean;
 };
+
+/**
+ * How far from the subject's edge each gutter's contents reach, in px, per logical side. Zero for a
+ * gutter with no brackets, whose labels size it on their own. A binding writes the non-zero ones as
+ * `--sk-annotated-room-<side>`, which the stylesheet turns into that gutter's minimum width: bracket
+ * labels are out of flow (they sit on their lines), so nothing else would reserve their room.
+ */
+export type AnnotationRoom = Readonly<Record<AnnotationSide, number>>;
+
+/** Everything a binding writes: one placement per label, and the room each gutter needs. */
+export type AnnotationLayout = {
+  readonly placements: readonly AnnotationPlacement[];
+  readonly room: AnnotationRoom;
+};
+
+/** The custom property a binding writes a gutter's room to. */
+export const annotationRoomProperty = (side: AnnotationSide): string => `--sk-annotated-room-${side}`;
 
 /**
  * The whole decision, from measured rectangles to the handful of strings a binding assigns. Both
@@ -749,7 +896,16 @@ export function placeAnnotations(
   measurements: readonly AnnotationMeasurement[],
   subject: AnnotationBox,
   options: AnnotationPlacementOptions = {},
-): AnnotationPlacement[] {
+): readonly AnnotationPlacement[] {
+  return layoutAnnotations(measurements, subject, options).placements;
+}
+
+/** `placeAnnotations`, plus the room each gutter needs for its brackets. */
+export function layoutAnnotations(
+  measurements: readonly AnnotationMeasurement[],
+  subject: AnnotationBox,
+  options: AnnotationPlacementOptions = {},
+): AnnotationLayout {
   const gap = options.gap ?? ANNOTATION_LANE_GAP;
   const tipInset = options.tipInset ?? ANNOTATION_TIP_INSET;
   const ringInset = options.ringInset ?? ANNOTATION_RING_DISTANCE;
@@ -759,14 +915,44 @@ export function placeAnnotations(
   const ringGap = options.ringGap ?? ANNOTATION_RING_GAP;
   const direction = options.direction ?? "ltr";
   const distribute = options.distribute ?? true;
+  const brackets = options.brackets ?? distribute;
 
-  const sides = measurements.map((measurement) =>
-    annotationExitSide(measurement.label, subject, measurement.side, direction),
+  const kinds: AnnotationMarkKind[] = measurements.map((measurement) =>
+    brackets && measurement.mark === "bracket" ? "bracket" : "ring",
+  );
+  /* A bracket label is out of flow and placed on its line by this function, so its measured box says
+     nothing about which gutter it is in: the request is the answer. */
+  const sides = measurements.map((measurement, index) =>
+    kinds[index] === "bracket"
+      ? measurement.side
+      : annotationExitSide(measurement.label, subject, measurement.side, direction),
   );
   const physical = sides.map((side) => physicalSide(side, direction));
   /* Normalized ONCE, here, so "has something to point at" means the same thing to the distribution
      below and to the drawing after it. Asking twice is how the two would come to disagree. */
   const targets = measurements.map((measurement) => measurement.targets.filter(isPointable));
+
+  /* The rings come FIRST now, ahead of the distribution: where a straight leader can reach a ring is
+     what bounds where its label may slide (see `AnnotationLane`). */
+  const rings = measurements.map((measurement, index) =>
+    targets[index]!.map((target) => {
+      const inset = measurement.ringInset ?? ringInset;
+      /* Narrowest opinion first: this one mark, then the frame, then the part's own corner, then the
+         constant for a caller that measured no corners at all.
+
+         The part's corner is the only one that gets CONVERTED on the way in, and it has to be: an
+         authored `ringRadius` is a statement about the RING, while `target.radius` is a statement
+         about the element the ring is drawn beside. A 12px card outlined 2px inside itself is
+         concentric at 10px and visibly not at 12px, the corners bowing apart exactly where the eye
+         is checking whether the mark belongs to the box. Same sign convention as everywhere here, so
+         an `offset` ring (negative inset) grows its corner instead. */
+      const authored = measurement.ringRadius ?? ringRadius;
+      const radius =
+        authored ??
+        (target.radius === undefined ? ANNOTATION_RING_RADIUS : Math.max(0, target.radius - inset));
+      return ringAround(target, inset, radius);
+    }),
+  );
 
   /*
    * One lane per gutter, and a label with nothing to point at sits the distribution out entirely: it
@@ -778,7 +964,10 @@ export function placeAnnotations(
     for (const gutter of ["left", "right", "top", "bottom"] as const) {
       const members = measurements
         .map((measurement, index) => ({ measurement, index }))
-        .filter(({ index }) => physical[index] === gutter && targets[index]!.length > 0);
+        .filter(
+          ({ index }) =>
+            physical[index] === gutter && kinds[index] === "ring" && targets[index]!.length > 0,
+        );
       if (members.length === 0) continue;
 
       const vertical = gutter === "left" || gutter === "right";
@@ -793,7 +982,16 @@ export function placeAnnotations(
         const size = vertical ? measurement.label.height : measurement.label.width;
         const middle = vertical ? span.y + span.height / 2 : span.x + span.width / 2;
         // Level with that centre, expressed from the gutter's own start.
-        return { desired: middle - size / 2 - origin, size };
+        const desired = middle - size / 2 - origin;
+        /* A single mark leaves the label's midpoint, so its leader is one straight segment while that
+           midpoint stays inside the stretch `leaderTarget` can land on. A label naming several parts
+           leaves from several points and has no one window: it keeps the old, unbounded lane. */
+        if (rings[index]!.length !== 1) return { desired, size };
+        const ring = rings[index]![0]!;
+        const [lo, hi] = vertical
+          ? straightRange(ring.y, ring.height, tipInset)
+          : straightRange(ring.x, ring.width, tipInset);
+        return { desired, size, min: lo - size / 2 - origin, max: hi - size / 2 - origin };
       });
 
       const placed = distributeLanes(lanes, extent, gap);
@@ -804,16 +1002,35 @@ export function placeAnnotations(
     }
   }
 
-  return measurements.map((measurement, index) => {
+  const bracketed = placeBrackets(measurements, subject, physical, kinds, targets);
+
+  const placements = measurements.map((measurement, index): AnnotationPlacement => {
     const side = sides[index]!;
     const gutter = physical[index]!;
     const vertical = gutter === "left" || gutter === "right";
-    const shift = Math.round(offsets[index]!);
-    const translate = vertical ? { x: 0, y: shift } : { x: shift, y: 0 };
 
-    const label: AnnotationBox = vertical
-      ? { ...measurement.label, y: measurement.label.y + shift }
-      : { ...measurement.label, x: measurement.label.x + shift };
+    const bracket = bracketed.brackets[index];
+    if (bracket) {
+      return {
+        side,
+        mark: "bracket",
+        translate: bracket.translate,
+        /* The bracket rides on the first mark; any further ones (`match: "all"`) are rings only,
+           revealed with it. */
+        marks: rings[index]!.map((ring, at) => ({ path: at === 0 ? bracket.path : "", ring })),
+      };
+    }
+
+    const shift = Math.round(offsets[index]!);
+    /* A ring label sharing a gutter with brackets steps out past them, and its leader crosses them. */
+    const across = bracketed.across[index] ?? 0;
+    const translate = vertical ? { x: across, y: shift } : { x: shift, y: across };
+
+    const label: AnnotationBox = {
+      ...measurement.label,
+      x: measurement.label.x + translate.x,
+      y: measurement.label.y + translate.y,
+    };
 
     /*
      * One mark per thing named, each leaving the label's facing edge at its OWN point.
@@ -824,24 +1041,7 @@ export function placeAnnotations(
      * no two of a label's own leaders cross.
      */
     const origins = spreadAlong(label, gutter, targets[index]!);
-    const marks = targets[index]!.map((target, at) => {
-      const inset = measurement.ringInset ?? ringInset;
-      /* Narrowest opinion first: this one mark, then the frame, then the part's own corner, then the
-         constant for a caller that measured no corners at all.
-
-         The part's corner is the only one that gets CONVERTED on the way in, and it has to be: an
-         authored `ringRadius` is a statement about the RING, while `target.radius` is a statement
-         about the element the ring is drawn beside. A 12px card outlined 2px inside itself is
-         concentric at 10px and visibly not at 12px, the corners bowing apart exactly where the eye
-         is checking whether the mark belongs to the box. Same sign convention as everywhere here, so
-         an `offset` ring (negative inset) grows its corner instead. */
-      const authored = measurement.ringRadius ?? ringRadius;
-      const radius =
-        authored ??
-        (target.radius === undefined
-          ? ANNOTATION_RING_RADIUS
-          : Math.max(0, target.radius - inset));
-      const ring = ringAround(target, inset, radius);
+    const marks = rings[index]!.map((ring, at) => {
       const from = origins[at]!;
       const to = leaderTarget(from, ring, gutter, tipInset, ringGap);
       return {
@@ -850,8 +1050,179 @@ export function placeAnnotations(
       };
     });
 
-    return { side, translate, marks };
+    return { side, mark: "ring", translate, marks };
   });
+
+  const room = {} as Record<AnnotationSide, number>;
+  for (const side of annotationSides) room[side] = bracketed.room[physicalSide(side, direction)];
+  return { placements, room };
+}
+
+type BracketPlacement = { readonly translate: AnnotationPoint; readonly path: string };
+
+/**
+ * THE BRACKETS: which track each one runs in, where its label sits, and what that costs each gutter.
+ *
+ * Tracks are assigned smallest part first, each to the innermost track where it overlaps nothing
+ * (its line and its label both, with a gap) and lies outside every bracket it contains. Smallest
+ * first is what makes containers go OUTSIDE: by the time the accordion is placed, its items already
+ * hold the inner tracks, and the accordion overlaps all of them.
+ *
+ * A track is as wide as its widest label, because the label sits ON the line: the tracks are spaced
+ * so no label reaches the next line over.
+ */
+function placeBrackets(
+  measurements: readonly AnnotationMeasurement[],
+  subject: AnnotationBox,
+  physical: readonly PhysicalSide[],
+  kinds: readonly AnnotationMarkKind[],
+  targets: readonly (readonly AnnotationTarget[])[],
+): {
+  brackets: (BracketPlacement | undefined)[];
+  across: (number | undefined)[];
+  room: Record<PhysicalSide, number>;
+} {
+  const gap = ANNOTATION_BRACKET_GAP;
+  const brackets: (BracketPlacement | undefined)[] = new Array(measurements.length);
+  const across: (number | undefined)[] = new Array(measurements.length);
+  const room: Record<PhysicalSide, number> = { left: 0, right: 0, top: 0, bottom: 0 };
+
+  for (const gutter of ["left", "right", "top", "bottom"] as const) {
+    const vertical = gutter === "left" || gutter === "right";
+    const members = measurements
+      .map((measurement, index) => ({ measurement, index }))
+      .filter(({ index }) => physical[index] === gutter && kinds[index] === "bracket")
+      .map(({ measurement, index }) => {
+        /* A bracket with nothing to measure still needs somewhere to sit: level with the subject,
+           and no line, the same as a ring label whose selector matched nothing. */
+        const span = targets[index]!.length > 0 ? unionOf(targets[index]!) : subject;
+        const start = vertical ? span.y : span.x;
+        const end = start + (vertical ? span.height : span.width);
+        const along = vertical ? measurement.label.height : measurement.label.width;
+        const mid = (start + end) / 2;
+        return {
+          index,
+          start,
+          end,
+          mid,
+          labelLo: mid - along / 2,
+          labelHi: mid + along / 2,
+          lo: Math.min(start, mid - along / 2),
+          hi: Math.max(end, mid + along / 2),
+          across: vertical ? measurement.label.width : measurement.label.height,
+          track: 0,
+        };
+      });
+    if (members.length === 0) continue;
+
+    const order = [...members].sort((a, b) => a.end - a.start - (b.end - b.start) || a.index - b.index);
+    const tracks: (typeof members)[] = [];
+    for (const item of order) {
+      let track = 0;
+      for (const placed of tracks.flat()) {
+        if (item.start <= placed.start && placed.end <= item.end) {
+          track = Math.max(track, placed.track + 1);
+        }
+      }
+      /* Two brackets share a track unless their LINES overlap (meeting end to end is a chain, and
+         allowed) or either one's label comes within `gap` of the other's line or label. */
+      const clash = (other: (typeof members)[number]): boolean =>
+        (item.start < other.end && other.start < item.end) ||
+        (item.labelLo < other.hi + gap && other.lo < item.labelHi + gap) ||
+        (other.labelLo < item.hi + gap && item.lo < other.labelHi + gap);
+      while (tracks[track]?.some(clash)) {
+        track += 1;
+      }
+      item.track = track;
+      (tracks[track] ??= []).push(item);
+    }
+
+    /* Each track's line, as a distance out from the subject's edge. An empty track (possible when a
+       container skips past one) takes no room. */
+    const widths = Array.from(tracks, (track) =>
+      track ? Math.max(...track.map((item) => item.across)) : 0,
+    );
+    const lines: number[] = [];
+    let reach = 0;
+    widths.forEach((width) => {
+      if (width === 0) {
+        lines.push(reach);
+        return;
+      }
+      lines.push(reach + gap + width / 2);
+      reach += gap + width;
+    });
+
+    const outward = gutter === "left" || gutter === "top" ? -1 : 1;
+    const edge =
+      gutter === "left"
+        ? subject.x
+        : gutter === "right"
+          ? subject.x + subject.width
+          : gutter === "top"
+            ? subject.y
+            : subject.y + subject.height;
+
+    for (const item of members) {
+      const { measurement, index } = { measurement: measurements[item.index]!, index: item.index };
+      const line = Math.round(edge + outward * lines[item.track]!);
+      const mid = Math.round(item.mid);
+      const centre = vertical ? { x: line, y: mid } : { x: mid, y: line };
+      const translate = {
+        x: Math.round(centre.x - measurement.label.width / 2 - measurement.label.x),
+        y: Math.round(centre.y - measurement.label.height / 2 - measurement.label.y),
+      };
+      const tick = line - outward * ANNOTATION_BRACKET_TICK;
+      const meets = (at: number) =>
+        tracks[item.track]!.some(
+          (other) => other !== item && (Math.abs(other.end - at) < gap || Math.abs(other.start - at) < gap),
+        );
+      const start = Math.round(item.start + (meets(item.start) ? ANNOTATION_BRACKET_JOINT : 0));
+      const end = Math.round(item.end - (meets(item.end) ? ANNOTATION_BRACKET_JOINT : 0));
+      const path =
+        targets[index]!.length === 0
+          ? ""
+          : annotationPath(
+              vertical
+                ? [
+                    { x: tick, y: start },
+                    { x: line, y: start },
+                    { x: line, y: end },
+                    { x: tick, y: end },
+                  ]
+                : [
+                    { x: start, y: tick },
+                    { x: start, y: line },
+                    { x: end, y: line },
+                    { x: end, y: tick },
+                  ],
+            );
+      brackets[index] = { translate, path };
+    }
+
+    /* Ring labels in the same gutter step out past the outermost bracket label. How far they already
+       are from the subject is read off their flow box, so the step is only what is missing. */
+    let ringReach = 0;
+    measurements.forEach((measurement, index) => {
+      if (physical[index] !== gutter || kinds[index] !== "ring") return;
+      const box = measurement.label;
+      const flow =
+        gutter === "left"
+          ? edge - (box.x + box.width)
+          : gutter === "right"
+            ? box.x - edge
+            : gutter === "top"
+              ? edge - (box.y + box.height)
+              : box.y - edge;
+      const missing = reach + gap - flow;
+      if (missing > 0) across[index] = Math.round(outward * missing);
+      ringReach = Math.max(ringReach, vertical ? box.width : box.height);
+    });
+
+    room[gutter] = Math.ceil(reach + (ringReach > 0 ? gap + ringReach : 0));
+  }
+
+  return { brackets, across, room };
 }
 
 /** The smallest box holding all of them. Empty in, empty out is impossible: callers filter first. */
@@ -1003,9 +1374,79 @@ function leaderTarget(
 }
 
 function clampInside(value: number, start: number, size: number, inset: number): number {
-  if (size <= inset * 2) return start + size / 2;
-  return Math.min(Math.max(value, start + inset), start + size - inset);
+  const [lo, hi] = straightRange(start, size, inset);
+  return Math.min(Math.max(value, lo), hi);
 }
+
+/** The stretch of a ring's facing edge a leader may land on: clear of the corners by `inset`, or
+ *  only the centre when the ring is too small to keep clear of both. */
+function straightRange(start: number, size: number, inset: number): [number, number] {
+  if (size <= inset * 2) return [start + size / 2, start + size / 2];
+  return [start + inset, start + size - inset];
+}
+
+/*
+ * THE FRAME's template, named because it appears twice: straight in the figure, or inside the canvas
+ * a `zoomable` figure wraps it in. One literal, so the two can never drift.
+ */
+const annotationFrame: ContractTemplate = {
+  element: "div",
+  part: "root",
+  /* The counter and the no-stacking rule both live on the frame, so the flag does too. */
+  options: ["numbered"],
+  children: [
+    {
+      element: "div",
+      part: "subject",
+      slot: "subject",
+      /* `inert` lands HERE and not on the host: the labels are not part of the specimen,
+         and an inert frame would take them out of the accessibility tree along with it. */
+      options: ["inert"],
+    },
+    /* A corner the labels never reach, so it needs no placement of its own beyond its part. */
+    { element: "p", part: "key", whenGiven: "key", slot: "key" },
+    /*
+     * FOCUSABLE, and this is the price of showing one mark at a time rather than all of
+     * them. A ring that only appears under the pointer is information a keyboard reader
+     * cannot reach, and "the leaders are decorative" is not an answer: the ring is the only
+     * thing that says WHICH part a name belongs to. A tab stop per label makes that
+     * reachable. The stylesheet keys the reveal on `:hover` and `:focus-visible` alike.
+     */
+    {
+      element: "span",
+      part: "label",
+      repeat: "items",
+      whenMissing: "numbered",
+      itemOptions: ["for", "side", "mark", "mobileAlign", "match", "ringPlacement", "ringDistance", "ringRadius"],
+      itemSlot: "children",
+      attrs: { tabindex: "0" },
+    },
+    /*
+     * THE NUMBERED BUBBLE: the same part in the same gutter, measured and led the same
+     * way, but EMPTY. Its number is a CSS counter (see `numbered`), and it is `aria-hidden`
+     * and no tab stop because a bare "3" says nothing out loud; the legend entry is what a
+     * reader reaches, and it carries the name.
+     */
+    {
+      element: "span",
+      part: "label",
+      repeat: "items",
+      whenGiven: "numbered",
+      itemOptions: ["for", "side", "mark", "mobileAlign", "match", "ringPlacement", "ringDistance", "ringRadius"],
+      attrs: { "aria-hidden": "true" },
+    },
+    /*
+     * EMPTY BY CONSTRUCTION. Its contents are measured, so there is nothing here for an
+     * author to write and nothing for the emitter to emit. `aria-hidden` because the
+     * leader says nothing the label does not already say out loud.
+     */
+    {
+      element: "svg",
+      part: "leaders",
+      attrs: { "aria-hidden": "true", focusable: "false" },
+    },
+  ],
+};
 
 /* ---------------------------------------------------------------------------------------------- *
  * Contract
@@ -1022,6 +1463,9 @@ export const annotationContract = {
     "--sk-annotated-gap",
     "--sk-annotated-key-color",
     "--sk-annotated-subject-filter",
+    "--sk-annotated-surface-bg",
+    "--sk-annotated-legend-bg",
+    "--sk-annotated-figure-inset",
   ],
 
   options: {
@@ -1082,6 +1526,28 @@ export const annotationContract = {
       attr: annotationAttrs.ringRadius,
       machineInput: true,
     },
+    /**
+     * Numbers in the gutters, names in a legend under the frame.
+     *
+     * For the diagram whose names cost the specimen its width: ten part names in the margins can
+     * leave the subject a third of its frame, where ten numbers leave it nearly all of it. The
+     * leaders and rings are unchanged, and so is the one-at-a-time reveal, which now answers from
+     * the legend too: reading an entry lights its number, its leader and its part together.
+     *
+     * The number is a CSS counter, not text: it is the entry's position, which the markup already
+     * states, and a second copy an author typed could disagree with it.
+     */
+    numbered: { type: "boolean", default: false, attr: annotationAttrs.numbered, trueValue: "" },
+    /**
+     * The drawing becomes a CANVAS: laid out at its own width, shown fitted, and pannable and
+     * zoomable (drag, Ctrl/Cmd + wheel, two fingers, `+`/`-`/`0`). For a diagram that has to be
+     * legible on a phone: instead of rewrapping the specimen into the narrow screen, it is shown
+     * whole and small, and the reader zooms into the part they want. The legend stays outside the
+     * canvas, unscaled. See `@skryensya/core/canvas`.
+     */
+    zoomable: { type: "boolean", default: false, attr: "data-zoomable", trueValue: "" },
+    /* The canvas's own labels, under the same names `Canvas` uses. */
+    ...canvasLabelOptions,
   },
 
   signatures: {
@@ -1095,7 +1561,18 @@ export const annotationContract = {
         "leader-line",
       ],
       host: { element: "div" },
-      options: ["label", "inert", "ringPlacement", "ringDistance", "ringRadius"],
+      options: [
+        "label",
+        "inert",
+        "ringPlacement",
+        "ringDistance",
+        "ringRadius",
+        "numbered",
+        "zoomable",
+        "zoomInLabel",
+        "zoomOutLabel",
+        "fitLabel",
+      ],
       slots: {
         /** What is being diagrammed. Any composition at all; the frame never looks inside it. */
         subject: { accepts: "node", required: true },
@@ -1106,6 +1583,10 @@ export const annotationContract = {
          * subject its width. See `annotationParts.key`.
          */
         key: { accepts: "text" },
+        /** A `zoomable` canvas's hint for a one-finger drag. Default: "Use two fingers to move the view". */
+        touchHint: { accepts: "text" },
+        /** A `zoomable` canvas's hint for a plain wheel. Default: "Use Ctrl + scroll to zoom". */
+        wheelHint: { accepts: "text" },
         /**
          * The labels, as DATA rather than as children, for the reason every collection is data here:
          * one entry becomes two things in two different places (a label in a gutter and a path in
@@ -1171,6 +1652,17 @@ export const annotationContract = {
                 machineInput: true,
               },
               /**
+               * How this label marks its part. `bracket` for an AREA that holds other parts (an
+               * accordion, one of its items, an open panel): a dimension line along the part's side
+               * with the label on its middle, instead of a leader into whatever child sits there.
+               * Omitted is `ring`. See `AnnotationMarkKind`.
+               */
+              mark: {
+                type: "enum",
+                values: [...annotationMarkKinds],
+                attr: annotationAttrs.mark,
+              },
+              /**
                * Where the label lands in its row once the narrow layout clusters labels above and
                * below the specimen. Omit it for the cluster's own packing; use `end` for a label
                * that belongs against the far edge without forcing its neighbours to follow it.
@@ -1188,51 +1680,38 @@ export const annotationContract = {
       mount: annotationAttrs.root,
       template: {
         element: "div",
-        part: "root",
+        part: "figure",
         host: true,
         /* The group role only exists when there is a name for it: an unnamed group is an extra
            level of nesting a screen reader announces and nobody asked for. */
         attrsWhen: [{ option: "label", given: true, attrs: { role: "group" } }],
         children: [
+          /* Unzoomable: the frame sits straight in the figure. */
+          { ...annotationFrame, whenMissing: "zoomable" },
+          /*
+           * `zoomable`: the SAME frame inside a canvas. The node carries the canvas's mount point and
+           * class, so the Canvas enhancer attaches to it exactly as it would to a `Canvas`.
+           */
           {
             element: "div",
-            part: "subject",
-            slot: "subject",
-            /* `inert` lands HERE and not on the host: the labels are not part of the specimen, and
-               an inert frame would take them out of the accessibility tree along with it. */
-            options: ["inert"],
+            also: [canvasParts.root],
+            mount: canvasAttrs.root,
+            whenGiven: "zoomable",
+            children: canvasTemplateChildren(annotationFrame),
           },
-          /* A corner the labels never reach, so it needs no placement of its own beyond its part. */
-          { element: "p", part: "key", whenGiven: "key", slot: "key" },
-          /*
-           * FOCUSABLE, and this is the price of showing one mark at a time rather than all of them.
-           *
-           * A ring that only appears under the pointer is information a keyboard reader cannot
-           * reach, and "the leaders are decorative" is not an answer: the ring is the only thing
-           * that says WHICH part a name belongs to, which is the entire content of the diagram. A
-           * tab stop per label is the cheapest way to make that reachable, and it turns the diagram
-           * into something a reader can walk rather than only hover, which is worth having on its
-           * own. The stylesheet keys the reveal on `:hover` and `:focus-visible` alike.
-           */
           {
-            element: "span",
-            part: "label",
-            repeat: "items",
-            itemOptions: ["for", "side", "mobileAlign", "match", "ringPlacement", "ringDistance", "ringRadius"],
-            itemSlot: "children",
-            attrs: { tabindex: "0" },
-          },
-          /*
-           * EMPTY BY CONSTRUCTION. Its contents are one `<path>` and one `<circle>` per label, and
-           * every number in them is measured, so there is nothing here for an author to write and
-           * nothing for the emitter to emit. `focusable="false"` because IE-era SVG is still in
-           * enough tab orders to be worth two attributes, and `aria-hidden` because the leader says
-           * nothing the label does not already say out loud.
-           */
-          {
-            element: "svg",
-            part: "leaders",
-            attrs: { "aria-hidden": "true", focusable: "false" },
+            element: "ol",
+            part: "legend",
+            whenGiven: "numbered",
+            children: [
+              {
+                element: "li",
+                part: "legendItem",
+                repeat: "items",
+                itemSlot: "children",
+                attrs: { tabindex: "0" },
+              },
+            ],
           },
         ],
       },

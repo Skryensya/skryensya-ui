@@ -30,6 +30,7 @@ import { skipLinkContract } from "./skip-link.js";
 import { annotationContract } from "./annotation.js";
 import { diagramContract } from "./diagram.js";
 import { backToTopContract } from "./back-to-top.js";
+import { canvasContract } from "./canvas.js";
 import { accordionContract } from "./accordion.js";
 import { tileContract } from "./tile.js";
 import { paginationContract, tablePagerContract } from "./pagination.js";
@@ -116,6 +117,7 @@ export const contracts = fromContracts(
   boxContract,
   breadcrumbContract,
   buttonContract,
+  canvasContract,
   calloutContract,
   chartContract,
   checkboxContract,

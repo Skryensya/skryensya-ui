@@ -4,6 +4,7 @@ import {
   diagramParts,
   diagramRoutes,
   diagramZoneHeaders,
+  diagramZoneNames,
   isDiagramArrow,
   placeDiagramZones,
   isDiagramShape,
@@ -94,6 +95,15 @@ export function connectDiagram(root: HTMLElement): Cleanup {
       id: element.getAttribute(diagramAttrs.row) ?? "",
       element,
     })),
+  );
+  /*
+   * Each zone's own name, kept beside its zone. Its WIDTH is what the router needs, so a connector
+   * entering the region can land beside the words rather than through them (`diagramZoneNames`),
+   * and the width is the one thing about the label that can be read at any time: a word is as wide
+   * as it is whether it is sitting in the flow fallback or placed in the corner of a boundary.
+   */
+  const zoneLabels = zones.map((zone) =>
+    zone.querySelector<HTMLElement>(`.${diagramParts.zoneLabel}`),
   );
   /* Which zone each node is innermost in, and how the zones nest: authored structure, read once. */
   const zoneWiring: DiagramZoneInput[] = zones.map((zone) => ({
@@ -186,6 +196,11 @@ export function connectDiagram(root: HTMLElement): Cleanup {
     const placements = routeDiagram(measurements, inputs, {
       direction,
       keepRailsOut: diagramZoneHeaders(regions),
+      keepPortsOut: diagramZoneNames(
+        regions,
+        zoneLabels.map((label) => label?.getBoundingClientRect().width ?? 0),
+        { direction },
+      ),
     });
 
     /*
@@ -378,9 +393,21 @@ function drawConnectors(
  *
  * The rectangle is the OUTSIDE of the line, which is why the stylesheet gives a placed zone
  * `box-sizing: border-box`: what the geometry computed is where the border goes, not where its
- * padding starts. A zone holding nothing is left with no `translate` at all, and the stylesheet
- * hides exactly that: a region around no nodes has no box, and a box of zero at the origin is a dot
- * in the corner of the drawing rather than an absence.
+ * padding starts. A zone holding nothing is left with no `left` at all, and the stylesheet hides
+ * exactly that: a region around no nodes has no box, and a box of zero at the origin is a dot in
+ * the corner of the drawing rather than an absence.
+ *
+ * PHYSICAL INSETS AND NOT `translate`, which is what this wrote first and is the one thing here
+ * that is about PAINTING rather than about geometry. A non-none `translate` makes its element a
+ * stacking context, and a stacking context is a lid: the zone's own name could then never be
+ * painted above the connectors, however it was ordered, because everything inside the zone stacks
+ * inside the zone. A caption a wire runs through is the failure that causes (see
+ * `.sk-diagram__zone-label` in `diagram.css`). Insets place the same box in the same place, cost
+ * the same pass, and leave the lid off.
+ *
+ * `left`/`top` and not the logical pair, for the reason the whole module is physical: these numbers
+ * came out of `getBoundingClientRect`, and a right-to-left document would otherwise mirror them
+ * twice.
  */
 function drawZones(
   zones: readonly HTMLElement[],
@@ -389,12 +416,14 @@ function drawZones(
   zones.forEach((zone, index) => {
     const region = regions[index];
     if (!region) {
-      zone.style.removeProperty("translate");
+      zone.style.removeProperty("left");
+      zone.style.removeProperty("top");
       zone.style.removeProperty("inline-size");
       zone.style.removeProperty("block-size");
       return;
     }
-    zone.style.translate = `${region.box.x}px ${region.box.y}px`;
+    zone.style.left = `${region.box.x}px`;
+    zone.style.top = `${region.box.y}px`;
     zone.style.inlineSize = `${region.box.width}px`;
     zone.style.blockSize = `${region.box.height}px`;
   });

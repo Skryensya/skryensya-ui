@@ -8,12 +8,20 @@ import {
   diagramBranchTree,
   diagramCycleCss,
   diagramDemoCss,
+  diagramFlowCss,
   diagramFlowTree,
+  diagramGateCss,
+  diagramHalfAdderCss,
+  diagramGateRuleCss,
+  diagramGateRuleTree,
+  diagramGateTree,
   diagramInfraTree,
   diagramLogicTree,
+  diagramModelCss,
   diagramModelTree,
   diagramProcessTree,
   diagramStateTree,
+  diagramTreeCss,
   diagramTreeTree,
   diagramZonedCss,
 } from "../../demos/diagram";
@@ -124,7 +132,7 @@ const hooks = `.mi-diagrama {
     <p set:html={t("diagram.flowBody")} />
     <ComponentPreview
       tree={diagramFlowTree(t)}
-      css={diagramDemoCss}
+      css={diagramFlowCss}
       label={t("diagram.flowPreviewLabel")}
     />
 
@@ -140,7 +148,7 @@ const hooks = `.mi-diagrama {
     <p set:html={t("diagram.treeBody")} />
     <ComponentPreview
       tree={diagramTreeTree(t)}
-      css={diagramDemoCss}
+      css={diagramTreeCss}
       label={t("diagram.treePreviewLabel")}
     />
 
@@ -168,12 +176,31 @@ const hooks = `.mi-diagrama {
       label={t("diagram.logicPreviewLabel")}
     />
 
+    <h3>{t("diagram.gateTitle")}</h3>
+    <p set:html={t("diagram.gateBody")} />
+    <p set:html={t("diagram.gateBody2")} />
+    <ComponentPreview
+      tree={diagramGateTree(t)}
+      css={diagramHalfAdderCss}
+      label={t("diagram.gatePreviewLabel")}
+    />
+    <p set:html={t("diagram.gateBody3")} />
+
+    <h3>{t("diagram.gateRuleTitle")}</h3>
+    <p set:html={t("diagram.gateRuleBody")} />
+    <ComponentPreview
+      tree={diagramGateRuleTree(t)}
+      css={diagramGateRuleCss}
+      label={t("diagram.gateRulePreviewLabel")}
+    />
+    <p set:html={t("diagram.gateRuleBody2")} />
+
     <h3>{t("diagram.modelTitleDiagram")}</h3>
     <p set:html={t("diagram.modelBodyDiagram")} />
     <p set:html={t("diagram.modelBodyDiagram2")} />
     <ComponentPreview
       tree={diagramModelTree(t)}
-      css={diagramDemoCss}
+      css={diagramModelCss}
       label={t("diagram.modelPreviewLabel")}
     />
     <p set:html={t("diagram.modelWarn")} />

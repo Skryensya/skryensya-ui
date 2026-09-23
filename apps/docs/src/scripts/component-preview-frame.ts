@@ -198,6 +198,12 @@ function hasScrollableAncestor(target: EventTarget | null, deltaY: number): bool
  */
 function forwardWheelToParent(event: WheelEvent): void {
   if (scrolls()) return;
+  /*
+   * A component inside already TOOK this gesture (a Canvas zooming on Ctrl + wheel, or panning once
+   * the reader has zoomed in). Forwarding it anyway scrolled the page under a canvas that was also
+   * zooming: both moved at once. `window` hears the event last, so the verdict is already in.
+   */
+  if (event.defaultPrevented) return;
   if (hasScrollableAncestor(event.target, event.deltaY)) return;
   event.preventDefault();
   window.parent.scrollBy({ left: event.deltaX, top: event.deltaY });

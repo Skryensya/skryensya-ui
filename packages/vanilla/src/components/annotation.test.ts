@@ -32,7 +32,7 @@ const withBox = (element: Element, rect: Rect): void => {
     }) as DOMRect;
 };
 
-type Annotation = { for: string; side?: string; text: string; match?: string };
+type Annotation = { for: string; side?: string; text: string; match?: string; mark?: string };
 
 const frame = (annotations: readonly Annotation[]): HTMLElement => {
   const root = document.createElement("div");
@@ -45,7 +45,9 @@ const frame = (annotations: readonly Annotation[]): HTMLElement => {
         (annotation) =>
           `<span class="${annotationParts.label}" data-for="${annotation.for}" data-side="${
             annotation.side ?? "inline-start"
-          }"${annotation.match ? ` data-match="${annotation.match}"` : ""}>${annotation.text}</span>`,
+          }"${annotation.match ? ` data-match="${annotation.match}"` : ""}${
+            annotation.mark ? ` data-mark="${annotation.mark}"` : ""
+          }>${annotation.text}</span>`,
       )
       .join("")}
     <svg class="${annotationParts.leaders}" aria-hidden="true" focusable="false"></svg>
@@ -212,6 +214,21 @@ describe("connectAnnotated", () => {
     expect(overlayOf(fixed).querySelector("rect")!.getAttribute("rx")).toBe("0");
   });
 
+  it("brackets an area along its side and reserves the gutter room it takes", () => {
+    /* part-a spans y 100..160 against the subject's inline-end edge at x=600. The 140px label sits
+       on a line 6 + 70 out (x=676), level with the part's middle, and the gutter needs 6 + 140. */
+    const root = frame([{ for: ".part-a", side: "inline-end", mark: "bracket", text: "part a" }]);
+    layOut(root);
+    connectAnnotated(root);
+
+    expect(overlayOf(root).querySelector("path")!.getAttribute("d")).toBe(
+      "M 670 100 L 676 100 L 676 160 L 670 160",
+    );
+    expect(labelsOf(root)[0]!.style.translate).toBe("606px 120px");
+    expect(root.style.getPropertyValue("--sk-annotated-room-inline-end")).toBe("146px");
+    expect(root.style.getPropertyValue("--sk-annotated-room-inline-start")).toBe("");
+  });
+
   it("keeps one mark per label even when a label has nothing to point at", () => {
     /*
      * The reveal pairs a label with its mark BY INDEX, so a shorter list of marks would light up the
@@ -362,6 +379,67 @@ describe("connectAnnotated", () => {
 
     labelsOf(root)[0]!.dispatchEvent(new Event("focusin", { bubbles: true }));
     expect(overlayOf(root).children[0]!.hasAttribute("data-sk-active")).toBe(true);
+  });
+
+  it("reveals from the legend in a numbered frame, lighting its number and its mark together", () => {
+    /* The template's own shape: the FIGURE is the mount point, the frame is one child of it and the
+       legend another, so the list is outside the frame's grid. */
+    const root = frame([{ for: ".part-a", text: "" }, { for: ".part-b", text: "" }]);
+    root.removeAttribute("data-sk-annotated");
+    root.setAttribute("data-numbered", "");
+    const figure = document.createElement("div");
+    figure.className = annotationParts.figure;
+    figure.setAttribute("data-sk-annotated", "");
+    root.replaceWith(figure);
+    figure.append(root);
+    figure.insertAdjacentHTML(
+      "beforeend",
+      `<ol class="${annotationParts.legend}">
+        <li class="${annotationParts.legendItem}" tabindex="0">part a</li>
+        <li class="${annotationParts.legendItem}" tabindex="0">part b</li>
+      </ol>`,
+    );
+    layOut(root);
+    connectAnnotated(figure);
+    expect(root.querySelector(`.${annotationParts.legend}`)).toBeNull();
+
+    const entries = [...figure.querySelectorAll<HTMLElement>(`.${annotationParts.legendItem}`)];
+    const marks = [...overlayOf(root).children];
+    // The bubbles are still what the leaders leave from: one mark each, as without a legend.
+    expect(marks).toHaveLength(2);
+
+    entries[1]!.dispatchEvent(new Event("focusin", { bubbles: true }));
+    expect(entries[1]!.hasAttribute("data-sk-active")).toBe(true);
+    expect(labelsOf(root)[1]!.hasAttribute("data-sk-active")).toBe(true);
+    expect(marks[1]!.hasAttribute("data-sk-active")).toBe(true);
+    expect(marks[0]!.hasAttribute("data-sk-active")).toBe(false);
+
+    // Hovering the number hands the reveal to its own entry, not to the one still focused.
+    labelsOf(root)[0]!.dispatchEvent(new Event("pointerenter"));
+    expect(entries[0]!.hasAttribute("data-sk-active")).toBe(true);
+    expect(entries[1]!.hasAttribute("data-sk-active")).toBe(false);
+
+    // A pointer moving over the legend is not a miss on the specimen: the reveal stays.
+    entries[0]!.dispatchEvent(new PointerEvent("pointermove", { clientX: 0, clientY: 0, bubbles: true }));
+    expect(marks[0]!.hasAttribute("data-sk-active")).toBe(true);
+  });
+
+  it("finds its frame one canvas deeper when the figure is zoomable", () => {
+    /* The template's `zoomable` shape: figure > canvas > viewport > content > frame. A lookup that
+       only tried the figure's direct child found nothing here, and the diagram drew no leaders. */
+    const root = frame([{ for: ".part-a", text: "part a" }]);
+    root.removeAttribute("data-sk-annotated");
+    const figure = document.createElement("div");
+    figure.className = annotationParts.figure;
+    figure.setAttribute("data-sk-annotated", "");
+    figure.innerHTML = `<div class="sk-canvas" data-sk-canvas><div class="${annotationParts.viewport}"><div class="${annotationParts.content}"></div></div></div>`;
+    root.replaceWith(figure);
+    figure.querySelector(`.${annotationParts.content}`)!.append(root);
+    layOut(root);
+    connectAnnotated(figure);
+
+    expect(overlayOf(root).querySelector("path")!.getAttribute("d")).toBe("M 140 130 L 202 130");
+    expect(labelsOf(root)[0]!.getAttribute("data-sk-side")).toBe("inline-start");
   });
 
   it("writes back which gutter the label actually landed in", () => {

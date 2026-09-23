@@ -9,12 +9,16 @@ Diagram:
     - "hace falta un ciclo: una arista hacia un nodo que está más arriba sale por el margen y vuelve, que es como se dibuja \"y vuelve a empezar\" desde siempre"
     - "las aristas no son una secuencia sino una relación entre cosas (un modelo, un esquema): `arrow: \"none\"` dibuja la línea sin punta y la etiqueta lleva la cardinalidad"
     - "un nodo tiene que decir más que una línea de texto: su slot acepta una composición, así que adentro entra cualquier árbol del catálogo"
+    - "lo que hay que dibujar es lógica booleana: `shape` trae las siete compuertas de la notación IEEE 91 / IEC 60617-12 (`and`, `or`, `xor`, `nand`, `nor`, `xnor`, `not`), con la forma real y no una caja que dice AND adentro"
+    - "una compuerta y un paso van en el mismo dibujo: son un solo `Diagram`, así que el resultado de una compuerta puede entrar a una caja de proceso y la salida de un paso puede ser un operando, sin cambiar de componente a mitad de camino"
   avoidWhen:
     - "lo que hay que nombrar son las partes de una sola cosa ya dibujada: eso es Annotation, que ancla cada etiqueta a un selector adentro del sujeto y no dibuja un grafo"
     - "el contenido es una secuencia sin ramas y sin ciclos: eso es ProcessList si son instrucciones, o Steps si lo primario es el progreso; un diagrama de una sola columna sin bifurcaciones es una lista con líneas de más"
     - "la jerarquía es de contención y no de flujo (carpetas, un árbol de archivos): eso es TreeView o Folder, donde lo que importa es qué está adentro de qué"
     - "el grafo es grande, viene de datos, o hay que explorarlo, hacer zoom o arrastrar nodos: esto no resuelve disposición, dibuja diagramas chicos escritos a mano"
-    - "lo que se necesita es notación UML completa, swimlanes o tipos de caja por convención (cilindro, paralelogramo): son convenciones que hay que enseñarle a quien lee, y acá sólo viven las tres formas que se entienden sin leyenda"
+    - "lo que se necesita es notación UML completa, swimlanes o tipos de caja por convención (cilindro, paralelogramo, hexágono): son convenciones que hay que enseñarle a quien lee, y de las formas de prosa acá sólo viven las tres que se entienden sin leyenda. Las compuertas lógicas son la excepción y pasan la misma prueba por el otro lado: no son una caja que significa AND, son el símbolo que la norma le asigna a la conjunción, y quien lee la notación la lee sin leyenda"
+    - "hace falta un esquemático de verdad: esto dibuja las siete compuertas y nada más. No hay flip-flops, ni buses, ni multiplexores, ni componentes con patas numeradas, ni nodos de unión, ni netlist; una compuerta tampoco lleva nada adentro, así que un designador visible (`U1`) no tiene dónde ir"
+    - "el dibujo lógico necesita realimentación: un latch de compuertas cruzadas no se puede dibujar acá. Los operandos tienen que venir de columnas anteriores, que es el orden en el que un esquemático se dibuja igual; un cable que va hacia atrás dobla a mitad de camino entre sus dos puntas, y si las dos compuertas comparten columna ese punto queda adentro de las dos y el cable pasa por debajo del símbolo que alimentaba"
   alternatives:
     - Annotated
     - ProcessList

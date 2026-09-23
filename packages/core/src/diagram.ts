@@ -47,12 +47,12 @@ import type { ComponentContract, OptionsOf } from "./contract.js";
  * ---------------------------------------------------------------------------------------------- */
 
 /**
- * What a node IS, in the only three flavours that change how it is drawn.
+ * What a node IS, in the flavours that change how it is drawn.
  *
- * Deliberately three, and deliberately not a shape catalogue. Every extra silhouette a diagram
- * vocabulary offers (parallelogram for input, cylinder for storage, hexagon for preparation) is a
- * convention the reader has to have been taught, and the ones below are the three that survive
- * without teaching:
+ * THE FIRST THREE ARE THE PROSE SHAPES, and they are deliberately three. Every extra silhouette a
+ * general diagram vocabulary offers (parallelogram for input, cylinder for storage, hexagon for
+ * preparation) is a convention the reader has to have been TAUGHT, and these three survive without
+ * teaching:
  *
  *   `process`   a step. A box. The default, because most nodes are just a thing that happens.
  *   `decision`  a question with more than one answer out of it. A rhombus, which is the one shape
@@ -64,17 +64,91 @@ import type { ComponentContract, OptionsOf } from "./contract.js";
  * a decision is that two edges leave it, which the edges already say. The shape only makes the
  * drawing readable. What it DOES change, and the reason the geometry knows about it, is where a
  * connector may touch: see `sideOutline`.
+ *
+ * THE REST ARE LOGIC GATES, and the boundary above moved to let them in. The rule that kept the set
+ * at three was "no silhouette a reader has to be taught", and a gate is the one family that passes
+ * it from the other direction: `and` is not a box that means AND, it is the symbol IEEE 91 / IEC
+ * 60617-12 assigns to conjunction, and a reader who knows the notation reads it with no legend while
+ * a reader who does not would not be helped by a rounder rectangle either. A drawing that needs them
+ * needs the real ones; a drawing that does not will never reach for them.
+ *
+ *   `and` `or` `xor`            a gate. The distinctive shape, no bubble.
+ *   `nand` `nor` `xnor`         the same three with an inversion bubble on the output.
+ *   `not`                       an inverter: the triangle, and the bubble that is the whole point.
+ *
+ * `xnor` is in the set although only six gates were asked for, and that is not creep: a NOTATION is
+ * complete or it is not. Shipping `nand` and `nor` (the bubbled AND and OR) while leaving out the
+ * bubbled XOR would leave a hole a reader notices and cannot fill, and the bubble is the same one
+ * three other shapes already draw.
+ *
+ * WHAT A GATE IS NOT is the part worth stating, because it is the first thing this vocabulary loses
+ * and the reason gates could not simply be three more entries in the list above:
+ *
+ *   A GATE HAS NO INSIDE. The silhouette IS the operator, so nothing goes in the box. A node's words
+ *   are still required and still authored - they are what the screen reader hears and what the route
+ *   list quotes - but the stylesheet takes them out of the flow, because a word written inside a
+ *   gate is a thing no schematic has ever drawn.
+ *
+ *   A GATE HAS FIXED PORTS. Signals arrive on the back plane and the result leaves from the nose,
+ *   always, in the inline direction: an AND whose output leaves downwards is not an AND drawn oddly,
+ *   it is unreadable. So a gate opts OUT of the geometric ladder that picks a side from where two
+ *   boxes happen to sit, and `edgeSides` says so. Its output is also ONE pin rather than a face:
+ *   three edges leaving a gate leave from the same point, which is how fan-out is drawn.
+ *
+ * Use `isDiagramGate` wherever the difference matters; nothing else in the geometry branches on a
+ * specific shape name.
  */
-export type DiagramShape = "process" | "decision" | "terminal";
+export type DiagramProseShape = "process" | "decision" | "terminal";
+
+/**
+ * The gates, in the order a truth table would introduce them: the three plain ones, their three
+ * inversions, and the inverter that is only a bubble.
+ */
+export type DiagramGate = "and" | "or" | "xor" | "nand" | "nor" | "xnor" | "not";
+
+export type DiagramShape = DiagramProseShape | DiagramGate;
+
+export const diagramGates = [
+  "and",
+  "or",
+  "xor",
+  "nand",
+  "nor",
+  "xnor",
+  "not",
+] as const satisfies readonly DiagramGate[];
 
 export const diagramShapes = [
   "process",
   "decision",
   "terminal",
+  ...diagramGates,
 ] as const satisfies readonly DiagramShape[];
 
 export function isDiagramShape(value: unknown): value is DiagramShape {
   return typeof value === "string" && (diagramShapes as readonly string[]).includes(value);
+}
+
+/**
+ * Is this shape a logic gate, i.e. does it flow along the inline axis with one output pin?
+ *
+ * The one predicate the geometry branches on. Everything a gate changes - which side an edge may
+ * touch, whether the output is a face or a point, how wide the input band is - follows from this
+ * being true, so a new gate is one entry in `diagramGates` and one silhouette in the stylesheet,
+ * never a new branch down here.
+ */
+export function isDiagramGate(shape: DiagramShape): shape is DiagramGate {
+  return (diagramGates as readonly string[]).includes(shape);
+}
+
+/**
+ * Do these two shapes force the sides an edge between them touches?
+ *
+ * True when either end is a gate, which is the only case where the drawing's meaning depends on the
+ * side rather than on tidiness.
+ */
+export function diagramFlowsInline(from: DiagramShape, to: DiagramShape): boolean {
+  return isDiagramGate(from) || isDiagramGate(to);
 }
 
 /**
@@ -120,6 +194,39 @@ export const diagramParts = {
   node: "sk-diagram__node",
   /** The node's own words, in an element of their own so a node with rows has a heading. */
   title: "sk-diagram__node-title",
+  /**
+   * A NODE'S VISIBLE NAME WHEN ITS BOX HAS NO ROOM FOR ONE, which in practice means a logic gate.
+   *
+   * Every other shape here holds its words: a process box is as wide as its label, a rhombus is
+   * padded to fit a question. A gate's box IS the symbol - a fixed 5:4 silhouette with nothing
+   * inside it - so a name written in it would be written across the drawing of an operator, which no
+   * schematic does, and the stylesheet clips the title for exactly that reason. That leaves nowhere
+   * for the one piece of text a schematic DOES put on a gate: its reference designator, the `U1`
+   * or `G3` that prose elsewhere on the page refers back to.
+   *
+   * This is that, and it is OUTSIDE the box rather than in it, which is not a layout preference. The
+   * node's box is what every port is measured from (`sideOutline` reads it, the nose is its middle
+   * right point), so text in normal flow would grow the box, move the nose off the symbol's own
+   * centre and stretch the silhouette that is pinned to the box's edges. Absolutely positioned under
+   * the node, it is drawn without being measured.
+   *
+   * WHICH MEANS IT CLAIMS NO SPACE, and the stylesheet reserves it on the node's behalf rather than
+   * leaving it to whoever composes the drawing. One line of caption is added to the rank gap, so a
+   * designator does not land on the symbol in the rank below, and to the frame's bottom padding, so
+   * the last rank's is not cut off at the edge. Both are `:has()`, so a drawing with no designator
+   * pays nothing and is spaced exactly as it was.
+   *
+   * That was learnt twice, the hard way, and both failures looked like nothing: the first cut `U2`
+   * off at the stage boundary, the second put `U1` on the corner of the gate below it where it read
+   * as labelling the wrong part. Anything positioned outside a node is invisible to everything that
+   * reasons about the node's box, which is also why an `overflow` on a node or an ancestor deletes
+   * a designator silently.
+   *
+   * It is deliberately NOT read into the announced reading of the drawing: `diagramNodeText` returns
+   * the title part alone whenever there is one, so a route says "AND, Carry" rather than "AND U1,
+   * Carry". A designator is a handle for pointing at a part in prose, not another name for it.
+   */
+  designator: "sk-diagram__node-designator",
   /**
    * A node's MARK: a product logo, a service glyph, an icon. A box, sized by one hook, holding
    * whatever the author put in it.
@@ -401,6 +508,34 @@ export const DIAGRAM_LANE_GAP = 18;
 export const DIAGRAM_PORT_BAND = 0.6;
 
 /**
+ * The same band on a GATE's input plane, which is narrower because the notation says where the pins
+ * are rather than leaving it to taste.
+ *
+ * A third of the height puts two inputs at 1/3 and 2/3 and three at 1/3, 1/2 and 2/3, which is where
+ * every schematic has drawn them since the symbols were standardised: the pins belong to the SYMBOL,
+ * not to the drawing they are in, so two AND gates of different heights on the same sheet still read
+ * as the same part. The general band's 0.2 / 0.8 spreads them to the corners of the back plane,
+ * where an OR gate's back has curved away from them.
+ */
+export const DIAGRAM_GATE_PORT_BAND = 1 / 3;
+
+/**
+ * How far an OR-family gate's back plane bows INTO the symbol, as a fraction of its own width.
+ *
+ * The concave back is why a gate's input side is a polyline rather than the bounding box's left
+ * edge: a lead stopping at the box would stop in the air the curve left behind, a few pixels short
+ * of the symbol, on every input of every OR in the drawing. `sideOutline` walks the bow instead, so
+ * a lead touches the back WHERE THE BACK IS at that pin's own height - the same correction the
+ * rhombus needed, for the same reason, one shape family over.
+ *
+ * The number is read off the silhouette in `diagram.css` (the back's control points put its deepest
+ * point at about 15% of the width) and the two have to move together. A V through that depth is
+ * within a pixel of the curve at every height a pin can land on, which is what makes two points
+ * enough.
+ */
+export const DIAGRAM_GATE_BACK_BOW = 0.15;
+
+/**
  * How far apart two ports may be, across the corridor, and still be drawn as one straight run.
  *
  * A route is built at four points and then simplified, which removes a turn through nothing but not
@@ -418,6 +553,21 @@ export const DIAGRAM_SNAP = 6;
  * still reads as parallel rather than as a fan. See the corridor pass in `routeDiagram`.
  */
 export const DIAGRAM_CORRIDOR_GAP = 10;
+
+/**
+ * What a label chip pays for sitting on top of a connector that is not its own.
+ *
+ * A chip has a ground, so a line that runs under one DISAPPEARS into it, and what a reader is left
+ * with is two strokes ending at a word: the label reads as a junction, and the relationship it
+ * interrupted reads as two relationships that meet there. Measured on the order model, one long
+ * vertical ran behind two of the three chips, and the drawing claimed a fan-out no edge in it had.
+ *
+ * Priced between stepping off the line (`DIAGRAM_LABEL_OFF_LINE`) and burying a node: a chip gives
+ * up its place on its own stroke to clear somebody else's, and still would not climb onto a box to
+ * do it. Charged once per connector rather than per segment, because what is hidden is one line,
+ * however many corners of it the chip happens to cover.
+ */
+export const DIAGRAM_LABEL_OVER_STROKE = 40;
 
 /** One row inside a node, as the binding measured it. */
 export type DiagramRowMeasurement = {
@@ -512,6 +662,16 @@ export type DiagramRouteOptions = {
    * each zone where its NAME is. See `diagramZoneHeaders`.
    */
   readonly keepRailsOut?: readonly DiagramBox[];
+  /**
+   * Boxes a connector may not TOUCH DOWN inside: a zone's name plate, and so far nothing else.
+   *
+   * Separate from `keepRailsOut` because it answers a different question about a different part of
+   * the line. A rail is a long run along one axis and it clears a band by moving off it; a port is
+   * where the line meets a box, and what it clears is decided by sliding ALONG that side. Given
+   * both, a connector entering a region misses its name twice: the rail goes above the strip, and
+   * the descent lands beside the words rather than through them.
+   */
+  readonly keepPortsOut?: readonly DiagramBox[];
 };
 
 /**
@@ -572,6 +732,44 @@ export function sideOutline(
     }
   }
 
+  if (isDiagramGate(shape)) {
+    switch (side) {
+      /*
+       * THE OUTPUT IS A POINT, and that is the difference a gate insists on hardest. Every other
+       * shape here offers a FACE and spreads whatever arrives along it, which is right for a box:
+       * three arrows leaving a step are three separate departures. A gate has one output pin, so
+       * three edges leaving it are one signal read three times, and drawing them from three heights
+       * would claim three outputs a reader would then look for on the symbol. A one-point outline is
+       * how that is said in this module's own vocabulary: `portOffsets` still spreads its requests,
+       * `pointAlong` still walks the polyline, and every t lands on the pin.
+       */
+      case "right":
+        return [{ x: right, y: cy }];
+      /*
+       * THE INPUT PLANE, walked rather than assumed. Flat-backed gates (`and`, `nand`, and the
+       * inverter, whose triangle stands on its back edge) put it on the box's own left edge. The
+       * OR family's back bows inward, so the outline is a V through the deepest point: see
+       * `DIAGRAM_GATE_BACK_BOW` for why two segments are enough and why this number lives beside
+       * the silhouette that drew it.
+       */
+      case "left":
+        return gateBackIsBowed(shape)
+          ? [{ x, y }, { x: x + width * DIAGRAM_GATE_BACK_BOW, y: cy }, { x, y: bottom }]
+          : [{ x, y }, { x, y: bottom }];
+      /*
+       * A gate has no block-axis faces, and nothing asks for one: `edgeSides` pins both ends of
+       * every edge that touches a gate to the inline axis, a back edge's margin lane is only ever
+       * `left` or `right`, and a self edge never consults an outline at all. The box's own edges are
+       * the honest answer to a question that cannot currently be asked, and they keep a port on the
+       * frame rather than inventing a pin the symbol does not have.
+       */
+      case "top":
+        return [{ x, y }, { x: right, y }];
+      case "bottom":
+        return [{ x, y: bottom }, { x: right, y: bottom }];
+    }
+  }
+
   switch (side) {
     case "top":
       return [{ x, y }, { x: right, y }];
@@ -582,6 +780,17 @@ export function sideOutline(
     case "right":
       return [{ x: right, y }, { x: right, y: bottom }];
   }
+}
+
+/**
+ * Does this gate's back plane bow inward?
+ *
+ * The OR family only: the shape's back is a concave arc, and `sideOutline` walks it so an input lead
+ * touches the symbol instead of the air behind it. AND, NAND and the inverter stand on a straight
+ * back and need no correction.
+ */
+function gateBackIsBowed(shape: DiagramGate): boolean {
+  return shape === "or" || shape === "nor" || shape === "xor" || shape === "xnor";
 }
 
 /** The total length of a polyline. Zero for anything shorter than two distinct points. */
@@ -781,11 +990,113 @@ const simplify = (points: readonly DiagramPoint[]): DiagramPoint[] => {
  * BELOW a decision and slightly to either side, and the centre-to-centre angle there is nearer
  * horizontal than vertical, so the angular rule sends both branches out sideways and then U-turns
  * them down into their targets. Asking "is it below?" first is what keeps a flowchart flowing down.
+ *
+ * AND THE LADDER IS SKIPPED ENTIRELY WHEN EITHER END IS A GATE, which is rung zero and the only
+ * thing `shapes` is for.
+ *
+ * The ladder's premise is that no side means anything: it is picking the TIDIEST route between two
+ * boxes, and a box that is entered from the top rather than the left has not said anything different.
+ * A gate breaks that premise outright. Its back plane is where operands arrive and its nose is where
+ * the result leaves; an AND entered from below is not an AND drawn unusually, it is a drawing that
+ * cannot be read. So an end that touches a gate is PINNED to the inline axis - into the back, out of
+ * the nose - and only the other end, if it is an ordinary box, still gets a side chosen for it.
+ *
+ * WHICH WAY "INLINE" POINTS is `direction`'s business and the second reason this takes options. A
+ * schematic flows the way its language reads, and a drawing mirrored by CSS Grid in an RTL locale
+ * would otherwise have its signals running back into the gates' noses. The silhouettes mirror with
+ * it (`diagram.css` flips them under `:dir(rtl)`), so the two stay in agreement.
+ *
+ * AND NOTHING THAT TOUCHES A GATE IS A BACK EDGE, which follows rather than being decided. A back
+ * edge is routed out to a margin lane, and the lane machinery asks BOTH of its ends for a port on
+ * the same physical side - which for a gate would mean feeding a signal into the nose, or taking the
+ * output off the back plane. So an edge that touches a gate is drawn as an ordinary connector, even
+ * when it runs backwards.
+ *
+ * WHICH SETS THE ONE LIMIT THIS VOCABULARY HAS, and it is worth stating plainly because it decides
+ * how a gate drawing has to be laid out. An ordinary corridor turns HALFWAY between its two ends. On
+ * a wire that runs forward that midpoint is the empty space between two symbols, which is where a
+ * schematic turns too. On a wire that runs BACKWARDS - a gate reading a result from further along -
+ * the midpoint is between a nose and a back plane that are behind it, and when the two gates share a
+ * grid column those are the same few pixels: the turn lands INSIDE both boxes, and the wire is drawn
+ * underneath the symbol it was feeding, where a gate's own fill paints over it.
+ *
+ * There is no two-bend orthogonal route that avoids this: leaving the nose and turning before the
+ * target's back plane crosses one symbol or the other whichever side the rail is put on. A real
+ * feedback line is a four-bend route out past the source, along, and back in, which is machinery
+ * this module does not have and a latch is not reason enough to add.
+ *
+ * So: OPERANDS COME FROM EARLIER COLUMNS. Put each operator in a column after the ones feeding it,
+ * which is the order a schematic draws them in anyway, and every wire runs forward. A cross-coupled
+ * latch is the drawing this cannot do, and `contracts/semantic/diagram.yaml` says so where an author
+ * will read it.
  */
+export type DiagramEdgeShapes = {
+  readonly from: DiagramShape;
+  readonly to: DiagramShape;
+  readonly direction?: DiagramDirection;
+};
+
 export function edgeSides(
   from: DiagramBox,
   to: DiagramBox,
+  shapes?: DiagramEdgeShapes,
 ): { readonly exit: PhysicalSide; readonly enter: PhysicalSide; readonly back: boolean } {
+  if (shapes && diagramFlowsInline(shapes.from, shapes.to)) {
+    const forward: PhysicalSide = shapes.direction === "rtl" ? "left" : "right";
+    const backward: PhysicalSide = forward === "right" ? "left" : "right";
+    /*
+     * Only the end that IS a gate is pinned. A box feeding a gate keeps the ladder's answer for its
+     * own side, so a step sitting directly above its gate still lets go downwards and only the
+     * arrival is forced onto the back plane.
+     *
+     * WITH ONE REPAIR, because cancelling the detour orphaned the side that was chosen FOR it. The
+     * ladder's second rung answers "top" when the target is higher up, and that answer is not about
+     * the target at all: it is where a line goes to get OUT of the drawing and run up the margin.
+     * With the detour off - and it is off, because a margin lane cannot serve a gate - that "top"
+     * would send the operand out of the roof of its own box and then straight back down into a gate
+     * beside it. So a suppressed back edge takes the side FACING the gate instead, which is what the
+     * rung would have said had the two been level.
+     */
+    const ladder = edgeSides(from, to);
+    const facing = (self: DiagramBox, other: DiagramBox): PhysicalSide =>
+      other.x + other.width / 2 >= self.x + self.width / 2 ? "right" : "left";
+    /*
+     * AND THE OTHER END GOES INLINE TOO WHENEVER THERE IS ROOM FOR IT, which is the repair that
+     * makes "a gate is entered from the side" true of the DRAWING and not only of the port.
+     *
+     * Pinning the gate's end alone is half an answer, because a corridor's last segment follows the
+     * side it LEFT, not the side it arrives on. Measured on the half adder: `A` sits a rank above
+     * and a column left of the AND it feeds, the ladder gave it `bottom` for its own side, and the
+     * wire went down, across, and then ran 33px straight DOWN the gate's own back plane to reach a
+     * pin two thirds of the way along it. The pin was right and the drawing said the operand came
+     * in through the roof.
+     *
+     * So when the wire runs FORWARD - the target is a whole column further along the reading
+     * direction, which is where a signal goes anyway - the box's own side is the one FACING the
+     * gate, both ends are inline, and the elbow turns in the gap between the columns the way a
+     * schematic turns. It is the same test and the same reason as the row anchor further down: a
+     * side that carries meaning wins over the side that is merely tidiest.
+     *
+     * FORWARD AND NOT MERELY CLEAR, which is the narrower test of the two and deliberately so. A
+     * wire running backwards has no gap to turn in ahead of it, so facing the source would send it
+     * out of one box and straight back into the same side of the other; that is the feedback route
+     * this module does not draw, and the ladder's own answer is the better of the two bad ones.
+     *
+     * A BOX STACKED IN THE GATE'S OWN COLUMN keeps the ladder's vertical answer too, because then
+     * there is no facing side to take: the two overlap on the only axis that could have offered one.
+     */
+    const forwardRun =
+      shapes.direction === "rtl"
+        ? to.x + to.width <= from.x
+        : to.x >= from.x + from.width;
+    const inline = ladder.back || forwardRun;
+    return {
+      exit: isDiagramGate(shapes.from) ? forward : inline ? facing(from, to) : ladder.exit,
+      enter: isDiagramGate(shapes.to) ? backward : inline ? facing(to, from) : ladder.enter,
+      back: false,
+    };
+  }
+
   if (to.y + to.height <= from.y) return { exit: "top", enter: "bottom", back: true };
   if (to.y >= from.y + from.height) return { exit: "bottom", enter: "top", back: false };
   if (to.x >= from.x + from.width) return { exit: "right", enter: "left", back: false };
@@ -914,6 +1225,45 @@ export function diagramZoneHeaders(
   );
 }
 
+/**
+ * THE PLATE A ZONE'S NAME SITS ON, as boxes a PORT can be told to avoid.
+ *
+ * Its sibling `diagramZoneHeaders` returns the whole strip across the top of a region, which is
+ * what a horizontal rail has to clear. This is the other half of the same problem and the narrow
+ * one: a vertical run crosses that strip by definition (it is how a connector gets INTO a region),
+ * so the strip can tell it nothing. What it must not cross is the NAME, which is a few centimetres
+ * of the strip's leading corner and nothing else.
+ *
+ * THE WIDTH IS MEASURED AND THE REST IS DERIVED, which is what keeps this honest on the first pass.
+ * A binding cannot read the label's POSITION before the zones are placed - and they are placed
+ * after the routing, because a region is computed from where the grid put the nodes - but it can
+ * read its WIDTH at any time, because a word is as wide as it is wherever it sits. The corner and
+ * the height come from the zone's own box, so the plate is known before anything is drawn.
+ *
+ * The leading corner follows `direction`: a name sits at the inline-start of its region, and a
+ * right-to-left drawing mirrors with the text.
+ */
+export function diagramZoneNames(
+  zones: readonly DiagramZonePlacement[],
+  widths: readonly number[],
+  options: { readonly header?: number; readonly direction?: DiagramDirection } = {},
+): readonly DiagramBox[] {
+  const header = options.header ?? DIAGRAM_ZONE_HEADER;
+  const rtl = options.direction === "rtl";
+  return zones.flatMap((zone, index) => {
+    const width = widths[index] ?? 0;
+    if (!zone || width <= 0) return [];
+    return [
+      {
+        x: rtl ? zone.box.x + zone.box.width - width : zone.box.x,
+        y: zone.box.y,
+        width,
+        height: header,
+      },
+    ];
+  });
+}
+
 export type DiagramZoneOptions = {
   readonly padding?: number;
   readonly header?: number;
@@ -1007,6 +1357,8 @@ export function routeDiagram(
   const snap = options.snap ?? DIAGRAM_SNAP;
   const corridorGap = options.corridorGap ?? DIAGRAM_CORRIDOR_GAP;
   const keepRailsOut = options.keepRailsOut ?? [];
+  const keepPortsOut = options.keepPortsOut ?? [];
+
   const direction = options.direction ?? "ltr";
 
   /* First declaration wins, which is also what `querySelector` would do, so the two bindings agree
@@ -1064,7 +1416,15 @@ export function routeDiagram(
     const rows = { fromRow: rowOf(from, edge.fromRow), toRow: rowOf(to, edge.toRow) };
     const anchored = rows.fromRow !== undefined || rows.toRow !== undefined;
     const clearInline = to.box.x >= from.box.x + from.box.width || to.box.x + to.box.width <= from.box.x;
-    if (anchored && clearInline) {
+    /*
+     * A GATE OUTRANKS THE ROW OVERRIDE, and they agree about everything except which way is forward.
+     * Both rules put the connector on the inline axis; the row's version picks the end by where the
+     * two boxes happen to sit, which for a gate sitting to the LEFT of the record feeding it would
+     * take the signal out of the gate's nose and call it an input. The gate's axis is the notation's,
+     * so it wins - and the pins survive, because `rows` rides along either way and `rowPin` only ever
+     * applied to the inline sides both rules choose.
+     */
+    if (anchored && clearInline && !diagramFlowsInline(from.shape, to.shape)) {
       const rightwards = to.box.x >= from.box.x + from.box.width;
       resolved.push({
         index,
@@ -1079,11 +1439,15 @@ export function routeDiagram(
       continue;
     }
 
-    const sides = edgeSides(from.box, to.box);
+    const sides = edgeSides(from.box, to.box, {
+      from: from.shape,
+      to: to.shape,
+      direction,
+    });
     /* A back edge does not leave through the side the ladder named: the ladder only told us it IS
        one. Where it detours is decided below, once every back edge on the frame is known, because
        the lane has to clear the nodes it passes rather than only the two it joins. */
-    resolved.push({ index, from, to, ...sides, self: false });
+    resolved.push({ index, from, to, ...sides, ...rows, self: false });
   }
 
   /*
@@ -1153,6 +1517,8 @@ export function routeDiagram(
     readonly along: number;
     /** A row's own position along the side, as a fraction. Pinned ports do not spread. */
     readonly pin?: number;
+    /** Where the OTHER end sits across this side, which is how far the run from here reaches. */
+    readonly across: number;
   };
   const ports = new Map<string, PortRequest[]>();
   const portKey = (nodeId: string, side: PhysicalSide): string => `${nodeId}\u0000${side}`;
@@ -1167,8 +1533,9 @@ export function routeDiagram(
   ): void => {
     const key = portKey(node.id, side);
     const along = vertical(side) ? other.x + other.width / 2 : other.y + other.height / 2;
+    const across = vertical(side) ? other.y + other.height / 2 : other.x + other.width / 2;
     const list = ports.get(key);
-    const request: PortRequest = { edge, end, along, pin: rowPin(node.box, side, row) };
+    const request: PortRequest = { edge, end, along, across, pin: rowPin(node.box, side, row) };
     if (list) list.push(request);
     else ports.set(key, [request]);
   };
@@ -1203,12 +1570,120 @@ export function routeDiagram(
      * the honest answer is that they are the same height: nothing here can separate them.
      */
     const loose = order.filter((request) => request.pin === undefined);
-    const offsets = portOffsets(loose.length);
+    /* A gate's pins belong to the symbol rather than to the drawing: see `DIAGRAM_GATE_PORT_BAND`.
+       On its nose the band changes nothing, because the outline there is a single point. */
+    const offsets = portOffsets(
+      loose.length,
+      isDiagramGate(node.shape) ? DIAGRAM_GATE_PORT_BAND : DIAGRAM_PORT_BAND,
+    );
     let at = 0;
-    for (const request of order) {
-      const t = request.pin ?? offsets[at++]!;
-      placedPorts.set(`${key}\u0000${request.edge}\u0000${request.end}`, pointAlong(outline, t));
+    /*
+     * WHAT THIS SIDE HAS ALREADY GIVEN AWAY, which only a port that MOVES has to care about.
+     *
+     * `portOffsets` has already spread the ports that stay where they were asked to be, so two of
+     * those can never meet. A sliding one is the new case: told only to clear the name, two ports
+     * hunting for room on the same side both take the first clear place and arrive as one stroke,
+     * which is the collision the whole corridor pass downstream exists to prevent. So a port that
+     * moves is given the places already taken and keeps off them too.
+     */
+    const taken: DiagramPoint[] = [];
+    const band = isDiagramGate(node.shape) ? DIAGRAM_GATE_PORT_BAND : DIAGRAM_PORT_BAND;
+    const wanted = order.map((request) => ({ request, t: request.pin ?? offsets[at++]! }));
+    const placed = new Map<PortRequest, DiagramPoint>();
+
+    /*
+     * THE ONES THAT STAY GO DOWN FIRST, and the two passes are what make the sliding honest. A
+     * pinned port is a claim about which ROW it touches and never moves; a port on an inline side
+     * has no plate to fear (a name is a horizontal thing in a horizontal strip); and a port already
+     * clear of every name keeps the place `portOffsets` gave it. Placing all of those before any
+     * slide is what lets a sliding port know where the fixed ones ARE - done in one pass, a port
+     * that moved first would land wherever it liked and the one that never moved would arrive four
+     * pixels away from it.
+     */
+    for (const { request, t } of wanted) {
+      const point = pointAlong(outline, t);
+      const stays =
+        request.pin !== undefined ||
+        !vertical(side) ||
+        !plateCrossed(point, keepPortsOut, request.across, DIAGRAM_LABEL_CLEARANCE);
+      if (!stays) continue;
+      placed.set(request, point);
+      taken.push(point);
     }
+
+    for (const { request, t } of wanted) {
+      if (placed.has(request)) continue;
+      const point = clearOfPlates(outline, t, band, keepPortsOut, side, request.across, taken);
+      placed.set(request, point);
+      taken.push(point);
+    }
+
+    for (const { request } of wanted) {
+      placedPorts.set(`${key}\u0000${request.edge}\u0000${request.end}`, placed.get(request)!);
+    }
+  }
+
+  /*
+   * A WIRE AIMED AT A FIXED PIN LEAVES AT THE PIN'S HEIGHT, which is the difference between a
+   * drawing a reader follows and one they untangle.
+   *
+   * Some ports cannot move: a gate's back plane carries the notation's own pins, and a row anchor
+   * is a claim about WHICH column a foreign key joins. The other end of those edges is ordinary,
+   * and `portOffsets` spreads it across its own side knowing nothing about where it is aiming. On
+   * the half adder that came out as four wires each with a six pixel kink a few pixels after
+   * leaving its box: the exits were spread to the ends of A's band, 9.6 and 38.4, while the XOR's
+   * pins are at the thirds, 16 and 32. Neither number is wrong and the pair is unreadable.
+   *
+   * So the free end is pulled onto the fixed one's line WHEN ITS OWN SIDE REACHES THAT FAR. Clamped
+   * to the same band it was spread within, because a port is a point on a box and a wire that left
+   * from the corner would be a different lie; and refused when it would land on a port already
+   * there, because two wires leaving one box at one point is the knot this is trying to undo. A
+   * wire that cannot be straightened keeps the jog it had, which is the honest drawing of an
+   * operand that really is a rank away.
+   */
+  for (const edge of resolved) {
+    if (edge.self || lanes.has(edge.index)) continue;
+    if (vertical(edge.exit) || vertical(edge.enter)) continue;
+    const exitFixed = isDiagramGate(edge.from.shape) || edge.fromRow !== undefined;
+    const enterFixed = isDiagramGate(edge.to.shape) || edge.toRow !== undefined;
+    /*
+     * EXACTLY ONE END FIXED, and the `===` is load-bearing in both directions.
+     *
+     * Neither fixed is two spreads that already agree with each other, which is what `portOffsets`
+     * is for. BOTH fixed is two claims and nothing to reconcile - and it is the half of this test
+     * that protects the notation. The tempting simplification here is "align whenever either end is
+     * fixed", which reads the same and is not: with a gate at both ends it would pull one gate's
+     * pins onto the other's, and a pin that moved is an AND with its inputs in the wrong place. A
+     * gate-to-gate wire bends. That is the drawing being honest about two symbols that do not line
+     * up, and there is a test below standing on it.
+     */
+    if (exitFixed === enterFixed) continue;
+
+    const free = exitFixed
+      ? { node: edge.to, side: edge.enter, end: "enter" as const }
+      : { node: edge.from, side: edge.exit, end: "exit" as const };
+    const fixedKey = exitFixed
+      ? `${portKey(edge.from.id, edge.exit)}\u0000${edge.index}\u0000exit`
+      : `${portKey(edge.to.id, edge.enter)}\u0000${edge.index}\u0000enter`;
+    const freeKey = `${portKey(free.node.id, free.side)}\u0000${edge.index}\u0000${free.end}`;
+    const target = placedPorts.get(fixedKey);
+    const at = placedPorts.get(freeKey);
+    if (!target || !at || Math.abs(target.y - at.y) <= snap) continue;
+
+    const band = isDiagramGate(free.node.shape) ? DIAGRAM_GATE_PORT_BAND : DIAGRAM_PORT_BAND;
+    const reach = (free.node.box.height * band) / 2;
+    const middle = free.node.box.y + free.node.box.height / 2;
+    const y = Math.min(middle + reach, Math.max(middle - reach, target.y));
+    /* Nothing gained if the clamp lands it back where it started, or inside another port's room. */
+    if (Math.abs(y - at.y) <= snap) continue;
+    const sideKey = portKey(free.node.id, free.side);
+    const crowded = (ports.get(sideKey) ?? []).some((other) => {
+      if (other.edge === edge.index && other.end === free.end) return false;
+      const point = placedPorts.get(`${sideKey}\u0000${other.edge}\u0000${other.end}`);
+      return point !== undefined && Math.abs(point.y - y) < corridorGap;
+    });
+    if (crowded) continue;
+    placedPorts.set(freeKey, { x: at.x, y });
   }
 
   /*
@@ -1323,6 +1798,28 @@ export function routeDiagram(
   /* Each label, once placed, becomes something the next label has to miss. See the note below. */
   const placedChips: DiagramBox[] = [];
 
+  /*
+   * TWO PASSES, AND THE SECOND ONE IS WHY.
+   *
+   * Every connector is routed first and every label is placed after, because a chip has to miss the
+   * lines it is not labelling and a chip placed while half the drawing is still unrouted can only
+   * miss the half that exists. One pass put the order model's three cardinalities on the rail that
+   * a fourth connector then ran down, and each of them swallowed it.
+   *
+   * The split costs one array and changes nothing about either step: routing never reads a label,
+   * and placing one never moves a line.
+   */
+  type Drawn = {
+    readonly index: number;
+    /** The full run, which is what a chip is placed against: see the note in the second pass. */
+    readonly tipped: readonly DiagramPoint[];
+    /** The stroke as it is actually painted, which is what the OTHER chips have to miss. */
+    readonly line: readonly DiagramPoint[];
+    readonly arrows: readonly string[];
+    readonly heads: readonly DiagramBox[];
+  };
+  const drawn: Drawn[] = [];
+
   for (const edge of resolved) {
     const arrow = edges[edge.index]!.arrow ?? "end";
     const points = edge.self
@@ -1372,10 +1869,22 @@ export function routeDiagram(
     );
     if (line.length < 2) continue;
 
+    drawn.push({ index: edge.index, tipped, line, arrows, heads });
+  }
+
+  /* Every head on the frame, not only this edge's two: covering somebody else's arrow loses the
+     same fact as covering your own, which is which way that relationship points. */
+  const allHeads = drawn.flatMap((connector) => connector.heads);
+
+  for (const connector of drawn) {
     /*
      * The chip is placed against the FULL run (`tipped`), not the shortened stroke: what it has to
      * stay clear of is the head as a shape, and `heads` says where that is. Every node is an
      * obstacle, including this edge's own two: a label touching a box reads as belonging to it.
+     *
+     * AND EVERY OTHER CONNECTOR, which is what the second pass buys: a line that runs under a chip
+     * is a line the reader loses, and the word left sitting between two stubs reads as a junction.
+     * Its own line is not in the list, because sitting on that one is what a label is for.
      *
      * AND EVERY CHIP ALREADY PLACED. Two labels colliding is the same failure as a label on a box,
      * and it is the one a branch produces on purpose: an if/else's two answers leave the same node
@@ -1384,12 +1893,17 @@ export function routeDiagram(
      * is deterministic in authoring order (so both bindings agree), and the case it cannot solve is
      * the case where there was no room for two labels anyway.
      */
-    const measured = edges[edge.index]!.label;
-    const anchor = placeDiagramLabel(tipped, measured, [
-      ...heads,
-      ...nodeBoxes,
-      ...placedChips,
-    ]);
+    const measured = edges[connector.index]!.label;
+    const anchor = placeDiagramLabel(
+      connector.tipped,
+      measured,
+      [...allHeads, ...nodeBoxes, ...placedChips],
+      {
+        strokes: drawn
+          .filter((other) => other.index !== connector.index)
+          .map((other) => other.line),
+      },
+    );
     if (measured && (measured.width > 0 || measured.height > 0)) {
       placedChips.push({
         x: anchor.x - measured.width / 2,
@@ -1399,14 +1913,114 @@ export function routeDiagram(
       });
     }
 
-    placements[edge.index] = {
-      path: diagramPath(line, cornerRadius),
-      arrows,
+    placements[connector.index] = {
+      path: diagramPath(connector.line, cornerRadius),
+      arrows: [...connector.arrows],
       label: { x: round(anchor.x), y: round(anchor.y) },
     };
   }
 
   return placements;
+}
+
+/**
+ * WHERE ALONG A SIDE A CONNECTOR MAY TOUCH DOWN, once the boxes it must miss are known.
+ *
+ * The one case this exists for is a region's own name: a wire entering a zone crosses the strip at
+ * its top wherever its target happens to be, and the target is often the first node in the region,
+ * whose centre line is under the words. Masking the words was half the fix and the wrong half on
+ * its own - the line still went there, it was merely hidden - so this moves the line.
+ *
+ * SLIDING ALONG THE SIDE AND NOT OFF IT, because a port is a point ON a box: the only freedom it
+ * has is where along that side it sits, which is exactly the freedom `portOffsets` already uses to
+ * spread several connectors. The search is over the same band, out from the place the port wanted,
+ * so a port that needs to move moves as little as it can and one that is already clear does not
+ * move at all.
+ *
+ * AND IT GIVES UP RATHER THAN LIE. When every position in the band is inside a plate - a name as
+ * wide as the node under it - the port keeps the place it asked for. The drawing then has a line
+ * across a word, which is what the label's own ground is for: two mechanisms, and the cheap one is
+ * the backstop for the case the good one cannot solve.
+ */
+/**
+ * WOULD A CONNECTOR TOUCHING DOWN HERE RUN THROUGH ONE OF THOSE PLATES?
+ *
+ * THE TEST IS THE RUN, NOT THE POINT, and getting that wrong is what the first version of this did:
+ * a port sits ON the node, and the name it collides with is in the strip ABOVE the node, so the
+ * port itself is never inside the plate. What crosses the words is the approach.
+ *
+ * AND THE RUN IS BOUNDED, which is the second thing it got wrong. Asked only "is the plate out that
+ * way", a port dodged a region's name two hundred pixels above it that its own wire came nowhere
+ * near: measured on the AWS drawing, the database's arrival slid sideways for the public subnet's
+ * caption, three ranks up. The run reaches from this port to the other end, and a port already knows
+ * where the box it is joining sits, so the plate has to lie in THAT stretch.
+ */
+function plateCrossed(
+  point: DiagramPoint,
+  plates: readonly DiagramBox[],
+  across: number,
+  clearance: number,
+): boolean {
+  const near = Math.min(point.y, across);
+  const far = Math.max(point.y, across);
+  return plates.some((plate) => {
+    if (point.x <= plate.x - clearance || point.x >= plate.x + plate.width + clearance) return false;
+    return plate.y + plate.height >= near - clearance && plate.y <= far + clearance;
+  });
+}
+
+function clearOfPlates(
+  outline: readonly DiagramPoint[],
+  wanted: number,
+  band: number,
+  plates: readonly DiagramBox[],
+  side: PhysicalSide,
+  /** Where the other end of this connector sits across the side: the far end of the run. */
+  across: number,
+  /** Ports already placed on this same side. A moving port keeps off them; see the caller. */
+  taken: readonly DiagramPoint[] = [],
+  clearance: number = DIAGRAM_LABEL_CLEARANCE,
+  steps: number = 24,
+  separation: number = DIAGRAM_CORRIDOR_GAP,
+): DiagramPoint {
+  const at = pointAlong(outline, wanted);
+  if (plates.length === 0) return at;
+
+  const crossed = (point: DiagramPoint): boolean =>
+    plateCrossed(point, plates, across, clearance);
+  if (!crossed(at)) return at;
+
+  /* Out from where it wanted to be, alternating sides, so the nearest clear place wins and the
+     answer does not depend on which direction was tried first. */
+  const low = (1 - band) / 2;
+  const high = 1 - low;
+  /* Far enough from a port already on this side that the two read as two, which is the same number
+     and the same argument the corridor pass uses one axis over. */
+  const occupied = (point: DiagramPoint): boolean =>
+    taken.some(
+      (other) => Math.abs(other.x - point.x) < separation && Math.abs(other.y - point.y) < separation,
+    );
+
+  /*
+   * TWO TIERS, AND THE ORDER BETWEEN THEM IS THE WHOLE JUDGEMENT. Clear of the name AND clear of
+   * the ports already on this side is the answer worth having. Where the band is too narrow to be
+   * both - a caption nearly as wide as the box under it - crossing the words is the worse failure
+   * of the two, so the second pass drops the separation and keeps the name. Two wires a few pixels
+   * apart are still two wires; a wire through a word is a word nobody can read.
+   */
+  for (const spaced of [true, false]) {
+    for (let step = 1; step <= steps; step += 1) {
+      const reach = (step / steps) * (high - low);
+      for (const t of [wanted + reach, wanted - reach]) {
+        if (t < low || t > high) continue;
+        const candidate = pointAlong(outline, t);
+        if (crossed(candidate)) continue;
+        if (spaced && occupied(candidate)) continue;
+        return candidate;
+      }
+    }
+  }
+  return at;
 }
 
 /**
@@ -1563,6 +2177,58 @@ export type DiagramLabelOptions = {
   readonly samples?: number;
   /** What a chip pays for leaving the stroke. See `DIAGRAM_LABEL_OFF_LINE`. */
   readonly offLinePenalty?: number;
+  /**
+   * The OTHER connectors on the frame, as the polylines they are drawn as. A chip that covers one
+   * hides it; see `DIAGRAM_LABEL_OVER_STROKE`. Never this edge's own line, which a chip sits on by
+   * design.
+   */
+  readonly strokes?: readonly (readonly DiagramPoint[])[];
+  /** What a chip pays for covering one of them. See `DIAGRAM_LABEL_OVER_STROKE`. */
+  readonly overStrokePenalty?: number;
+};
+
+/**
+ * Whether a segment touches a rectangle at all, by the slab test.
+ *
+ * Written for the general case although every segment a diagram routes is axis-aligned: the two
+ * retractions pull a line's ends along their own segment, and one day something will arrive here
+ * diagonal. The general answer is four comparisons longer than the special one and cannot be wrong.
+ */
+const segmentHitsBox = (a: DiagramPoint, b: DiagramPoint, box: DiagramBox): boolean => {
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const slabs: readonly (readonly [number, number])[] = [
+    [-dx, a.x - box.x],
+    [dx, box.x + box.width - a.x],
+    [-dy, a.y - box.y],
+    [dy, box.y + box.height - a.y],
+  ];
+  let near = 0;
+  let far = 1;
+  for (const [along, room] of slabs) {
+    /* Parallel to this pair of edges: it either starts between them or misses the box entirely. */
+    if (along === 0) {
+      if (room < 0) return false;
+      continue;
+    }
+    const at = room / along;
+    if (along < 0) {
+      if (at > far) return false;
+      if (at > near) near = at;
+    } else {
+      if (at < near) return false;
+      if (at < far) far = at;
+    }
+  }
+  return true;
+};
+
+/** Whether any part of a connector runs through a box. One answer per connector: see the constant. */
+const strokeHitsBox = (points: readonly DiagramPoint[], box: DiagramBox): boolean => {
+  for (let at = 1; at < points.length; at += 1) {
+    if (segmentHitsBox(points[at - 1]!, points[at]!, box)) return true;
+  }
+  return false;
 };
 
 /**
@@ -1607,6 +2273,8 @@ export function placeDiagramLabel(
   const bends = line.slice(1, -1);
   const area = Math.max(1, label.width * label.height);
   const offLine = options.offLinePenalty ?? DIAGRAM_LABEL_OFF_LINE;
+  const strokes = options.strokes ?? [];
+  const overStroke = options.overStrokePenalty ?? DIAGRAM_LABEL_OVER_STROKE;
 
   let best: DiagramPoint = pointAlong(line, 0.5);
   let bestCost = Number.POSITIVE_INFINITY;
@@ -1660,6 +2328,22 @@ export function placeDiagramLabel(
         const share = Math.max(1, Math.min(area, obstacle.width * obstacle.height));
         cost += (covered / share) * 100;
         cost += (crowded / share) * 20;
+      }
+      /*
+       * A CONNECTOR THAT IS NOT THIS ONE, run under the chip's own ground and gone. Priced flat and
+       * per stroke: what the reader loses is a whole relationship, not a proportion of one, and it
+       * is the same loss whether the chip covers a corner of it or an inch.
+       *
+       * Measured against the chip's own box and NOT against its clearance, unlike a node, and the
+       * difference is not fussiness. A stroke is one pixel wide and turns corners, so a clearance
+       * band catches the CORNER of a line the chip is nowhere near: measured on the order model, the
+       * one good position - above both records, in the gutter, five pixels clear of where the long
+       * vertical begins - was priced as a collision by those five pixels, and the chip went back
+       * into the corridor it had just escaped. Covering a line is what costs; being near one is what
+       * a drawing this dense cannot avoid.
+       */
+      for (const stroke of strokes) {
+        if (strokeHitsBox(stroke, box)) cost += overStroke;
       }
       /* A preference. One bend under the chip is worth avoiding; two is worse. */
       for (const bend of bends) {
@@ -1749,17 +2433,38 @@ function routePoints(
     return [start, { x: lane.at, y: start.y }, { x: lane.at, y: end.y }, end];
   }
 
+  /*
+   * WHICH END A STRAIGHTENED CORRIDOR LINES UP ON, and the default is "neither, split the
+   * difference", which is right for two boxes and wrong for a gate.
+   *
+   * Straightening a near-straight corridor has to move an end (see `DIAGRAM_SNAP`), and on two boxes
+   * it does not matter which: a port is spread along a FACE, so a couple of pixels along that face
+   * is still on it, and meeting in the middle keeps the jog off both. A gate has no face to absorb
+   * it. Its output is a single point at the nose and its inputs sit on the heights the notation
+   * assigns them, so the same two pixels leave a visible gap at the tip of the symbol or slide a pin
+   * off its third. The end that cannot move is therefore the one the line lines up ON, and the box
+   * at the other end takes the whole correction - which is exactly the end that can afford it.
+   *
+   * Two gates give way to each other as two boxes would: both ends are fixed, so there is no better
+   * answer than the middle, and in practice two gates on one rank are already on the same centre
+   * line and nothing moves at all.
+   */
+  const fixedStart = isDiagramGate(edge.from.shape);
+  const fixedEnd = isDiagramGate(edge.to.shape);
+  const straight = (a: number, b: number): number =>
+    fixedStart === fixedEnd ? (a + b) / 2 : fixedStart ? a : b;
+
   if (vertical(exitSide)) {
     /* Near enough to straight IS straight: see `DIAGRAM_SNAP`. */
     if (Math.abs(start.x - end.x) <= snap) {
-      const x = (start.x + end.x) / 2;
+      const x = straight(start.x, end.x);
       return [{ x, y: start.y }, { x, y: end.y }];
     }
     const mid = rail ?? (start.y + end.y) / 2;
     return [start, { x: start.x, y: mid }, { x: end.x, y: mid }, end];
   }
   if (Math.abs(start.y - end.y) <= snap) {
-    const y = (start.y + end.y) / 2;
+    const y = straight(start.y, end.y);
     return [{ x: start.x, y }, { x: end.x, y }];
   }
   const mid = rail ?? (start.x + end.x) / 2;
@@ -1916,8 +2621,14 @@ export const diagramContract = {
     "--sk-diagram-row-padding-block",
     "--sk-diagram-row-padding-inline",
     "--sk-diagram-row-rule-color",
+    "--sk-diagram-record-header-bg",
+    "--sk-diagram-record-header-font-weight",
     "--sk-diagram-decision-aspect",
     "--sk-diagram-decision-stroke-scale",
+    "--sk-diagram-gate-inline-size",
+    "--sk-diagram-designator-color",
+    "--sk-diagram-designator-font-size",
+    "--sk-diagram-designator-gap",
     "--sk-diagram-connector-color",
     "--sk-diagram-connector-width",
     "--sk-diagram-zone-bg",
@@ -1925,6 +2636,7 @@ export const diagramContract = {
     "--sk-diagram-zone-border-style",
     "--sk-diagram-zone-border-width",
     "--sk-diagram-zone-color",
+    "--sk-diagram-zone-label-bg",
     "--sk-diagram-zone-font-size",
     "--sk-diagram-zone-inset",
     "--sk-diagram-zone-inset-block-start",
@@ -2005,7 +2717,15 @@ export const diagramContract = {
               node: { type: "string", attr: diagramAttrs.node },
               /**
                * Which silhouette it is drawn with. `process` is the default because most nodes are
-               * a step; see `DiagramShape` for why the set stops at three.
+               * a step.
+               *
+               * Three of them are the prose shapes (`process`, `decision`, `terminal`) and the rest
+               * are logic gates (`and`, `or`, `xor`, `nand`, `nor`, `xnor`, `not`). The two families
+               * are one option and not two, because they are one drawing: a gate's result is read by
+               * a step, a step's outcome is an operand, and an author who had to pick a component
+               * per family could never draw the frame that contains both. See `DiagramShape` for
+               * where the line is and what a gate gives up to be on this list - no inside, and ports
+               * the notation fixes rather than the layout.
                */
               shape: {
                 type: "enum",
@@ -2051,6 +2771,19 @@ export const diagramContract = {
                * to be a different height.
                */
               logo: { accepts: "node" },
+              /**
+               * THIS NODE'S VISIBLE NAME, drawn under it and never measured.
+               *
+               * For the shape whose box cannot hold one: a gate is a silhouette with no inside, so
+               * its `children` are clipped and this is where a reference designator (`U1`, `G3`)
+               * goes. See `diagramParts.designator` for why it is positioned rather than laid out,
+               * and for the one consequence - it hangs into the rank gap, which
+               * `--sk-diagram-row-gap` is what widens.
+               *
+               * A slot rather than a string, like every other piece of content here, so a
+               * designator can be a `Code` or a link back to the prose that names it.
+               */
+              designator: { accepts: "node" },
               /**
                * THE NAMED LINES INSIDE A BOX: a class's members, a table's columns, a message's
                * fields. A rule appears above them, which is what turns a box into a record.
@@ -2235,6 +2968,13 @@ export const diagramContract = {
                     itemSlot: "logo",
                   },
                   { element: "span", part: "title", itemSlot: "children" },
+                  /* After the words and outside the flow: see `diagramParts.designator`. */
+                  {
+                    element: "span",
+                    part: "designator",
+                    whenItemSlotGiven: "designator",
+                    itemSlot: "designator",
+                  },
                   {
                     element: "ul",
                     part: "rows",

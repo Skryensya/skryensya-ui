@@ -6,6 +6,7 @@ import {
   annotationAnatomyTree,
   annotationDemoCss,
   annotationElbowTree,
+  annotationNumberedTree,
   annotationPluralCss,
   annotationPluralTree,
   annotationSidesTree,
@@ -124,6 +125,14 @@ const hooks = `.mi-diagrama {
 
     <h3 id="key">{t("annotation.keyTitle")}</h3>
     <p set:html={t("annotation.keyBody")} />
+
+    <h3 id="numbered">{t("annotation.numberedTitle")}</h3>
+    <p set:html={t("annotation.numberedBody")} />
+    <ComponentPreview
+      tree={annotationNumberedTree(t)}
+      css={annotationDemoCss}
+      label={t("annotation.numberedPreviewLabel")}
+    />
 
     <h3>{t("annotation.pluralTitle")}</h3>
     <p set:html={t("annotation.pluralBody")} />

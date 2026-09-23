@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-21T18:02:53.498Z",
+  "generatedAt": "2026-09-22T01:56:56.855Z",
   "viewport": {
     "width": 1920,
     "height": 1000
@@ -1214,15 +1214,17 @@
       "descriptionlist-with-a-tag-and-a-link": 171
     },
     "/components/diagram": {
-      "a-query-s-lifecycle": 222,
+      "a-half-adder": 221,
+      "a-query-s-lifecycle": 318,
       "a-web-application-on-aws": 1133,
       "an-app-inside-a-vpc": 755,
-      "an-authenticated-request": 288,
+      "an-authenticated-request": 410,
       "an-order-s-foreign-keys": 313,
       "authorizing-a-request": 274,
+      "authorizing-a-request-with-gates": 348,
       "fulfilling-an-order": 293,
-      "publishing-a-post": 293,
-      "triaging-a-complaint": 422
+      "publishing-a-post": 377,
+      "triaging-a-complaint": 578
     },
     "/components/fade-edge": {
       "fade-intensity": 352,
@@ -1286,14 +1288,16 @@
     },
     "/es/componentes/diagram": {
       "autorizar-una-peticion": 271,
+      "autorizar-una-peticion-con-compuertas": 348,
       "claves-foraneas-de-un-pedido": 313,
       "despachar-un-pedido": 293,
-      "el-ciclo-de-vida-de-una-consulta": 222,
-      "publicar-una-nota": 293,
-      "triaje-de-un-reclamo": 467,
+      "el-ciclo-de-vida-de-una-consulta": 318,
+      "publicar-una-nota": 377,
+      "triaje-de-un-reclamo": 623,
+      "un-semisumador": 221,
       "una-aplicacion-en-una-vpc": 755,
       "una-aplicacion-web-en-aws": 1133,
-      "una-peticion-autenticada": 291
+      "una-peticion-autenticada": 410
     },
     "/es/componentes/quote": {
       "quote": 160,

@@ -9,7 +9,7 @@ const ATTRS = {"fill":"none","stroke":"currentColor","stroke-width":"2","stroke-
 
 export const componentIcons: Readonly<Record<string, IconData | StableIconName>> = {
   "/components/accordion": { viewBox: "0 0 24 24", attrs: ATTRS, body: "<path d=\"M10 5h11\" /><path d=\"M10 12h11\" /><path d=\"M10 19h11\" /><path d=\"m3 10 3-3-3-3\" /><path d=\"m3 20 3-3-3-3\" />" },
-  "/components/annotation": { viewBox: "0 0 24 24", attrs: ATTRS, body: "<path d=\"M21 9a2.4 2.4 0 0 0-.706-1.706l-3.588-3.588A2.4 2.4 0 0 0 15 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2z\" /><path d=\"M15 3v5a1 1 0 0 0 1 1h5\" />" },
+  "/components/annotation": { viewBox: "0 0 24 24", attrs: ATTRS, body: "<path d=\"M3 7V5a2 2 0 0 1 2-2h2\" /><path d=\"M17 3h2a2 2 0 0 1 2 2v2\" /><path d=\"M21 17v2a2 2 0 0 1-2 2h-2\" /><path d=\"M7 21H5a2 2 0 0 1-2-2v-2\" /><circle cx=\"12\" cy=\"12\" r=\"3\" /><path d=\"m16 16-1.9-1.9\" />" },
   "/components/diagram": { viewBox: "0 0 24 24", attrs: ATTRS, body: "<rect width=\"8\" height=\"8\" x=\"3\" y=\"3\" rx=\"2\" /><path d=\"M7 11v4a2 2 0 0 0 2 2h4\" /><rect width=\"8\" height=\"8\" x=\"13\" y=\"13\" rx=\"2\" />" },
   "/components/avatar": { viewBox: "0 0 24 24", attrs: ATTRS, body: "<path d=\"M17.925 20.056a6 6 0 0 0-11.851.001\" /><circle cx=\"12\" cy=\"11\" r=\"4\" /><circle cx=\"12\" cy=\"12\" r=\"10\" />" },
   "/components/back-to-top": { viewBox: "0 0 24 24", attrs: ATTRS, body: "<path d=\"M5 3h14\" /><path d=\"m18 13-6-6-6 6\" /><path d=\"M12 7v14\" />" },

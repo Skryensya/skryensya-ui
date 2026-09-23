@@ -139,20 +139,38 @@ export function framedIn(moduleName: string) {
       });
 
       /*
-       * Still an eager `srcDoc` prop, unlike the Vanilla stage's own - but the reason it HAD to be is
-       * gone, and that is worth writing down rather than leaving as an unexplained asymmetry.
+       * DEFERRED, into {@link componentPreviewAttrs.doc}, exactly like the Vanilla stage beside it.
+       * The measurement the previous note here asked for has been taken, and it was worth taking.
        *
-       * A deferred version (author into {@link componentPreviewAttrs.doc}, promote on
-       * `client:visible`'s own hydration) was tried and reverted once, because the fullscreen route
-       * reconstructed a preview from this page's STATIC html and copied only `<script src="…">` tags
-       * into that reconstruction, never inline ones. Astro's `client:visible` bootstrap IS an inline
-       * script, so a deferred island never hydrated there and every React-bound "Pantalla completa"
-       * spun forever. The eager prop was what made it work with no hydration at all.
+       * `hidden` on an ancestor stops RENDERING, not LOADING. So an eager `srcDoc` on this element
+       * booted a whole second realm - its own React, and `render-tree`'s 82 component modules - for
+       * every preview on the page, at parse time, behind a tab nobody had clicked.
        *
-       * That route no longer exists. Nothing now reads this page's static markup expecting a
-       * fully-populated `srcDoc`, so deferring is available again - untried since, and a real saving
-       * on a page full of React stages. Left eager here because that is a performance change with its
-       * own measurement to do, not a side effect of deleting a route.
+       * Two production builds of the same tree, five runs each, a fresh browser per run, 1440x900.
+       * "Arrival" is navigation until the first stage reports ready:
+       *
+       *                            arrival (min / median)      stage bytes at arrival
+       *   /components/annotation   972 -> 451 / 1110 -> 473     4747kB -> 2689kB
+       *   /components/button      1099 -> 584 / 1171 -> 952    14499kB -> 13452kB
+       *
+       * The byte column understates it and the arrival column is the point: the prewarm below puts
+       * most of those bytes back deliberately, just after the reader has what they came for rather
+       * than before. Button's median moved least because that page's own 17 stages dominate it.
+       *
+       * A deferred version was tried and reverted ONCE before, and the reason no longer exists: the
+       * fullscreen route reconstructed a preview from this page's STATIC html and copied only
+       * `<script src="…">` tags, never inline ones, so Astro's inline `client:visible` bootstrap
+       * never ran there and every React-bound "Pantalla completa" spun forever. That route is gone,
+       * and nothing else reads this markup expecting a populated `srcDoc`.
+       *
+       * Promotion is the shared observer's job now (`connectStageLifecycle`,
+       * `@skryensya/vanilla/component-preview`), which is also why the old hydration race is gone:
+       * `srcdoc` is no longer a React-controlled prop, so there is nothing for React to diff it
+       * against. It is promoted when the reader picks React, and prewarmed on idle for whichever
+       * previews are in view, so switching still feels instant.
+       *
+       * No `loading="lazy"`: it does nothing for inline `srcdoc`, which is the whole reason this
+       * attribute exists (see `ComponentPreview.astro`'s own stage).
        */
 
       /*
@@ -198,9 +216,8 @@ export function framedIn(moduleName: string) {
           data-sk-component-preview-scroll={scroll ? "" : undefined}
           data-sk-component-preview-min-height={minHeight ? "" : undefined}
           aria-busy="true"
-          srcDoc={srcDoc}
+          data-sk-component-preview-doc={srcDoc}
           title={`Preview renderizado (React): ${title}`}
-          loading="lazy"
           allow="clipboard-write"
           suppressHydrationWarning
         />

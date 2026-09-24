@@ -751,6 +751,17 @@ async function boot(): Promise<void> {
     const { mountEditor } = await import("@skryensya/vanilla/editor");
     mountEditor(document);
   }
+  /*
+   * UserSelect is absent from `mountFrameComponents`'s own registry for a different reason than
+   * Editor's (no peer dependency here): it has no compiled contract yet, so it has no canonical
+   * usage tree, and `vanilla-conformance.test.ts` requires every REGISTERED selector to be
+   * exercised by one (see `packages/vanilla/src/runtime/registry.ts`'s own note). This page still
+   * demos it live, so it opts in explicitly here, same shape as Editor just above.
+   */
+  if (document.querySelector("[data-sk-user-select]")) {
+    const { mountUserSelect } = await import("@skryensya/vanilla/user-select");
+    mountUserSelect(document);
+  }
   await mountReactDemo();
   runAuthoredScript();
 

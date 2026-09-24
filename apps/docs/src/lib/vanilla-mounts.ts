@@ -88,12 +88,6 @@ export const vanillaMounts = {
     mount: "mountSelect",
     selector: "[data-sk-select]",
   },
-  "/components/user-select": {
-    name: "UserSelect",
-    entrypoint: "@skryensya/vanilla/user-select",
-    mount: "mountUserSelect",
-    selector: "[data-sk-user-select]",
-  },
   "/components/sidebar": {
     name: "Sidebar",
     entrypoint: "@skryensya/vanilla/sidebar",

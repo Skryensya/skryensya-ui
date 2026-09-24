@@ -25,7 +25,8 @@ export const userSelectMessages = {
     "userSelectPage.vanillaTitle": "Vanilla",
     "userSelectPage.vanillaBody":
       "El enhancer nunca inventa una fila: lee <code>data-value</code>, el nodo de texto y un <code>data-email</code> opcional de cada <code>[data-sk-select-item]</code> ya autorado, y clona su propio <code>.sk-avatar</code> para el resumen del trigger, nunca deriva iniciales por su cuenta. El wrapper del listado (<code>role=\"listbox\"</code>), la fila vacía y el pie \"N seleccionados · Clear all\" se generan solos si no los autoras.",
-    "userSelectPage.iconsTitle": "Iconos",
+    "userSelectPage.explicitMountNote":
+      "UserSelect aún no tiene un contrato compilado propio, así que no forma parte del registro de <code>initComponents()</code>: móntalo con <code>mountUserSelect()</code>, explícitamente.",
     "userSelectPage.listenTitle": "Escuchar el cambio",
     "userSelectPage.reactTitle": "React",
     "userSelectPage.reactBody":
@@ -57,7 +58,8 @@ export const userSelectMessages = {
     "userSelectPage.vanillaTitle": "Vanilla",
     "userSelectPage.vanillaBody":
       "The enhancer never invents a row: it reads <code>data-value</code>, the text node and an optional <code>data-email</code> off each authored <code>[data-sk-select-item]</code>, and clones its own <code>.sk-avatar</code> for the trigger's summary, it never derives initials on its own. The list wrapper (<code>role=\"listbox\"</code>), the empty row and the \"N selected · Clear all\" footer generate themselves when not authored.",
-    "userSelectPage.iconsTitle": "Icons",
+    "userSelectPage.explicitMountNote":
+      "UserSelect has no compiled contract of its own yet, so it is not part of <code>initComponents()</code>'s registry: mount it with <code>mountUserSelect()</code>, explicitly.",
     "userSelectPage.listenTitle": "Listening for the change",
     "userSelectPage.reactTitle": "React",
     "userSelectPage.reactBody":

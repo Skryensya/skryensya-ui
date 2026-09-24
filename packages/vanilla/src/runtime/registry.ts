@@ -58,10 +58,14 @@ const registrations: readonly Registration[] = [
     selector: "[data-sk-select]",
     load: async () => (await import("../components/select.js")).mountSelect,
   },
-  {
-    selector: "[data-sk-user-select]",
-    load: async () => (await import("../components/user-select.js")).mountUserSelect,
-  },
+  /*
+   * `UserSelect` is deliberately absent from this lazy registry, same shape Editor's own absence
+   * documents in `index.ts`: it has no canonical usage tree yet (no compiled contract owns its
+   * markup, see `packages/core/src/user-select.ts`'s own note), and `vanilla-conformance.test.ts`
+   * requires every registered selector to be exercised by one. A page that authors
+   * `[data-sk-user-select]` calls `mountUserSelect()` explicitly instead, the same shape
+   * `EditorPage.astro`'s own install snippet already shows for Editor.
+   */
   {
     selector: "[data-sk-segmented]",
     load: async () =>

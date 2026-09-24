@@ -9,6 +9,15 @@
  * mount points genuinely new to this composition: the root (its own, so mounting it can never collide
  * with a plain `Select` on the same page), the search field, the list wrapper `composite: false` needs
  * around the rows, and the optional "N selected · Clear all" footer.
+ *
+ * NO `ComponentContract` HERE, on purpose. Every other file in this shape (`select.ts`, `combobox.ts`,
+ * `avatar.ts`) ends in one, which is what a compiled contract, a canonical usage tree
+ * (`packages/ai-gates/src/trees.ts`) and the Vanilla auto-loader's registry all key off. This
+ * composition paints entirely with THEIR classes, so it earns no new sheet of its own to publish a
+ * contract for; adding one only to satisfy the pipeline would be a contract that describes no CSS.
+ * The one real cost: `mountUserSelect` (Vanilla) stays out of `initComponents()`'s own registry, the
+ * same shape `@skryensya/editor` already carries for its own, different reason (an optional peer
+ * dependency) - a page authoring `[data-sk-user-select]` calls `mountUserSelect()` itself.
  */
 
 export const userSelectAttrs = {

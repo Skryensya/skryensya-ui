@@ -66,13 +66,18 @@ export const userSelectEmptyHtml = (t: Translate): string => `<div class="sk-sel
   </div>
 </div>`;
 
-export const userSelectJs = `import { initComponents } from "@skryensya/vanilla/auto";
+/*
+ * The EXPLICIT mount, not `initComponents()`: UserSelect has no compiled contract yet (see
+ * `packages/core/src/user-select.ts`'s own note), so it carries no canonical usage tree and stays
+ * out of the auto-loader's registry, same shape Editor's own page already shows for a different
+ * reason. This is the one snippet that is actually true of how this component mounts.
+ */
+export const userSelectJs = `import { mountUserSelect } from "@skryensya/vanilla/user-select";
 import { mountIcons } from "@skryensya/vanilla/icon";
 import { lucideIcons } from "@skryensya/icons-lucide";
 
 mountIcons(document, lucideIcons);
-
-await initComponents();`;
+mountUserSelect();`;
 
 export const userSelectListen = `document
   .getElementById("assignees")

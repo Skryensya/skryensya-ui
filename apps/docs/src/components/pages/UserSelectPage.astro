@@ -12,8 +12,6 @@ import CodeBlock from "../CodeBlock.astro";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import { userSelectHtml, userSelectEmptyHtml, userSelectJs, userSelectListen } from "../../demos/user-select";
-import { vanillaMounts } from "../../lib/vanilla-mounts";
-import VanillaMount from "../VanillaMount.astro";
 import { UserSelectBasicDemo, UserSelectLoadingDemo } from "../react-demos/user-select";
 import { getLocale, useTranslations } from "../../i18n";
 
@@ -21,14 +19,11 @@ const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
+const vanillaInstall = `pnpm add @skryensya/core @skryensya/vanilla`;
 const styles = `@import "@skryensya/core/patterns/anchored.css";
 @import "@skryensya/core/components/select.css";
 @import "@skryensya/core/components/combobox.css";
 @import "@skryensya/core/components/avatar.css";`;
-const iconsSetup = `import { mountIcons } from "@skryensya/vanilla/icon";
-import { lucideIcons } from "@skryensya/icons-lucide";
-
-mountIcons(document, lucideIcons);`;
 
 const reactSource = `<UserSelect
   users={users}
@@ -103,11 +98,10 @@ const reactSource = `<UserSelect
   </Fragment>
 
   <Fragment slot="installVanilla">
+    <p set:html={t("userSelectPage.explicitMountNote")} />
+    <CodeBlock code={vanillaInstall} label="terminal" />
     <CodeBlock code={styles} label="CSS" lang="css" />
-    <VanillaMount {...vanillaMounts["/components/user-select"]} headingLevel="h3" />
-
-    <h4>{t("userSelectPage.iconsTitle")}</h4>
-    <CodeBlock code={iconsSetup} label="JavaScript" />
+    <CodeBlock code={userSelectJs} label="JavaScript" />
 
     <h4>{t("userSelectPage.listenTitle")}</h4>
     <CodeBlock code={userSelectListen} label="JavaScript" />

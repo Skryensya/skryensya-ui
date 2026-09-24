@@ -440,6 +440,10 @@
     "./vaul": {
       "types": "./src/components/vaul.tsx",
       "default": "./src/components/vaul.tsx"
+    },
+    "./user-select": {
+      "types": "./src/components/user-select.tsx",
+      "default": "./src/components/user-select.tsx"
     }
   },
   "scripts": {

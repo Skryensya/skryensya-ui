@@ -3,7 +3,7 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribe la entrada y pega el
 # hash nuevo.
-surface: "4852197260bc5e9b"
+surface: "bc826141c70ee9cc"
 entries:
   - date: 2026-09-20
     kind: rework
@@ -332,3 +332,31 @@ entries:
         <code>mobileAlign</code> option and the clustered layout below 40rem: a number fits any margin and the canvas shows the same drawing
         fitted, so nothing has to change shape on a narrow screen. With <code>match: "all"</code>, every match
         gets its own bubble and its own leader, all showing the same number, instead of one bubble fanning out several leaders.
+  - date: 2026-09-24
+    kind: feature
+    target: Annotated
+    es:
+      title: Un diagrama que se ajusta a la pantalla sin zoom
+      body: >-
+        Opción <code>fitOnly</code>, con el mismo nombre que en <code>Canvas</code>: el marco se sigue mostrando ajustado al ancho disponible, pero sin barra de
+        zoom, sin gestos y sin parada de Tab en el viewport. Es la forma de una anatomía que se lee en reposo, como las de esta documentación.
+    en:
+      title: A diagram that fits the screen without zoom
+      body: >-
+        <code>fitOnly</code> option, under the same name <code>Canvas</code> uses: the frame is still shown fitted to the available width, but with no zoom
+        bar, no gestures and no tab stop on the viewport. It is the shape of an anatomy that is read at rest, like the ones in these docs.
+  - date: 2026-09-24
+    kind: bugfix
+    target: Annotated
+    es:
+      title: "<code>inert: false</code> deja el sujeto vivo de verdad"
+      body: >-
+        En el markup, <code>inert</code> es un atributo booleano de HTML, así que apagarlo no escribía nada y el sujeto de Vanilla quedaba igual de inerte. Ahora
+        la opción en falso emite <code>inert="false"</code> y el enhancer lo lee como la excepción; React ya lo respetaba con su prop booleana. Una anatomía que
+        quiere mostrar cambios de estado puede mantener el sujeto usable en los dos.
+    en:
+      title: "<code>inert: false</code> really leaves the subject live"
+      body: >-
+        In markup, <code>inert</code> is an HTML boolean attribute, so turning it off wrote nothing and the Vanilla subject stayed just as inert. The option now
+        emits <code>inert="false"</code> when off and the enhancer reads it as the opt-out; React already honoured it through its boolean prop. An anatomy that
+        wants to show state changes can keep its subject usable in both.

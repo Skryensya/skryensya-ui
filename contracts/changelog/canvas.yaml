@@ -3,7 +3,7 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribe la entrada y pega el
 # hash nuevo.
-surface: "6ea3f5f97937f7b6"
+surface: "a13df78bd414e32b"
 entries:
   - date: 2026-09-23
     kind: feature
@@ -40,3 +40,18 @@ entries:
       title: A minimum height, so a small drawing is not a sliver
       body: >-
         <code>--sk-canvas-min-block-size</code> hook, <code>16rem</code> by default. The drawing is not enlarged to fill it: it is centred in the extra height.
+  - date: 2026-09-24
+    kind: feature
+    target: Canvas
+    es:
+      title: Un canvas que sólo se ajusta, para dibujos que se leen y no se exploran
+      body: >-
+        Opción <code>fitOnly</code> (<code>data-fit-only</code>): el dibujo se sigue ajustando y reajustando en cada cambio de tamaño, y nada más. Sin barra de zoom,
+        sin avisos, sin gestos, y el viewport deja de ser una parada de Tab, porque una caja que se enfoca y no responde a ninguna tecla es una trampa para el teclado.
+        La rueda, el arrastre y el pellizco quedan para la página.
+    en:
+      title: A canvas that only fits, for drawings that are read rather than explored
+      body: >-
+        <code>fitOnly</code> option (<code>data-fit-only</code>): the drawing still fits and refits on every resize, and that is all. No zoom bar, no hints, no
+        gestures, and the viewport stops being a tab stop, because a focusable box that does nothing on any key is a trap for the keyboard. The wheel, a drag
+        and a pinch stay the page's.

@@ -308,6 +308,32 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-24",
+            "en": {
+              "body": "<code>fitOnly</code> option, under the same name <code>Canvas</code> uses: the frame is still shown fitted to the available width, but with no zoom bar, no gestures and no tab stop on the viewport. It is the shape of an anatomy that is read at rest, like the ones in these docs.",
+              "title": "A diagram that fits the screen without zoom"
+            },
+            "es": {
+              "body": "Opción <code>fitOnly</code>, con el mismo nombre que en <code>Canvas</code>: el marco se sigue mostrando ajustado al ancho disponible, pero sin barra de zoom, sin gestos y sin parada de Tab en el viewport. Es la forma de una anatomía que se lee en reposo, como las de esta documentación.",
+              "title": "Un diagrama que se ajusta a la pantalla sin zoom"
+            },
+            "kind": "feature",
+            "target": "Annotated"
+          },
+          {
+            "date": "2026-09-24",
+            "en": {
+              "body": "In markup, <code>inert</code> is an HTML boolean attribute, so turning it off wrote nothing and the Vanilla subject stayed just as inert. The option now emits <code>inert=\"false\"</code> when off and the enhancer reads it as the opt-out; React already honoured it through its boolean prop. An anatomy that wants to show state changes can keep its subject usable in both.",
+              "title": "<code>inert: false</code> really leaves the subject live"
+            },
+            "es": {
+              "body": "En el markup, <code>inert</code> es un atributo booleano de HTML, así que apagarlo no escribía nada y el sujeto de Vanilla quedaba igual de inerte. Ahora la opción en falso emite <code>inert=\"false\"</code> y el enhancer lo lee como la excepción; React ya lo respetaba con su prop booleana. Una anatomía que quiere mostrar cambios de estado puede mantener el sujeto usable en los dos.",
+              "title": "<code>inert: false</code> deja el sujeto vivo de verdad"
+            },
+            "kind": "bugfix",
+            "target": "Annotated"
+          },
+          {
             "date": "2026-09-23",
             "en": {
               "body": "When a gutter's labels are distributed, each one stays, where there is room, within the stretch from which its leader reaches the ring in a single segment, and the neighbour with more slack is the one that moves. A leader only bends when no arrangement keeps them all straight.",
@@ -1438,6 +1464,19 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-24",
+            "en": {
+              "body": "<code>fitOnly</code> option (<code>data-fit-only</code>): the drawing still fits and refits on every resize, and that is all. No zoom bar, no hints, no gestures, and the viewport stops being a tab stop, because a focusable box that does nothing on any key is a trap for the keyboard. The wheel, a drag and a pinch stay the page's.",
+              "title": "A canvas that only fits, for drawings that are read rather than explored"
+            },
+            "es": {
+              "body": "Opción <code>fitOnly</code> (<code>data-fit-only</code>): el dibujo se sigue ajustando y reajustando en cada cambio de tamaño, y nada más. Sin barra de zoom, sin avisos, sin gestos, y el viewport deja de ser una parada de Tab, porque una caja que se enfoca y no responde a ninguna tecla es una trampa para el teclado. La rueda, el arrastre y el pellizco quedan para la página.",
+              "title": "Un canvas que sólo se ajusta, para dibujos que se leen y no se exploran"
+            },
+            "kind": "feature",
+            "target": "Canvas"
+          },
+          {
             "date": "2026-09-23",
             "en": {
               "body": "New <code>Canvas</code> contract: the content is laid out at its own width and shown fitted to the view, never enlarged. Drag pans; Ctrl/Cmd + wheel and a trackpad pinch zoom around the pointer; on touch, two fingers pan and zoom while one finger keeps scrolling the page, with a brief hint when someone tries with one. Keyboard: <code>+</code>, <code>-</code>, <code>0</code> fits, <code>1</code> is 100% and the arrows pan. Three icon-only buttons at the smallest size: zoom in, zoom out and fit, in a vertical bar in the top corner over the drawing, or a strip of their own under it on narrow screens. Dragging works at rest too, as long as half the drawing stays in view; once the reader has zoomed or dragged, a plain wheel pans the canvas and hands the scroll back to the page at an edge, and fit returns it to rest. The ground is a board ruled with hairlines barely off its own tone, between the surface and the sunken ground, and the grid slides and spreads with pan and zoom (<code>--sk-canvas-viewport-bg</code>, <code>--sk-canvas-grid-color</code>, <code>--sk-canvas-grid-size</code>).",
@@ -1446,6 +1485,19 @@
             "es": {
               "body": "Nuevo contrato <code>Canvas</code>: el contenido se diseña a su propio ancho y se muestra ajustado a la vista, sin agrandarlo nunca. Arrastrar mueve; Ctrl/Cmd + rueda y el pellizco del trackpad acercan alrededor del puntero; en táctil, dos dedos mueven y hacen zoom mientras un dedo sigue haciendo scroll de la página, con un aviso breve si alguien intenta con uno. Teclado: <code>+</code>, <code>-</code>, <code>0</code> ajusta, <code>1</code> es 100% y las flechas mueven. Tres botones de solo icono, en el tamaño más chico: acercar, alejar y ajustar, en una barra vertical arriba a la derecha sobre el dibujo, o en una franja propia debajo de él en pantallas angostas. Arrastrar funciona también en reposo, siempre que quede a la vista la mitad del dibujo; una vez que se hizo zoom o se arrastró, la rueda sola mueve el canvas y devuelve el scroll a la página al llegar al borde, y ajustar lo vuelve al reposo. El fondo es un tablero con una grilla de líneas finas apenas distinta de su tono, entre la superficie y el fondo hundido, y la grilla se mueve y se espacia con el pan y el zoom (<code>--sk-canvas-viewport-bg</code>, <code>--sk-canvas-grid-color</code>, <code>--sk-canvas-grid-size</code>).",
               "title": "Un canvas con zoom para dibujos más grandes que la pantalla"
+            },
+            "kind": "feature",
+            "target": "Canvas"
+          },
+          {
+            "date": "2026-09-23",
+            "en": {
+              "body": "<code>--sk-canvas-min-block-size</code> hook, <code>16rem</code> by default. The drawing is not enlarged to fill it: it is centred in the extra height.",
+              "title": "A minimum height, so a small drawing is not a sliver"
+            },
+            "es": {
+              "body": "Hook <code>--sk-canvas-min-block-size</code>, por defecto <code>16rem</code>. El dibujo no se agranda para llenarlo: queda centrado en la altura que sobra.",
+              "title": "Una altura mínima, para que un dibujo chico no quede como una franja"
             },
             "kind": "feature",
             "target": "Canvas"
@@ -3150,6 +3202,18 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-23",
+            "en": {
+              "body": "Inside a <code>Canvas</code> the drawing is laid out at a design width of its own and shown fitted, so a phone sees the whole desktop diagram and zooms instead of getting boxes one word per line. It used to collapse to zero width (the frame is a size container) and, once zoomed, every measurement came in scaled and the connectors landed off their boxes. The width is <code>--sk-diagram-canvas-inline-size</code>: by default, every column at its widest node.",
+              "title": "A diagram can sit inside a Canvas"
+            },
+            "es": {
+              "body": "Adentro de un <code>Canvas</code> el dibujo se diseña a un ancho propio y se muestra ajustado, así un teléfono ve el diagrama de escritorio entero y hace zoom en vez de recibir cajas de una palabra por línea. Antes colapsaba a cero de ancho (el marco es un contenedor de tamaño) y, con zoom, cada medida venía escalada y los conectores caían fuera de sus cajas. El ancho es <code>--sk-diagram-canvas-inline-size</code>: por defecto, cada columna con su nodo más ancho.",
+              "title": "Un diagrama puede ir adentro de un Canvas"
+            },
+            "kind": "feature"
+          },
           {
             "date": "2026-09-22",
             "en": {
@@ -4898,6 +4962,27 @@
               "title": "LayoutGrid agrega medidas de contenido y full bleed"
             },
             "kind": "feature"
+          }
+        ],
+        "version": "0.0.1-dev"
+      }
+    ],
+    "lightbox": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-09-24",
+            "en": {
+              "body": "New <code>Lightbox</code> contract on the native <code>&lt;dialog&gt;</code> with <code>showModal()</code>: the top layer, the inert page, Escape and the scroll lock are the platform's, and focus returns to what opened it (or, when that is gone, to the thumbnail of the photo the reader ended on). It opens from thumbnails (<code>Lightbox.Trigger</code>, a link to the full image that works with no script) or from code with the same lifecycle: <code>open</code>, <code>close</code>, <code>next</code>, <code>previous</code>, <code>goTo</code> and <code>resetZoom</code>. In React, <code>LightboxProvider</code> + <code>useLightbox()</code> give one viewer for the whole app. Zoom with buttons, <code>+</code>/<code>-</code>/<code>0</code>, the wheel, a double click, a double tap and a pinch; zoomed in, dragging and the arrows move the image inside its frame. A swipe changes photo and a swipe down closes. Only the two neighbours are preloaded, and a failed image says so in words without blocking navigation.",
+              "title": "A modal image viewer, for one photo or a whole gallery"
+            },
+            "es": {
+              "body": "Nuevo contrato <code>Lightbox</code> sobre el <code>&lt;dialog&gt;</code> nativo con <code>showModal()</code>: capa superior, página inerte, Escape y bloqueo de scroll son de la plataforma, y el foco vuelve al elemento que lo abrió (o, si ya no está, a la miniatura de la foto en que se terminó). Se abre desde miniaturas (<code>Lightbox.Trigger</code>, un enlace a la imagen completa que funciona sin JavaScript) o desde código con el mismo ciclo: <code>open</code>, <code>close</code>, <code>next</code>, <code>previous</code>, <code>goTo</code> y <code>resetZoom</code>. En React, <code>LightboxProvider</code> + <code>useLightbox()</code> dan un único visor para toda la app. Zoom con botones, <code>+</code>/<code>-</code>/<code>0</code>, rueda, doble clic, doble toque y pellizco; con zoom, arrastrar y las flechas mueven la imagen dentro del cuadro. Deslizar cambia de foto y hacia abajo cierra. Sólo precarga las dos vecinas, y un error se dice con palabras sin bloquear la navegación.",
+              "title": "Un visor de imágenes modal, para una foto o una galería entera"
+            },
+            "kind": "feature",
+            "target": "Lightbox"
           }
         ],
         "version": "0.0.1-dev"
@@ -11714,9 +11799,17 @@
           "default": "Fit to view",
           "type": "string"
         },
+        "fitOnly": {
+          "attr": "data-fit-only",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
         "inert": {
           "attr": "inert",
           "default": true,
+          "falseValue": "false",
           "trueValue": "",
           "type": "boolean"
         },
@@ -11821,6 +11914,7 @@
             "ringPlacement",
             "ringDistance",
             "ringRadius",
+            "fitOnly",
             "zoomInLabel",
             "zoomOutLabel",
             "fitLabel"
@@ -11931,9 +12025,15 @@
                 ],
                 "children": [
                   {
-                    "attrs": {
-                      "tabindex": "0"
-                    },
+                    "attrsWhen": [
+                      {
+                        "attrs": {
+                          "tabindex": "0"
+                        },
+                        "given": false,
+                        "option": "fitOnly"
+                      }
+                    ],
                     "children": [
                       {
                         "children": [
@@ -12075,7 +12175,8 @@
                       }
                     ],
                     "element": "div",
-                    "part": "controls"
+                    "part": "controls",
+                    "whenMissing": "fitOnly"
                   },
                   {
                     "attrs": {
@@ -12095,7 +12196,8 @@
                       }
                     ],
                     "element": "p",
-                    "part": "hint"
+                    "part": "hint",
+                    "whenMissing": "fitOnly"
                   },
                   {
                     "attrs": {
@@ -12115,11 +12217,15 @@
                       }
                     ],
                     "element": "p",
-                    "part": "hint"
+                    "part": "hint",
+                    "whenMissing": "fitOnly"
                   }
                 ],
                 "element": "div",
-                "mount": "data-sk-canvas"
+                "mount": "data-sk-canvas",
+                "options": [
+                  "fitOnly"
+                ]
               },
               {
                 "children": [
@@ -14514,6 +14620,12 @@
           "part": "root",
           "sheet": "@skryensya/core/components/canvas.css"
         },
+        "--sk-canvas-min-block-size": {
+          "default": "16rem",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/canvas.css"
+        },
         "--sk-canvas-radius": {
           "default": "var(--radius-surface)",
           "output": false,
@@ -14533,6 +14645,7 @@
         "--sk-canvas-radius",
         "--sk-canvas-content-inline-size",
         "--sk-canvas-max-block-size",
+        "--sk-canvas-min-block-size",
         "--sk-canvas-viewport-bg",
         "--sk-canvas-grid-color",
         "--sk-canvas-grid-size"
@@ -14543,6 +14656,13 @@
           "attr": "aria-label",
           "default": "Fit to view",
           "type": "string"
+        },
+        "fitOnly": {
+          "attr": "data-fit-only",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
         },
         "label": {
           "attr": "aria-label",
@@ -14627,6 +14747,7 @@
             "label",
             "minZoom",
             "maxZoom",
+            "fitOnly",
             "zoomInLabel",
             "zoomOutLabel",
             "fitLabel"
@@ -14659,9 +14780,15 @@
             ],
             "children": [
               {
-                "attrs": {
-                  "tabindex": "0"
-                },
+                "attrsWhen": [
+                  {
+                    "attrs": {
+                      "tabindex": "0"
+                    },
+                    "given": false,
+                    "option": "fitOnly"
+                  }
+                ],
                 "children": [
                   {
                     "children": [
@@ -14761,7 +14888,8 @@
                   }
                 ],
                 "element": "div",
-                "part": "controls"
+                "part": "controls",
+                "whenMissing": "fitOnly"
               },
               {
                 "attrs": {
@@ -14781,7 +14909,8 @@
                   }
                 ],
                 "element": "p",
-                "part": "hint"
+                "part": "hint",
+                "whenMissing": "fitOnly"
               },
               {
                 "attrs": {
@@ -14801,7 +14930,8 @@
                   }
                 ],
                 "element": "p",
-                "part": "hint"
+                "part": "hint",
+                "whenMissing": "fitOnly"
               }
             ],
             "element": "div",
@@ -21811,6 +21941,12 @@
       "category": "content",
       "css": "@skryensya/core/components/diagram.css",
       "hookDetails": {
+        "--sk-diagram-canvas-inline-size": {
+          "default": "calc(\n      var(--sk-diagram-columns) * var(--sk-diagram-node-max-inline-size) +\n        (var(--sk-diagram-columns) - 1) * var(--sk-diagram-column-gap)\n    )",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/diagram.css"
+        },
         "--sk-diagram-column-gap": {
           "default": "var(--space-inline-md)",
           "output": false,
@@ -22156,6 +22292,7 @@
         "--sk-diagram-node-padding-block",
         "--sk-diagram-node-min-inline-size",
         "--sk-diagram-node-max-inline-size",
+        "--sk-diagram-canvas-inline-size",
         "--sk-diagram-node-font-size",
         "--sk-diagram-node-line-height",
         "--sk-diagram-node-font-weight",
@@ -22248,7 +22385,7 @@
             "lo que hay que nombrar son las partes de una sola cosa ya dibujada: eso es Annotation, que ancla cada etiqueta a un selector adentro del sujeto y no dibuja un grafo",
             "el contenido es una secuencia sin ramas y sin ciclos: eso es ProcessList si son instrucciones, o Steps si lo primario es el progreso; un diagrama de una sola columna sin bifurcaciones es una lista con líneas de más",
             "la jerarquía es de contención y no de flujo (carpetas, un árbol de archivos): eso es TreeView o Folder, donde lo que importa es qué está adentro de qué",
-            "el grafo es grande, viene de datos, o hay que explorarlo, hacer zoom o arrastrar nodos: esto no resuelve disposición, dibuja diagramas chicos escritos a mano",
+            "el grafo es grande, viene de datos, o hay que explorarlo o arrastrar nodos: esto no resuelve disposición, dibuja diagramas chicos escritos a mano. Para acercar y mover la vista sí alcanza con envolverlo en un Canvas",
             "lo que se necesita es notación UML completa, swimlanes o tipos de caja por convención (cilindro, paralelogramo, hexágono): son convenciones que hay que enseñarle a quien lee, y de las formas de prosa acá sólo viven las tres que se entienden sin leyenda. Las compuertas lógicas son la excepción y pasan la misma prueba por el otro lado: no son una caja que significa AND, son el símbolo que la norma le asigna a la conjunción, y quien lee la notación la lee sin leyenda",
             "hace falta un esquemático de verdad: esto dibuja las siete compuertas y nada más. No hay flip-flops, ni buses, ni multiplexores, ni componentes con patas numeradas, ni nodos de unión, ni netlist; una compuerta tampoco lleva nada adentro, así que un designador visible (`U1`) no tiene dónde ir",
             "el dibujo lógico necesita realimentación: un latch de compuertas cruzadas no se puede dibujar acá. Los operandos tienen que venir de columnas anteriores, que es el orden en el que un esquemático se dibuja igual; un cable que va hacia atrás dobla a mitad de camino entre sus dos puntas, y si las dos compuertas comparten columna ese punto queda adentro de las dos y el cable pasa por debajo del símbolo que alimentaba"
@@ -22262,6 +22399,7 @@
             "las aristas no son una secuencia sino una relación entre cosas (un modelo, un esquema): `arrow: \"none\"` dibuja la línea sin punta y la etiqueta lleva la cardinalidad",
             "un nodo tiene que decir más que una línea de texto: su slot acepta una composición, así que adentro entra cualquier árbol del catálogo",
             "lo que hay que dibujar es lógica booleana: `shape` trae las siete compuertas de la notación IEEE 91 / IEC 60617-12 (`and`, `or`, `xor`, `nand`, `nor`, `xnor`, `not`), con la forma real y no una caja que dice AND adentro",
+            "el diagrama es más ancho que la pantalla que lo muestra (cuatro columnas en un teléfono): envuelto en un `Canvas` se diseña a su ancho de escritorio y se muestra ajustado, con zoom, en vez de apretar cada caja a una palabra por línea",
             "una compuerta y un paso van en el mismo dibujo: son un solo `Diagram`, así que el resultado de una compuerta puede entrar a una caja de proceso y la salida de un paso puede ser un operando, sin cambiar de componente a mitad de camino"
           ]
         }
@@ -27108,6 +27246,690 @@
           }
         }
       }
+    },
+    "lightbox": {
+      "bindings": {
+        "Lightbox": {
+          "enhancer": "data-sk-lightbox",
+          "markup": true,
+          "portals": false,
+          "react": "@skryensya/react/lightbox#Lightbox"
+        },
+        "Lightbox.Trigger": {
+          "enhancer": null,
+          "markup": true,
+          "portals": false,
+          "react": "@skryensya/react/lightbox#Lightbox.Trigger"
+        }
+      },
+      "category": "overlays",
+      "css": "@skryensya/core/components/lightbox.css",
+      "hookDetails": {
+        "--sk-lightbox-backdrop-bg": {
+          "default": "color-mix(in oklch, var(--color-bg-canvas) 94%, transparent)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/lightbox.css"
+        },
+        "--sk-lightbox-bg": {
+          "default": "transparent",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/lightbox.css"
+        },
+        "--sk-lightbox-caption-bg": {
+          "default": "color-mix(in oklch, var(--color-bg-canvas) 82%, transparent)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/lightbox.css"
+        },
+        "--sk-lightbox-caption-max-block-size": {
+          "default": "28dvh",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/lightbox.css"
+        },
+        "--sk-lightbox-control-bg": {
+          "default": "color-mix(in oklch, var(--color-bg-canvas) 78%, transparent)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/lightbox.css"
+        },
+        "--sk-lightbox-control-border-color": {
+          "default": "color-mix(in oklch, var(--color-text-primary) 24%, transparent)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/lightbox.css"
+        },
+        "--sk-lightbox-fg": {
+          "default": "var(--color-text-primary)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/lightbox.css"
+        },
+        "--sk-lightbox-gutter": {
+          "default": "var(--space-inset-sm)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/lightbox.css"
+        },
+        "--sk-lightbox-muted-fg": {
+          "default": "var(--color-text-secondary)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/lightbox.css"
+        },
+        "--sk-lightbox-nav-room": {
+          "default": "0px",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/lightbox.css"
+        },
+        "--sk-lightbox-trigger-radius": {
+          "default": "var(--radius-control)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/lightbox.css"
+        }
+      },
+      "hooks": [
+        "--sk-lightbox-backdrop-bg",
+        "--sk-lightbox-bg",
+        "--sk-lightbox-fg",
+        "--sk-lightbox-muted-fg",
+        "--sk-lightbox-control-bg",
+        "--sk-lightbox-control-border-color",
+        "--sk-lightbox-caption-bg",
+        "--sk-lightbox-caption-max-block-size",
+        "--sk-lightbox-gutter",
+        "--sk-lightbox-nav-room",
+        "--sk-lightbox-trigger-radius"
+      ],
+      "hookSheets": [
+        "@skryensya/core/patterns/scroll-lock.css",
+        "@skryensya/core/patterns/visually-hidden.css"
+      ],
+      "id": "lightbox",
+      "options": {
+        "caption": {
+          "attr": "data-caption",
+          "default": true,
+          "falseValue": "false",
+          "machineInput": true,
+          "prop": "showCaption",
+          "type": "boolean"
+        },
+        "closeLabel": {
+          "attr": "aria-label",
+          "default": "Close",
+          "type": "string"
+        },
+        "closeOnBackdrop": {
+          "attr": "data-close-on-backdrop",
+          "default": true,
+          "falseValue": "false",
+          "machineInput": true,
+          "prop": "closeOnBackdropClick",
+          "type": "boolean"
+        },
+        "counter": {
+          "attr": "data-counter",
+          "default": true,
+          "falseValue": "false",
+          "machineInput": true,
+          "prop": "showCounter",
+          "type": "boolean"
+        },
+        "counterLabel": {
+          "attr": "data-counter-label",
+          "default": "Image {index} of {count}",
+          "machineInput": true,
+          "type": "string"
+        },
+        "errorLabel": {
+          "attr": "data-error-label",
+          "default": "This image could not be loaded.",
+          "machineInput": true,
+          "type": "string"
+        },
+        "label": {
+          "attr": "aria-label",
+          "default": "Image viewer",
+          "type": "string"
+        },
+        "lightboxId": {
+          "attr": "id",
+          "prop": "id",
+          "type": "string"
+        },
+        "loop": {
+          "attr": "data-loop",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "maxZoom": {
+          "attr": "data-max-zoom",
+          "default": 4,
+          "machineInput": true,
+          "max": 10,
+          "min": 1,
+          "type": "number"
+        },
+        "nextLabel": {
+          "attr": "aria-label",
+          "default": "Next image",
+          "type": "string"
+        },
+        "opens": {
+          "attr": "data-sk-lightbox-open",
+          "refersTo": {
+            "contract": "lightbox",
+            "option": "lightboxId"
+          },
+          "type": "string"
+        },
+        "previousLabel": {
+          "attr": "aria-label",
+          "default": "Previous image",
+          "type": "string"
+        },
+        "resetZoomLabel": {
+          "attr": "aria-label",
+          "default": "Reset zoom",
+          "type": "string"
+        },
+        "triggerAlt": {
+          "attr": "data-lightbox-alt",
+          "prop": "alt",
+          "type": "string"
+        },
+        "triggerCredit": {
+          "attr": "data-lightbox-credit",
+          "prop": "credit",
+          "type": "string"
+        },
+        "triggerDescription": {
+          "attr": "data-lightbox-description",
+          "prop": "description",
+          "type": "string"
+        },
+        "triggerHeight": {
+          "attr": "data-lightbox-height",
+          "integer": true,
+          "min": 1,
+          "prop": "height",
+          "type": "number"
+        },
+        "triggerSrc": {
+          "attr": "href",
+          "prop": "src",
+          "type": "string"
+        },
+        "triggerTitle": {
+          "attr": "data-lightbox-title",
+          "prop": "title",
+          "type": "string"
+        },
+        "triggerWidth": {
+          "attr": "data-lightbox-width",
+          "integer": true,
+          "min": 1,
+          "prop": "width",
+          "type": "number"
+        },
+        "zoom": {
+          "attr": "data-zoom",
+          "default": true,
+          "falseValue": "false",
+          "machineInput": true,
+          "type": "boolean"
+        },
+        "zoomInLabel": {
+          "attr": "aria-label",
+          "default": "Zoom in",
+          "type": "string"
+        },
+        "zoomOutLabel": {
+          "attr": "aria-label",
+          "default": "Zoom out",
+          "type": "string"
+        }
+      },
+      "parts": {
+        "actions": "sk-lightbox__actions",
+        "caption": "sk-lightbox__caption",
+        "control": "sk-lightbox__control",
+        "counter": "sk-lightbox__counter",
+        "credit": "sk-lightbox__credit",
+        "description": "sk-lightbox__description",
+        "error": "sk-lightbox__error",
+        "figure": "sk-lightbox__figure",
+        "image": "sk-lightbox__image",
+        "live": "sk-lightbox__live",
+        "loader": "sk-lightbox__loader",
+        "nav": "sk-lightbox__nav",
+        "placeholder": "sk-lightbox__placeholder",
+        "root": "sk-lightbox",
+        "stage": "sk-lightbox__stage",
+        "title": "sk-lightbox__title",
+        "toolbar": "sk-lightbox__toolbar",
+        "trigger": "sk-lightbox__trigger"
+      },
+      "semantics": {
+        "Lightbox": {
+          "alternatives": [
+            "ImageFrame",
+            "Canvas",
+            "Dialog",
+            "Carousel"
+          ],
+          "avoidWhen": [
+            "la imagen se entiende a su tamaño en la página: agrandarla agrega un paso que nadie pidió; eso es ImageFrame",
+            "lo que se quiere mostrar grande no es una imagen sino un diagrama o un dibujo que hay que explorar dentro de la página: eso es Canvas, que no tapa la página",
+            "el contenido del modal es texto, un formulario o acciones: eso es Dialog; un Lightbox no tiene cuerpo propio más allá de la imagen y su leyenda",
+            "las imágenes tienen que recorrerse en la página misma, varias a la vista: eso es Carousel"
+          ],
+          "useWhen": [
+            "hay fotos que se muestran en miniatura y quien lee necesita verlas grandes, de a una, sin salir de la página: una galería, las fotos de un producto, las capturas de un informe",
+            "la imagen tiene detalle que sólo se lee de cerca (un plano, una captura con texto chico, una foto de producto): el visor trae zoom con botones, rueda, teclado y pellizco",
+            "hay que abrir una imagen desde código, sin miniatura en la página: el handle abre, cierra y navega con el mismo ciclo de foco y bloqueo de scroll que un clic",
+            "una galería larga: sólo carga la imagen actual y sus dos vecinas, nunca la galería entera"
+          ]
+        },
+        "Lightbox.Trigger": {
+          "alternatives": [
+            "Button.action",
+            "Link"
+          ],
+          "avoidWhen": [
+            "la imagen se abre desde un botón que no es una miniatura (\"Ver fotos\"): eso es un Button que llama al handle del Lightbox",
+            "la miniatura tiene que llevar a otra página y no a la imagen: eso es un Link"
+          ],
+          "useWhen": [
+            "una miniatura en la página tiene que abrir su imagen en un Lightbox: el enlace apunta a la imagen completa, así que sin JavaScript igual la abre",
+            "varias miniaturas forman una galería: todas nombran el mismo Lightbox en `opens` y el orden de la página es el orden de la galería"
+          ]
+        }
+      },
+      "signatures": {
+        "Lightbox": {
+          "compose": [
+            {
+              "of": "button",
+              "sheets": [
+                "@skryensya/core/components/button.css"
+              ],
+              "systemOwned": true
+            },
+            {
+              "of": "loader",
+              "sheets": [
+                "@skryensya/core/components/loader.css"
+              ],
+              "systemOwned": true
+            },
+            {
+              "of": "icon",
+              "systemOwned": true
+            }
+          ],
+          "forward": [
+            "aria-*"
+          ],
+          "host": {
+            "element": "dialog"
+          },
+          "intent": [
+            "lightbox",
+            "image-viewer",
+            "photo-gallery-viewer",
+            "zoom-image",
+            "fullscreen-image"
+          ],
+          "mount": "data-sk-lightbox",
+          "options": [
+            "lightboxId",
+            "label",
+            "closeLabel",
+            "previousLabel",
+            "nextLabel",
+            "zoomInLabel",
+            "zoomOutLabel",
+            "resetZoomLabel",
+            "errorLabel",
+            "counterLabel",
+            "loop",
+            "zoom",
+            "maxZoom",
+            "counter",
+            "caption",
+            "closeOnBackdrop"
+          ],
+          "react": {
+            "from": "@skryensya/react/lightbox",
+            "name": "Lightbox"
+          },
+          "slots": {},
+          "template": {
+            "children": [
+              {
+                "children": [
+                  {
+                    "attrs": {
+                      "aria-hidden": "true"
+                    },
+                    "element": "p",
+                    "part": "counter"
+                  },
+                  {
+                    "children": [
+                      {
+                        "also": [
+                          "sk-button",
+                          "sk-interactive"
+                        ],
+                        "attrs": {
+                          "data-icon-only": "",
+                          "data-lightbox-action": "zoom-out",
+                          "data-size": "md",
+                          "data-variant": "translucent",
+                          "type": "button"
+                        },
+                        "children": [
+                          {
+                            "attrs": {
+                              "data-sk-icon": "zoom-out",
+                              "data-sk-icon-size": "md"
+                            },
+                            "element": "span"
+                          }
+                        ],
+                        "element": "button",
+                        "options": [
+                          "zoomOutLabel"
+                        ],
+                        "part": "control"
+                      },
+                      {
+                        "also": [
+                          "sk-button",
+                          "sk-interactive"
+                        ],
+                        "attrs": {
+                          "data-icon-only": "",
+                          "data-lightbox-action": "zoom-in",
+                          "data-size": "md",
+                          "data-variant": "translucent",
+                          "type": "button"
+                        },
+                        "children": [
+                          {
+                            "attrs": {
+                              "data-sk-icon": "zoom-in",
+                              "data-sk-icon-size": "md"
+                            },
+                            "element": "span"
+                          }
+                        ],
+                        "element": "button",
+                        "options": [
+                          "zoomInLabel"
+                        ],
+                        "part": "control"
+                      },
+                      {
+                        "also": [
+                          "sk-button",
+                          "sk-interactive"
+                        ],
+                        "attrs": {
+                          "data-icon-only": "",
+                          "data-lightbox-action": "reset-zoom",
+                          "data-size": "md",
+                          "data-variant": "translucent",
+                          "type": "button"
+                        },
+                        "children": [
+                          {
+                            "attrs": {
+                              "data-sk-icon": "fit",
+                              "data-sk-icon-size": "md"
+                            },
+                            "element": "span"
+                          }
+                        ],
+                        "element": "button",
+                        "options": [
+                          "resetZoomLabel"
+                        ],
+                        "part": "control"
+                      },
+                      {
+                        "also": [
+                          "sk-button",
+                          "sk-interactive"
+                        ],
+                        "attrs": {
+                          "data-icon-only": "",
+                          "data-lightbox-action": "close",
+                          "data-size": "md",
+                          "data-variant": "translucent",
+                          "type": "button"
+                        },
+                        "children": [
+                          {
+                            "attrs": {
+                              "data-sk-icon": "close",
+                              "data-sk-icon-size": "md"
+                            },
+                            "element": "span"
+                          }
+                        ],
+                        "element": "button",
+                        "options": [
+                          "closeLabel"
+                        ],
+                        "part": "control"
+                      }
+                    ],
+                    "element": "div",
+                    "part": "actions"
+                  }
+                ],
+                "element": "div",
+                "part": "toolbar"
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "also": [
+                          "sk-loader"
+                        ],
+                        "attrs": {
+                          "aria-hidden": "true",
+                          "data-size": "lg"
+                        },
+                        "element": "span",
+                        "part": "loader"
+                      },
+                      {
+                        "attrs": {
+                          "hidden": ""
+                        },
+                        "element": "p",
+                        "options": [
+                          "errorLabel"
+                        ],
+                        "part": "error",
+                        "textFromOption": "errorLabel"
+                      }
+                    ],
+                    "element": "div",
+                    "part": "stage"
+                  },
+                  {
+                    "attrs": {
+                      "hidden": ""
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "hidden": ""
+                        },
+                        "element": "p",
+                        "part": "title"
+                      },
+                      {
+                        "attrs": {
+                          "hidden": ""
+                        },
+                        "element": "p",
+                        "part": "description"
+                      },
+                      {
+                        "attrs": {
+                          "hidden": ""
+                        },
+                        "element": "p",
+                        "part": "credit"
+                      }
+                    ],
+                    "element": "figcaption",
+                    "part": "caption"
+                  }
+                ],
+                "element": "figure",
+                "part": "figure"
+              },
+              {
+                "also": [
+                  "sk-lightbox__control",
+                  "sk-button",
+                  "sk-interactive"
+                ],
+                "attrs": {
+                  "data-icon-only": "",
+                  "data-lightbox-action": "previous",
+                  "data-size": "md",
+                  "data-variant": "translucent",
+                  "type": "button"
+                },
+                "children": [
+                  {
+                    "attrs": {
+                      "data-sk-icon": "chevron-left",
+                      "data-sk-icon-size": "md"
+                    },
+                    "element": "span"
+                  }
+                ],
+                "element": "button",
+                "options": [
+                  "previousLabel"
+                ],
+                "part": "nav"
+              },
+              {
+                "also": [
+                  "sk-lightbox__control",
+                  "sk-button",
+                  "sk-interactive"
+                ],
+                "attrs": {
+                  "data-icon-only": "",
+                  "data-lightbox-action": "next",
+                  "data-size": "md",
+                  "data-variant": "translucent",
+                  "type": "button"
+                },
+                "children": [
+                  {
+                    "attrs": {
+                      "data-sk-icon": "chevron-right",
+                      "data-sk-icon-size": "md"
+                    },
+                    "element": "span"
+                  }
+                ],
+                "element": "button",
+                "options": [
+                  "nextLabel"
+                ],
+                "part": "nav"
+              },
+              {
+                "also": [
+                  "sk-visually-hidden"
+                ],
+                "attrs": {
+                  "aria-atomic": "true",
+                  "aria-live": "polite"
+                },
+                "element": "p",
+                "part": "live"
+              }
+            ],
+            "element": "dialog",
+            "host": true,
+            "part": "root"
+          }
+        },
+        "Lightbox.Trigger": {
+          "forward": [
+            "id",
+            "aria-*"
+          ],
+          "host": {
+            "element": "a"
+          },
+          "intent": [
+            "open-image-in-lightbox",
+            "gallery-thumbnail",
+            "enlarge-image"
+          ],
+          "options": [
+            "opens",
+            "triggerSrc",
+            "triggerAlt",
+            "triggerTitle",
+            "triggerDescription",
+            "triggerCredit",
+            "triggerWidth",
+            "triggerHeight"
+          ],
+          "react": {
+            "from": "@skryensya/react/lightbox",
+            "name": "Lightbox.Trigger"
+          },
+          "requires": [
+            "opens",
+            "triggerSrc"
+          ],
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "attrs": {
+              "aria-haspopup": "dialog"
+            },
+            "element": "a",
+            "host": true,
+            "part": "trigger",
+            "slot": "children"
+          }
+        }
+      },
+      "systemOwned": [
+        "image",
+        "placeholder"
+      ]
     },
     "list": {
       "bindings": {
@@ -47069,7 +47891,7 @@
     "working": "0.0.1"
   },
   "schemaVersion": "2.3",
-  "sourceHash": "d47be5b13565615e",
+  "sourceHash": "ff939903fdab75ec",
   "vocabulary": {
     "a11y": "When `when` holds, one of `requiresOneOf` must be given: an option, a raw attribute, a filled slot, or a child signature by name.",
     "atLeastOneOf": "At least one member of each group counts: a filled slot, a boolean option set to true, or an option other than its default.",

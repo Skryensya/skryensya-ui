@@ -888,10 +888,8 @@ function connectStageLifecycle(root: HTMLElement): Cleanup {
    * the reader opens it.
    */
   const panel = root.closest<HTMLElement>('[role="tabpanel"]');
-  const panelObserver = panel
-    ? new MutationObserver(scheduleStageLifecycle)
-    : null;
-  panelObserver?.observe(panel, { attributes: true, attributeFilter: ["hidden"] });
+  const panelObserver = panel ? new MutationObserver(scheduleStageLifecycle) : null;
+  if (panel) panelObserver?.observe(panel, { attributes: true, attributeFilter: ["hidden"] });
 
   return () => {
     observer?.unobserve(root);

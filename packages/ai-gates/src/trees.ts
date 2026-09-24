@@ -3106,6 +3106,49 @@ const signatureTrees: readonly Canonical[] = [
   },
 
   /*
+   * LIGHTBOX is two signatures that only mean something together: triggers naming one viewer's id,
+   * and the viewer. Two triggers, not one, so the gallery (counter, previous/next) is what renders;
+   * a single image hides all of that. The viewer is a closed `dialog` at rest, which is exactly the
+   * root the vanilla conformance gate needs to see enhanced.
+   */
+  {
+    name: "lightbox/gallery",
+    enhanced: true,
+    tree: {
+      contract: "layout",
+      signature: "Stack",
+      options: { gap: "md" },
+      children: [
+        ...["La plaza al atardecer", "La plaza de noche"].map(
+          (alt): UsageTree => ({
+            contract: "lightbox",
+            signature: "Lightbox.Trigger",
+            options: { opens: "gate-lightbox", triggerSrc: SAMPLE_MEDIA, triggerWidth: 1600, triggerHeight: 900, triggerTitle: alt },
+            slots: {
+              children: {
+                contract: "image-frame",
+                signature: "ImageFrame",
+                options: { aspect: "1/1", src: SAMPLE_MEDIA, alt },
+              },
+            },
+          }),
+        ),
+        {
+          contract: "lightbox",
+          signature: "Lightbox",
+          options: {
+            lightboxId: "gate-lightbox",
+            label: "Galería",
+            closeLabel: "Cerrar",
+            previousLabel: "Anterior",
+            nextLabel: "Siguiente",
+          },
+        },
+      ],
+    },
+  },
+
+  /*
    * CHART, as a series with an overlay. `line`/`area` are the only kinds that need an enhancer, and
    * it only paints the overlay: the bars underneath are CSS over the values, so the fixture is
    * `area` on purpose. The labels stay on, unlike a sparkline in a card, because this is the gate's

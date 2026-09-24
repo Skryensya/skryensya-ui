@@ -1363,7 +1363,7 @@
             "lo que hay que nombrar son las partes de una sola cosa ya dibujada: eso es Annotation, que ancla cada etiqueta a un selector adentro del sujeto y no dibuja un grafo",
             "el contenido es una secuencia sin ramas y sin ciclos: eso es ProcessList si son instrucciones, o Steps si lo primario es el progreso; un diagrama de una sola columna sin bifurcaciones es una lista con líneas de más",
             "la jerarquía es de contención y no de flujo (carpetas, un árbol de archivos): eso es TreeView o Folder, donde lo que importa es qué está adentro de qué",
-            "el grafo es grande, viene de datos, o hay que explorarlo, hacer zoom o arrastrar nodos: esto no resuelve disposición, dibuja diagramas chicos escritos a mano",
+            "el grafo es grande, viene de datos, o hay que explorarlo o arrastrar nodos: esto no resuelve disposición, dibuja diagramas chicos escritos a mano. Para acercar y mover la vista sí alcanza con envolverlo en un Canvas",
             "lo que se necesita es notación UML completa, swimlanes o tipos de caja por convención (cilindro, paralelogramo, hexágono): son convenciones que hay que enseñarle a quien lee, y de las formas de prosa acá sólo viven las tres que se entienden sin leyenda. Las compuertas lógicas son la excepción y pasan la misma prueba por el otro lado: no son una caja que significa AND, son el símbolo que la norma le asigna a la conjunción, y quien lee la notación la lee sin leyenda",
             "hace falta un esquemático de verdad: esto dibuja las siete compuertas y nada más. No hay flip-flops, ni buses, ni multiplexores, ni componentes con patas numeradas, ni nodos de unión, ni netlist; una compuerta tampoco lleva nada adentro, así que un designador visible (`U1`) no tiene dónde ir",
             "el dibujo lógico necesita realimentación: un latch de compuertas cruzadas no se puede dibujar acá. Los operandos tienen que venir de columnas anteriores, que es el orden en el que un esquemático se dibuja igual; un cable que va hacia atrás dobla a mitad de camino entre sus dos puntas, y si las dos compuertas comparten columna ese punto queda adentro de las dos y el cable pasa por debajo del símbolo que alimentaba"
@@ -1390,6 +1390,7 @@
             "las aristas no son una secuencia sino una relación entre cosas (un modelo, un esquema): `arrow: \"none\"` dibuja la línea sin punta y la etiqueta lleva la cardinalidad",
             "un nodo tiene que decir más que una línea de texto: su slot acepta una composición, así que adentro entra cualquier árbol del catálogo",
             "lo que hay que dibujar es lógica booleana: `shape` trae las siete compuertas de la notación IEEE 91 / IEC 60617-12 (`and`, `or`, `xor`, `nand`, `nor`, `xnor`, `not`), con la forma real y no una caja que dice AND adentro",
+            "el diagrama es más ancho que la pantalla que lo muestra (cuatro columnas en un teléfono): envuelto en un `Canvas` se diseña a su ancho de escritorio y se muestra ajustado, con zoom, en vez de apretar cada caja a una palabra por línea",
             "una compuerta y un paso van en el mismo dibujo: son un solo `Diagram`, así que el resultado de una compuerta puede entrar a una caja de proceso y la salida de un paso puede ser un operando, sin cambiar de componente a mitad de camino"
           ]
         }
@@ -2112,6 +2113,65 @@
           "parents": [],
           "useWhen": [
             "la región es el landmark <main> de la página: el área de trabajo de una aplicación o de una plantilla"
+          ]
+        }
+      ]
+    },
+    {
+      "category": "overlays",
+      "css": "@skryensya/core/components/lightbox.css",
+      "id": "lightbox",
+      "signatures": [
+        {
+          "alternatives": [
+            "ImageFrame",
+            "Canvas",
+            "Dialog",
+            "Carousel"
+          ],
+          "avoidWhen": [
+            "la imagen se entiende a su tamaño en la página: agrandarla agrega un paso que nadie pidió; eso es ImageFrame",
+            "lo que se quiere mostrar grande no es una imagen sino un diagrama o un dibujo que hay que explorar dentro de la página: eso es Canvas, que no tapa la página",
+            "el contenido del modal es texto, un formulario o acciones: eso es Dialog; un Lightbox no tiene cuerpo propio más allá de la imagen y su leyenda",
+            "las imágenes tienen que recorrerse en la página misma, varias a la vista: eso es Carousel"
+          ],
+          "host": "dialog",
+          "id": "Lightbox",
+          "intent": [
+            "lightbox",
+            "image-viewer",
+            "photo-gallery-viewer",
+            "zoom-image",
+            "fullscreen-image"
+          ],
+          "parents": [],
+          "useWhen": [
+            "hay fotos que se muestran en miniatura y quien lee necesita verlas grandes, de a una, sin salir de la página: una galería, las fotos de un producto, las capturas de un informe",
+            "la imagen tiene detalle que sólo se lee de cerca (un plano, una captura con texto chico, una foto de producto): el visor trae zoom con botones, rueda, teclado y pellizco",
+            "hay que abrir una imagen desde código, sin miniatura en la página: el handle abre, cierra y navega con el mismo ciclo de foco y bloqueo de scroll que un clic",
+            "una galería larga: sólo carga la imagen actual y sus dos vecinas, nunca la galería entera"
+          ]
+        },
+        {
+          "alternatives": [
+            "Button.action",
+            "Link"
+          ],
+          "avoidWhen": [
+            "la imagen se abre desde un botón que no es una miniatura (\"Ver fotos\"): eso es un Button que llama al handle del Lightbox",
+            "la miniatura tiene que llevar a otra página y no a la imagen: eso es un Link"
+          ],
+          "host": "a",
+          "id": "Lightbox.Trigger",
+          "intent": [
+            "open-image-in-lightbox",
+            "gallery-thumbnail",
+            "enlarge-image"
+          ],
+          "parents": [],
+          "useWhen": [
+            "una miniatura en la página tiene que abrir su imagen en un Lightbox: el enlace apunta a la imagen completa, así que sin JavaScript igual la abre",
+            "varias miniaturas forman una galería: todas nombran el mismo Lightbox en `opens` y el orden de la página es el orden de la galería"
           ]
         }
       ]
@@ -5104,5 +5164,5 @@
     }
   ],
   "schemaVersion": "2.3",
-  "sourceHash": "d47be5b13565615e"
+  "sourceHash": "ff939903fdab75ec"
 }

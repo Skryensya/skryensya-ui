@@ -20,6 +20,10 @@ const componentDescriptions = {
     es: "Explica una relación entre varias cosas: nodos en una grilla y aristas que el runtime traza.",
     en: "Explains how several things relate: nodes in a grid, and edges the runtime draws.",
   },
+  "/components/canvas": {
+    es: "Muestra un dibujo más grande que la pantalla, ajustado a la vista, con zoom y desplazamiento.",
+    en: "Shows a drawing bigger than the screen, fitted to the view, with zoom and pan.",
+  },
   "/components/avatar": {
     es: "Representa la identidad de una persona con foto o iniciales.",
     en: "Represents a person's identity with a photo or initials.",

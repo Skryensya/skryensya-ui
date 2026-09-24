@@ -132,6 +132,7 @@ import { toolbarMessages } from "./messages/components/toolbar";
 import { tooltipMessages } from "./messages/components/tooltip";
 import { treeViewMessages } from "./messages/components/tree-view";
 import { treegridMessages } from "./messages/components/treegrid";
+import { userSelectMessages } from "./messages/components/user-select";
 import { wrapperMessages } from "./messages/components/wrapper";
 import { foundationsMessages } from "./messages/foundations";
 import { gradientsMessages } from "./messages/gradients";
@@ -269,6 +270,7 @@ export const ui = {
     ...tooltipMessages.es,
     ...treeViewMessages.es,
     ...treegridMessages.es,
+    ...userSelectMessages.es,
     ...wrapperMessages.es,
     ...foundationsMessages.es,
     ...gradientsMessages.es,
@@ -401,6 +403,7 @@ export const ui = {
     ...tooltipMessages.en,
     ...treeViewMessages.en,
     ...treegridMessages.en,
+    ...userSelectMessages.en,
     ...wrapperMessages.en,
     ...foundationsMessages.en,
     ...gradientsMessages.en,

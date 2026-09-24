@@ -59,6 +59,10 @@ const registrations: readonly Registration[] = [
     load: async () => (await import("../components/select.js")).mountSelect,
   },
   {
+    selector: "[data-sk-user-select]",
+    load: async () => (await import("../components/user-select.js")).mountUserSelect,
+  },
+  {
     selector: "[data-sk-segmented]",
     load: async () =>
       (await import("../components/segmented.js")).mountSegmented,

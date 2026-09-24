@@ -553,6 +553,10 @@
     "./jsdom-floor": {
       "types": "./src/jsdom-floor.ts",
       "default": "./src/jsdom-floor.ts"
+    },
+    "./user-select": {
+      "types": "./src/user-select.ts",
+      "default": "./src/user-select.ts"
     }
   },
   "scripts": {

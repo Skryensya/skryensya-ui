@@ -124,6 +124,7 @@ const MAP: Record<string, string> = {
   "/components/tooltip": "BadgeInfo",
   "/components/tree-view": "ListTree",
   "/components/treegrid": "FolderTree",
+  "/components/user-select": "Users",
   "/components/wrapper": "Frame",
   "/hotkey": "Command",
   "/nav-list": "role:menu",

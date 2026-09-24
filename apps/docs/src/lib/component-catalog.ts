@@ -372,6 +372,10 @@ const componentDescriptions = {
     es: "Explora jerarquías anidadas mediante ramas expandibles.",
     en: "Explores nested hierarchies through expandable branches.",
   },
+  "/components/user-select": {
+    es: "Selecciona una o varias personas de una lista, con avatars y búsqueda.",
+    en: "Selects one or more people from a list, with avatars and search.",
+  },
   "/components/wrapper": {
     es: "Centra el contenido y limita su ancho de lectura.",
     en: "Centers content and caps its readable width.",

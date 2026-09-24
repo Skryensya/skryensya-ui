@@ -81,6 +81,10 @@
       "types": "./src/components/select.ts",
       "default": "./src/components/select.ts"
     },
+    "./user-select": {
+      "types": "./src/components/user-select.ts",
+      "default": "./src/components/user-select.ts"
+    },
     "./segmented": {
       "types": "./src/components/segmented.ts",
       "default": "./src/components/segmented.ts"

@@ -8,6 +8,7 @@ export { connectLoader, mountLoader } from "./components/loader.js";
 export { connectMarquee, mountMarquee } from "./components/marquee.js";
 export { mountExpandableTile } from "./components/expandable-tile.js";
 export { mountSelect } from "./components/select.js";
+export { mountUserSelect } from "./components/user-select.js";
 export { mountSegmented } from "./components/segmented.js";
 export { mountStat } from "./components/stat.js";
 export { connectSidebar, mountSidebar } from "./components/sidebar.js";

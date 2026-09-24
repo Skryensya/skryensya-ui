@@ -1,6 +1,7 @@
 import { comboboxParts } from "@skryensya/core/combobox";
 import { selectAttrs, selectParts, selectPositioning } from "@skryensya/core/select";
 import { select } from "@skryensya/core/machines";
+import { userSelectAttrs, userSelectSearchKey } from "@skryensya/core/user-select";
 import { normalizeProps, Portal, useMachine } from "@zag-js/react";
 import { useId, useMemo, useRef, useState, type KeyboardEvent, type RefObject } from "react";
 import { useAnchored } from "./anchored.js";
@@ -13,9 +14,6 @@ import { Loader } from "./loader.js";
 import { Text } from "./typography.js";
 
 const cx = (...classes: Array<string | undefined>) => classes.filter(Boolean).join(" ");
-
-const combiningMarks = /\p{M}+/gu;
-const searchKey = (value: string) => value.normalize("NFD").replace(combiningMarks, "").toLocaleLowerCase();
 
 export type UserSelectUser = {
   id: string;
@@ -71,11 +69,11 @@ export function UserSelect({
   // Folded once per user list, not once per row per keystroke, same precedent as Combobox's own
   // `searchKeys`. Name and email searched together so "mar" and an email-local-part both match.
   const searchKeys = useMemo(
-    () => users.map((user) => searchKey(`${user.name} ${user.email ?? ""}`)),
+    () => users.map((user) => userSelectSearchKey(`${user.name} ${user.email ?? ""}`)),
     [users],
   );
   const filteredUsers = useMemo(() => {
-    const needle = searchKey(query.trim());
+    const needle = userSelectSearchKey(query.trim());
     if (!needle) return users;
     return users.filter((_, index) => searchKeys[index]!.includes(needle));
   }, [users, query, searchKeys]);
@@ -145,7 +143,11 @@ export function UserSelect({
       : `${filteredUsers.length} ${filteredUsers.length === 1 ? "result" : "results"} available`;
 
   return (
-    <div className={cx(selectParts.root, className)} ref={rootRef} {...{ [selectAttrs.root]: "" }}>
+    <div
+      className={cx(selectParts.root, className)}
+      ref={rootRef}
+      {...{ [selectAttrs.root]: "", [userSelectAttrs.root]: "" }}
+    >
       <select {...api.getHiddenSelectProps()} {...{ [selectAttrs.hidden]: "" }}>
         {users.map((user) => (
           <option disabled={user.disabled} key={user.id} value={user.id}>

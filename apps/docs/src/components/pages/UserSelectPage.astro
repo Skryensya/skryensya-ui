@@ -1,0 +1,124 @@
+---
+/*
+ * A composition guide, not a new primitive's page: there is no `user-select.ts` compiled contract
+ * (see the callout below), so the shell runs with no `contractId` and Referencia/Cambios drop out,
+ * same precedent `CardPage.astro` sets for a pattern with no contract of its own. Estilo still reads
+ * real published hooks (Select, Combobox, Avatar); Tests reads the two real files written for both
+ * bindings.
+ */
+import "@skryensya/core/components/select.css";
+import "@skryensya/core/components/combobox.css";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { userSelectHtml, userSelectEmptyHtml, userSelectJs, userSelectListen } from "../../demos/user-select";
+import { vanillaMounts } from "../../lib/vanilla-mounts";
+import VanillaMount from "../VanillaMount.astro";
+import { UserSelectBasicDemo, UserSelectLoadingDemo } from "../react-demos/user-select";
+import { getLocale, useTranslations } from "../../i18n";
+
+const locale = getLocale(Astro.url);
+const t = useTranslations(locale);
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+const styles = `@import "@skryensya/core/patterns/anchored.css";
+@import "@skryensya/core/components/select.css";
+@import "@skryensya/core/components/combobox.css";
+@import "@skryensya/core/components/avatar.css";`;
+const iconsSetup = `import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+
+mountIcons(document, lucideIcons);`;
+
+const reactSource = `<UserSelect
+  users={users}
+  value={value}
+  onValueChange={setValue}
+  placeholder="${t("userSelectPage.placeholder")}"
+  searchPlaceholder="${t("userSelectPage.searchPlaceholder")}"
+/>`;
+---
+
+<ComponentPageShell
+  title="UserSelect"
+  description={t("userSelectPage.description")}
+  badge="Beta"
+  styleGroups={[
+    { file: "components/select.css", probe: "sk-select", title: "Select" },
+    { file: "components/combobox.css", probe: "sk-combobox", title: "Combobox" },
+    { file: "components/avatar.css", probe: "sk-avatar", title: "Avatar" },
+    { file: "patterns/anchored.css", probe: "sk-anchored", title: "Heredados de Anclaje" },
+  ]}
+  testFiles={["packages/react/src/components/user-select.test.tsx", "packages/vanilla/src/components/user-select.test.ts"]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("userSelectPage.lede")} />
+
+    <div class="sk-callout" data-tone="info">
+      <div class="sk-callout__content">
+        <div class="sk-callout__description" set:html={t("userSelectPage.calloutBody")} />
+      </div>
+    </div>
+
+    <h3>{t("userSelectPage.basicTitle")}</h3>
+    <p set:html={t("userSelectPage.basicBody")} />
+    <ComponentPreview
+      html={userSelectHtml(t)}
+      js={userSelectJs}
+      react={reactSource}
+      label="UserSelect"
+      note={t("userSelectPage.basicBody")}
+      viewport="menu"
+    >
+      <Fragment slot="react">
+        <UserSelectBasicDemo client:visible lang={locale} />
+      </Fragment>
+    </ComponentPreview>
+
+    <h3>{t("userSelectPage.statesTitle")}</h3>
+    <p set:html={t("userSelectPage.statesBody")} />
+    <ComponentPreview
+      html={userSelectHtml(t).replace('data-value="jane"', 'data-value="jane maria marco john"')}
+      hideSource
+      label="UserSelect (multiple)"
+      viewport="menu"
+    />
+    <ComponentPreview html={userSelectEmptyHtml(t)} hideSource label="UserSelect (empty)" viewport="menu" />
+    <ComponentPreview react={reactSource.replace("<UserSelect", "<UserSelect loading")} hideSource label="UserSelect (loading)" viewport="menu">
+      <Fragment slot="react">
+        <UserSelectLoadingDemo client:visible lang={locale} />
+      </Fragment>
+    </ComponentPreview>
+
+    <h3>{t("userSelectPage.vanillaTitle")}</h3>
+    <p set:html={t("userSelectPage.vanillaBody")} />
+
+    <h3>{t("userSelectPage.reactTitle")}</h3>
+    <p set:html={t("userSelectPage.reactBody")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+    <CodeBlock code={styles} label="CSS" lang="css" />
+  </Fragment>
+
+  <Fragment slot="installVanilla">
+    <CodeBlock code={styles} label="CSS" lang="css" />
+    <VanillaMount {...vanillaMounts["/components/user-select"]} headingLevel="h3" />
+
+    <h4>{t("userSelectPage.iconsTitle")}</h4>
+    <CodeBlock code={iconsSetup} label="JavaScript" />
+
+    <h4>{t("userSelectPage.listenTitle")}</h4>
+    <CodeBlock code={userSelectListen} label="JavaScript" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <ul>
+      <li set:html={t("userSelectPage.a11yItem1")} />
+      <li set:html={t("userSelectPage.a11yItem2")} />
+      <li set:html={t("userSelectPage.a11yItem3")} />
+      <li set:html={t("userSelectPage.a11yItem4")} />
+    </ul>
+  </Fragment>
+</ComponentPageShell>

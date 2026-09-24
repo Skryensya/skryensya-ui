@@ -43,6 +43,8 @@ import { architectureMessages } from "./messages/architecture";
 import { accordionMessages } from "./messages/components/accordion";
 import { avatarMessages } from "./messages/components/avatar";
 import { annotationMessages } from "./messages/components/annotation";
+import { canvasMessages } from "./messages/components/canvas";
+import { lightboxMessages } from "./messages/components/lightbox";
 import { backToTopMessages } from "./messages/components/back-to-top";
 import { badgeMessages } from "./messages/components/badge";
 import { diagramMessages } from "./messages/components/diagram";
@@ -181,6 +183,8 @@ export const ui = {
     ...backToTopMessages.es,
     ...badgeMessages.es,
     ...diagramMessages.es,
+    ...canvasMessages.es,
+    ...lightboxMessages.es,
     ...boxMessages.es,
     ...breadcrumbMessages.es,
     ...buttonMessages.es,
@@ -313,6 +317,8 @@ export const ui = {
     ...backToTopMessages.en,
     ...badgeMessages.en,
     ...diagramMessages.en,
+    ...canvasMessages.en,
+    ...lightboxMessages.en,
     ...boxMessages.en,
     ...breadcrumbMessages.en,
     ...buttonMessages.en,

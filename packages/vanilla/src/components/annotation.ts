@@ -4,6 +4,7 @@ import {
   annotationAttrs,
   annotationElementRadius,
   annotationHitIndex,
+  annotationInstances,
   annotationParts,
   annotationRingInset,
   annotationRoomProperty,
@@ -30,8 +31,6 @@ import { createConnectMount } from "../runtime/svelte-hydrate.js";
 
 const rootSelector = `[${annotationAttrs.root}]`;
 const SVG_NS = "http://www.w3.org/2000/svg";
-/* Matches annotation.css: narrow screens turn the four gutters into two wrapping label clusters. */
-const stackedLabelsQuery = "(max-width: 40rem)";
 /* What owns its own reveal: the frame's hit-test stands down while the pointer is over one. */
 const readerSelector = `.${annotationParts.label}, .${annotationParts.legendItem}`;
 
@@ -67,11 +66,9 @@ type Cleanup = () => void;
  * drawing where a few pixels read as a mistake.
  */
 export function connectAnnotated(root: HTMLElement): Cleanup {
-  /* The mount point is the FIGURE, which holds the drawing and, beside it, the legend. Markup
-     authored before the figure existed mounts on the frame itself, and that is still a whole
-     diagram: it simply has nowhere to put a legend. */
-  /* A `zoomable` figure holds its frame one canvas deeper; either way it is the figure's own frame,
-     never one inside the specimen. */
+  /* The mount point is the FIGURE, which holds the canvas and, under it, the legend. The frame is
+     one canvas deeper, and it is the figure's own frame, never one inside the specimen. A frame
+     mounted on directly is still a drawing: it simply has no legend to light. */
   const frame = root.classList.contains(annotationParts.root)
     ? root
     : root.querySelector<HTMLElement>(
@@ -80,11 +77,22 @@ export function connectAnnotated(root: HTMLElement): Cleanup {
   if (!frame) return () => {};
   const subject = frame.querySelector<HTMLElement>(`.${annotationParts.subject}`);
   const overlay = frame.querySelector<SVGSVGElement>(`.${annotationParts.leaders}`);
+  /* The AUTHORED bubbles, one per entry. Copies a previous connection left behind go first: they are
+     this enhancer's own output, and it writes them again from the matches. */
+  for (const stale of frame.querySelectorAll(
+    `:scope > .${annotationParts.label}[${annotationAttrs.instance}]`,
+  )) {
+    stale.remove();
+  }
   const labels = Array.from(
     frame.querySelectorAll<HTMLElement>(`:scope > .${annotationParts.label}`),
   );
-  /* A `numbered` frame's legend, one entry per label in the same order. Empty otherwise, which is
-     what lets everything below treat the two modes as one. */
+  /* An entry's further bubbles, one per extra part a `match: "all"` selector found. */
+  const copies: HTMLElement[][] = labels.map(() => []);
+  const bubblesOf = (entry: number): HTMLElement[] => [labels[entry]!, ...copies[entry]!];
+  /* What the overlay was last drawn from: bubble k is `<g>` k, and belongs to entry `drawn[k].entry`. */
+  let drawn: { readonly element: HTMLElement; readonly entry: number }[] = [];
+  /* The legend, one entry per label in the same order. */
   const entries = Array.from(
     root.querySelectorAll<HTMLElement>(
       `:scope > .${annotationParts.legend} > .${annotationParts.legendItem}`,
@@ -95,11 +103,15 @@ export function connectAnnotated(root: HTMLElement): Cleanup {
      part, and there is no sensible half-measure to fall back to. */
   if (!subject || !overlay) return () => {};
 
-  /* A diagram is a drawing: the accordion (or anything else) inside is a specimen, not a control.
-     Written as an attribute, not `.inert =`, because jsdom does not reflect the property. The
-     watcher keeps `tabindex="-1"` after Zag / Breadcrumb restamp `tabindex="0"` on a later effect. */
-  subject.toggleAttribute("inert", true);
-  const unwatchFocus = watchAnnotationSpecimenFocus(subject);
+  /*
+   * A diagram is a drawing by default, but an anatomy can deliberately keep its subject live to
+   * demonstrate state changes. The contract emits `inert="false"` for that opt-out: the HTML
+   * boolean attribute is briefly present before mounting, so remove it rather than assigning
+   * `.inert = false`; jsdom does not reflect that property.
+   */
+  const inert = subject.getAttribute("inert") !== "false";
+  subject.toggleAttribute("inert", inert);
+  const unwatchFocus = inert ? watchAnnotationSpecimenFocus(subject) : () => {};
 
   /*
    * Read ONCE, frame and labels alike: these are compose-time decisions about how the drawing is
@@ -135,12 +147,6 @@ export function connectAnnotated(root: HTMLElement): Cleanup {
 
   const sync = (): void => {
     raf = 0;
-    /* A numbered frame never stacks: a bubble is one digit wide, so its gutters fit any screen. */
-    /* Nor does one on a canvas: it is laid out at its own width and shown scaled. */
-    const stacked =
-      !frame.hasAttribute(annotationAttrs.numbered) &&
-      !frame.parentElement?.classList.contains(annotationParts.content) &&
-      window.matchMedia(stackedLabelsQuery).matches;
     const rootRect = frame.getBoundingClientRect();
     /* The overlay resolves `inset: 0` against the PADDING box, so the origin every coordinate is
        written in is the border box shifted in by the border itself. */
@@ -165,22 +171,35 @@ export function connectAnnotated(root: HTMLElement): Cleanup {
       radius: annotationElementRadius(element),
     });
 
-    const measurements: AnnotationMeasurement[] = labels.map((label, index) => {
-      const live = relative(label);
-      const offset = readAnnotationTranslate(label.style.translate);
-      const found = targetsOf(
+    /* The matches first, because they decide how many bubbles each entry needs, and every bubble
+       has to exist before anything is measured. */
+    const found = labels.map((label, index) => {
+      const matches = targetsOf(
         subject,
         label.getAttribute(annotationAttrs.target),
         label.getAttribute(annotationAttrs.match) === "all",
       );
-      for (const element of found) watch(element, index);
-      const mark = label.getAttribute(annotationAttrs.mark);
+      for (const element of matches) watch(element, index);
+      copyTo(index, Math.max(1, matches.length));
+      return matches;
+    });
+    const instances = annotationInstances(found);
+    const bubbles = instances.map(({ entry, instance }) => ({
+      element: bubblesOf(entry)[instance]!,
+      entry,
+    }));
+
+    const measurements: AnnotationMeasurement[] = instances.map(({ entry, target }, index) => {
+      const label = bubbles[index]!.element;
+      const live = relative(label);
+      const offset = readAnnotationTranslate(label.style.translate);
+      const mark = labels[entry]!.getAttribute(annotationAttrs.mark);
       return {
-        side: sideOf(label),
+        side: sideOf(labels[entry]!),
         mark: isAnnotationMarkKind(mark) ? mark : undefined,
-        ...labelRings[index],
+        ...labelRings[entry],
         label: { ...live, x: live.x - offset.x, y: live.y - offset.y },
-        targets: found.map(asTarget),
+        targets: target ? [asTarget(target)] : [],
       };
     });
 
@@ -201,7 +220,6 @@ export function connectAnnotated(root: HTMLElement): Cleanup {
       direction,
       ringInset,
       ringRadius: frameRadius,
-      distribute: !stacked,
     });
     const { placements } = layout;
 
@@ -210,6 +228,7 @@ export function connectAnnotated(root: HTMLElement): Cleanup {
        would otherwise rewrite the whole overlay. */
     if (previous && sameLayout(layout, previous)) return;
     previous = layout;
+    drawn = bubbles;
 
     /* Only the gutters that hold brackets get a floor; the rest stay plain `auto`. */
     for (const side of annotationSides) {
@@ -219,15 +238,16 @@ export function connectAnnotated(root: HTMLElement): Cleanup {
     }
 
     placements.forEach((placement, index) => {
-      const label = labels[index]!;
+      const label = bubbles[index]!.element;
       label.style.translate = annotationTranslate(placement.translate);
       label.setAttribute(annotationAttrs.resolvedSide, placement.side);
     });
 
     drawLeaders(overlay, placements);
-    /* A redraw can replace the `<g>` that carried the reveal, so re-stamp it: a resize while the
-       pointer is resting on a label must not blank the mark the reader is looking at. */
-    if (active !== null) overlay.children[active]?.toggleAttribute(annotationAttrs.active, true);
+    /* A redraw can replace the `<g>` that carried the reveal, and can add bubbles, so re-stamp it: a
+       resize while the pointer is resting on a label must not blank the mark the reader is looking
+       at. */
+    if (active !== null) paint(active, true);
   };
 
   const schedule = (): void => {
@@ -250,35 +270,79 @@ export function connectAnnotated(root: HTMLElement): Cleanup {
    * the pointer. The smallest containing box wins, so a title inside a tile lights the title.
    */
   let active: number | null = null;
+  /* An ENTRY lights up, not a bubble: every bubble of a plural name, every mark they lead to, and
+     its one legend entry. */
+  const paint = (entry: number, on: boolean): void => {
+    drawn.forEach((bubble, index) => {
+      if (bubble.entry !== entry) return;
+      bubble.element.toggleAttribute(annotationAttrs.active, on);
+      overlay.children[index]?.toggleAttribute(annotationAttrs.active, on);
+    });
+    entries[entry]?.toggleAttribute(annotationAttrs.active, on);
+  };
   const setActive = (index: number | null): void => {
     if (active === index) return;
-    for (const at of [active, index]) {
-      if (at === null) continue;
-      const on = at === index;
-      labels[at]?.toggleAttribute(annotationAttrs.active, on);
-      entries[at]?.toggleAttribute(annotationAttrs.active, on);
-      overlay.children[at]?.toggleAttribute(annotationAttrs.active, on);
-    }
+    if (active !== null) paint(active, false);
+    if (index !== null) paint(index, true);
     active = index;
   };
 
-  /* The number and its legend entry are the same reader: either one lights the mark. A numbered
-     bubble never takes focus, so its focus listeners simply never fire. */
-  const listeners = [...labels, ...entries].flatMap((label, at) => {
-    const index = at < labels.length ? at : at - labels.length;
-    const enter = () => setActive(index);
+  /* The reveal on one bubble: the authored ones below, and every copy as it is made. */
+  const listenTo = (bubble: HTMLElement, entry: number): Cleanup => {
+    const enter = () => setActive(entry);
     const leave = () => setActive(null);
-    label.addEventListener("pointerenter", enter);
-    label.addEventListener("pointerleave", leave);
-    label.addEventListener("focusin", enter);
-    label.addEventListener("focusout", leave);
-    return [
-      () => label.removeEventListener("pointerenter", enter),
-      () => label.removeEventListener("pointerleave", leave),
-      () => label.removeEventListener("focusin", enter),
-      () => label.removeEventListener("focusout", leave),
-    ];
-  });
+    bubble.addEventListener("pointerenter", enter);
+    bubble.addEventListener("pointerleave", leave);
+    return () => {
+      bubble.removeEventListener("pointerenter", enter);
+      bubble.removeEventListener("pointerleave", leave);
+    };
+  };
+  const copyListeners = new Map<HTMLElement, Cleanup>();
+
+  /*
+   * Grows or shrinks an entry's copies to `count` bubbles in all. A copy is the authored bubble
+   * without anything a pass wrote on it, placed right after the last of its entry: the number is a
+   * CSS counter, and a copy that does not count, straight after the one that did, shows its value.
+   */
+  const copyTo = (entry: number, count: number): void => {
+    const own = copies[entry]!;
+    while (own.length < count - 1) {
+      const copy = labels[entry]!.cloneNode(false) as HTMLElement;
+      copy.removeAttribute("style");
+      copy.removeAttribute(annotationAttrs.active);
+      copy.removeAttribute(annotationAttrs.resolvedSide);
+      copy.setAttribute(annotationAttrs.instance, "");
+      bubblesOf(entry).at(-1)!.after(copy);
+      own.push(copy);
+      observer.observe(copy);
+      copyListeners.set(copy, listenTo(copy, entry));
+    }
+    while (own.length > count - 1) {
+      const copy = own.pop()!;
+      observer.unobserve(copy);
+      copyListeners.get(copy)?.();
+      copyListeners.delete(copy);
+      copy.remove();
+    }
+  };
+
+  /* The number and its legend entry are the same reader: either one lights the mark. Only the
+     entry takes focus. */
+  const listeners = [
+    ...labels.map((label, entry) => listenTo(label, entry)),
+    ...entries.flatMap((item, entry) => {
+      const enter = () => setActive(entry);
+      const leave = () => setActive(null);
+      item.addEventListener("focusin", enter);
+      item.addEventListener("focusout", leave);
+      return [
+        listenTo(item, entry),
+        () => item.removeEventListener("focusin", enter),
+        () => item.removeEventListener("focusout", leave),
+      ];
+    }),
+  ];
 
   /* Targets registered for hit-testing (and resize), not for their own pointer listeners. */
   const hitTargets: { element: Element; index: number }[] = [];
@@ -339,7 +403,7 @@ export function connectAnnotated(root: HTMLElement): Cleanup {
     subtree: true,
     childList: true,
     attributes: true,
-    attributeFilter: ["aria-hidden", "hidden"],
+    attributeFilter: ["aria-hidden", "hidden", "data-state"],
   });
 
   /* One more pass once the webfonts are in, and it is deliberately not awaited by anything: a frame
@@ -358,6 +422,7 @@ export function connectAnnotated(root: HTMLElement): Cleanup {
     mutations.disconnect();
     unwatchFocus();
     for (const off of listeners) off();
+    for (const off of copyListeners.values()) off();
   };
 }
 

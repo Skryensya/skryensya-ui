@@ -1,5 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { anatomyFigureHtml } from "./annotation-parts";
 
 /*
  * THE ANATOMY SPECIMEN: density switch AND expand toggle in one drawing. No single signature emits
@@ -45,31 +46,22 @@ const codePreviewAnatomySpecimen = (t: Translate): string => `<div
   </div>
 </div>`;
 
-const label = (target: string, side: string, text: string, extra = ""): string =>
-  `<span class="sk-annotation" data-for="${target}" data-side="${side}" data-match="first"${extra} tabindex="0">${text}</span>`;
 
-export const codePreviewAnatomyHtml = (t: Translate): string => `<div
-  class="sk-annotated"
-  data-sk-annotated
-  aria-label="${t("codePreview.anatomyLabel")}"
-  data-ring-placement="inset"
-  data-ring-distance="2"
-  role="group"
->
-  <div class="sk-annotated__subject" inert>
-    ${codePreviewAnatomySpecimen(t)}
-  </div>
-  ${label(".sk-code-preview", "block-start", "sk-code-preview", ' data-ring-placement="offset" data-ring-distance="8"')}
-  ${label(".sk-code-preview__label", "inline-start", "sk-code-preview__label")}
-  ${label(".sk-code-preview__meta", "inline-start", "sk-code-preview__meta", ' data-ring-placement="offset" data-ring-distance="4"')}
-  ${label(".sk-code-preview__density", "inline-end", "sk-code-preview__density")}
-  ${label(".sk-code-preview__preview", "inline-start", "sk-code-preview__preview")}
-  ${label(".sk-code-preview__viewport", "inline-end", "sk-code-preview__viewport", ' data-ring-placement="offset" data-ring-distance="3"')}
-  ${label(".sk-code-preview__toggle", "block-end", "sk-code-preview__toggle")}
-  <svg class="sk-annotated__leaders" aria-hidden="true" focusable="false"></svg>
-</div>`;
+export const codePreviewAnatomyHtml = (t: Translate): string => anatomyFigureHtml(t, {
+  label: t("codePreview.anatomyLabel"),
+  specimen: codePreviewAnatomySpecimen(t),
+  parts: [
+    { for: ".sk-code-preview", side: "block-start", mark: "bracket", ringPlacement: "offset", ringDistance: 8 },
+    { for: ".sk-code-preview__label", side: "inline-start" },
+    { for: ".sk-code-preview__meta", side: "inline-start", ringPlacement: "offset", ringDistance: 4 },
+    { for: ".sk-code-preview__density", side: "inline-end" },
+    { for: ".sk-code-preview__preview", side: "inline-start" },
+    { for: ".sk-code-preview__viewport", side: "inline-end", ringPlacement: "offset", ringDistance: 3 },
+    { for: ".sk-code-preview__toggle", side: "block-end" },
+  ],
+});
 
-export const codePreviewAnatomyCss = `.sk-annotated {
+export const codePreviewAnatomyCss = `.sk-annotated-figure {
   --sk-annotation-font-family: var(--font-family-code);
 }
 

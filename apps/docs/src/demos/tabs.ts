@@ -1,7 +1,7 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 import { tabsAdvancedItems, tabsBasicItems, tabsStatesItems } from "./data/tabs";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /* Basic, states and live-status Tabs compositions shared by both locales. The panels themselves are
  * data: see `data/tabs.ts`. */
@@ -11,8 +11,9 @@ import { namePart } from "./annotation-parts";
 export const tabsAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("tabsPage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("tabsPage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "tabs",
       signature: "Tabs",
@@ -21,7 +22,7 @@ export const tabsAnatomyTree = (t: Translate): UsageTree => ({
       slots: { items: tabsBasicItems(t) },
     },
     items: [
-      namePart(".sk-tabs", "block-start"),
+      namePart(".sk-tabs", "block-start", { mark: "bracket" }),
       namePart(".sk-tabs__list", "inline-start"),
       namePart(".sk-tabs__trigger", "inline-start", { ringPlacement: "offset", ringDistance: 2 }),
       namePart(".sk-tabs__content", "block-end"),

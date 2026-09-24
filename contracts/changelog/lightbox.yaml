@@ -1,0 +1,32 @@
+# Qué cambió en lightbox, en las palabras que lee quien lo usa. Sólo se agrega, nunca se reescribe.
+#
+# `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
+# que no coincide, algo de lo que un consumidor depende se movió: escribe la entrada y pega el
+# hash nuevo.
+surface: "853bcb2c08960fd4"
+entries:
+  - date: 2026-09-24
+    kind: feature
+    target: Lightbox
+    es:
+      title: Un visor de imágenes modal, para una foto o una galería entera
+      body: >-
+        Nuevo contrato <code>Lightbox</code> sobre el <code>&lt;dialog&gt;</code> nativo con <code>showModal()</code>: capa superior, página inerte,
+        Escape y bloqueo de scroll son de la plataforma, y el foco vuelve al elemento que lo abrió (o, si ya no está, a la miniatura de la foto en
+        que se terminó). Se abre desde miniaturas (<code>Lightbox.Trigger</code>, un enlace a la imagen completa que funciona sin JavaScript) o desde
+        código con el mismo ciclo: <code>open</code>, <code>close</code>, <code>next</code>, <code>previous</code>, <code>goTo</code> y
+        <code>resetZoom</code>. En React, <code>LightboxProvider</code> + <code>useLightbox()</code> dan un único visor para toda la app. Zoom con
+        botones, <code>+</code>/<code>-</code>/<code>0</code>, rueda, doble clic, doble toque y pellizco; con zoom, arrastrar y las flechas mueven la
+        imagen dentro del cuadro. Deslizar cambia de foto y hacia abajo cierra. Sólo precarga las dos vecinas, y un error se dice con palabras sin
+        bloquear la navegación.
+    en:
+      title: A modal image viewer, for one photo or a whole gallery
+      body: >-
+        New <code>Lightbox</code> contract on the native <code>&lt;dialog&gt;</code> with <code>showModal()</code>: the top layer, the inert page,
+        Escape and the scroll lock are the platform's, and focus returns to what opened it (or, when that is gone, to the thumbnail of the photo the
+        reader ended on). It opens from thumbnails (<code>Lightbox.Trigger</code>, a link to the full image that works with no script) or from code
+        with the same lifecycle: <code>open</code>, <code>close</code>, <code>next</code>, <code>previous</code>, <code>goTo</code> and
+        <code>resetZoom</code>. In React, <code>LightboxProvider</code> + <code>useLightbox()</code> give one viewer for the whole app. Zoom with
+        buttons, <code>+</code>/<code>-</code>/<code>0</code>, the wheel, a double click, a double tap and a pinch; zoomed in, dragging and the arrows
+        move the image inside its frame. A swipe changes photo and a swipe down closes. Only the two neighbours are preloaded, and a failed image
+        says so in words without blocking navigation.

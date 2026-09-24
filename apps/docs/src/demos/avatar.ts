@@ -1,6 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 const ACCENT_HEX = "1f5fc3";
 const ON_ACCENT_HEX = "ffffff";
@@ -100,8 +100,9 @@ const AVATAR_COLOR_SIZES: readonly ("xl" | "lg" | "md" | "sm")[] = [
 export const avatarAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("avatar.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("avatar.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "layout",
       signature: "Inline",
@@ -158,8 +159,9 @@ export const avatarAnatomyTree = (t: Translate): UsageTree => ({
 export const avatarGroupAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("avatar.groupAnatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("avatar.groupAnatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "avatar",
       signature: "AvatarGroup",
@@ -195,7 +197,7 @@ export const avatarGroupAnatomyTree = (t: Translate): UsageTree => ({
       /* Default size, deliberately: `.sk-avatar-group__overflow` hard-sizes itself to
          `--size-control-md` while the discs follow `data-size`, so an `lg` stack draws a counter
          visibly smaller than the avatars it counts. True, and not what this diagram is about. */
-      namePart(".sk-avatar-group", "block-start", { ringPlacement: "offset", ringDistance: 8, ringRadius: 10 }),
+      namePart(".sk-avatar-group", "block-start", { mark: "bracket", ringPlacement: "offset", ringDistance: 8, ringRadius: 10 }),
       /* The first disc only. `all` would ring every member including the overflow's neighbours and
          turn the stack into a row of circles with no figure left to read. */
       namePart(".sk-avatar", "inline-start", { ringPlacement: "offset", ringDistance: 4 }),

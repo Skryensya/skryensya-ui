@@ -6,6 +6,7 @@ import {
   diagramAwsCss,
   diagramAwsTree,
   diagramBranchTree,
+  diagramCanvasTree,
   diagramCycleCss,
   diagramDemoCss,
   diagramFlowCss,
@@ -35,6 +36,9 @@ import "@skryensya/core/components/diagram.css";
    the services, an Icon for the visitor. A preview only gets the CSS its page imported, and a
    slotted child counts. */
 import "@skryensya/core/patterns/image-frame.css";
+/* The canvas demo wraps the tree in a Canvas, which brings its own sheet (and the button one it
+   imports for the zoom bar). */
+import "@skryensya/core/components/canvas.css";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -150,6 +154,15 @@ const hooks = `.mi-diagrama {
       tree={diagramTreeTree(t)}
       css={diagramTreeCss}
       label={t("diagram.treePreviewLabel")}
+    />
+
+    <h3>{t("diagram.canvasTitle")}</h3>
+    <p set:html={t("diagram.canvasBody")} />
+    <ComponentPreview
+      tree={diagramCanvasTree(t)}
+      css={diagramDemoCss}
+      label={t("diagram.canvasPreviewLabel")}
+      flush
     />
 
     <h3>{t("diagram.stateTitle")}</h3>

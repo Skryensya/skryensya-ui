@@ -1,5 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { anatomyCanvas, anatomyHints } from "./annotation-parts";
 
 /*
  * The three accordions on the page, from one composition written once.
@@ -123,8 +124,9 @@ export const accordionMultipleTree = (t: Translate): UsageTree => ({
 export const detailsAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("accordion.nativeAnatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("accordion.nativeAnatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "accordion",
       signature: "DetailsGroup",
@@ -188,20 +190,23 @@ export const detailsAnatomyTree = (t: Translate): UsageTree => ({
     },
     items: [
       {
-        options: { for: ".sk-details-group", side: "block-start" },
+        options: { for: ".sk-details-group", mark: "bracket", side: "inline-end" },
         slots: { children: "sk-details-group" },
       },
-      { options: { for: ".sk-details", side: "inline-start" }, slots: { children: "sk-details" } },
       {
-        options: { for: ".sk-details__summary", side: "inline-start" },
+        options: { for: ".sk-details", mark: "bracket", side: "inline-end" },
+        slots: { children: "sk-details" },
+      },
+      {
+        options: { for: ".sk-details__summary", mark: "bracket", side: "inline-end" },
         slots: { children: "sk-details__summary" },
       },
       {
-        options: { for: ".sk-details__indicator", side: "inline-end" },
+        options: { for: ".sk-details__indicator", side: "block-start" },
         slots: { children: "sk-details__indicator" },
       },
       {
-        options: { for: ".sk-details__content", side: "block-end" },
+        options: { for: ".sk-details__content", mark: "bracket", side: "inline-end" },
         slots: { children: "sk-details__content" },
       },
     ],

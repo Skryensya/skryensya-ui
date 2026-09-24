@@ -1,5 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { anatomyFigureHtml } from "./annotation-parts";
 
 /*
  * THE ANATOMY, and the one thing it shows that the real control never does: the dropzone and a
@@ -9,24 +10,10 @@ import type { Translate } from "../i18n";
  * MARKUP like Menu's: part classes, and no mount attributes that would leave the enhancer fighting
  * static rows.
  *
- * TEN LABELS, AND THE ROOM FOR THEM CAME FROM THE PANEL, not from dropping any of them.
- *
- * Each inline-start/inline-end label takes its gutter out of the subject's own width, and the gutter
- * is set by the LONGEST name on that side. The first attempt here moved some below and cut the rest:
- * the specimen went from 292px to 322px and the diagram lost four parts, which is a bad trade for a
- * drawing whose whole job is naming parts. The width was being left on the floor one level up: every
- * preview in a tab panel is already PLACED on the grid's `breakout` track and then centred, so it
- * shrinks to its content and abandons the track. `width="breakout"` plus the `justify-self` rule in
- * `site.css` hands this diagram the whole track instead.
- *
- * AND THE BLOCK NAME IS SAID ONCE. Every gutter is as wide as the longest label in it, the labels
- * are already at the smallest type this system has, and nine of the ten were repeating the same
- * fourteen characters before their own half: `sk-file-upload__item-preview` reserved 28 characters
- * of margin to add 14 of information. The root pill carries the block and the rest carry
- * `*__element`, where the star stands in for the block named above them: the `__` stays because it
- * is what says "element of", and the star is what says "of the one up there". The width that buys
- * goes to the subject, which is what the drawing is of. `data-for` keeps the full selector, so what
- * each label POINTS AT is unchanged.
+ * FIFTEEN PARTS, AND THE MARGINS HOLD ONLY THEIR NUMBERS. This diagram is the one that used to
+ * say its block name once in a key and abbreviate every label to `*__element`, because fifteen
+ * names in the gutters squeezed the specimen to 292px. The names live in the legend now, where
+ * they wrap instead of costing the drawing its width, so each one is spelled out whole.
  */
 const fileUploadAnatomySpecimen = (t: Translate): string => `<div class="sk-file-upload">
   <label class="sk-file-upload__label">${t("demo.fileUpload.label")}</label>
@@ -65,40 +52,30 @@ const fileUploadAnatomySpecimen = (t: Translate): string => `<div class="sk-file
   </ul>
 </div>`;
 
-const label = (target: string, side: string, text: string, extra = ""): string =>
-  `<span class="sk-annotation" data-for="${target}" data-side="${side}" data-match="first"${extra} tabindex="0">${text}</span>`;
 
-export const fileUploadAnatomyHtml = (t: Translate): string => `<div
-  class="sk-annotated"
-  data-sk-annotated
-  aria-label="${t("fileUploadPage.anatomyLabel")}"
-  data-ring-placement="inset"
-  data-ring-distance="2"
-  role="group"
->
-  <div class="sk-annotated__subject" inert>
-    ${fileUploadAnatomySpecimen(t)}
-  </div>
-  ${label(".sk-file-upload", "block-start", "sk-file-upload")}
-  ${label(".sk-file-upload__label", "inline-start", "*__label", ' data-ring-placement="offset" data-ring-distance="2"')}
-  ${label(".sk-file-upload__icon", "inline-start", "*__icon", ' data-ring-placement="offset" data-ring-distance="2"')}
-  ${label(".sk-file-upload__trigger", "inline-start", "*__trigger")}
-  ${label(".sk-file-upload__tally", "inline-start", "*__tally")}
-  ${label(".sk-file-upload__item-preview", "inline-start", "*__item-preview")}
-  ${label(".sk-file-upload__item-name", "inline-start", "*__item-name", ' data-ring-placement="offset" data-ring-distance="2"')}
-  ${label(".sk-file-upload__item-size", "inline-start", "*__item-size", ' data-ring-placement="offset" data-ring-distance="4"')}
-  ${label(".sk-file-upload__dropzone", "inline-end", "*__dropzone")}
-  ${label(".sk-file-upload__instruction", "inline-end", "*__instruction")}
-  ${label(".sk-file-upload__hint", "inline-end", "*__hint", ' data-ring-placement="offset" data-ring-distance="2"')}
-  ${label(".sk-file-upload__item-body", "inline-end", "*__item-body", ' data-ring-placement="offset" data-ring-distance="2"')}
-  ${label(".sk-file-upload__item-delete", "inline-end", "*__item-delete", ' data-ring-placement="offset" data-ring-distance="4"')}
-  ${label(".sk-file-upload__item-group", "block-end", "*__item-group")}
-  ${label(".sk-file-upload__item", "block-end", "*__item", ' data-ring-placement="offset" data-ring-distance="2"')}
-  <p class="sk-annotated__key">* = sk-file-upload</p>
-  <svg class="sk-annotated__leaders" aria-hidden="true" focusable="false"></svg>
-</div>`;
+export const fileUploadAnatomyHtml = (t: Translate): string => anatomyFigureHtml(t, {
+  label: t("fileUploadPage.anatomyLabel"),
+  specimen: fileUploadAnatomySpecimen(t),
+  parts: [
+    { for: ".sk-file-upload", side: "block-start", mark: "bracket" },
+    { for: ".sk-file-upload__label", side: "inline-start", ringPlacement: "offset", ringDistance: 2 },
+    { for: ".sk-file-upload__icon", side: "inline-start", ringPlacement: "offset", ringDistance: 2 },
+    { for: ".sk-file-upload__trigger", side: "inline-start" },
+    { for: ".sk-file-upload__tally", side: "inline-start" },
+    { for: ".sk-file-upload__item-preview", side: "inline-start" },
+    { for: ".sk-file-upload__item-name", side: "inline-start", ringPlacement: "offset", ringDistance: 2 },
+    { for: ".sk-file-upload__item-size", side: "inline-start", ringPlacement: "offset", ringDistance: 4 },
+    { for: ".sk-file-upload__dropzone", side: "inline-end" },
+    { for: ".sk-file-upload__instruction", side: "inline-end" },
+    { for: ".sk-file-upload__hint", side: "inline-end", ringPlacement: "offset", ringDistance: 2 },
+    { for: ".sk-file-upload__item-body", side: "inline-end", ringPlacement: "offset", ringDistance: 2 },
+    { for: ".sk-file-upload__item-delete", side: "inline-end", ringPlacement: "offset", ringDistance: 4 },
+    { for: ".sk-file-upload__item-group", side: "block-end" },
+    { for: ".sk-file-upload__item", side: "block-end", ringPlacement: "offset", ringDistance: 2 },
+  ],
+});
 
-export const fileUploadAnatomyCss = `.sk-annotated {
+export const fileUploadAnatomyCss = `.sk-annotated-figure {
   --sk-annotation-font-family: var(--font-family-code);
 }
 

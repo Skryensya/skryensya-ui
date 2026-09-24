@@ -1,4 +1,4 @@
-import { canvasAttrs, canvasLabelOptions, canvasParts, canvasTemplateChildren } from "./canvas.js";
+import { canvasAttrs, canvasFitOnlyOption, canvasLabelOptions, canvasParts, canvasTemplateChildren } from "./canvas.js";
 import type { ComponentContract, ContractTemplate, OptionsOf } from "./contract.js";
 
 /*
@@ -7,13 +7,19 @@ import type { ComponentContract, ContractTemplate, OptionsOf } from "./contract.
  * A composition diagram has one job: point at a piece of a rendered thing and say what it is. Every
  * house style solves it the same way, and every one of them solves it badly: a label absolutely
  * positioned over the specimen (which covers the very part it names), or a numbered legend under it
- * (which makes the reader hold six numbers in their head while their eye travels). What actually
+ * with nothing drawn in between (which makes the reader hunt for each number on the specimen). What actually
  * works is what technical illustration settled on a century ago: the label sits OUTSIDE the subject,
  * in a margin of its own, and a LEADER LINE connects the two.
  *
- * (`numbered` is the one concession to the legend, and it keeps what matters: the number still sits
- * in the margin and a leader still reaches the part, so only the NAME travels below, and the reader
- * who reads the legend entry sees its number, leader and part light up together.)
+ * ONE FORM, AND IT KEEPS WHAT MATTERS FROM BOTH. The margin holds a NUMBER and a leader still
+ * reaches the part; the NAME travels to a legend under the frame, and reading an entry lights its
+ * number, its leader and its part together. Names in the margins were the first form and the only
+ * one for a while, and they cost the specimen its width: ten part names in the gutters left an
+ * Accordion a third of its frame, and on a phone the margins had to collapse into clusters whose
+ * leaders crossed the whole specimen. A number is one bubble wide, so the gutters fit any screen and
+ * the drawing never has to change shape. And the whole frame sits on a CANVAS (`@skryensya/core/canvas`):
+ * laid out at its own width, shown fitted, and zoomable, so a phone shows the same drawing smaller
+ * rather than a different drawing.
  *
  * So this contract owns exactly two invariants, and they are the two that keep getting broken:
  *
@@ -65,13 +71,10 @@ export function isAnnotationSide(value: unknown): value is AnnotationSide {
  */
 export const annotationParts = {
   /**
-   * THE FIGURE, and the host: the drawing plus whatever explains it from outside, which today is a
-   * `numbered` diagram's legend. Its own block rather than an element of `sk-annotated`, because it
+   * THE FIGURE, and the host: the canvas that holds the drawing, and under it the legend that names
+   * what the drawing numbers. Its own block rather than an element of `sk-annotated`, because it
    * CONTAINS that block: the legend is a sibling of the frame, not a cell of its grid, so a long
    * name can never widen a gutter and the list flows on its own terms.
-   *
-   * Markup written before it existed mounts `data-sk-annotated` on the frame directly and is still
-   * a whole diagram; it just has no legend. The enhancer accepts either.
    */
   figure: "sk-annotated-figure",
   /** The frame: the grid that holds a subject and the gutters its labels live in. */
@@ -114,7 +117,7 @@ export const annotationParts = {
    */
   key: "sk-annotated__key",
   /**
-   * THE LEGEND of a `numbered` diagram: an `<ol>` in the figure, under the frame and OUTSIDE it, one
+   * THE LEGEND: an `<ol>` in the figure, under the frame and OUTSIDE it, one
    * entry per label in the labels' own order, so the entry's number is the bubble's number without
    * anyone writing either.
    *
@@ -127,13 +130,13 @@ export const annotationParts = {
    */
   legend: "sk-annotated__legend",
   /**
-   * One entry in it, and in a `numbered` diagram the element a reader TABS to. The bubble keeps
+   * One entry in it, and the element a reader TABS to. The bubble keeps
    * only its number and goes `aria-hidden`: the name is here, so the tab stop and the accessible
    * text belong here too.
    */
   legendItem: "sk-annotated__legend-item",
   /*
-   * THE CANVAS, BORROWED. A `zoomable` figure puts its frame inside the same structure `Canvas`
+   * THE CANVAS, BORROWED. The figure puts its frame inside the same structure `Canvas`
    * renders (see `canvasTemplateChildren`), so the template names those parts too. They are the
    * canvas's classes, not this block's: one stylesheet and one enhancer serve both.
    */
@@ -179,16 +182,51 @@ export const annotationAttrs = {
   ringDistance: "data-ring-distance",
   /** The ring's corner radius, in px. Read by the binding, never rendered. */
   ringRadius: "data-ring-radius",
-  /**
-   * Where the label sits in its row of the narrow-screen cluster. Omitted keeps the cluster's own
-   * packing; set it only for the diagrams whose label order needs the opposite edge.
-   */
-  mobileAlign: "data-mobile-align",
-  /** The frame draws numbers in its gutters and names them in a legend below. */
-  numbered: "data-numbered",
   /** How this label marks its part: a ring around it, or a bracket along it. */
   mark: "data-mark",
+  /**
+   * Written by the binding on every bubble after an entry's first: the copies a `match: "all"`
+   * entry gets, one per further part its selector matched. See `annotationInstances`.
+   */
+  instance: "data-sk-instance",
 } as const;
+
+/**
+ * ONE BUBBLE PER THING NAMED, and every bubble of one entry wears the same number.
+ *
+ * A plural name (`match: "all"`: a breadcrumb's crumbs, a table's rows) used to be ONE bubble with
+ * a fan of leaders out of it. A fan reads as one gesture, and that was the argument for it; it is
+ * also a knot of lines crossing the specimen whenever the parts are far apart, and a bubble whose
+ * position says nothing about any one of them. So each part gets its own bubble, laid out and led
+ * exactly like any other, and the NUMBER is what says they are one name: the legend still has one
+ * entry, and reading it lights every bubble of it together.
+ *
+ * How many bubbles an entry needs is a runtime fact (how many parts its selector matched), so the
+ * authored markup carries one and the binding adds the rest right after it, marked
+ * `data-sk-instance`. Adjacent on purpose: the number is a CSS counter, and a copy that does not
+ * increment it, sitting straight after the one that did, shows the same value with nothing to keep
+ * in sync.
+ *
+ * This is the bookkeeping both bindings share: given each entry's matches, the flat list of
+ * bubbles, each with its entry and the one target it points at. An entry that matched nothing still
+ * gets its one bubble, with no target, which is what keeps every legend entry a number on the
+ * drawing.
+ */
+export type AnnotationInstance<T> = {
+  readonly entry: number;
+  readonly instance: number;
+  readonly target: T | undefined;
+};
+
+export function annotationInstances<T>(
+  matches: readonly (readonly T[])[],
+): readonly AnnotationInstance<T>[] {
+  return matches.flatMap((found, entry): AnnotationInstance<T>[] =>
+    found.length === 0
+      ? [{ entry, instance: 0, target: undefined }]
+      : found.map((target, instance) => ({ entry, instance, target })),
+  );
+}
 
 /* ---------------------------------------------------------------------------------------------- *
  * Pure geometry - no DOM, no framework. Tested from `packages/core/src/annotation.test.ts`.
@@ -240,15 +278,6 @@ const logicalSide = (side: PhysicalSide, direction: AnnotationDirection): Annota
 
 /** Clearance between two labels that would otherwise touch, in px. */
 export const ANNOTATION_LANE_GAP = 6;
-
-/** A narrow-screen cluster label may hug either logical inline edge of its row. */
-export type AnnotationMobileAlign = "start" | "end";
-
-export const annotationMobileAlignments = ["start", "end"] as const satisfies readonly AnnotationMobileAlign[];
-
-export function isAnnotationMobileAlign(value: unknown): value is AnnotationMobileAlign {
-  return typeof value === "string" && (annotationMobileAlignments as readonly string[]).includes(value);
-}
 
 /**
  * How far a leader's tip stays clear of its target's CORNERS, in px. Without it a leader aimed at a
@@ -331,9 +360,6 @@ export function isAnnotationMatch(value: unknown): value is AnnotationMatch {
  * long as the part, with a short tick at each end turned toward it, and the label sitting on the
  * line's middle. Brackets that would overlap are stacked outward in tracks, a container always
  * outside what it contains, so nested areas read as nested.
- *
- * Only in the four-gutter layout: the narrow-screen cluster has no gutter for a bracket to run in,
- * so there a bracket label falls back to a ring.
  */
 export type AnnotationMarkKind = "ring" | "bracket";
 
@@ -770,7 +796,7 @@ export function watchAnnotationSpecimenFocus(subject: HTMLElement): () => void {
 
 /**
  * How much the frame is drawn scaled by, read off its two sizes: the rect a transform scales and the
- * layout box it does not. 1 everywhere except inside a `zoomable` canvas (or any other transformed
+ * layout box it does not. 1 everywhere except inside a zoomed canvas (or any other transformed
  * ancestor), where every rectangle a binding reads is in SCREEN pixels while the leaders are drawn in
  * the frame's OWN. Dividing this back out is what keeps a zoomed diagram's lines on their parts, and
  * it is the only thing zoom costs this module: placement is scale-invariant once measured this way,
@@ -1385,15 +1411,10 @@ function straightRange(start: number, size: number, inset: number): [number, num
   return [start + inset, start + size - inset];
 }
 
-/*
- * THE FRAME's template, named because it appears twice: straight in the figure, or inside the canvas
- * a `zoomable` figure wraps it in. One literal, so the two can never drift.
- */
+/* THE FRAME's template: what the canvas holds. */
 const annotationFrame: ContractTemplate = {
   element: "div",
   part: "root",
-  /* The counter and the no-stacking rule both live on the frame, so the flag does too. */
-  options: ["numbered"],
   children: [
     {
       element: "div",
@@ -1406,33 +1427,17 @@ const annotationFrame: ContractTemplate = {
     /* A corner the labels never reach, so it needs no placement of its own beyond its part. */
     { element: "p", part: "key", whenGiven: "key", slot: "key" },
     /*
-     * FOCUSABLE, and this is the price of showing one mark at a time rather than all of
-     * them. A ring that only appears under the pointer is information a keyboard reader
-     * cannot reach, and "the leaders are decorative" is not an answer: the ring is the only
-     * thing that says WHICH part a name belongs to. A tab stop per label makes that
-     * reachable. The stylesheet keys the reveal on `:hover` and `:focus-visible` alike.
+     * THE NUMBERED BUBBLE: one per entry, in the gutter it asked for, measured and led to its
+     * part, but EMPTY. Its number is a CSS counter (the entry's position, which the markup
+     * already states, so no typed copy can disagree with it), and it is `aria-hidden` and no
+     * tab stop because a bare "3" says nothing out loud; the legend entry is what a reader
+     * reaches, and it carries the name.
      */
     {
       element: "span",
       part: "label",
       repeat: "items",
-      whenMissing: "numbered",
-      itemOptions: ["for", "side", "mark", "mobileAlign", "match", "ringPlacement", "ringDistance", "ringRadius"],
-      itemSlot: "children",
-      attrs: { tabindex: "0" },
-    },
-    /*
-     * THE NUMBERED BUBBLE: the same part in the same gutter, measured and led the same
-     * way, but EMPTY. Its number is a CSS counter (see `numbered`), and it is `aria-hidden`
-     * and no tab stop because a bare "3" says nothing out loud; the legend entry is what a
-     * reader reaches, and it carries the name.
-     */
-    {
-      element: "span",
-      part: "label",
-      repeat: "items",
-      whenGiven: "numbered",
-      itemOptions: ["for", "side", "mark", "mobileAlign", "match", "ringPlacement", "ringDistance", "ringRadius"],
+      itemOptions: ["for", "side", "mark", "match", "ringPlacement", "ringDistance", "ringRadius"],
       attrs: { "aria-hidden": "true" },
     },
     /*
@@ -1489,7 +1494,7 @@ export const annotationContract = {
      * The component still MOUNTS, so every part it renders at rest is on screen to be pointed at;
      * it simply never changes.
      */
-    inert: { type: "boolean", default: true, attr: "inert", trueValue: "" },
+    inert: { type: "boolean", default: true, attr: "inert", trueValue: "", falseValue: "false" },
     /**
      * Which side of a part's own edge its ring is drawn on. `inset` is unambiguous about which
      * element a mark belongs to and is right for a dense composition; `offset` is right where the
@@ -1526,27 +1531,8 @@ export const annotationContract = {
       attr: annotationAttrs.ringRadius,
       machineInput: true,
     },
-    /**
-     * Numbers in the gutters, names in a legend under the frame.
-     *
-     * For the diagram whose names cost the specimen its width: ten part names in the margins can
-     * leave the subject a third of its frame, where ten numbers leave it nearly all of it. The
-     * leaders and rings are unchanged, and so is the one-at-a-time reveal, which now answers from
-     * the legend too: reading an entry lights its number, its leader and its part together.
-     *
-     * The number is a CSS counter, not text: it is the entry's position, which the markup already
-     * states, and a second copy an author typed could disagree with it.
-     */
-    numbered: { type: "boolean", default: false, attr: annotationAttrs.numbered, trueValue: "" },
-    /**
-     * The drawing becomes a CANVAS: laid out at its own width, shown fitted, and pannable and
-     * zoomable (drag, Ctrl/Cmd + wheel, two fingers, `+`/`-`/`0`). For a diagram that has to be
-     * legible on a phone: instead of rewrapping the specimen into the narrow screen, it is shown
-     * whole and small, and the reader zooms into the part they want. The legend stays outside the
-     * canvas, unscaled. See `@skryensya/core/canvas`.
-     */
-    zoomable: { type: "boolean", default: false, attr: "data-zoomable", trueValue: "" },
-    /* The canvas's own labels, under the same names `Canvas` uses. */
+    /* The canvas's own options, under the same names `Canvas` uses. */
+    ...canvasFitOnlyOption,
     ...canvasLabelOptions,
   },
 
@@ -1567,8 +1553,7 @@ export const annotationContract = {
         "ringPlacement",
         "ringDistance",
         "ringRadius",
-        "numbered",
-        "zoomable",
+        "fitOnly",
         "zoomInLabel",
         "zoomOutLabel",
         "fitLabel",
@@ -1583,9 +1568,9 @@ export const annotationContract = {
          * subject its width. See `annotationParts.key`.
          */
         key: { accepts: "text" },
-        /** A `zoomable` canvas's hint for a one-finger drag. Default: "Use two fingers to move the view". */
+        /** The canvas's hint for a one-finger drag. Default: "Use two fingers to move the view". */
         touchHint: { accepts: "text" },
-        /** A `zoomable` canvas's hint for a plain wheel. Default: "Use Ctrl + scroll to zoom". */
+        /** The canvas's hint for a plain wheel. Default: "Use Ctrl + scroll to zoom". */
         wheelHint: { accepts: "text" },
         /**
          * The labels, as DATA rather than as children, for the reason every collection is data here:
@@ -1615,8 +1600,10 @@ export const annotationContract = {
               },
               /**
                * Whether this label names the FIRST element its selector matches or every one of
-               * them. `all` for a name that is genuinely plural (a breadcrumb crumb, a table row);
-               * `first`, the default, for the singular names that are most of a diagram.
+               * them. `all` for a name that is genuinely plural (a breadcrumb crumb, a table row):
+               * each match gets its own bubble, all wearing the entry's one number (see
+               * `annotationInstances`). `first`, the default, for the singular names that are most of
+               * a diagram.
                */
               match: {
                 type: "enum",
@@ -1662,16 +1649,6 @@ export const annotationContract = {
                 values: [...annotationMarkKinds],
                 attr: annotationAttrs.mark,
               },
-              /**
-               * Where the label lands in its row once the narrow layout clusters labels above and
-               * below the specimen. Omit it for the cluster's own packing; use `end` for a label
-               * that belongs against the far edge without forcing its neighbours to follow it.
-               */
-              mobileAlign: {
-                type: "enum",
-                values: [...annotationMobileAlignments],
-                attr: annotationAttrs.mobileAlign,
-              },
             },
             slots: { children: { accepts: "node", required: true } },
           },
@@ -1686,23 +1663,21 @@ export const annotationContract = {
            level of nesting a screen reader announces and nobody asked for. */
         attrsWhen: [{ option: "label", given: true, attrs: { role: "group" } }],
         children: [
-          /* Unzoomable: the frame sits straight in the figure. */
-          { ...annotationFrame, whenMissing: "zoomable" },
           /*
-           * `zoomable`: the SAME frame inside a canvas. The node carries the canvas's mount point and
-           * class, so the Canvas enhancer attaches to it exactly as it would to a `Canvas`.
+           * The frame inside a canvas. The node carries the canvas's mount point and class, so the
+           * Canvas enhancer attaches to it exactly as it would to a `Canvas`.
            */
           {
             element: "div",
             also: [canvasParts.root],
             mount: canvasAttrs.root,
-            whenGiven: "zoomable",
+            /* On the canvas node, not the figure: it is the canvas's enhancer that reads it. */
+            options: ["fitOnly"],
             children: canvasTemplateChildren(annotationFrame),
           },
           {
             element: "ol",
             part: "legend",
-            whenGiven: "numbered",
             children: [
               {
                 element: "li",

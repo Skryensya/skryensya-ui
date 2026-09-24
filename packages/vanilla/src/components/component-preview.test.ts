@@ -4,7 +4,6 @@ import {
   releaseComponentPreviewStages,
   resetSharedComponentPreviewBinding,
   resetSharedComponentPreviewScreen,
-  prewarmComponentPreviewStages,
   restoreComponentPreviewStages,
 } from "./component-preview.js";
 import { mountSegmented } from "./segmented.js";
@@ -366,20 +365,17 @@ describe("ComponentPreview opt-in enhancer", () => {
     expect(react.srcdoc).toBe("");
   });
 
-  it("prewarms the hidden binding's stage once the page goes idle", async () => {
+  it("boots a visible stage when observer delivery is unavailable", async () => {
     resetBindingState();
+    vi.stubGlobal("IntersectionObserver", undefined);
     document.body.innerHTML = twoBindingStages();
-    const root = document.querySelector<HTMLElement>("[data-sk-component-preview]");
-    const react = root?.querySelector<HTMLIFrameElement>('[data-test-stage="react"]');
-    if (!root || !react) throw new Error("Invalid test markup.");
+    const root = document.querySelector<HTMLElement>("[data-sk-component-preview]")!;
+    const vanilla = root.querySelector<HTMLIFrameElement>('[data-test-stage="vanilla"]')!;
 
-    restoreComponentPreviewStages(root);
-    expect(react.srcdoc).toBe("");
-
-    prewarmComponentPreviewStages(root);
-    /* jsdom has no requestIdleCallback, so the implementation falls back to a timer. */
-    await vi.waitFor(() => expect(react.srcdoc).toContain("<body>react</body>"), { timeout: 3000 });
+    expect(mountAll()).toBe(1);
+    await vi.waitFor(() => expect(vanilla.srcdoc).toContain("<body>vanilla</body>"));
   });
+
 
   it("boots the hidden stage immediately when the reader switches binding", () => {
     resetBindingState();

@@ -1,0 +1,129 @@
+---
+import type { UsageTree } from "@skryensya/core/usage-tree";
+import "@skryensya/core/components/button.css";
+import "@skryensya/core/components/canvas.css";
+import "@skryensya/core/components/diagram.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { getLocale, useTranslations, type Translate } from "../../i18n";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const canvasTree = (translate: Translate): UsageTree => ({
+  contract: "canvas",
+  signature: "Canvas",
+  options: {
+    label: translate("canvas.demoLabel"),
+    zoomInLabel: translate("canvas.zoomInLabel"),
+    zoomOutLabel: translate("canvas.zoomOutLabel"),
+    fitLabel: translate("canvas.fitLabel"),
+  },
+  slots: {
+    touchHint: translate("canvas.touchHint"),
+    wheelHint: translate("canvas.wheelHint"),
+    children: {
+      contract: "diagram",
+      signature: "Diagram",
+      options: { label: translate("canvas.demoLabel") },
+      slots: {
+        nodes: [
+          { options: { node: "draft", shape: "terminal" }, slots: { children: translate("canvas.nodeDraft") } },
+          { options: { node: "review" }, slots: { children: translate("canvas.nodeReview") } },
+          { options: { node: "publish" }, slots: { children: translate("canvas.nodePublish") } },
+          { options: { node: "live", shape: "terminal" }, slots: { children: translate("canvas.nodeLive") } },
+        ],
+        edges: [
+          { options: { from: "draft", to: "review" }, slots: {} },
+          { options: { from: "review", to: "publish" }, slots: { children: translate("canvas.edgeApproved") } },
+          { options: { from: "publish", to: "live" }, slots: {} },
+        ],
+      },
+    },
+  },
+});
+
+const install = `pnpm add @skryensya/core @skryensya/react`;
+const styles = `@import "@skryensya/core/components/canvas.css";`;
+const html = `<div class="sk-canvas" data-sk-canvas aria-label="Flujo de publicación" role="group">
+  <div class="sk-canvas__viewport" tabindex="0">
+    <div class="sk-canvas__content">
+      <!-- un diagrama, plano o anatomía estático -->
+    </div>
+  </div>
+  <!-- controles y avisos los emite el árbol -->
+</div>`;
+const react = `import { Canvas } from "@skryensya/react/canvas";
+
+<Canvas label="Flujo de publicación">
+  <PublicationDiagram />
+</Canvas>`;
+const canvasDemoCss = `.sk-canvas {
+  --sk-canvas-content-inline-size: 30rem;
+}`;
+const hooks = `.mi-canvas {
+  --sk-canvas-max-block-size: 34rem;
+  --sk-canvas-viewport-bg: var(--color-bg-canvas);
+  --sk-canvas-grid-size: 20px;
+  --sk-canvas-grid-color: color-mix(
+    in oklab, var(--color-border-subtle) 35%, transparent
+  );
+}`;
+---
+
+<ComponentPageShell
+  title="Canvas"
+  description={t("canvas.description")}
+  badge={t("canvas.betaBadge")}
+  contractId="canvas"
+  testFiles={["packages/core/src/canvas.test.ts", "packages/vanilla/src/components/canvas.test.ts", "packages/react/src/components/canvas.test.tsx"]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("canvas.lede")} />
+
+    <h3>{t("canvas.whenTitle")}</h3>
+    <p set:html={t("canvas.whenBody")} />
+
+    <h3>{t("canvas.notForTitle")}</h3>
+    <p set:html={t("canvas.notForBody")} />
+
+    <h3>{t("canvas.demoTitle")}</h3>
+    <p set:html={t("canvas.demoBody")} />
+    <ComponentPreview
+      tree={canvasTree(t)}
+      css={canvasDemoCss}
+      label={t("canvas.demoLabel")}
+      flush
+    />
+
+    <h3>{t("canvas.controlsTitle")}</h3>
+    <p set:html={t("canvas.controlsBody")} />
+
+    <h3>{t("canvas.optionsTitle")}</h3>
+    <p set:html={t("canvas.optionsBody")} />
+
+    <p set:html={t("component.reactNote")} />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("canvas.contractItem1")} />
+      <li set:html={t("canvas.contractItem2")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+    <CodeBlock code={styles} label="CSS" lang="css" />
+    <CodeBlock code={html} label="HTML" lang="html" />
+    <CodeBlock code={react} label="React" lang="tsx" />
+
+    <h4>{t("canvas.cssTitle")}</h4>
+    <p set:html={t("canvas.cssBody")} />
+    <CodeBlock code={hooks} label="CSS" lang="css" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("canvas.a11yP1")} />
+    <p set:html={t("canvas.a11yP2")} />
+  </Fragment>
+</ComponentPageShell>

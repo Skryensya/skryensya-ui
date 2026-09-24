@@ -3,6 +3,7 @@ import {
   diagramNodeText,
   diagramParts,
   diagramRoutes,
+  diagramScale,
   diagramZoneHeaders,
   diagramZoneNames,
   isDiagramArrow,
@@ -142,15 +143,18 @@ export function connectDiagram(root: HTMLElement): Cleanup {
     const rootRect = root.getBoundingClientRect();
     /* The overlay resolves `inset: 0` against the PADDING box, so the origin every coordinate is
        written in is the border box shifted in by the border itself. */
-    const originX = rootRect.left + root.clientLeft;
-    const originY = rootRect.top + root.clientTop;
+    /* Inside a zoomed canvas every rect is in screen pixels and the overlay is drawn in the frame's
+       own, so each length is divided back out; the border (`clientLeft`) is a layout length already. */
+    const scale = diagramScale(root, rootRect);
+    const originX = rootRect.left + root.clientLeft * scale;
+    const originY = rootRect.top + root.clientTop * scale;
     const relative = (element: Element): DiagramBox => {
       const rect = element.getBoundingClientRect();
       return {
-        x: rect.left - originX,
-        y: rect.top - originY,
-        width: rect.width,
-        height: rect.height,
+        x: (rect.left - originX) / scale,
+        y: (rect.top - originY) / scale,
+        width: rect.width / scale,
+        height: rect.height / scale,
       };
     };
 
@@ -181,7 +185,7 @@ export function connectDiagram(root: HTMLElement): Cleanup {
        `display: none`) measures zero, which is exactly "nothing to keep clear of". */
     const inputs: DiagramEdgeInput[] = wiring.map((edge, index) => {
       const chip = edges[index]!.getBoundingClientRect();
-      return { ...edge, label: { width: chip.width, height: chip.height } };
+      return { ...edge, label: { width: chip.width / scale, height: chip.height / scale } };
     });
 
     const direction: DiagramDirection =
@@ -198,7 +202,7 @@ export function connectDiagram(root: HTMLElement): Cleanup {
       keepRailsOut: diagramZoneHeaders(regions),
       keepPortsOut: diagramZoneNames(
         regions,
-        zoneLabels.map((label) => label?.getBoundingClientRect().width ?? 0),
+        zoneLabels.map((label) => (label?.getBoundingClientRect().width ?? 0) / scale),
         { direction },
       ),
     });

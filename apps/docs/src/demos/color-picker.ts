@@ -1,5 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { anatomyFigureHtml } from "./annotation-parts";
 
 /*
  * The color picker four ways: full, compact, with presets, and native. The native one has its own
@@ -63,38 +64,29 @@ const colorPickerAnatomySpecimen = (t: Translate): string => `<div
   </div>
 </div>`;
 
-const label = (target: string, side: string, text: string, extra = ""): string =>
-  `<span class="sk-annotation" data-for="${target}" data-side="${side}" data-match="first"${extra} tabindex="0">${text}</span>`;
 
 /** Open panel frozen in flow: trigger, content, area, channels, presets, eyedropper. */
-export const colorPickerAnatomyHtml = (t: Translate): string => `<div
-  class="sk-annotated"
-  data-sk-annotated
-  aria-label="${t("colorPicker.anatomyLabel")}"
-  data-ring-placement="inset"
-  data-ring-distance="2"
-  role="group"
->
-  <div class="sk-annotated__subject" inert>
-    ${colorPickerAnatomySpecimen(t)}
-  </div>
-  ${label(".sk-color-picker", "block-start", "sk-color-picker")}
-  ${label(".sk-color-picker__label", "inline-start", "sk-color-picker__label", ' data-ring-placement="offset" data-ring-distance="2"')}
-  ${label(".sk-color-picker__trigger", "inline-start", "sk-color-picker__trigger")}
-  ${label(".sk-color-picker__swatch", "inline-start", "sk-color-picker__swatch", ' data-ring-placement="offset" data-ring-distance="2"')}
-  ${label(".sk-color-picker__content", "inline-end", "sk-color-picker__content")}
-  ${label(".sk-color-picker__area", "inline-end", "sk-color-picker__area")}
-  ${label(".sk-color-picker__channels", "inline-end", "sk-color-picker__channels", ' data-ring-placement="offset" data-ring-distance="2"')}
-  ${label(".sk-color-picker__swatch-group", "block-end", "sk-color-picker__swatch-group")}
-  ${label(".sk-color-picker__eyedropper", "block-end", "sk-color-picker__eyedropper")}
-  <svg class="sk-annotated__leaders" aria-hidden="true" focusable="false"></svg>
-</div>`;
+export const colorPickerAnatomyHtml = (t: Translate): string => anatomyFigureHtml(t, {
+  label: t("colorPicker.anatomyLabel"),
+  specimen: colorPickerAnatomySpecimen(t),
+  parts: [
+    { for: ".sk-color-picker", side: "block-start", mark: "bracket" },
+    { for: ".sk-color-picker__label", side: "inline-start", ringPlacement: "offset", ringDistance: 2 },
+    { for: ".sk-color-picker__trigger", side: "inline-start" },
+    { for: ".sk-color-picker__swatch", side: "inline-start", ringPlacement: "offset", ringDistance: 2 },
+    { for: ".sk-color-picker__content", side: "inline-end" },
+    { for: ".sk-color-picker__area", side: "inline-end" },
+    { for: ".sk-color-picker__channels", side: "inline-end", ringPlacement: "offset", ringDistance: 2 },
+    { for: ".sk-color-picker__swatch-group", side: "block-end" },
+    { for: ".sk-color-picker__eyedropper", side: "block-end" },
+  ],
+});
 
 /*
  * Put the floating panel back in flow under the trigger, same move Menu's anatomy CSS makes: out of
  * flow the frame sizes to the trigger alone and the panel lands on top of the labels naming it.
  */
-export const colorPickerAnatomyCss = `.sk-annotated {
+export const colorPickerAnatomyCss = `.sk-annotated-figure {
   --sk-annotation-font-family: var(--font-family-code);
 }
 

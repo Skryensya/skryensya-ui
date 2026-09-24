@@ -1,4 +1,4 @@
-/* A `zoomable` figure wraps its frame in a canvas, which brings its own sheet. */
+/* The figure wraps its frame in a canvas, which brings its own sheet. */
 @import url("./canvas.css");
 
 /*
@@ -33,8 +33,10 @@
  * NOTHING HERE IS INTERACTIVE. There is no hover, no focus and no state: a diagram is a drawing.
  * Whether the specimen itself responds to anything is the `inert` option's decision, one level up.
  *
- * `[data-numbered]` trades each label's name for a number and lists the names in a legend under the
- * frame, in the figure beside it rather than in its grid; see `.sk-annotated-figure`.
+ * EVERY LABEL IS A NUMBER. The bubble in the gutter carries its entry's position and the name sits
+ * in a legend under the frame, in the figure beside it rather than in its grid; see
+ * `.sk-annotated-figure`. The whole frame sits on a canvas, laid out at its own width and shown
+ * fitted, so no breakpoint here ever has to reshape it.
  */
 @layer components {
   /*
@@ -155,66 +157,56 @@
   }
 
   /*
-   * THE FIGURE: the drawing, then what explains it from outside. A column, and the legend is its
-   * own row of it, never a cell of the frame's grid.
+   * THE FIGURE IS A CARD OF TWO BANDS. The drawing sits in the first, on the surface; the legend in
+   * the second, on a sunken ground behind a hairline, tighter and quieter. Two containers because
+   * they are two kinds of content: the drawing is what the reader looks at, the legend is what they
+   * look things UP in, and letting them share one ground made the list read as a second drawing
+   * competing with the first.
    */
   .sk-annotated-figure {
+    --sk-annotated-figure-inset: var(--space-inset-md);
     display: flex;
     flex-direction: column;
-    gap: var(--sk-annotated-gap);
     inline-size: 100%;
     max-inline-size: 100%;
-  }
-
-  /*
-   * A FIGURE WITH A LEGEND IS A CARD OF TWO BANDS. The drawing sits in the first, on the surface; the
-   * legend in the second, on a sunken ground behind a hairline, tighter and quieter. Two containers
-   * because they are two kinds of content: the drawing is what the reader looks at, the legend is
-   * what they look things UP in, and letting them share one ground made the list read as a second
-   * drawing competing with the first.
-   *
-   * Keyed on the legend being there rather than on `numbered`, so a figure with nothing under it
-   * stays exactly the unframed drawing every other anatomy diagram is.
-   */
-  .sk-annotated-figure:has(> .sk-annotated__legend) {
-    gap: 0;
     overflow: clip;
     border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-surface);
     background: var(--sk-annotated-surface-bg);
   }
 
-  /*
-   * THE CARD'S PADDING IS CHARGED TO THE SPECIMEN, so it is the smallest that still reads as a
-   * margin, and smaller again on a narrow screen: at `lg` a phone-width Accordion lost enough width
-   * to break its title mid-word.
-   */
-  .sk-annotated-figure:has(> .sk-annotated__legend) {
-    --sk-annotated-figure-inset: var(--space-inset-md);
-  }
-
+  /* The legend's padding is the one inset a narrow screen still pays for at full size, so it tightens. */
   @media (max-width: 40rem) {
-    .sk-annotated-figure:has(> .sk-annotated__legend) {
+    .sk-annotated-figure {
       --sk-annotated-figure-inset: var(--space-inset-sm);
     }
   }
 
-  .sk-annotated-figure:has(> .sk-annotated__legend) > .sk-annotated {
-    box-sizing: border-box;
-    padding: var(--sk-annotated-figure-inset);
-  }
-
   /*
-   * A ZOOMABLE FIGURE: the frame sits on a canvas. The frame keeps a margin inside it (scaled with
-   * everything else), and inside a card the canvas drops its own border, since the card already has
-   * one and the legend band below is the only division the figure wants.
+   * THE FRAME SITS ON A CANVAS. It keeps a margin inside it (scaled with everything else), and the
+   * canvas drops its own border, since the card already has one and the legend band below is the
+   * only division the figure wants.
    */
   .sk-canvas__content > .sk-annotated {
     box-sizing: border-box;
     padding: var(--space-inset-md);
   }
 
-  .sk-annotated-figure:has(> .sk-annotated__legend) > .sk-canvas {
+  /*
+   * THE DRAWING'S DESIGN WIDTH: the room it is given, never less than a desktop column.
+   *
+   * A bare canvas lays its content out at `max-content`, which is right for a plan that has one width
+   * of its own and wrong for a specimen with prose in it: an open Details panel's paragraph became
+   * one 1400px line, and the whole diagram was fitted down to 44% on a desktop page with room to
+   * spare. Capped at the viewport, text wraps the way it would on the page and a desktop diagram
+   * shows at 100%. Floored at `36rem`, a phone still gets the desktop drawing, scaled, rather than one
+   * rewrapped to its width, which is what the canvas is for.
+   */
+  .sk-annotated-figure .sk-canvas__content {
+    max-inline-size: max(100%, 36rem);
+  }
+
+  .sk-annotated-figure > .sk-canvas {
     border: 0;
     border-radius: 0;
     background: transparent;
@@ -222,7 +214,7 @@
 
   .sk-annotated-figure > .sk-annotated__legend {
     border-block-start: 1px solid var(--color-border-subtle);
-    padding: var(--sk-annotated-figure-inset, var(--space-inset-md));
+    padding: var(--sk-annotated-figure-inset);
     background: var(--sk-annotated-legend-bg);
   }
 
@@ -349,7 +341,6 @@
     font-weight: var(--sk-annotation-font-weight);
     line-height: var(--sk-annotation-line-height);
     text-align: center;
-    /* A part name is one token: a second line makes a label ambiguous and its leader unreadable. */
     white-space: nowrap;
     cursor: default;
     transition:
@@ -359,13 +350,12 @@
   }
 
   /*
-   * THE ONE BEING READ. `:hover` and `:focus-visible` alike, because the labels are focusable
-   * precisely so this reveal is reachable without a pointer (see the contract's note on `tabindex`),
-   * and `[data-sk-active]` because the binding writes that on the label at the same moment it writes
-   * it on the mark: the two have to light up together or the pairing the reveal exists to show is
+   * THE ONE BEING READ. `:hover` for the pointer, and `[data-sk-active]` because the binding writes
+   * that on the number at the same moment it writes it on the mark and on the legend entry (the one
+   * a keyboard reaches): they have to light up together or the pairing the reveal exists to show is
    * exactly what goes missing.
    */
-  .sk-annotation:is(:hover, :focus-visible, [data-sk-active]) {
+  .sk-annotation:is(:hover, [data-sk-active]) {
     border-color: var(--sk-annotation-bubble-border-color-active);
     background: var(--sk-annotation-bubble-wash), var(--sk-annotation-bubble-bg-active);
     color: var(--sk-annotation-color-active);
@@ -390,19 +380,15 @@
   }
 
   /*
-   * NUMBERED: the bubble keeps its gutter, its leader and its reveal, and trades its name for its
-   * position. A COUNTER, not text: the number is the label's place in the markup, the legend's
-   * `<li>` is the same place in the same order, and nothing an author typed can make the two
-   * disagree.
-   *
-   * The counter counts in DOM order and the narrow layout reorders with flex `order`, which is the
-   * behaviour wanted: the number names an entry, not a position on screen.
+   * THE NUMBER: the bubble's content is its position. A COUNTER, not text: the number is the label's
+   * place in the markup, the legend's `<li>` is the same place in the same order, and nothing an
+   * author typed can make the two disagree.
    */
-  .sk-annotated[data-numbered] {
+  .sk-annotated {
     counter-reset: sk-annotation;
   }
 
-  .sk-annotated[data-numbered] > .sk-annotation {
+  .sk-annotated > .sk-annotation {
     counter-increment: sk-annotation;
     /* Round for one digit, a short pill for two: at least as wide as it is tall. */
     min-inline-size: calc(
@@ -412,7 +398,17 @@
     font-variant-numeric: tabular-nums;
   }
 
-  .sk-annotated[data-numbered] > .sk-annotation::before {
+  /*
+   * THE SAME NUMBER, AGAIN. A plural entry gets one bubble per part it names, and every bubble after
+   * the first is a binding-written copy placed right after it (see `annotationInstances`). A copy
+   * does not count, so it shows the value its first bubble just set: one name, one number, as many
+   * bubbles as there are parts.
+   */
+  .sk-annotated > .sk-annotation[data-sk-instance] {
+    counter-increment: none;
+  }
+
+  .sk-annotated > .sk-annotation::before {
     content: counter(sk-annotation);
   }
 
@@ -509,99 +505,6 @@
     grid-area: 3 / 2;
     justify-self: start;
     align-self: start;
-  }
-
-  /*
-   * A narrow screen has room to read the specimen or the labels beside it, never both. Keep the
-   * drawing rather than shrinking it: the four gutters become two CLUSTERS, one above and one below
-   * the specimen. They participate in normal flow, so the frame grows to contain every label; a
-   * translated lane cannot push a bubble beyond the viewport. The bindings retain the measured boxes
-   * for their leaders but skip lane distribution at this breakpoint.
-   *
-   * THE CLUSTERS WRAP, they are not columns, and the difference is the whole height of the diagram.
-   * One label per line is the obvious reading of "stack them", and it charges the frame a full line
-   * for a chip that is fifty pixels wide: FileUpload's fifteen names took 543px of column beside an
-   * empty right half, turning a 515px drawing into a 1058px one. A `row wrap` cluster spends that
-   * width instead, and the same fifteen names land in four rows.
-   *
-   * THE SUBJECT FORCES ITS OWN LINE (`flex: 1 0 100%`), which is what keeps this ONE wrapping
-   * container readable as three bands rather than a bag of items: every `order: 0` label fills rows
-   * above it, the subject can never share a row with a label, and the `order: 2` labels start a
-   * fresh row under it. No wrapper element, and therefore nothing new in the authored markup.
-   *
-   * A NUMBERED FRAME IS EXEMPT, AND SO IS ONE ON A CANVAS (which is laid out at its own width and
-   * shown scaled, so the narrow screen never reaches it). Its gutters are one bubble wide, so they fit any screen, and keeping
-   * them is what keeps each number level with its part: clustered, every leader crosses the whole
-   * specimen to reach it. Both bindings skip the same query for it, so they keep distributing.
-   */
-  @media (max-width: 40rem) {
-    .sk-annotated:not([data-numbered], .sk-canvas__content > *) {
-      display: flex;
-      flex-flow: row wrap;
-      align-items: flex-start;
-      align-content: flex-start;
-      /* The cluster's own spacing, not the diagram's: `--sk-annotated-gap` is the clearance between
-         the specimen and a margin, and between two chips in a row it reads as a gulf. The subject
-         keeps the real gap as a margin below. */
-      gap: var(--space-inline-xs) var(--space-inline-sm);
-    }
-
-    .sk-annotated:not([data-numbered], .sk-canvas__content > *) > .sk-annotated__subject {
-      order: 1;
-      /* `100%` basis: a line of its own, whatever the row above it was doing. */
-      flex: 1 0 100%;
-      min-inline-size: 0;
-      margin-block: var(--sk-annotated-gap);
-      position: relative;
-      z-index: 0;
-    }
-
-    /* `position: relative` here also returns a bracket label to the cluster: there is no gutter for
-       its line to run in, and the binding draws it as a ring. */
-    .sk-annotated:not([data-numbered], .sk-canvas__content > *) > .sk-annotation {
-      /*
-       * The subject's filter creates a stacking context. Above it, labels remain readable even where
-       * their expanded mobile stack reaches the specimen's visual edge; leaders sit below the labels.
-       */
-      position: relative;
-      z-index: 2;
-      inline-size: fit-content;
-      max-inline-size: 100%;
-      white-space: normal;
-      overflow-wrap: anywhere;
-      font-size: calc(var(--sk-annotation-font-size) * 0.875);
-      line-height: calc(var(--sk-annotation-line-height) * 0.875);
-    }
-
-    .sk-annotated:not([data-numbered], .sk-canvas__content > *) > .sk-annotation:is([data-side="inline-start"], [data-side="block-start"]) {
-      order: 0;
-    }
-
-    .sk-annotated:not([data-numbered], .sk-canvas__content > *) > .sk-annotation:is([data-side="inline-end"], [data-side="block-end"]) {
-      order: 2;
-    }
-
-    /*
-     * END-ALIGNED IS A MARGIN NOW, not `align-self`. In the column this used to be, the cross axis
-     * was the inline one and `flex-end` put a chip against the far edge; in a wrapping row the cross
-     * axis is the block one, where the same declaration would only move the chip DOWN inside its own
-     * row. An auto inline margin says the thing the option has always meant: take the rest of the
-     * row, and sit at its end.
-     */
-    .sk-annotated:not([data-numbered], .sk-canvas__content > *) > .sk-annotation[data-mobile-align="end"] {
-      margin-inline-start: auto;
-    }
-
-    /* Last, and on a line of its own: a footnote about the drawing belongs under all of it, not
-       wrapped into the cluster of names above. */
-    .sk-annotated:not([data-numbered], .sk-canvas__content > *) > .sk-annotated__key {
-      order: 3;
-      flex: 1 0 100%;
-    }
-
-    .sk-annotated:not([data-numbered], .sk-canvas__content > *) > .sk-annotated__leaders {
-      z-index: 1;
-    }
   }
 
   /*

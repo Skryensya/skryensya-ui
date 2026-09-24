@@ -278,12 +278,16 @@ const registrations: readonly Registration[] = [
     load: async () => (await import("../components/diagram.js")).mountDiagram,
   },
   /*
-   * Before the annotated frame: an `Annotated` that is `zoomable` embeds a canvas, and its leaders
+   * Before the annotated frame: an `Annotated` embeds a canvas, and its leaders
    * are measured scale-aware, so the order is not load-bearing; it simply reads in nesting order.
    */
   {
     selector: "[data-sk-canvas]",
     load: async () => (await import("../components/canvas.js")).mountCanvas,
+  },
+  {
+    selector: "dialog[data-sk-lightbox]",
+    load: async () => (await import("../components/lightbox.js")).mountLightbox,
   },
   /*
    * LAST ON PURPOSE, and it is the only entry in this table whose POSITION means anything.

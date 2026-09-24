@@ -1,6 +1,8 @@
+import { PLACEHOLDER_HREF } from "../lib/placeholder-hrefs";
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 import { genericIcon } from "./anatomy-subject";
+import { anatomyCanvas, anatomyHints } from "./annotation-parts";
 
 /*
  * Each preview isolates one decision. The page is a teaching sequence, not
@@ -137,7 +139,7 @@ export const buttonIconOnlyTree = (t: Translate): UsageTree => ({
  * site, so it opens in a new tab and the launch icon trails the label: the label names where it goes,
  * the icon is the "and it leaves this tab" footnote, the same order the docs' own external links use.
  */
-export const buttonAsLinkTree = (t: Translate, href: string): UsageTree => ({
+export const buttonAsLinkTree = (t: Translate, href: string = PLACEHOLDER_HREF): UsageTree => ({
   contract: "button",
   signature: "Button.navigation",
   options: { tone: "accent", href },
@@ -224,8 +226,9 @@ export const tileButtonTree = (_t: Translate): UsageTree => ({
 export const buttonAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("button.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("button.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "button",
       signature: "Button.action",

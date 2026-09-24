@@ -5,7 +5,7 @@ import {
   treeViewMinimalNodes,
   treeViewProjectNodes,
 } from "./data/tree-view";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /* TreeView state, hierarchy, disabled nodes and event feedback share one node model, which is data:
  * see `data/tree-view.ts`. */
@@ -17,8 +17,9 @@ import { namePart } from "./annotation-parts";
 export const treeViewAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("treeViewPage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("treeViewPage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "tree-view",
       signature: "TreeView",
@@ -47,7 +48,7 @@ export const treeViewAnatomyTree = (t: Translate): UsageTree => ({
       },
     },
     items: [
-      namePart(".sk-tree-view", "block-start"),
+      namePart(".sk-tree-view", "block-start", { mark: "bracket" }),
       namePart(".sk-tree-view__tree", "inline-start"),
       namePart(".sk-tree-view__branch-control", "inline-start"),
       namePart(".sk-tree-view__branch-indicator", "inline-start"),

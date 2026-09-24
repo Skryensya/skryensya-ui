@@ -1,6 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 import dismissScript from "./scripts/toast-dismiss.ts?raw";
 import emitScript from "./scripts/toast-emit.ts?raw";
 import stackScript from "./scripts/toast-stack.ts?raw";
@@ -12,8 +12,9 @@ import stackScript from "./scripts/toast-stack.ts?raw";
 export const toastAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("toastPage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("toastPage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "content",
       signature: "ToastRegion",
@@ -40,7 +41,7 @@ export const toastAnatomyTree = (t: Translate): UsageTree => ({
       },
     },
     items: [
-      namePart(".sk-toast-region", "block-start"),
+      namePart(".sk-toast-region", "block-start", { mark: "bracket" }),
       namePart(".sk-callout", "inline-start"),
       namePart(".sk-callout__icon", "inline-start"),
       namePart(".sk-callout__content", "inline-end", { ringPlacement: "offset", ringDistance: 6 }),

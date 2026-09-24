@@ -1,6 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /*
  * The control, not the chrome around it. Both trees still sit inside a FormField, because a control
@@ -30,8 +30,9 @@ import { namePart } from "./annotation-parts";
 export const inputAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("inputPage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("inputPage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "layout",
       signature: "Stack",

@@ -27,6 +27,8 @@ export type CanvasProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   minZoom?: number;
   /** The largest scale a reader can zoom in to. Default 4. */
   maxZoom?: number;
+  /** Only fit the content: no zoom bar, no gestures, not a tab stop. It still refits on resize. */
+  fitOnly?: boolean;
   zoomInLabel?: string;
   zoomOutLabel?: string;
   fitLabel?: string;
@@ -46,6 +48,7 @@ export function Canvas({
   label,
   minZoom = CANVAS_MIN_ZOOM,
   maxZoom = CANVAS_MAX_ZOOM,
+  fitOnly = false,
   zoomInLabel = zoomInOption.default,
   zoomOutLabel = zoomOutOption.default,
   fitLabel = fitOption.default,
@@ -58,8 +61,8 @@ export function Canvas({
   useEffect(() => {
     const root = rootRef.current;
     if (!root) return;
-    return connectCanvasView(root, { minZoom, maxZoom });
-  }, [minZoom, maxZoom]);
+    return connectCanvasView(root, { minZoom, maxZoom, fitOnly });
+  }, [minZoom, maxZoom, fitOnly]);
 
   return (
     <div
@@ -68,9 +71,11 @@ export function Canvas({
       className={cx(canvasParts.root, className)}
       ref={rootRef}
       role={label ? "group" : undefined}
+      {...{ [canvasAttrs.fitOnly]: fitOnly ? "" : undefined }}
     >
       <CanvasParts
         fitLabel={fitLabel}
+        fitOnly={fitOnly}
         touchHint={touchHint}
         wheelHint={wheelHint}
         zoomInLabel={zoomInLabel}
@@ -84,6 +89,7 @@ export function Canvas({
 
 type CanvasPartsProps = {
   children: ReactNode;
+  fitOnly?: boolean;
   zoomInLabel: string;
   zoomOutLabel: string;
   fitLabel: string;
@@ -93,21 +99,26 @@ type CanvasPartsProps = {
 
 /**
  * Everything below the root, shared with `Annotated`, which renders the same structure around its
- * own frame when it is `zoomable` (the template does the same with `canvasTemplateChildren`).
+ * own frame (the template does the same with `canvasTemplateChildren`).
  */
 export function CanvasParts({
   children,
+  fitOnly = false,
   zoomInLabel,
   zoomOutLabel,
   fitLabel,
   touchHint,
   wheelHint,
 }: CanvasPartsProps) {
+  const viewport = (
+    <div className={canvasParts.viewport} tabIndex={fitOnly ? undefined : 0}>
+      <div className={canvasParts.content}>{children}</div>
+    </div>
+  );
+  if (fitOnly) return viewport;
   return (
     <>
-      <div className={canvasParts.viewport} tabIndex={0}>
-        <div className={canvasParts.content}>{children}</div>
-      </div>
+      {viewport}
       <div className={canvasParts.controls}>
         <Control action="zoom-in" icon="zoom-in" label={zoomInLabel} />
         <Control action="zoom-out" icon="zoom-out" label={zoomOutLabel} />
@@ -143,12 +154,12 @@ function Control({ action, icon, label }: { action: CanvasAction; icon: string; 
 export function useCanvasView(
   ref: { readonly current: HTMLElement | null },
   enabled: boolean,
-  options: { minZoom?: number; maxZoom?: number } = {},
+  options: { minZoom?: number; maxZoom?: number; fitOnly?: boolean } = {},
 ): void {
-  const { minZoom, maxZoom } = options;
+  const { minZoom, maxZoom, fitOnly } = options;
   useEffect(() => {
     const root = ref.current;
     if (!enabled || !root) return;
-    return connectCanvasView(root, { minZoom, maxZoom });
-  }, [enabled, minZoom, maxZoom, ref]);
+    return connectCanvasView(root, { minZoom, maxZoom, fitOnly });
+  }, [enabled, minZoom, maxZoom, fitOnly, ref]);
 }

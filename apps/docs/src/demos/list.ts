@@ -1,6 +1,7 @@
+import { placeholderHrefs } from "../lib/placeholder-hrefs";
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 import { genericIcon } from "./anatomy-subject";
 
 /* The anatomy ladder. Each demo adds one slot to the row before it. */
@@ -12,8 +13,9 @@ import { genericIcon } from "./anatomy-subject";
 export const listAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("listPage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("listPage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "list",
       signature: "List",
@@ -37,7 +39,7 @@ export const listAnatomyTree = (t: Translate): UsageTree => ({
       ],
     },
     items: [
-      namePart(".sk-list", "block-start"),
+      namePart(".sk-list", "block-start", { mark: "bracket" }),
       namePart(".sk-list__item", "inline-start"),
       namePart(".sk-list__leading", "inline-start"),
       namePart(".sk-list__content", "inline-end", { ringPlacement: "offset", ringDistance: 6 }),
@@ -133,7 +135,7 @@ export const listTrailingTree = (t: Translate): UsageTree => ({
  *
  * The hrefs come from the page: they point at real docs routes, which differ per locale.
  */
-export const listLinksTree = (t: Translate, hrefs: readonly string[]): UsageTree => ({
+export const listLinksTree = (t: Translate, hrefs: readonly string[] = placeholderHrefs()): UsageTree => ({
   contract: "list",
   signature: "List",
   attrs: { "aria-label": t("demo.list.resources") },
@@ -165,7 +167,7 @@ export const listLinksTree = (t: Translate, hrefs: readonly string[]): UsageTree
  * of `ListItem` and not of `ListItemLink`, so a link that is disabled has no expression. The demo
  * keeps four rows instead of five, and the disabled state is taught by `ListItem` above.
  */
-export const listFullTree = (t: Translate, hrefs: readonly string[]): UsageTree => ({
+export const listFullTree = (t: Translate, hrefs: readonly string[] = placeholderHrefs()): UsageTree => ({
   contract: "list",
   signature: "List",
   options: { density: "compact" },

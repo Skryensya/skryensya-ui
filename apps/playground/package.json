@@ -5,7 +5,7 @@
   "type": "module",
   "description": "The playground: every docs example, opened in an editor that runs it.",
   "scripts": {
-    "dev": "astro dev stop && pnpm run sandbox && astro dev --port 4174",
+    "dev": "pnpm run sandbox && astro dev --port 4174",
     "check": "astro check",
     "build": "pnpm run sandbox && astro build",
     "preview": "astro preview",

@@ -31,6 +31,7 @@ import {
   isDiagramShape,
   type DiagramBox,
   type DiagramNodeMeasurement,
+  diagramScale,
 } from "./diagram.js";
 
 /*
@@ -1336,5 +1337,20 @@ describe("diagram reading: what a screen reader is given", () => {
       [{ from: "a", to: "gone", label: "Yes" }],
     );
     expect(routes[0]).toEqual([]);
+  });
+});
+
+describe("diagramScale: a drawing inside a zoomed canvas", () => {
+  const frameOf = (offsetWidth: number) => ({ offsetWidth }) as HTMLElement;
+
+  it("is the rect's width over the layout box's, which is what a transform scales", () => {
+    expect(diagramScale(frameOf(300), { width: 600 })).toBe(2);
+    expect(diagramScale(frameOf(400), { width: 300 })).toBe(0.75);
+  });
+
+  it("is 1 for an unscaled drawing and for one with no box yet, never a division by zero", () => {
+    expect(diagramScale(frameOf(300), { width: 300 })).toBe(1);
+    expect(diagramScale(frameOf(0), { width: 0 })).toBe(1);
+    expect(diagramScale(frameOf(300), { width: 0 })).toBe(1);
   });
 });

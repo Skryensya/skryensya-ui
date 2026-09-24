@@ -1,19 +1,19 @@
-import { collectionItems, type UsageTree } from "@skryensya/core/usage-tree";
+import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { anatomyCanvas, anatomyHints } from "./annotation-parts";
 
 /*
- * THREE DEMOS, because the component makes three separate claims and no single frame makes all
- * three at once.
+ * FOUR DEMOS, because the component makes four separate claims and no single frame makes all of
+ * them at once. Every one is the same form, the only one there is: numbers in the gutters, names in
+ * the legend, the whole drawing on a canvas.
  *
- *   annotationAnatomyTree   the one the component exists for: a whole Accordion with every part it
- *                           renders, frozen, with a label on each. Eight labels across all four
- *                           gutters, which is also the densest case the distribution ever has to
- *                           resolve on this page.
- *   annotationNumberedTree  the same Accordion with `numbered`: numbers in the gutters, names
- *                           in a legend under the frame.
+ *   annotationAnatomyTree   the one the component exists for: a whole live Accordion with every
+ *                           part it renders, areas bracketed and things ringed. The Accordion page
+ *                           shows this same figure.
  *   annotationSidesTree     the four gutters on one small specimen, so "inline-start" and friends
  *                           stop being words and become positions.
- *   annotationElbowTree     the leader itself: targets deliberately bunched so their labels cannot
+ *   annotationPluralTree    one name, several parts: `match: "all"`.
+ *   annotationElbowTree     the leader itself: targets deliberately bunched so their numbers cannot
  *                           all sit level with them, which is the only way to SEE the 45-degree
  *                           knee the contract promises.
  *
@@ -24,9 +24,9 @@ import type { Translate } from "../i18n";
 /*
  * The demos' own type, passed to BOTH bindings through `ComponentPreview`'s `css` prop.
  *
- * The component deliberately inherits its family (a label is not always a class name: it is whatever
- * the diagram is naming), and every label on this page IS one, so the page asks for the code family
- * the same way it would in prose. This is the hook doing its job, not a gap in the default.
+ * The component deliberately inherits its family (a name is not always a class name: it is whatever
+ * the diagram is naming), and every name in these legends IS one, so the page asks for the code
+ * family the same way it would in prose. This is the hook doing its job, not a gap in the default.
  */
 export const annotationDemoCss = `.sk-annotated-figure {
   --sk-annotation-font-family: var(--font-family-code);
@@ -37,7 +37,7 @@ export const annotationDemoCss = `.sk-annotated-figure {
  * current page visible, so the drawing can name both the repeated visible items and the one singular
  * control that represents the collapsed ancestors.
  */
-export const annotationPluralCss = `.sk-annotated {
+export const annotationPluralCss = `.sk-annotated-figure {
   --sk-annotation-font-family: var(--font-family-code);
   --sk-annotated-gap: var(--space-stack-xl);
 }
@@ -70,27 +70,33 @@ const accordionSection = (
 });
 
 /*
- * THE FIRST SECTION IS OPEN (`defaultOpen`) and the second is closed, and that is the whole reason
- * this specimen has two of them: `sk-tile__expandable-content` only exists to be pointed at while
- * something is expanded, and the chevron only shows both of its states when both states are on
- * screen. One section would have documented half the anatomy.
- *
- * `inert` is what makes it a specimen: the accordion still MOUNTS (every part it renders at rest is
- * there to be labelled), it simply never responds. Clicking a trigger does nothing, Tab walks past
- * the whole thing, and a screen reader is not marched through a control that refuses to work.
+ * The first section opens by default and the second stays closed so every rendered Accordion part
+ * exists in the drawing. This is a frozen reference: it names those states without changing under
+ * the reader. Interaction belongs in the Accordion's usage demos, not in its anatomy.
  *
  * `sk-accordion__trigger-heading` IS NOT LABELLED HERE, and its absence is the honest answer rather
  * than an oversight. That part is `display: contents` (accordion.css: carrying `role="heading"` must
  * not insert a box between a section and its button), so it has no box for a leader to reach. The
- * contract handles it, `isPointable` drops the leader and keeps the label, but a label pointing at
+ * contract handles it, `isPointable` drops the leader and keeps the number, but a number pointing at
  * nothing in the one demo that teaches the component would read as a bug rather than as a rule. The
  * page says so in prose instead.
+ *
+ * THE MARKS ARE PLANNED FOR NUMBERS:
+ *
+ *   AREAS GET BRACKETS. The accordion, the open item, its trigger and its panel are regions that
+ *   hold other parts, so a leader into any of them lands on some child. Their numbers sit on
+ *   dimension lines along the inline-end side instead, nested outward: the trigger and the panel
+ *   share the inner track (they do not overlap), then the item, then the accordion.
+ *   THINGS GET RINGS, from the NEAREST gutter. The title and the description start at the card's
+ *   inline-start edge, so their numbers do too; the chevron takes block-start, the one side where
+ *   its leader does not cross the brackets.
  */
 export const annotationAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("annotation.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("annotation.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "accordion",
       signature: "Accordion",
@@ -111,10 +117,13 @@ export const annotationAnatomyTree = (t: Translate): UsageTree => ({
       ],
     },
     items: [
-      { options: { for: ".sk-accordion", side: "block-start" }, slots: { children: "sk-accordion" } },
-      { options: { for: ".sk-tile", side: "inline-start" }, slots: { children: "sk-tile" } },
       {
-        options: { for: ".sk-tile__trigger", side: "inline-start" },
+        options: { for: ".sk-accordion", side: "inline-end", mark: "bracket" },
+        slots: { children: "sk-accordion" },
+      },
+      { options: { for: ".sk-tile", side: "inline-end", mark: "bracket" }, slots: { children: "sk-tile" } },
+      {
+        options: { for: ".sk-tile__trigger", side: "inline-end", mark: "bracket" },
         slots: { children: "sk-tile__trigger" },
       },
       /*
@@ -128,7 +137,7 @@ export const annotationAnatomyTree = (t: Translate): UsageTree => ({
       {
         options: {
           for: ".sk-tile__title",
-          side: "inline-end",
+          side: "inline-start",
           ringPlacement: "offset",
           ringDistance: 4,
         },
@@ -137,74 +146,23 @@ export const annotationAnatomyTree = (t: Translate): UsageTree => ({
       {
         options: {
           for: ".sk-tile__description",
-          side: "inline-end",
+          side: "inline-start",
           ringPlacement: "offset",
           ringDistance: 4,
         },
         slots: { children: "sk-tile__description" },
       },
       {
-        options: { for: ".sk-tile__chevron", side: "inline-end" },
+        options: { for: ".sk-tile__chevron", side: "block-start" },
         slots: { children: "sk-tile__chevron" },
       },
       {
-        options: { for: ".sk-tile__expandable-content", side: "block-end" },
+        options: { for: ".sk-tile__expandable-content", side: "inline-end", mark: "bracket" },
         slots: { children: "sk-tile__expandable-content" },
       },
     ],
   },
 });
-
-/*
- * THE SAME ACCORDION, NUMBERED. The same specimen and the same entries as the anatomy demo above, so
- * the two previews can be compared directly, with the marks re-planned for numbers:
- *
- *   AREAS GET BRACKETS. The accordion, the open item, its trigger and its panel are regions that
- *   hold other parts, so a leader into any of them lands on some child. Their numbers sit on
- *   dimension lines along the inline-end side instead, nested outward: the trigger and the panel
- *   share the inner track (they do not overlap), then the item, then the accordion.
- *   THINGS GET RINGS, from the NEAREST gutter. The title and the description start at
- *   the card's inline-start edge, so their numbers do too; the chevron takes block-start, the one
- *   side where its leader does not cross the brackets.
- */
-const numberedEntries: Record<string, Readonly<Record<string, string>>> = {
-  ".sk-accordion": { side: "inline-end", mark: "bracket" },
-  ".sk-tile": { side: "inline-end", mark: "bracket" },
-  ".sk-tile__trigger": { side: "inline-end", mark: "bracket" },
-  ".sk-tile__expandable-content": { side: "inline-end", mark: "bracket" },
-  ".sk-tile__title": { side: "inline-start" },
-  ".sk-tile__description": { side: "inline-start" },
-  ".sk-tile__chevron": { side: "block-start" },
-};
-
-export const annotationNumberedTree = (t: Translate): UsageTree => {
-  const tree = annotationAnatomyTree(t);
-  return {
-    ...tree,
-    /*
-     * ZOOMABLE, because this is the figure that has to survive a phone: laid out at its own width
-     * and shown fitted, with two fingers (or Ctrl + wheel, or the zoom bar) to get close to a part.
-     */
-    options: {
-      ...tree.options,
-      label: t("annotation.numberedLabel"),
-      numbered: true,
-      zoomable: true,
-      zoomInLabel: t("annotation.zoomInLabel"),
-      zoomOutLabel: t("annotation.zoomOutLabel"),
-      fitLabel: t("annotation.fitLabel"),
-    },
-    slots: {
-      ...tree.slots,
-      touchHint: t("annotation.touchHint"),
-      wheelHint: t("annotation.wheelHint"),
-      items: collectionItems(tree.slots?.items).map((item) => {
-        const entry = numberedEntries[String(item.options?.for)];
-        return entry ? { ...item, options: { ...item.options, ...entry } } : item;
-      }),
-    },
-  };
-};
 
 /*
  * The four gutters, on a specimen small enough that all four fit on screen at once.
@@ -219,14 +177,16 @@ export const annotationSidesTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
   options: {
+    ...anatomyCanvas(t),
     label: t("annotation.sidesLabel"),
     inert: true,
     ringPlacement: "offset",
     ringDistance: 4,
   },
   slots: {
+    ...anatomyHints(t),
     /* The four sides demo is also where the key is shown, because it is the diagram on this page
-       with a label on every side: the corner it uses is visibly the one nothing else reaches. */
+       with a number on every side: the corner it uses is visibly the one nothing else reaches. */
     key: "sk-stat = " + t("annotation.keyMeaning"),
     subject: {
       contract: "stat",
@@ -251,8 +211,8 @@ export const annotationSidesTree = (t: Translate): UsageTree => ({
  * Every other demo on this page names singular parts: one root, one trigger, one panel. A breadcrumb
  * has none of those. `sk-breadcrumb__item` is not the first crumb, it is ALL of the visible ones.
  * Ringing the leftmost and leaving the rest bare would be saying something false about the part,
- * which is why `match: "all"` exists: one label, one bubble, and a leader out to each thing the
- * name covers.
+ * which is why `match: "all"` exists: one entry, and a bubble of its own for each thing the name
+ * covers, every one of them wearing the entry's number.
  *
  * The narrow specimen also collapses its middle ancestors. That state has one singular part:
  * `sk-breadcrumb__collapse-trigger`. It sits beside the repeated visible items, which makes the
@@ -260,18 +220,20 @@ export const annotationSidesTree = (t: Translate): UsageTree => ({
  *
  * `sk-breadcrumb__current` stays singular on purpose, and the contrast is the point of putting it
  * in the same drawing: a trail has exactly one current page, so that name IS singular and its
- * single leader says so. Two kinds of name, told apart by how many lines leave the bubble.
+ * single bubble says so. Two kinds of name, told apart by how many times a number appears.
  */
 export const annotationPluralTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
   options: {
+    ...anatomyCanvas(t),
     label: t("annotation.pluralLabel"),
     inert: true,
     ringPlacement: "offset",
     ringDistance: 3,
   },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "breadcrumb",
       signature: "Breadcrumb",
@@ -313,11 +275,11 @@ export const annotationPluralTree = (t: Translate): UsageTree => ({
 /*
  * THE KNEE, and the first version of this demo did not produce one.
  *
- * Four List rows 48px apart, labelled from the side, is not a hard case: an 18px label plus a 6px
- * gap needs 24, so every label sat level with its own row and every leader came out as one straight
+ * Four List rows 48px apart, numbered from the side, is not a hard case: an 18px bubble plus a 6px
+ * gap needs 24, so every number sat level with its own row and every leader came out as one straight
  * segment. The demo claimed a knee and drew four ruler lines.
  *
- * Side BY SIDE is what forces it. Four chips in a row share one y, so all four labels want the same
+ * Side BY SIDE is what forces it. Four chips in a row share one y, so all four numbers want the same
  * millimetre of one gutter, the distribution has to fan them out, and then every leader but the one
  * that happened to land level has to turn to get back. Which is the whole claim: it turns ONCE, at
  * 45 degrees, and never twice.
@@ -325,8 +287,9 @@ export const annotationPluralTree = (t: Translate): UsageTree => ({
 export const annotationElbowTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("annotation.elbowLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("annotation.elbowLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "layout",
       signature: "Inline",
@@ -346,22 +309,22 @@ export const annotationElbowTree = (t: Translate): UsageTree => ({
     },
     items: [
       {
-        options: { for: ".sk-badge:nth-child(1)", side: "inline-start", mobileAlign: "end" },
+        options: { for: ".sk-badge:nth-child(1)", side: "inline-start" },
         slots: { children: ":nth-child(1)" },
       },
       {
-        options: { for: ".sk-badge:nth-child(2)", side: "inline-start", mobileAlign: "end" },
+        options: { for: ".sk-badge:nth-child(2)", side: "inline-start" },
         slots: { children: ":nth-child(2)" },
       },
       /*
        * FOUR BEFORE THREE, and the inversion is the point rather than a slip.
        *
-       * Four labels that want the same millimetre are fanned out in AUTHORING order (the
+       * Four numbers that want the same millimetre are fanned out in AUTHORING order (the
        * distribution sorts by desired position and ties break on index, `distributeLanes`), so the
        * order they are written in is the order they end up down the gutter. In the `inline-end`
-       * gutter the nearest target is the LAST chip, so listing the third first put the far label
+       * gutter the nearest target is the LAST chip, so listing the third first put the far number
        * nearest the frame and crossed the two leaders over each other. Nearest target, nearest
-       * label: nothing crosses.
+       * number: nothing crosses.
        */
       {
         options: { for: ".sk-badge:nth-child(4)", side: "inline-end" },

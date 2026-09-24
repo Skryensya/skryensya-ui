@@ -1,6 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 type UIKey = Parameters<Translate>[0];
 
@@ -10,8 +10,9 @@ const tag = (t: Translate, key: UIKey) => ({ slots: { label: t(key) } });
 export const tagsInputAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("tagsInputPage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("tagsInputPage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "tags-input",
       signature: "TagsInput",
@@ -24,7 +25,7 @@ export const tagsInputAnatomyTree = (t: Translate): UsageTree => ({
       slots: { items: [tag(t, "demo.tagsInput.tag.react"), tag(t, "demo.tagsInput.tag.svelte")] },
     },
     items: [
-      namePart(".sk-tags-input", "block-start"),
+      namePart(".sk-tags-input", "block-start", { mark: "bracket" }),
       namePart(".sk-tags-input__control", "inline-start"),
       namePart(".sk-tags-input__item-preview", "block-end", { ringPlacement: "offset", ringDistance: 2 }),
       namePart(".sk-tags-input__input", "inline-end", { ringPlacement: "offset", ringDistance: 4 }),

@@ -6,7 +6,6 @@ import {
   annotationAnatomyTree,
   annotationDemoCss,
   annotationElbowTree,
-  annotationNumberedTree,
   annotationPluralCss,
   annotationPluralTree,
   annotationSidesTree,
@@ -29,18 +28,35 @@ const t = useTranslations(getLocale(Astro.url));
 const install = `pnpm add @skryensya/core @skryensya/react`;
 const styles = `@import "@skryensya/core/components/annotation.css";`;
 
-const html = `<div class="sk-annotated" data-sk-annotated role="group" aria-label="Anatomía de Accordion">
-  <div class="sk-annotated__subject" inert>
-    <!-- cualquier composición: aquí va el Accordion entero -->
+/* The shape `emit` writes, trimmed to what an author types: the enhancers fill the bubbles, the
+   leaders and the canvas's behaviour. */
+const html = `<div class="sk-annotated-figure" data-sk-annotated role="group" aria-label="Anatomía de Accordion">
+  <div class="sk-canvas" data-sk-canvas>
+    <div class="sk-canvas__viewport" tabindex="0">
+      <div class="sk-canvas__content">
+        <div class="sk-annotated">
+          <div class="sk-annotated__subject" inert>
+            <!-- cualquier composición: aquí va el Accordion entero -->
+          </div>
+
+          <!-- vacías a propósito: el número es un contador de CSS -->
+          <span class="sk-annotation" data-for=".sk-accordion" data-side="inline-end" data-mark="bracket" aria-hidden="true"></span>
+          <span class="sk-annotation" data-for=".sk-tile__title" data-side="inline-start" aria-hidden="true"></span>
+          <span class="sk-annotation" data-for=".sk-tile__chevron" data-side="block-start" aria-hidden="true"></span>
+
+          <!-- vacío a propósito: el enhancer dibuja aquí, con números que sólo existen medidos -->
+          <svg class="sk-annotated__leaders" aria-hidden="true" focusable="false"></svg>
+        </div>
+      </div>
+    </div>
+    <!-- la barra de zoom y los dos avisos del canvas: ver el HTML que emite el árbol -->
   </div>
 
-  <span class="sk-annotation" data-for=".sk-accordion" data-side="block-start">sk-accordion</span>
-  <span class="sk-annotation" data-for=".sk-tile" data-side="inline-start">sk-tile</span>
-  <span class="sk-annotation" data-for=".sk-tile__trigger" data-side="inline-start">sk-tile__trigger</span>
-  <span class="sk-annotation" data-for=".sk-tile__chevron" data-side="inline-end">sk-tile__chevron</span>
-
-  <!-- vacío a propósito: el enhancer dibuja aquí, con números que sólo existen medidos -->
-  <svg class="sk-annotated__leaders" aria-hidden="true" focusable="false"></svg>
+  <ol class="sk-annotated__legend">
+    <li class="sk-annotated__legend-item" tabindex="0">sk-accordion</li>
+    <li class="sk-annotated__legend-item" tabindex="0">sk-tile__title</li>
+    <li class="sk-annotated__legend-item" tabindex="0">sk-tile__chevron</li>
+  </ol>
 </div>`;
 
 const react = `import { Annotated } from "@skryensya/react/annotation";
@@ -48,7 +64,11 @@ import { Accordion } from "@skryensya/react/accordion";
 
 <Annotated
   label="Anatomía de Accordion"
-  inert
+  zoomInLabel="Acercar"
+  zoomOutLabel="Alejar"
+  fitLabel="Ajustar a la vista"
+  touchHint="Usa dos dedos para mover el diagrama"
+  wheelHint="Usa Ctrl + scroll para hacer zoom"
   subject={
     <Accordion>
       <Accordion.Item value="envio" defaultOpen>
@@ -58,20 +78,20 @@ import { Accordion } from "@skryensya/react/accordion";
     </Accordion>
   }
   annotations={[
-    { for: ".sk-accordion", side: "block-start", children: "sk-accordion" },
-    { for: ".sk-tile", side: "inline-start", children: "sk-tile" },
-    { for: ".sk-tile__trigger", side: "inline-start", children: "sk-tile__trigger" },
-    { for: ".sk-tile__chevron", side: "inline-end", children: "sk-tile__chevron" },
+    { for: ".sk-accordion", side: "inline-end", mark: "bracket", children: "sk-accordion" },
+    { for: ".sk-tile__title", side: "inline-start", children: "sk-tile__title" },
+    { for: ".sk-tile__chevron", side: "block-start", children: "sk-tile__chevron" },
   ]}
 />`;
 
 /* The hooks a diagram actually retunes, and the one nobody guesses: the type family is inherited,
    because a label is not always a class name. */
-const hooks = `.mi-diagrama {
-  /* las etiquetas de esta pagina SON clases, asi que piden la familia de codigo */
+const hooks = `.mi-diagrama.sk-annotated-figure {
+  /* los nombres de esta pagina SON clases, asi que piden la familia de codigo;
+     en la figura, para que llegue tambien a la leyenda */
   --sk-annotation-font-family: var(--font-family-code);
   /* el gap de la grilla: con las tres columnas en auto, es la distancia entre cada
-     etiqueta y lo que nombra */
+     numero y lo que nombra */
   --sk-annotated-gap: var(--space-inline-lg);
   /* el unico acento: la anotacion que se esta leyendo. En reposo todo queda gris. */
   --sk-annotation-ring-color: var(--color-border-accent);
@@ -112,6 +132,12 @@ const hooks = `.mi-diagrama {
       note={t("annotation.anatomyHint")}
     />
 
+    <h3 id="legend">{t("annotation.legendTitle")}</h3>
+    <p set:html={t("annotation.legendBody")} />
+
+    <h3 id="canvas">{t("annotation.canvasTitle")}</h3>
+    <p set:html={t("annotation.canvasBody")} />
+
     <h3>{t("annotation.ringPlacementTitle")}</h3>
     <p set:html={t("annotation.ringPlacementBody")} />
 
@@ -125,14 +151,6 @@ const hooks = `.mi-diagrama {
 
     <h3 id="key">{t("annotation.keyTitle")}</h3>
     <p set:html={t("annotation.keyBody")} />
-
-    <h3 id="numbered">{t("annotation.numberedTitle")}</h3>
-    <p set:html={t("annotation.numberedBody")} />
-    <ComponentPreview
-      tree={annotationNumberedTree(t)}
-      css={annotationDemoCss}
-      label={t("annotation.numberedPreviewLabel")}
-    />
 
     <h3>{t("annotation.pluralTitle")}</h3>
     <p set:html={t("annotation.pluralBody")} />

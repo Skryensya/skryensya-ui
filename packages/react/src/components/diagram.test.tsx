@@ -182,6 +182,20 @@ describe("Diagram", () => {
     expect(groups[0]!.querySelector("path")!.getAttribute("d")).toBe("M 150 40 L 150 88");
   });
 
+  it("divides a canvas's zoom back out, so a scaled drawing routes exactly as an unscaled one", async () => {
+    const { container } = render(<Diagram edges={edges} label="Request handling" nodes={nodes} />);
+    /* Inside a Canvas zoomed to 200%: every rect doubled, the layout box still 300 wide. */
+    const root = container.querySelector<HTMLElement>(`.${diagramParts.root}`)!;
+    Object.defineProperty(root, "offsetWidth", { configurable: true, value: 300 });
+    withBox(root, { x: 0, y: 0, width: 600, height: 400 });
+    withBox(container.querySelector(`.${diagramParts.nodes}`)!, { x: 0, y: 0, width: 600, height: 280 });
+    const [first, second] = nodesOf(container);
+    withBox(first!, { x: 200, y: 0, width: 200, height: 80 });
+    withBox(second!, { x: 200, y: 200, width: 200, height: 80 });
+    await act(async () => fire?.());
+    expect(overlayOf(container).querySelector("path")!.getAttribute("d")).toBe("M 150 40 L 150 88");
+  });
+
   it("anchors each edge label to a point on its own stroke, clear of the arrowhead", async () => {
     const { container } = render(<Diagram edges={edges} label="Request handling" nodes={nodes} />);
     layOut(container);

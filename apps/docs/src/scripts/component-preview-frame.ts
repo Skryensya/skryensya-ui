@@ -5,10 +5,7 @@
  */
 import { siteIcons } from "../icons";
 import { mountComponentsWithIcons } from "@skryensya/vanilla/auto";
-import { mountCodePreview } from "@skryensya/vanilla/code-preview";
-import { mountComponentPreview } from "@skryensya/vanilla/component-preview";
 import { mountIcons } from "@skryensya/vanilla/icon";
-import { registerPhoneFormat } from "@skryensya/phone";
 
 /*
  * Root cause (do not regress): `window.frameElement instanceof HTMLIFrameElement` is FALSE inside
@@ -312,7 +309,14 @@ async function cloneParentStyles(): Promise<void> {
     document.head.append(clone);
   }
 
-  await Promise.all(pending);
+  /*
+   * A dynamically restored srcdoc can receive an already-complete stylesheet from the browser
+   * cache without a second `load` event. The clones still apply, but waiting exclusively for that
+   * event leaves the visible stage behind its spinner forever. Styles may continue loading after
+   * the cap; the later font/image settling and ResizeObserver paths still measure their final size.
+   */
+  const deadline = new Promise<void>((resolve) => setTimeout(resolve, 2000));
+  await Promise.race([Promise.all(pending).then(() => undefined), deadline]);
 }
 
 /*
@@ -477,8 +481,12 @@ async function mountReactDemo(): Promise<void> {
    * an empty fallback first, `fitFrame()`'s first passes measure that emptiness, and the real
    * content then lands after the stage already left its loading state, so the resize transition
    * animates a visible jump instead of the frame simply appearing at its final size.
+   *
+   * It gets the demo's props: `TreeDemo` only knows WHICH components to load once it has the tree.
    */
-  if (typeof module.preload === "function") await module.preload();
+  const raw = document.body.dataset.skReactDemoProps;
+  const props = raw ? (JSON.parse(raw) as Record<string, unknown>) : {};
+  if (typeof module.preload === "function") await module.preload(props);
 
   const exported = module[exportName];
   if (typeof exported !== "function") {
@@ -494,9 +502,6 @@ async function mountReactDemo(): Promise<void> {
    */
   const Component =
     (exported as { demoComponent?: unknown }).demoComponent ?? exported;
-
-  const raw = document.body.dataset.skReactDemoProps;
-  const props = raw ? (JSON.parse(raw) as Record<string, unknown>) : {};
 
   /*
    * A container of its own rather than `document.body`: React owns everything inside its root, and
@@ -681,8 +686,19 @@ async function boot(): Promise<void> {
    * validate on either side. Take this line out and that field keeps rendering and simply stops
    * checking, with one warning in the console: exactly what a consumer who never installs
    * `@skryensya/phone` sees.
+   *
+   * LOADED ONLY WHERE A PHONE FIELD IS: the numbering plans are ~155 kB, and a static import put
+   * them in every preview frame on the site to serve the one Input demo that asks. The Vanilla
+   * markup is already in this document, and a tree-driven React demo carries the same option in
+   * its props, so both are visible before either binding mounts, and validation only ever runs on
+   * a later interaction.
    */
-  registerPhoneFormat();
+  if (
+    document.querySelector('input[data-format="phone"]') ||
+    document.body.dataset.skReactDemoProps?.includes('"format":"phone"')
+  ) {
+    void import("@skryensya/phone").then(({ registerPhoneFormat }) => registerPhoneFormat());
+  }
 
   syncRootState();
   const rootObserver = new MutationObserver(syncRootState);
@@ -730,14 +746,32 @@ async function boot(): Promise<void> {
   window.addEventListener("pagehide", () => iconObserver.disconnect(), {
     once: true,
   });
-  await mountFrameComponents(document);
+  /*
+   * A lazy enhancer import must never own the preview's ready state. If an optional module stalls,
+   * the authored markup remains visible and the stage can finish measuring; the import may still
+   * complete later and hydrate its controls.
+   */
+  await Promise.race([
+    mountFrameComponents(document),
+    new Promise<void>((resolve) => setTimeout(resolve, 2000)),
+  ]);
+  /* Geometry must be live before the ready flag: its observer follows an Accordion's expansion. */
+  // Imported only where one exists, like the two surfaces below: each was a static import every
+  // preview frame on the site parsed for the handful of demos that have one.
+  if (document.querySelector("[data-sk-annotated]")) {
+    (await import("@skryensya/vanilla/annotation")).mountAnnotated(document);
+  }
   /*
    * The documentation surfaces are opt-in, and this realm opts in: a preview of ComponentPreview
    * has to behave like one: its own tabs, reload, resizer and code disclosure. Both mounts are
    * no-ops when the demo has neither surface, which is every other preview on the site.
    */
-  if (document.querySelector("[data-sk-code-preview]")) mountCodePreview(document);
-  if (document.querySelector("[data-sk-component-preview]")) mountComponentPreview(document);
+  if (document.querySelector("[data-sk-code-preview]")) {
+    (await import("@skryensya/vanilla/code-preview")).mountCodePreview(document);
+  }
+  if (document.querySelector("[data-sk-component-preview]")) {
+    (await import("@skryensya/vanilla/component-preview")).mountComponentPreview(document);
+  }
   /*
    * Editor is deliberately absent from `initComponents`'s own registry (`mountFrameComponents`
    * above already ran it): `@skryensya/editor` is an OPTIONAL peer dependency of
@@ -865,17 +899,29 @@ async function boot(): Promise<void> {
   await settleContent();
   if (!scrolls()) fitFrame();
 
-  document.documentElement.setAttribute(
-    "data-sk-component-preview-frame-ready",
-    "",
-  );
+  finishFrame();
+}
+
+function finishFrame(): void {
+  if (frame?.hasAttribute("data-sk-component-preview-frame-ready")) return;
+  document.documentElement.setAttribute("data-sk-component-preview-frame-ready", "");
   frame?.setAttribute("data-sk-component-preview-frame-ready", "");
   frame?.setAttribute("aria-busy", "false");
   window.dispatchEvent(new CustomEvent("sk-component-preview-ready"));
 }
 
-void boot().catch((error: unknown) => {
-  frame?.setAttribute("data-sk-component-preview-frame-error", "");
-  frame?.setAttribute("aria-busy", "false");
-  console.error("[ComponentPreview] Could not initialize srcdoc frame.", error);
-});
+/*
+ * A frame runs third-party component imports in a separate realm. If a browser leaves one of those
+ * imports pending, the preview must still reveal its authored content instead of showing a loader
+ * forever. A normal boot settles sooner; this is the bounded failure path.
+ */
+const readyDeadline = window.setTimeout(finishFrame, 3000);
+
+void boot()
+  .then(() => window.clearTimeout(readyDeadline))
+  .catch((error: unknown) => {
+    window.clearTimeout(readyDeadline);
+    frame?.setAttribute("data-sk-component-preview-frame-error", "");
+    frame?.setAttribute("aria-busy", "false");
+    console.error("[ComponentPreview] Could not initialize srcdoc frame.", error);
+  });

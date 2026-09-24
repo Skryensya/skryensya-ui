@@ -1,7 +1,9 @@
 import { defineConfig } from "astro/config";
+import type { AstroUserConfig } from "astro";
 import react from "@astrojs/react";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import { NodePackageImporter } from "sass";
+import { createRequire } from "node:module";
 
 /*
  * `astro dev` leaves NODE_ENV unset or "development"; `astro build` forces "production". A couple of
@@ -10,6 +12,43 @@ import { NodePackageImporter } from "sass";
  * the new markup, the browser shows the old) is the failure this removes.
  */
 const isDev = process.env.NODE_ENV !== "production";
+
+/*
+ * DEV MEMORY: keep SSR source maps lazy.
+ *
+ * Vite's module runner defaults to `sourcemapInterceptor: "node"`, which turns on
+ * `process.setSourceMapsEnabled(true)`. From then on Node eagerly caches the code and the decoded
+ * inline map of EVERY module the runner evaluates, and keeps them for the life of the process.
+ * Measured A/B on this site, 12 component pages rendered cold: heap 686MB -> 611MB (-11%), and
+ * the gap only grows with every page visited. `"prepareStackTrace"` still maps SSR stack traces back to
+ * source, but reads the map from the runner's own module graph only when an error is formatted.
+ *
+ * `vite` is `require`d THROUGH astro, not imported: docs does not depend on it, and Astro's
+ * `isRunnableDevEnvironment` is an `instanceof` check, so the class must be the one from the exact
+ * module instance Astro runs. Astro evaluates this TS config inside a throwaway Vite runner, and an
+ * `import()` of vite's file path from here gets INLINED into that runner as a second copy: every
+ * page then 404s. `require` is left alone by the runner and hands back Node's own instance.
+ * `astro` is Astro's dev-only runnable environment; `ssr` renders the pages.
+ */
+type EnvironmentOptions = NonNullable<NonNullable<AstroUserConfig["vite"]>["environments"]>[string];
+type CreateDevEnvironment = NonNullable<NonNullable<EnvironmentOptions["dev"]>["createEnvironment"]>;
+const { createRunnableDevEnvironment } = createRequire(import.meta.resolve("astro/package.json"))(
+  "vite",
+) as {
+  createRunnableDevEnvironment: (
+    name: string,
+    config: Parameters<CreateDevEnvironment>[1],
+    context: { runnerOptions: { sourcemapInterceptor: "prepareStackTrace" } },
+  ) => Awaited<ReturnType<CreateDevEnvironment>>;
+};
+const lazySourceMaps: EnvironmentOptions = {
+  dev: {
+    createEnvironment: (name, config) =>
+      createRunnableDevEnvironment(name, config, {
+        runnerOptions: { sourcemapInterceptor: "prepareStackTrace" },
+      }),
+  },
+};
 
 /*
  * Vanilla ComponentPreview demos still run in srcdoc frames and hydrate with @skryensya/vanilla.
@@ -99,6 +138,7 @@ export default defineConfig({
     resolve: {
       dedupe: ["react", "react-dom", "@skryensya/core"],
     },
+    environments: { ssr: lazySourceMaps, astro: lazySourceMaps },
     /*
      * DEV ONLY: never let the browser reuse a served response without asking the dev server first.
      * The dev server is the source of truth; a stale tab that outlives an edit costs more than a

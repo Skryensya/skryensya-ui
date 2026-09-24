@@ -188,14 +188,27 @@ const {
   measure,
   screens = true,
   zoomedDesktop = false,
-  screenScope,
-  defaultScreen = "mobile",
+  screenScope: authoredScreenScope,
+  defaultScreen: authoredDefaultScreen = "mobile",
   hideSource = false,
   chrome = true,
   width,
 } = Astro.props;
 const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
+
+/*
+ * AN ANATOMY DIAGRAM IS ALWAYS FULL WIDTH, and owns that for good. `Annotated` sits on a Canvas,
+ * which already fits the drawing to whatever width it gets (a phone shows the same drawing, smaller),
+ * so a phone PRESET on the stage only shrinks it a second time. It also cannot be undone: most
+ * anatomy previews carry no chrome, so there is no switcher, and a preview without one used to follow
+ * the page's shared preset, which seeds as Mobile. Every anatomy in the docs rendered at 390px.
+ */
+const isAnatomy =
+  tree?.contract === "annotation" || (html?.includes("sk-annotated-figure") ?? false);
+const screenScope = isAnatomy ? "local" : authoredScreenScope;
+const defaultScreen = isAnatomy ? "free" : authoredDefaultScreen;
+const stageFlush = flush || isAnatomy;
 
 /*
  * Both sources from the one tree. Emitted at BUILD time: the compiler is data in, strings out, so
@@ -347,7 +360,7 @@ const frameDocument = hasVanillaStage
   ? buildPreviewFrameDocument({
       body: previewHtml,
       css,
-      flush,
+      flush: stageFlush,
       scroll,
       measure,
       encodedScript: encodedPreviewScript,
@@ -481,6 +494,7 @@ const stageStyle =
   data-sk-component-preview-playground={playgroundHandoff}
   data-sk-preview-source={previewSource}
   data-sk-component-preview-chrome={chrome ? undefined : "false"}
+  data-sk-component-preview-surface={isAnatomy && !chrome ? "none" : undefined}
   id={previewId}
   style={stageStyle}
 >
@@ -668,20 +682,10 @@ const stageStyle =
 
   {
     hasVanillaStage && (
-      /*
-       * `data-sk-component-preview-doc` holds the document, `srcdoc` starts EMPTY: `loading="lazy"`
-       * does nothing for `srcdoc` content (it is already inline HTML, so the parser starts fetching
-       * whatever it references - the frame runtime, its module graph - the moment it is parsed,
-       * on every preview on the page, at once, regardless of scroll position; that WAS this
-       * attribute's job here, and it never worked). `connectStageLifecycle`
-       * (`@skryensya/vanilla/component-preview`) promotes it to `srcdoc` the same way it already
-       * restores a released one: through the shared `IntersectionObserver`, once the stage is near
-       * view.
-       */
       <iframe
         class="sk-component-preview__stage"
         data-sk-component-preview-binding="vanilla"
-        data-sk-component-preview-flush={flush ? "" : undefined}
+        data-sk-component-preview-flush={stageFlush ? "" : undefined}
         data-sk-component-preview-viewport={viewport === "auto" ? undefined : viewport}
         data-sk-component-preview-min-height={minHeight ? "" : undefined}
         data-sk-component-preview-scroll={scroll ? "" : undefined}
@@ -712,7 +716,7 @@ const stageStyle =
             tree={tree}
             measure={measure}
             frameOptions={{
-              flush,
+              flush: stageFlush,
               scroll,
               viewport,
               minHeight,

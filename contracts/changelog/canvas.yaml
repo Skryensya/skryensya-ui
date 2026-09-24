@@ -3,7 +3,7 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribe la entrada y pega el
 # hash nuevo.
-surface: "cf1cfaf1b92e32cb"
+surface: "6ea3f5f97937f7b6"
 entries:
   - date: 2026-09-23
     kind: feature
@@ -29,3 +29,14 @@ entries:
         zoomed or dragged, a plain wheel pans the canvas and hands the scroll back to the page at an edge, and fit returns it to rest. The ground is a board ruled with hairlines barely off its own tone, between the surface and
         the sunken ground, and the grid slides and spreads with pan and zoom (<code>--sk-canvas-viewport-bg</code>, <code>--sk-canvas-grid-color</code>,
         <code>--sk-canvas-grid-size</code>).
+  - date: 2026-09-23
+    kind: feature
+    target: Canvas
+    es:
+      title: Una altura mínima, para que un dibujo chico no quede como una franja
+      body: >-
+        Hook <code>--sk-canvas-min-block-size</code>, por defecto <code>16rem</code>. El dibujo no se agranda para llenarlo: queda centrado en la altura que sobra.
+    en:
+      title: A minimum height, so a small drawing is not a sliver
+      body: >-
+        <code>--sk-canvas-min-block-size</code> hook, <code>16rem</code> by default. The drawing is not enlarged to fill it: it is centred in the extra height.

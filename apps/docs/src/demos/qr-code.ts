@@ -1,6 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Locale, Translate } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 import { genericIcon } from "./anatomy-subject";
 
 /*
@@ -48,8 +48,9 @@ const copy = (locale: Locale): Copy =>
 export const qrCodeAnatomyTree = (t: Translate, locale: Locale): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("qrCodePage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("qrCodePage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "qr-code",
       signature: "QRCode",
@@ -65,7 +66,7 @@ export const qrCodeAnatomyTree = (t: Translate, locale: Locale): UsageTree => ({
       },
     },
     items: [
-      namePart(".sk-qr-code", "block-start", { ringPlacement: "offset", ringDistance: 6 }),
+      namePart(".sk-qr-code", "block-start", { mark: "bracket", ringPlacement: "offset", ringDistance: 6 }),
       namePart(".sk-qr-code__frame", "inline-start"),
       namePart(".sk-qr-code__modules", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
       namePart(".sk-qr-code__logo", "block-end", { ringPlacement: "offset", ringDistance: 2 }),

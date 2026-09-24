@@ -2,7 +2,7 @@ import type { UsageTree } from "@skryensya/core/usage-tree";
 import { fireEvent, render, waitFor } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { Tabs } from "./tabs.js";
-import { renderTree } from "../render-tree.js";
+import { loadTree, renderTree } from "../render-tree.js";
 
 const items = [
   { value: "overview", label: "Overview", children: "Overview panel" },
@@ -88,6 +88,7 @@ describe("Tabs", () => {
         ],
       },
     };
+    await loadTree(tree);
     const ui = render(<>{renderTree(tree)}</>);
     const root = ui.container.querySelector(".sk-tabs");
 

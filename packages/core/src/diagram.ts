@@ -2500,6 +2500,18 @@ function selfRoute(node: DiagramNodeMeasurement, gap: number): DiagramPoint[] {
  * ---------------------------------------------------------------------------------------------- */
 
 /**
+ * How much the drawing is shown scaled by, read off its two sizes: the rect a transform scales and
+ * the layout box it does not. 1 everywhere except inside a zoomed `Canvas` (or any other transformed
+ * ancestor), where every rectangle a binding reads is in SCREEN pixels while the connectors are drawn
+ * in the drawing's OWN. Every measured length is divided by it, which is what makes the routing
+ * scale-invariant: a zoom moves no box, so it never has to re-route anything. Same rule as
+ * `annotationScale`, for the same reason.
+ */
+export function diagramScale(root: HTMLElement, rect: { readonly width: number }): number {
+  return root.offsetWidth > 0 && rect.width > 0 ? rect.width / root.offsetWidth : 1;
+}
+
+/**
  * A node's OWN text, with the routes list a binding writes into it left out.
  *
  * The routes quote the nodes they reach, so reading a node's `textContent` after the routes exist
@@ -2609,6 +2621,7 @@ export const diagramContract = {
     "--sk-diagram-node-padding-block",
     "--sk-diagram-node-min-inline-size",
     "--sk-diagram-node-max-inline-size",
+    "--sk-diagram-canvas-inline-size",
     "--sk-diagram-node-font-size",
     "--sk-diagram-node-line-height",
     "--sk-diagram-node-font-weight",

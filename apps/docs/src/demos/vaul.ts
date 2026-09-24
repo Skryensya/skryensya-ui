@@ -1,6 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /*
  * Root plus handle: Vaul's own parts. Children stay free-form composition (no `sk-vaul__content`),
@@ -10,8 +10,9 @@ import { namePart } from "./annotation-parts";
 export const vaulAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("vaulPage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("vaulPage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "vaul",
       signature: "Vaul",
@@ -36,7 +37,7 @@ export const vaulAnatomyTree = (t: Translate): UsageTree => ({
       ],
     },
     items: [
-      namePart(".sk-vaul", "block-start"),
+      namePart(".sk-vaul", "block-start", { mark: "bracket" }),
       namePart(".sk-vaul__handle", "block-start", { ringPlacement: "offset", ringDistance: 2 }),
     ],
   },
@@ -47,7 +48,7 @@ export const vaulAnatomyTree = (t: Translate): UsageTree => ({
  * normally hides it: this drawing is about the handle, and a diagram that omits the part it names
  * is worse than a diagram that forces it on for the specimen.
  */
-export const vaulAnatomyCss = `.sk-annotated {
+export const vaulAnatomyCss = `.sk-annotated-figure {
   --sk-annotation-font-family: var(--font-family-code);
 }
 

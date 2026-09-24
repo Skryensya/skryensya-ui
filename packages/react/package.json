@@ -229,6 +229,10 @@
       "types": "./src/components/canvas.tsx",
       "default": "./src/components/canvas.tsx"
     },
+    "./lightbox": {
+      "types": "./src/components/lightbox.tsx",
+      "default": "./src/components/lightbox.tsx"
+    },
     "./back-to-top": {
       "types": "./src/components/back-to-top.tsx",
       "default": "./src/components/back-to-top.tsx"

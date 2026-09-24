@@ -95,12 +95,13 @@ describe("Annotated", () => {
       />,
     );
 
-    /* The figure is the host: it carries the mount point and the name, and holds the frame. */
+    /* The figure is the host: it carries the mount point and the name, and holds the canvas the
+       frame sits on. */
     const figure = container.querySelector(`.${annotationParts.figure}`)!;
     expect(figure.hasAttribute("data-sk-annotated")).toBe(true);
     expect(figure.getAttribute("role")).toBe("group");
     expect(figure.getAttribute("aria-label")).toBe("Anatomy");
-    expect(figure.querySelector(`:scope > .${annotationParts.root}`)).not.toBeNull();
+    expect(figure.querySelector(`:scope > .sk-canvas .${annotationParts.root}`)).not.toBeNull();
     expect(container.querySelector(".part-a")).not.toBeNull();
     expect(labelsOf(container)).toHaveLength(1);
     expect(overlayOf(container).getAttribute("aria-hidden")).toBe("true");
@@ -133,7 +134,7 @@ describe("Annotated", () => {
     expect(button.getAttribute("tabindex")).toBe("-1");
     expect(link.getAttribute("tabindex")).toBe("-1");
     expect(labelsOf(container)[0]!.closest("[inert]")).toBeNull();
-    expect(labelsOf(container)[0]!.tabIndex).toBe(0);
+    expect(container.querySelector<HTMLElement>(`.${annotationParts.legendItem}`)!.tabIndex).toBe(0);
 
     button.setAttribute("tabindex", "0");
     link.setAttribute("tabindex", "0");
@@ -155,21 +156,6 @@ describe("Annotated", () => {
     expect(container.querySelector("button")!.tabIndex).not.toBe(-1);
   });
 
-  it("writes a label's mobile alignment hook only when requested", () => {
-    const { container } = render(
-      <Annotated
-        annotations={[
-          { for: ".part-a", children: "start" },
-          { for: ".part-b", mobileAlign: "end", children: "end" },
-        ]}
-        subject={specimen}
-      />,
-    );
-
-    expect(labelsOf(container)[0]!.hasAttribute("data-mobile-align")).toBe(false);
-    expect(labelsOf(container)[1]!.getAttribute("data-mobile-align")).toBe("end");
-  });
-
   it("lifts each label level with the part it names", () => {
     const { container } = render(
       <Annotated
@@ -186,27 +172,6 @@ describe("Annotated", () => {
     // part-a's middle is y=130, so a 20px label sits at 120; part-b's is 230, so 220.
     expect(labelsOf(container)[0]!.style.translate).toBe("0px 120px");
     expect(labelsOf(container)[1]!.style.translate).toBe("0px 220px");
-  });
-
-  /* Vanilla's twin: the narrow cluster packs itself, so the binding skips lane distribution and
-     draws the same leader every other label gets. Same path string, deliberately. */
-  it("keeps clustered narrow-screen labels in their flow positions", () => {
-    vi.stubGlobal("matchMedia", () => ({ matches: true }));
-    const { container } = render(
-      <Annotated
-        annotations={[
-          { for: ".part-a", children: "part a" },
-          { for: ".part-b", children: "part b" },
-        ]}
-        subject={specimen}
-      />,
-    );
-    layOut(container);
-    act(() => fire!());
-
-    expect(labelsOf(container)[0]!.style.translate).toBe("0px 0px");
-    expect(labelsOf(container)[1]!.style.translate).toBe("0px 0px");
-    expect(overlayOf(container).querySelector("path")!.getAttribute("d")).toBe("M 140 10 L 202 72 L 202 108");
   });
 
   it("draws the same marks the enhancer draws, in the same shape", () => {
@@ -295,29 +260,53 @@ describe("Annotated", () => {
     expect(overlay.children[1]!.children[0]!.getAttribute("d")).not.toBe("");
   });
 
-  it("names every match when the label asks for all of them", () => {
+  it("gives every match its own bubble, right after the first and wearing the same number", () => {
     const { container } = render(
       <Annotated
-        annotations={[{ for: "p", match: "all", children: "every part" }]}
+        annotations={[
+          { for: "p", match: "all", children: "every part" },
+          { for: ".part-b", children: "part b" },
+        ]}
         subject={specimen}
       />,
     );
     layOut(container);
     act(() => fire!());
 
-    const group = overlayOf(container).children[0]!;
-    expect([...group.children].map((child) => child.tagName)).toEqual([
-      "path",
-      "rect",
-      "path",
-      "rect",
-    ]);
-    /* The two leaders leave the label's edge at DIFFERENT points: all of them from one pixel is a
-       starburst, not a fan. Both still leave the same edge, which is what makes it one gesture. */
-    const starts = [group.children[0]!, group.children[2]!].map(
-      (p) => p.getAttribute("d")!.split(" L ")[0],
+    const bubbles = labelsOf(container);
+    expect(bubbles.map((bubble) => bubble.getAttribute("data-for"))).toEqual(["p", "p", ".part-b"]);
+    expect(bubbles.map((bubble) => bubble.hasAttribute("data-sk-instance"))).toEqual([false, true, false]);
+    const marks = [...overlayOf(container).children];
+    expect(marks).toHaveLength(3);
+    for (const mark of marks) expect([...mark.children].map((c) => c.tagName)).toEqual(["path", "rect"]);
+    // Still one name: the legend has one entry for it.
+    expect(container.querySelectorAll(`.${annotationParts.legendItem}`)).toHaveLength(2);
+  });
+
+  it("lights every bubble of a plural name together, and nothing else", () => {
+    const { container } = render(
+      <Annotated
+        annotations={[
+          { for: "p", match: "all", children: "every part" },
+          { for: ".part-b", children: "part b" },
+        ]}
+        subject={specimen}
+      />,
     );
-    expect(new Set(starts).size).toBe(2);
+    layOut(container);
+    act(() => fire!());
+
+    fireEvent.pointerEnter(labelsOf(container)[1]!);
+    expect(labelsOf(container).map((bubble) => bubble.hasAttribute("data-sk-active"))).toEqual([
+      true,
+      true,
+      false,
+    ]);
+    expect([...overlayOf(container).children].map((mark) => mark.hasAttribute("data-sk-active"))).toEqual([
+      true,
+      true,
+      false,
+    ]);
   });
 
   it("ignores selector matches in an aria-hidden measurement copy", () => {
@@ -350,7 +339,8 @@ describe("Annotated", () => {
     withBox(labelsOf(container)[0]!, { x: 0, y: 0, width: 140, height: 20 });
     act(() => fire!());
 
-    expect(overlayOf(container).children[0]!.childElementCount).toBe(4);
+    // Two visible parts, two bubbles: the shadow copies get none.
+    expect(overlayOf(container).childElementCount).toBe(2);
   });
 
   it("names a target that is itself aria-hidden", () => {
@@ -487,13 +477,13 @@ describe("Annotated", () => {
     layOut(container);
     act(() => fire!());
 
-    const label = labelsOf(container)[0]!;
-    expect(label.getAttribute("tabindex")).toBe("0");
-    fireEvent.focus(label);
+    const entry = container.querySelector<HTMLElement>(`.${annotationParts.legendItem}`)!;
+    expect(entry.getAttribute("tabindex")).toBe("0");
+    fireEvent.focus(entry);
     expect(overlayOf(container).children[0]!.hasAttribute("data-sk-active")).toBe(true);
   });
 
-  it("moves the names into a legend when numbered, leaving each bubble a bare number", () => {
+  it("puts the names in a legend, leaving each bubble a bare number", () => {
     const { container } = render(
       <Annotated
         annotations={[
@@ -501,12 +491,9 @@ describe("Annotated", () => {
           { for: ".part-b", children: "part b" },
         ]}
         label="Anatomy"
-        numbered
         subject={specimen}
       />,
     );
-    const root = container.querySelector(`.${annotationParts.root}`)!;
-    expect(root.hasAttribute("data-numbered")).toBe(true);
 
     const bubbles = labelsOf(container);
     expect(bubbles.map((bubble) => bubble.textContent)).toEqual(["", ""]);
@@ -522,23 +509,13 @@ describe("Annotated", () => {
     expect(entries.every((entry) => entry.getAttribute("tabindex") === "0")).toBe(true);
   });
 
-  it("renders no legend and names in the bubbles when not numbered", () => {
-    const { container } = render(
-      <Annotated annotations={[{ for: ".part-a", children: "part a" }]} subject={specimen} />,
-    );
-    expect(container.querySelector(`.${annotationParts.root}`)!.hasAttribute("data-numbered")).toBe(false);
-    expect(container.querySelector(`.${annotationParts.legend}`)).toBeNull();
-    expect(labelsOf(container)[0]!.textContent).toBe("part a");
-  });
-
-  it("reveals from the legend in a numbered frame, lighting its number and its mark together", () => {
+  it("reveals from the legend, lighting its number and its mark together", () => {
     const { container } = render(
       <Annotated
         annotations={[
           { for: ".part-a", children: "part a" },
           { for: ".part-b", children: "part b" },
         ]}
-        numbered
         subject={specimen}
       />,
     );
@@ -549,7 +526,7 @@ describe("Annotated", () => {
       ...container.querySelectorAll<HTMLElement>(`.${annotationParts.legendItem}`),
     ];
     const marks = () => [...overlayOf(container).children];
-    // The bubbles are still what the leaders leave from: one mark each, as without a legend.
+    // The bubbles are what the leaders leave from: one mark each.
     expect(marks()).toHaveLength(2);
 
     fireEvent.focus(entries[1]!);

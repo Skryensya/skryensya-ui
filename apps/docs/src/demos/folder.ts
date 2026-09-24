@@ -1,6 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 import { DEMO_IMAGE_FRAME_SRC } from "./image-frame";
 
 /*
@@ -99,7 +99,7 @@ const folder = ({ title, body: copy, href, previews = 0, active }: FolderSpec): 
  * FLAT: the live lean (`perspective` + `rotateX`) turns every getBoundingClientRect into a skewed
  * AABB no ring can honestly wrap. The diagram drops it; the demos below keep it.
  */
-export const folderAnatomyCss = `.sk-annotated {
+export const folderAnatomyCss = `.sk-annotated-figure {
   --sk-annotation-font-family: var(--font-family-code);
 }
 
@@ -124,8 +124,9 @@ export const folderAnatomyCss = `.sk-annotated {
 export const folderAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("folderPage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("folderPage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: folder({
       title: t("demo.folder.radioTitle"),
       body: t("demo.folder.radioBody"),
@@ -134,7 +135,7 @@ export const folderAnatomyTree = (t: Translate): UsageTree => ({
       active: true,
     }),
     items: [
-      namePart(".sk-folder", "block-start", { ringPlacement: "offset", ringDistance: 12 }),
+      namePart(".sk-folder", "block-start", { mark: "bracket", ringPlacement: "offset", ringDistance: 12 }),
       namePart(".sk-folder__shape-path", "inline-start", { ringPlacement: "offset", ringDistance: 4 }),
       namePart(".sk-folder__tab", "inline-start", { ringPlacement: "offset", ringDistance: 2 }),
       namePart(".sk-folder__content", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),

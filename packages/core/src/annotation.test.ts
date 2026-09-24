@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  annotationInstances,
   ANNOTATION_BRACKET_GAP,
   ANNOTATION_BRACKET_JOINT,
   ANNOTATION_BRACKET_TICK,
@@ -783,5 +784,23 @@ describe("bracket marks", () => {
     }).placements;
     expect(placement!.mark).toBe("ring");
     expect(placement!.marks[0]!.path).not.toContain(`L ${560 + ANNOTATION_BRACKET_GAP + 12}`);
+  });
+});
+
+describe("annotationInstances", () => {
+  it("gives every match its own bubble, each carrying its entry", () => {
+    expect(annotationInstances([["a"], ["b", "c", "d"]])).toEqual([
+      { entry: 0, instance: 0, target: "a" },
+      { entry: 1, instance: 0, target: "b" },
+      { entry: 1, instance: 1, target: "c" },
+      { entry: 1, instance: 2, target: "d" },
+    ]);
+  });
+
+  it("keeps one bubble, with no target, for an entry that matched nothing", () => {
+    expect(annotationInstances([[], ["a"]])).toEqual([
+      { entry: 0, instance: 0, target: undefined },
+      { entry: 1, instance: 0, target: "a" },
+    ]);
   });
 });

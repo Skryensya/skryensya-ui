@@ -126,6 +126,17 @@ export type {
 } from "./components/layout.js";
 export { ImageFrame } from "./components/image-frame.js";
 export type { ImageFrameProps } from "./components/image-frame.js";
+export { Lightbox, LightboxProvider, useLightbox, useLightboxState } from "./components/lightbox.js";
+export type {
+  LightboxHandle,
+  LightboxImage,
+  LightboxOpenOptions,
+  LightboxProps,
+  LightboxProviderProps,
+  LightboxSettings,
+  LightboxState,
+  LightboxTriggerProps,
+} from "./components/lightbox.js";
 export { MediaCaption, MediaGradient } from "./components/media-gradient.js";
 export type {
   MediaCaptionProps,

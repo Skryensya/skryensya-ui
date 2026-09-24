@@ -1,13 +1,14 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /** Label, control, both steppers and the input: the spinbutton's own parts at rest. */
 export const numberFieldAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("numberFieldPage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("numberFieldPage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "number-field",
       signature: "NumberField",
@@ -24,7 +25,7 @@ export const numberFieldAnatomyTree = (t: Translate): UsageTree => ({
       slots: { label: t("demo.numberField.label") },
     },
     items: [
-      namePart(".sk-number-field", "block-start"),
+      namePart(".sk-number-field", "block-start", { mark: "bracket" }),
       namePart(".sk-number-field__label", "inline-start"),
       namePart(".sk-number-field__control", "block-end"),
       namePart(".sk-number-field__decrement", "inline-start"),

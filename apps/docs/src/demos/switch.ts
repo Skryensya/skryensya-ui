@@ -1,14 +1,15 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 
 /** Input, control, thumb and label: the native switch's painted parts. */
 export const switchAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("switchPage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("switchPage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "switch",
       signature: "Switch",
@@ -16,7 +17,7 @@ export const switchAnatomyTree = (t: Translate): UsageTree => ({
       children: t("demo.switch.deployAutomatically"),
     },
     items: [
-      namePart(".sk-switch", "block-start"),
+      namePart(".sk-switch", "block-start", { mark: "bracket" }),
       namePart(".sk-switch__input", "inline-start"),
       namePart(".sk-switch__control", "inline-start", { ringPlacement: "offset", ringDistance: 2 }),
       namePart(".sk-switch__thumb", "inline-end"),

@@ -1,7 +1,7 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 import { radioGroupItems, tileRadioGroupItems } from "./data/radio-group";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /* Native and tile radio groups share one authored choice model: see `data/radio-group.ts`. */
 
@@ -10,8 +10,9 @@ import { namePart } from "./annotation-parts";
 export const radioGroupAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("radioGroupPage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("radioGroupPage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "radio-group",
       signature: "RadioGroup",
@@ -24,7 +25,7 @@ export const radioGroupAnatomyTree = (t: Translate): UsageTree => ({
       slots: { items: radioGroupItems },
     },
     items: [
-      namePart(".sk-radio-group", "block-start"),
+      namePart(".sk-radio-group", "block-start", { mark: "bracket" }),
       namePart(".sk-radio", "inline-start"),
       namePart(".sk-radio__input", "inline-start"),
       namePart(".sk-radio__control", "inline-start", { ringPlacement: "offset", ringDistance: 2 }),

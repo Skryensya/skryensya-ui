@@ -316,6 +316,27 @@ export const diagramTreeTree = (t: Translate): UsageTree => ({
 });
 
 /*
+ * THE SAME TREE ON A CANVAS, which is the other answer to "four leaves do not fit on a phone": do not
+ * re-flow it at all. The canvas lays the drawing out at its design width and shows it fitted, so the
+ * tree needs none of `diagramTreeCss`'s container queries, only the demos' shared node cap.
+ */
+export const diagramCanvasTree = (t: Translate): UsageTree => ({
+  contract: "canvas",
+  signature: "Canvas",
+  options: {
+    label: t("diagram.canvasPreviewLabel"),
+    zoomInLabel: t("canvas.zoomInLabel"),
+    zoomOutLabel: t("canvas.zoomOutLabel"),
+    fitLabel: t("canvas.fitLabel"),
+  },
+  slots: {
+    touchHint: t("canvas.touchHint"),
+    wheelHint: t("canvas.wheelHint"),
+    children: diagramTreeTree(t),
+  },
+});
+
+/*
  * A STATE CHART, which is the same drawing with an edge that points BACKWARDS.
  *
  * `idle -> loading -> ready` is an ordinary flow. What makes it a machine is `ready -> idle`

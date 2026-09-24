@@ -3,7 +3,7 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribe la entrada y pega el
 # hash nuevo.
-surface: "19551c5c83e4397d"
+surface: "4852197260bc5e9b"
 entries:
   - date: 2026-09-20
     kind: rework
@@ -311,3 +311,24 @@ entries:
         Ctrl/Cmd + wheel, two fingers, <code>+</code>/<code>-</code>/<code>0</code>). The legend stays outside, unscaled. Leaders are measured in the
         frame's own coordinates, so they stay on their parts at any zoom. <code>zoomInLabel</code>, <code>zoomOutLabel</code>, <code>fitLabel</code>
         labels and <code>touchHint</code>, <code>wheelHint</code> hints.
+  - date: 2026-09-23
+    kind: breaking
+    target: Annotated
+    es:
+      title: Números en el margen, nombres en la leyenda, y siempre sobre un canvas
+      body: >-
+        Es la única forma que queda. Cada burbuja lleva sólo su número (<code>aria-hidden</code>), los nombres pasan a la leyenda
+        (<code>sk-annotated__legend</code>, cuyas entradas son las paradas de Tab) y el marco vive siempre dentro de un <code>Canvas</code>.
+        Se van las opciones <code>numbered</code> y <code>zoomable</code>, el atributo <code>data-numbered</code>, la opción por entrada
+        <code>mobileAlign</code> y el layout de racimos debajo de 40rem: un número cabe en cualquier margen y el canvas muestra el mismo dibujo
+        ajustado, así que nada tiene que cambiar de forma en pantallas angostas. Con <code>match: "all"</code>, cada
+        coincidencia tiene su propia burbuja y su propia guía, todas con el mismo número, en vez de una burbuja con un abanico de guías.
+    en:
+      title: Numbers in the margin, names in the legend, and always on a canvas
+      body: >-
+        It is the only form left. Each bubble carries only its number (<code>aria-hidden</code>), the names move to the legend
+        (<code>sk-annotated__legend</code>, whose entries are the tab stops) and the frame always lives inside a <code>Canvas</code>.
+        Gone: the <code>numbered</code> and <code>zoomable</code> options, the <code>data-numbered</code> attribute, the per-entry
+        <code>mobileAlign</code> option and the clustered layout below 40rem: a number fits any margin and the canvas shows the same drawing
+        fitted, so nothing has to change shape on a narrow screen. With <code>match: "all"</code>, every match
+        gets its own bubble and its own leader, all showing the same number, instead of one bubble fanning out several leaders.

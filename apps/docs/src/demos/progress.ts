@@ -1,14 +1,15 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 
 /** Track and fill: the two painted parts of a determinate Progress. */
 export const progressAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("progressPage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("progressPage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "progress",
       signature: "Progress",
@@ -16,7 +17,7 @@ export const progressAnatomyTree = (t: Translate): UsageTree => ({
       attrs: { style: "inline-size: min(100%, 16rem)" },
     },
     items: [
-      namePart(".sk-progress", "block-start"),
+      namePart(".sk-progress", "block-start", { mark: "bracket" }),
       namePart(".sk-progress__bar", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
     ],
   },

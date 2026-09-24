@@ -6,6 +6,7 @@ import {
   menuMultilevelItems,
   menuSafetyItems,
 } from "./data/menu";
+import { anatomyFigureHtml } from "./annotation-parts";
 
 /*
  * The context-menu demo's own CSS, shared by BOTH bindings (`MenuPage.astro`'s Vanilla `html` and
@@ -217,8 +218,6 @@ const menuAnatomySpecimen = (t: Translate): string => `<div class="sk-menu" aria
  * so the spans have to match what the emitter would have produced: the part class, the gutter,
  * `data-match` and the `tabindex` that makes every label reachable on its own.
  */
-const label = (target: string, side: string, text: string, extra = "", match = "first"): string =>
-  `<span class="sk-annotation" data-for="${target}" data-side="${side}" data-match="${match}"${extra} tabindex="0">${text}</span>`;
 
 /*
  * THE DIAGRAM: the specimen, the labels, and the empty `<svg>` the enhancer draws the leaders into.
@@ -279,27 +278,20 @@ const label = (target: string, side: string, text: string, extra = "", match = "
  * the label inside the top row (level with it, above where the submenu begins) and the safe area,
  * whose own right edge IS the submenu's left edge.
  */
-export const menuAnatomyHtml = (t: Translate): string => `<div
-  class="sk-annotated"
-  data-sk-annotated
-  aria-label="${t("menuPage.anatomyLabel")}"
-  data-ring-placement="inset"
-  data-ring-distance="2"
-  role="group"
->
-  <div class="sk-annotated__subject" inert>
-    ${menuAnatomySpecimen(t)}
-  </div>
-  ${label(".sk-menu", "block-start", "sk-menu", ' data-ring-placement="offset" data-ring-distance="6"')}
-  ${label(".sk-menu__trigger", "inline-start", "sk-menu__trigger")}
-  ${label(".sk-menu__content", "inline-start", "sk-menu__content")}
-  ${label(".sk-menu__item:not([data-sk-submenu] *)", "inline-start", "sk-menu__item", "", "all")}
-  ${label(".sk-menu__positioner", "block-end", "sk-menu__positioner", ' data-ring-placement="offset" data-ring-distance="4"')}
-  ${label(".sk-menu__separator", "inline-start", "sk-menu__separator", ' data-ring-placement="offset" data-ring-distance="3"')}
-  ${label(".sk-menu__item-label", "inline-end", "sk-menu__item-label", ' data-ring-placement="offset" data-ring-distance="4"')}
-  ${label(".sk-menu__safe-area", "inline-end", "sk-menu__safe-area")}
-  <svg class="sk-annotated__leaders" aria-hidden="true" focusable="false"></svg>
-</div>`;
+export const menuAnatomyHtml = (t: Translate): string => anatomyFigureHtml(t, {
+  label: t("menuPage.anatomyLabel"),
+  specimen: menuAnatomySpecimen(t),
+  parts: [
+    { for: ".sk-menu", side: "block-start", mark: "bracket", ringPlacement: "offset", ringDistance: 6 },
+    { for: ".sk-menu__trigger", side: "inline-start" },
+    { for: ".sk-menu__content", side: "inline-start" },
+    { for: ".sk-menu__item:not([data-sk-submenu] *)", side: "inline-start", name: "sk-menu__item", match: "all" },
+    { for: ".sk-menu__positioner", side: "block-end", ringPlacement: "offset", ringDistance: 4 },
+    { for: ".sk-menu__separator", side: "inline-start", ringPlacement: "offset", ringDistance: 3 },
+    { for: ".sk-menu__item-label", side: "inline-end", ringPlacement: "offset", ringDistance: 4 },
+    { for: ".sk-menu__safe-area", side: "inline-end" },
+  ],
+});
 
 /*
  * THE SPECIMEN'S OWN CSS, and almost all of it is about ONE thing: putting the popup back in flow.
@@ -322,7 +314,7 @@ export const menuAnatomyHtml = (t: Translate): string => `<div
  * spanning the submenu. `data-debug` in the markup is what paints it, and that is the same hook the
  * live `debugSafetyTriangle` option uses (menu.css) rather than a second, drifting picture of it.
  */
-export const menuAnatomyCss = `.sk-annotated {
+export const menuAnatomyCss = `.sk-annotated-figure {
   --sk-annotation-font-family: var(--font-family-code);
 
   /* ONE NUMBER, TWO PLACES: how wide each panel is, and how much room the subject reserves for the

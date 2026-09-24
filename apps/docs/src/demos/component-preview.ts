@@ -1,6 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /*
  * THE ANATOMY, drawn on `ComponentPreview.bare` rather than on the apparatus this page otherwise
@@ -23,8 +23,9 @@ import { namePart } from "./annotation-parts";
 export const componentPreviewAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("componentPreview.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("componentPreview.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "component-preview",
       signature: "ComponentPreview.bare",
@@ -50,7 +51,7 @@ export const componentPreviewAnatomyTree = (t: Translate): UsageTree => ({
       },
     },
     items: [
-      namePart(".sk-component-preview", "inline-start"),
+      namePart(".sk-component-preview", "inline-start", { mark: "bracket" }),
       namePart(".sk-component-preview__header", "inline-start"),
       namePart(".sk-component-preview__title", "block-start", {
         ringPlacement: "offset",

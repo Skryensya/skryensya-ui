@@ -1,6 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /**
  * A dummyimage.com placeholder, 800×500. Same measure the old local asset had, so every demo
@@ -21,8 +21,9 @@ export const DEMO_IMAGE_FRAME_SRC = "https://dummyimage.com/800x500/9ca3af/37415
 export const imageFrameAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("imageFrame.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("imageFrame.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "image-frame",
       signature: "ImageFrame",
@@ -58,7 +59,7 @@ export const imageFrameAnatomyTree = (t: Translate): UsageTree => ({
       },
     },
     items: [
-      namePart(".sk-image-frame", "block-start"),
+      namePart(".sk-image-frame", "block-start", { mark: "bracket" }),
       namePart(".sk-image-frame__media", "inline-start"),
       namePart(".sk-media-caption", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
       namePart(".sk-media-gradient", "block-end"),

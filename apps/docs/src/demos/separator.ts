@@ -1,6 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 type UIKey = Parameters<Translate>[0];
 
@@ -14,15 +14,16 @@ const text = (t: Translate, key: UIKey): UsageTree => ({
 export const separatorAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("separatorPage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("separatorPage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "separator",
       signature: "LabelledSeparator",
       slots: { children: t("demo.separator.or") },
     },
     items: [
-      namePart(".sk-separator", "block-start"),
+      namePart(".sk-separator", "block-start", { mark: "bracket" }),
       namePart(".sk-separator__rule", "inline-start", { ringPlacement: "offset", ringDistance: 2 }),
       namePart(".sk-separator__label", "block-end", { ringPlacement: "offset", ringDistance: 4 }),
     ],

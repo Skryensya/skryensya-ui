@@ -1,6 +1,7 @@
+import { PLACEHOLDER_HREF } from "../lib/placeholder-hrefs";
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /*
  * Tile's own demos. Peer pages (Link, Button, Checkbox, …) keep the trees that teach their
@@ -20,7 +21,7 @@ const tileContent = (title: string, description: string): UsageTree => ({
 });
 
 /** Navigate: the whole face is an `<a href>`. */
-export const tileLinkDemoTree = (t: Translate, href: string): UsageTree => ({
+export const tileLinkDemoTree = (t: Translate, href: string = PLACEHOLDER_HREF): UsageTree => ({
   contract: "tile",
   signature: "TileLink",
   options: { href },
@@ -67,11 +68,12 @@ export const expandableTileTree = (t: Translate): UsageTree => ({
 export const tileAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("tilePage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("tilePage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: expandableTileTree(t),
     items: [
-      namePart(".sk-tile", "block-start"),
+      namePart(".sk-tile", "block-start", { mark: "bracket" }),
       namePart(".sk-tile__trigger", "inline-start"),
       namePart(".sk-tile__content", "inline-start", { ringPlacement: "offset", ringDistance: 6 }),
       namePart(".sk-tile__title", "inline-end", { ringPlacement: "offset", ringDistance: 4 }),

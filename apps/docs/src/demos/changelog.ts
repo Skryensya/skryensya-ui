@@ -1,6 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /*
  * TWO RELEASES, AND ONE OF THEM HAS NOT SHIPPED, which is the only pair that shows what this
@@ -111,8 +111,9 @@ export const changelogTree = (t: Translate): UsageTree => ({
 export const changelogAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("changelogPage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("changelogPage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "changelog",
       signature: "Changelog",
@@ -139,7 +140,7 @@ export const changelogAnatomyTree = (t: Translate): UsageTree => ({
       ],
     },
     items: [
-      namePart(".sk-changelog", "block-start"),
+      namePart(".sk-changelog", "block-start", { mark: "bracket" }),
       namePart(".sk-changelog__release", "inline-start"),
       namePart(".sk-changelog__marker", "inline-start"),
       namePart(".sk-changelog__version", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),

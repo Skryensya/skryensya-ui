@@ -1,7 +1,7 @@
 import { createRoot } from "react-dom/client";
 import { mountComponentsWithIcons } from "@skryensya/vanilla/auto";
 import { lucideIcons } from "@skryensya/icons-lucide";
-import { renderTree, setPortalContainer } from "@skryensya/react/render-tree";
+import { loadTree, renderTree, setPortalContainer } from "@skryensya/react/render-tree";
 import type { UsageTree } from "@skryensya/core/usage-tree";
 /*
  * One specifier, where this used to reach around `@skryensya/devtools`'s public entry three times by
@@ -113,6 +113,7 @@ async function boot(): Promise<void> {
     await mountComponentsWithIcons(document, lucideIcons);
   } else if (data.tree) {
     setPortalContainer({ current: stage as HTMLElement });
+    await loadTree(data.tree);
     createRoot(stage).render(renderTree(data.tree));
   }
 

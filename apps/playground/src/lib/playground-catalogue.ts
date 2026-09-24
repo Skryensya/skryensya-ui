@@ -61,31 +61,15 @@ const modules = import.meta.glob<Record<string, unknown>>(
 );
 
 /*
- * The demos that take more than a `t`.
+ * EVERY DEMO IS CALLED WITH `t` ALONE, and that is a rule the demos keep, not a table kept here.
  *
- * Most tree factories are `(t) => UsageTree`. A handful take a second argument because the page that
- * renders them has real destinations or a real locale to hand in, and calling those with nothing
- * produces a tree that fails validation for a reason that is the CALLER's, not the demo's. The
- * values below are the shapes those factories destructure, with the same placeholder hrefs the
- * emitted snippets already use elsewhere: inside a sandbox they go nowhere, and what the example is
- * about is the SHAPE of a link, not its target.
+ * A table of extra arguments (hrefs, a locale, options) used to live here, one entry per factory
+ * that needed more than `t`. It could only ever fall behind: every demo added after it was written
+ * either threw or produced a tree with `href: undefined`, and both are dropped below without a
+ * word, which is how Combobox, Megamenu, three NavLists and a dozen more went missing. Each factory
+ * now defaults everything past `t` (`placeholderHrefs`, `localeOf(t)`), and
+ * `docs/src/demos/playground-ready.test.ts` fails the moment a new one does not.
  */
-const HREF = "#";
-const EXTRA_ARGUMENTS: Record<string, unknown> = {
-  breadcrumbMultiTree: { projects: HREF, kit: HREF },
-  breadcrumbIconTree: HREF,
-  breadcrumbLongTree: HREF,
-  breadcrumbTwoTree: HREF,
-  buttonAsLinkTree: HREF,
-  listFullTree: [HREF, HREF, HREF],
-  listLinksTree: [HREF, HREF, HREF],
-  navListTree: { home: HREF, reports: HREF },
-  navbarTree: { home: HREF, projects: HREF, reports: HREF, team: HREF },
-  sidebarTree: { home: HREF, reports: HREF },
-  tableDensityTree: 0.8,
-  timeFieldTree: { locale: "es-DO", name: "hora" },
-  timeFieldNativeTree: { locale: "es-DO", name: "hora" },
-};
 
 /*
  * The modules whose factories take something other than `t` FIRST.
@@ -197,7 +181,17 @@ const componentPages = new Map(
 );
 
 export function playgroundCatalogue(t: Translate, locale: Locale): readonly PlaygroundComponent[] {
-  const components: PlaygroundComponent[] = [];
+  /*
+   * ONE RAIL ENTRY PER COMPONENT, NOT PER DEMO MODULE.
+   *
+   * The rail used to be the directory listing: one entry per file in `demos/`. Most files ARE one
+   * component, and the rest are exactly where that broke. `demos/layout.ts` feeds Box, Grid, Stack,
+   * Inline, Footer, Hero and Layout grid, `demos/typography.ts` feeds Heading and Text, and so the
+   * rail had "Layout" and "Typography" and none of the nine components a reader would look for.
+   * Each example now goes to the component whose docs page renders it (`routeFor`, the same answer
+   * "See the docs" already uses), and only a demo no component page shows stays under its module.
+   */
+  const groups = new Map<string, { examples: PlaygroundExample[]; claimed: Set<string>; firstModule: string }>();
 
   for (const [path, module] of Object.entries(modules).sort(([a], [b]) => a.localeCompare(b))) {
     const id = moduleId(path);
@@ -208,22 +202,18 @@ export function playgroundCatalogue(t: Translate, locale: Locale): readonly Play
      * label and link it. So the skip is explicit. `@skryensya/core/paused` holds the list.
      */
     if (isPausedSlug(id)) continue;
-    const examples: PlaygroundExample[] = [];
-    /** Slugs already taken inside THIS component, so a second one cannot reuse an id. */
-    const claimed = new Set<string>();
     const moduleArguments = MODULE_ARGUMENTS[id]?.(locale);
 
     for (const [exportName, value] of Object.entries(module)) {
-      const extra = EXTRA_ARGUMENTS[exportName];
+      /* Only `*Tree` exports are examples, the same rule `playground-ready.test.ts` holds them to. A
+         helper that happens to return a tree (`genericIcon`, the anatomy diagrams' placeholder icon)
+         is a building block, and offered on its own it read as a component called "Anatomy subject". */
+      if (!exportName.endsWith("Tree")) continue;
       let tree: unknown = value;
 
       if (typeof value === "function") {
         try {
-          tree = moduleArguments
-            ? value(...moduleArguments)
-            : extra === undefined
-              ? value(t)
-              : value(t, extra);
+          tree = moduleArguments ? value(...moduleArguments) : value(t);
         } catch {
           // Not a tree factory (a helper, a formatter): it simply is not a preset.
           continue;
@@ -232,51 +222,54 @@ export function playgroundCatalogue(t: Translate, locale: Locale): readonly Play
       if (!tree || typeof tree !== "object" || !("contract" in tree)) continue;
 
       /*
-       * ANATOMY DIAGRAMS ARE NOT EXAMPLES. A tree rooted in the `annotation` contract is a drawing
-       * OF a component: a labelled specimen with `inert: true`, whose whole point is that it cannot
-       * be interacted with. Handing one to an editor offers the reader a diagram to run, and its
-       * source is mostly ring geometry and label placement rather than the component being taught.
-       *
-       * Matched on the ROOT CONTRACT and not on the export name (`*AnatomyTree`): the name is a
-       * convention and conventions drift, while a tree that renders a diagram has no way to stop
-       * being rooted in `annotation`. This also removes the Annotation component's own demos, which
-       * is correct for the same reason: they are annotations.
+       * ANATOMY DIAGRAMS ARE EXAMPLES TOO. They were skipped, on the argument that an inert specimen
+       * is not something to run. But a diagram is a tree like any other, both bindings emit it, and
+       * its source is the answer to "how do I draw one of these for MY component", which only the
+       * playground can show by letting the reader edit it. Each lands under the component it
+       * diagrams (its docs page is the one that renders it), labelled by its own name ("Anatomy").
        */
-      if ((tree as UsageTree).contract === "annotation") continue;
-
       const problems = validateUsageTree(tree as UsageTree).problems;
       if (problems.some((problem) => problem.severity === "error")) continue;
 
+      const route = routeFor(id, exportName);
+      const routed = route?.startsWith("/components/") ? route.split("/").pop()! : undefined;
+      const componentId = routed && componentPages.has(routed) && !isPausedSlug(routed) ? routed : id;
+      const group =
+        groups.get(componentId) ??
+        groups.set(componentId, { examples: [], claimed: new Set(), firstModule: id }).get(componentId)!;
+
       /*
        * THE PREFIX STRIP CAN COLLIDE, so the slug is claimed rather than assumed. `humanise` removes
-       * the component prefix from the export name, which is what turns `buttonIconOnlyTree` into
-       * "Icon only": but in `demos/layout.ts` both `gridTree` and `layoutGridTree` come out "Grid",
-       * because stripping `layout` from the second leaves exactly the first. That shipped two rail
-       * entries reading "Grid", two catalogue ids reading `grid`, and React warning about duplicate
-       * keys on every render of the rail.
-       *
-       * On a collision the FULL export name is used instead, which is unique by construction: a
-       * module cannot export the same name twice. So the second one reads "Layout grid", which is
-       * also the more accurate name for it.
+       * the module prefix from the export name, which is what turns `buttonIconOnlyTree` into
+       * "Icon only": but two exports can come out the same once stripped (in `demos/layout.ts`,
+       * `gridTree` and `layoutGridTree` both read "Grid"), and now two MODULES can feed one
+       * component. On a collision the FULL export name is used instead, which is unique within a
+       * module, and then the module name, which makes it unique across them.
        */
       let label = humanise(exportName, id);
       let slug = slugify(label) || exportName.toLowerCase();
-      if (claimed.has(slug)) {
+      if (group.claimed.has(slug)) {
         label = humanise(exportName, "");
         slug = slugify(label) || exportName.toLowerCase();
       }
-      claimed.add(slug);
-      const route = routeFor(id, exportName) ?? componentPages.get(id)?.href;
-      examples.push({
+      if (group.claimed.has(slug)) {
+        label = `${label} (${id})`;
+        slug = `${slug}-${id}`;
+      }
+      group.claimed.add(slug);
+      const docsRoute = route ?? componentPages.get(componentId)?.href;
+      group.examples.push({
         id: slug,
         label,
         tree: tree as UsageTree,
-        docs: route ? docsUrl(route, locale, tree as UsageTree) : "",
+        docs: docsRoute ? docsUrl(docsRoute, locale, tree as UsageTree) : "",
       });
     }
+  }
 
+  const components: PlaygroundComponent[] = [];
+  for (const [id, { examples }] of groups) {
     if (examples.length === 0) continue;
-
     const page = componentPages.get(id);
     components.push({
       id,
@@ -302,7 +295,6 @@ export function playgroundCatalogue(t: Translate, locale: Locale): readonly Play
    * of turning up broken here.
    */
   const snippetExamples = snippets
-    .filter((snippet) => snippet.tree.contract !== "annotation")
     .filter((snippet) => !validateUsageTree(snippet.tree).problems.some((p) => p.severity === "error"))
     .map((snippet) => ({
       id: snippet.id,

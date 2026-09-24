@@ -21,6 +21,62 @@ type ValueChangeEvent = CustomEvent<{ value: string }>;
 /** Shared Vanilla | React preference for every preview on the page. */
 let sharedBinding: ComponentPreviewBinding | null = null;
 
+/*
+ * IntersectionObserver is the fast path, not a correctness dependency. A srcdoc stage starts
+ * empty until this lifecycle promotes it, so losing an observer callback otherwise leaves a
+ * visible preview behind its loading spinner forever. Keep one scroll/resize fallback for every
+ * preview on the page; it also covers browsers that expose IntersectionObserver but throttle it
+ * while restoring a background tab.
+ */
+const stageLifecycleRoots = new Set<HTMLElement>();
+let stageLifecycleTimer: number | null = null;
+
+function reconcileStageLifecycle(): void {
+  for (const root of stageLifecycleRoots) {
+    if (!root.isConnected) {
+      stageLifecycleRoots.delete(root);
+      continue;
+    }
+    if (stillNearView(root)) {
+      restoreComponentPreviewStages(root);
+    } else {
+      releaseComponentPreviewStages(root);
+    }
+  }
+}
+
+function scheduleStageLifecycle(): void {
+  if (stageLifecycleTimer !== null) return;
+  stageLifecycleTimer = window.setTimeout(() => {
+    stageLifecycleTimer = null;
+    reconcileStageLifecycle();
+  }, 0);
+}
+
+function startStageLifecycleFallback(): void {
+  if (stageLifecycleRoots.size !== 1) return;
+  window.addEventListener("scroll", scheduleStageLifecycle, { passive: true });
+  window.addEventListener("resize", scheduleStageLifecycle);
+}
+
+function stopStageLifecycleFallback(): void {
+  if (stageLifecycleRoots.size !== 0) return;
+  window.removeEventListener("scroll", scheduleStageLifecycle);
+  window.removeEventListener("resize", scheduleStageLifecycle);
+  if (stageLifecycleTimer !== null) {
+    window.clearTimeout(stageLifecycleTimer);
+    stageLifecycleTimer = null;
+  }
+}
+
+/** A preview is active within one viewport of the reader. */
+function stillNearView(root: HTMLElement): boolean {
+  if (!root.isConnected) return false;
+  const box = root.getBoundingClientRect();
+  const margin = window.innerHeight;
+  return box.bottom >= -margin && box.top <= window.innerHeight + margin;
+}
+
 /** Test helper: drop the in-memory preference between cases. */
 export function resetSharedComponentPreviewBinding(): void {
   sharedBinding = null;
@@ -128,23 +184,17 @@ function stageIsBehindAHiddenPanel(frame: HTMLIFrameElement): boolean {
 }
 
 /**
- * Remounts one stage from its cached document, or, the first time it is ever wanted, from
+ * Remounts one stage from its cached document, or, the first time it becomes visible, from
  * {@link componentPreviewAttrs.doc}. Neither binding sets `srcdoc` directly in its markup:
  * `loading="lazy"` does nothing for inline `srcdoc` content, so authoring it eagerly defeats the
- * whole point of this observer. A no-op on a stage already live, or one with no document to mount.
+ * whole point of this observer. A no-op on a stage already live, hidden, or with no document to
+ * mount.
  *
- * BOTH BINDINGS COME THROUGH HERE NOW. The React stage used to be excluded, because `srcDoc` was a
- * React-controlled prop on it and this shared observer promoting it first raced hydration and read
- * as a mismatch. It is a plain `data-` attribute there now (`framed.tsx`), so there is nothing for
- * React to diff `srcdoc` against and nothing left to race.
- *
- * `includeHidden` is the idle prewarm's door in: the scroll path promotes only what the reader can
- * actually see, so a Vanilla reader never pays for the React realm, while the prewarm below boots
- * the other binding once the page is quiet so that switching is instant.
+ * A binding that the reader did not choose remains an empty iframe. React otherwise brings its own
+ * realm and component modules for every preview, multiplying page memory before anyone asks for it.
  */
-function restoreStage(frame: HTMLIFrameElement, includeHidden = false): void {
-  if (frame.srcdoc) return;
-  if (!includeHidden && stageIsBehindAHiddenPanel(frame)) return;
+function restoreStage(frame: HTMLIFrameElement): void {
+  if (frame.srcdoc || stageIsBehindAHiddenPanel(frame)) return;
   const cached = stageSrcdocCache.get(frame);
   if (cached !== undefined) {
     frame.srcdoc = cached;
@@ -178,55 +228,6 @@ export function restoreComponentPreviewStages(root: HTMLElement): void {
   }
 }
 
-/*
- * THE OTHER BINDING, BOOTED WHILE NOBODY IS WAITING.
- *
- * `restoreComponentPreviewStages` deliberately skips the hidden binding, which is what makes
- * arrival fast: nothing boots but the stage in front of the reader. The cost of that, on its own,
- * lands on whoever clicks the other tab - they wait for a realm that has not started yet, and for
- * React that realm is expensive enough to feel.
- *
- * So the page buys it back in the gap: once the preview is in view and the browser has nothing
- * else to do, the hidden stage boots too. Idle and not a timer, because this is the definition of
- * work that must never compete with the reader's own scrolling; `requestIdleCallback` is absent
- * in Safari and in jsdom, where a slow macrotask is the honest fallback rather than an eager one.
- *
- * The reader who never switches pays these bytes anyway, and that is the trade chosen here on
- * purpose: they arrive on an idle connection, after everything visible is done, and they make the
- * switch itself instant.
- */
-const idle = (fn: () => void): void => {
-  const ric = (globalThis as { requestIdleCallback?: (cb: () => void) => void }).requestIdleCallback;
-  if (ric) ric(fn);
-  else setTimeout(fn, 1200);
-};
-
-/*
- * STILL NEAR VIEW when the callback finally runs, re-checked rather than assumed.
- *
- * Idle work is queued, not immediate, and a reader keeps scrolling in the meantime. Without this
- * the prewarm boots a realm for a preview that has already left, which the very next release pass
- * tears down again: wasted on both ends, and worst exactly when the reader is scrolling fast, which
- * is when idle time is scarcest.
- *
- * The same `100%` band the observer uses, so "near view" means one thing on this page and not two.
- */
-function stillNearView(root: HTMLElement): boolean {
-  if (!root.isConnected) return false;
-  const box = root.getBoundingClientRect();
-  const margin = window.innerHeight;
-  return box.bottom >= -margin && box.top <= window.innerHeight + margin;
-}
-
-export function prewarmComponentPreviewStages(root: HTMLElement): void {
-  idle(() => {
-    if (!stillNearView(root)) return;
-    for (const stage of stagesOf(root)) {
-      if (stage.tagName !== "IFRAME") continue;
-      restoreStage(stage as HTMLIFrameElement, true);
-    }
-  });
-}
 
 /**
  * Re-boot the srcdoc stages so count-ups, loaders and mount side-effects run again. The reader-
@@ -809,23 +810,9 @@ function connectSourceToggles(root: HTMLElement): Cleanup {
   };
 
   /*
-   * A binding with no file tabs has NOTHING to stand in front of: its own toggle already IS the
-   * one real per-file button, already wired by `code-preview.ts`'s own `connectCodePreview` (every
-   * `.sk-code-preview` mounts independently of this file)  -  AND it is also one of THIS function's
-   * own representative toggles, since a binding with no tabs has no separate shared bar to be one.
-   * Two things go wrong if a click is forwarded to it unfiltered, and both showed up live
-   * (`aria-expanded` coming back unchanged  -  toggled, then immediately un-toggled):
-   *
-   *  1. `panelToggle.click()` on THE SAME element the reader just clicked fires
-   *     `connectCodePreview`'s own listener a SECOND time, flipping its real state right back.
-   *     Excluding the clicked toggle from its own forwarding pass (`!== clicked`) is what stops
-   *     a toggle from re-clicking itself.
-   *  2. That same synthetic click ALSO fires THIS file's own listener on it a second time
-   *     (attached alongside `connectCodePreview`'s, since it doubles as a representative), which
-   *     would start a SECOND forwarding pass back over every OTHER panel  -  flipping them again
-   *     too. A reentrancy guard is what stops THAT: only the outermost, genuinely user-initiated
-   *     click runs the forwarding loop; a listener re-entered synchronously from inside that loop
-   *     sees the guard already up and returns without cascading further.
+   * A binding with no file tabs has nothing to stand in front of: its representative toggle is
+   * also its real panel toggle. Do not forward a click back to that same element, and suppress the
+   * handler while a synthetic click reaches the other representative.
    */
   let forwarding = false;
   const makeOnClick = (clicked: HTMLButtonElement) => () => {
@@ -872,39 +859,53 @@ function stageObserver(): IntersectionObserver | null {
       (entries) => {
         for (const entry of entries) {
           const previewRoot = entry.target as HTMLElement;
-          if (entry.isIntersecting) {
-            /* Visible first, then the other binding once the page is quiet: the reader waits for
-               one realm, never two. */
+          /*
+           * The browser may report a stale intersection while a layout shift moves a preview under
+           * the reader. Re-read the current box before releasing its realm: an empty `srcdoc`
+           * behind the visible loader has no recovery until another observer delivery arrives.
+           */
+          if (stillNearView(previewRoot)) {
             restoreComponentPreviewStages(previewRoot);
-            prewarmComponentPreviewStages(previewRoot);
           } else releaseComponentPreviewStages(previewRoot);
         }
       },
-      // One generous band, not a tighter release margin plus a separate restore margin: a reader
-      // scrolling normally crosses this boundary once per direction, and toggling the segmented
-      // control on the preview in front of them never crosses it at all, so there is nothing here
-      // for two margins to buy over one.
       { rootMargin: "100% 0px" },
     );
   }
   return sharedStageObserver;
 }
 
-/** Releases a preview's stages once it scrolls a viewport past view, restores them when it scrolls back. */
 function connectStageLifecycle(root: HTMLElement): Cleanup {
   const observer = stageObserver();
-  if (!observer || !stagesOf(root).length) return () => {};
-  observer.observe(root);
-  return () => observer.unobserve(root);
+  if (observer && stagesOf(root).length) observer.observe(root);
+  stageLifecycleRoots.add(root);
+  startStageLifecycleFallback();
+  scheduleStageLifecycle();
+
+  /*
+   * A preview can start behind the component page's own tabs. IntersectionObserver does not fire
+   * when that ancestor merely loses `hidden`, so watch the panel state and promote the stage when
+   * the reader opens it.
+   */
+  const panel = root.closest<HTMLElement>('[role="tabpanel"]');
+  const panelObserver = panel
+    ? new MutationObserver(scheduleStageLifecycle)
+    : null;
+  panelObserver?.observe(panel, { attributes: true, attributeFilter: ["hidden"] });
+
+  return () => {
+    observer?.unobserve(root);
+    panelObserver?.disconnect();
+    stageLifecycleRoots.delete(root);
+    stopStageLifecycleFallback();
+  };
 }
 
-/** Switches the authored source panels without owning preview rendering or highlighted code. */
 export function connectComponentPreview(root: HTMLElement): Cleanup {
   const bindingTabs = root.querySelector<HTMLElement>(selector(componentPreviewAttrs.bindingTabs));
   const sourceTabs = root.querySelector<HTMLElement>(selector(componentPreviewAttrs.sourceTabs));
   const reload = root.querySelector<HTMLElement>(selector(componentPreviewAttrs.reload));
   const playground = root.querySelector<HTMLElement>(selector(componentPreviewAttrs.playgroundOpen));
-
   /*
    * A PREVIEW THAT ONLY HAS ONE BINDING HAS NOTHING TO SWITCH, and must not be switched away from.
    *

@@ -1,6 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /*
  * Two ranges side by side, one enabled and one disabled.
@@ -14,8 +14,9 @@ import { namePart } from "./annotation-parts";
 export const sliderAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("sliderPage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("sliderPage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "slider",
       signature: "Slider",
@@ -23,7 +24,7 @@ export const sliderAnatomyTree = (t: Translate): UsageTree => ({
       attrs: { "aria-label": t("demo.slider.volume"), style: "inline-size: 16rem" },
     },
     items: [
-      namePart(".sk-slider", "block-start"),
+      namePart(".sk-slider", "block-start", { mark: "bracket" }),
       namePart(".sk-slider__control", "inline-start"),
       namePart(".sk-slider__track", "block-end"),
       namePart(".sk-slider__range", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),

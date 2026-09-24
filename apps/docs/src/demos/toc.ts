@@ -1,7 +1,7 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 import { tocAnatomyItems, tocIconItems, tocItems, tocNestedItems } from "./data/toc";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /* Plain, nested (h2/h3) and icon-bearing Toc compositions shared by both locales. The entries
  * themselves are data: see `data/toc.ts`. */
@@ -13,8 +13,9 @@ import { namePart } from "./annotation-parts";
 export const tocAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("tocPage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("tocPage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "toc",
       signature: "Toc",
@@ -22,7 +23,7 @@ export const tocAnatomyTree = (t: Translate): UsageTree => ({
       slots: { items: tocAnatomyItems(t) },
     },
     items: [
-      namePart(".sk-toc", "block-start"),
+      namePart(".sk-toc", "block-start", { mark: "bracket" }),
       namePart(".sk-toc__nav", "inline-start"),
       namePart(".sk-toc__title", "inline-end"),
       namePart(".sk-toc__list", "inline-start", { ringPlacement: "offset", ringDistance: 4 }),

@@ -1,14 +1,15 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 
 /** Ordered list, step, content and title: two steps without nested chrome. */
 export const processListAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("processListPage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("processListPage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "process-list",
       signature: "ProcessList",
@@ -43,7 +44,7 @@ export const processListAnatomyTree = (t: Translate): UsageTree => ({
       ],
     },
     items: [
-      namePart(".sk-process-list", "block-start"),
+      namePart(".sk-process-list", "block-start", { mark: "bracket" }),
       namePart(".sk-process-list__item", "inline-start"),
       namePart(".sk-process-list__content", "inline-end", { ringPlacement: "offset", ringDistance: 4 }),
       namePart(".sk-process-list__title", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),

@@ -1,21 +1,22 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 import { stepsItems, stepsVerticalItems } from "./data/steps";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /** Root, item, marker, label and description: one complete stage named at rest. */
 export const stepsAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("stepsPage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("stepsPage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "steps",
       signature: "Steps",
       slots: { items: stepsItems(t).slice(0, 3) },
     },
     items: [
-      namePart(".sk-steps", "block-start"),
+      namePart(".sk-steps", "block-start", { mark: "bracket" }),
       namePart(".sk-steps__item", "inline-start"),
       namePart(".sk-steps__marker", "inline-start", { ringPlacement: "offset", ringDistance: 2 }),
       namePart(".sk-steps__label", "inline-end"),

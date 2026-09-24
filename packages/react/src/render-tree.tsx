@@ -1,87 +1,4 @@
 import { createElement, type ReactNode, type RefObject } from "react";
-import * as tagModule from "./components/tag.js";
-import * as progressModule from "./components/progress.js";
-import * as avatarModule from "./components/avatar.js";
-import * as typographyModule from "./components/typography.js";
-import * as layoutModule from "./components/layout.js";
-import * as breadcrumbModule from "./components/breadcrumb.js";
-import * as emptyStateModule from "./components/empty-state.js";
-import * as statModule from "./components/stat.js";
-import * as calloutModule from "./components/callout.js";
-import * as processListModule from "./components/process-list.js";
-import * as descriptionListModule from "./components/description-list.js";
-import * as quoteModule from "./components/quote.js";
-import * as tagsInputModule from "./components/tags-input.js";
-import * as separatorModule from "./components/separator.js";
-import * as timelineModule from "./components/timeline.js";
-import * as changelogModule from "./components/changelog.js";
-import * as stepsModule from "./components/steps.js";
-import * as listModule from "./components/list.js";
-import * as navbarModule from "./components/navbar.js";
-import * as toolbarModule from "./components/toolbar.js";
-import * as editorModule from "./components/editor.js";
-import * as mediaGradientModule from "./components/media-gradient.js";
-import * as segmentedModule from "./components/segmented.js";
-import * as sliderModule from "./components/slider.js";
-import * as timeFieldModule from "./components/time-field.js";
-import * as fileUploadModule from "./components/file-upload.js";
-import * as carouselModule from "./components/carousel.js";
-import * as marqueeModule from "./components/marquee.js";
-import * as treeViewModule from "./components/tree-view.js";
-import * as sidebarModule from "./components/sidebar.js";
-import * as backToTopModule from "./components/back-to-top.js";
-import * as canvasModule from "./components/canvas.js";
-import * as annotationModule from "./components/annotation.js";
-import * as diagramModule from "./components/diagram.js";
-import * as skipLinkModule from "./components/skip-link.js";
-import * as accordionModule from "./components/accordion.js";
-import * as tileModule from "./components/tile.js";
-import * as paginationModule from "./components/pagination.js";
-import * as stateButtonModule from "./components/state-button.js";
-import * as contentModule from "./components/content.js";
-import * as numberFieldModule from "./components/number-field.js";
-import * as formFieldModule from "./components/form-field.js";
-import * as tooltipModule from "./components/tooltip.js";
-import * as selectModule from "./components/select.js";
-import * as menuModule from "./components/menu.js";
-import * as comboboxModule from "./components/combobox.js";
-import * as calendarModule from "./components/calendar.js";
-import * as datePickerModule from "./components/date-picker.js";
-import * as dialogModule from "./components/dialog.js";
-import * as splitButtonModule from "./components/split-button.js";
-import * as popoverModule from "./components/popover.js";
-import * as commandPaletteModule from "./components/command-palette.js";
-import * as codePreviewModule from "./components/code-preview.js";
-import * as detailsModule from "./components/details.js";
-import * as vaulModule from "./components/vaul.js";
-import * as selectNativeModule from "./components/select-native.js";
-import * as badgeModule from "./components/badge.js";
-import * as colorPickerModule from "./components/color-picker.js";
-import * as kbdModule from "./components/kbd.js";
-import * as loaderModule from "./components/loader.js";
-import * as placeholderModule from "./components/placeholder.js";
-import * as buttonModule from "./components/button.js";
-import * as iconModule from "./components/icon.js";
-import * as fadeEdgeModule from "./components/fade-edge.js";
-import * as qrModule from "./components/qr-code.js";
-import * as imageFrameModule from "./components/image-frame.js";
-import * as inputModule from "./components/input.js";
-import * as navListModule from "./components/nav-list.js";
-import * as selectionModule from "./components/selection.js";
-import * as tableModule from "./components/table.js";
-import * as treegridModule from "./components/treegrid.js";
-import * as meterModule from "./components/meter.js";
-import * as chartModule from "./components/chart.js";
-import * as dataGridModule from "./components/data-grid.js";
-import * as feedModule from "./components/feed.js";
-import * as folderModule from "./components/folder.js";
-import * as commentThreadModule from "./components/comment-thread.js";
-import * as questionnaireModule from "./components/questionnaire.js";
-import * as menubarModule from "./components/menubar.js";
-import * as megamenuModule from "./components/megamenu.js";
-import * as tabsModule from "./components/tabs.js";
-import * as tocModule from "./components/toc.js";
-import * as componentPreviewModule from "./components/component-preview.js";
 import type { ContractSlot } from "@skryensya/core/contract";
 import { getContract, getSignature } from "@skryensya/core/registry";
 import { resolveReactProps } from "@skryensya/core/react-props";
@@ -103,94 +20,100 @@ import {
  * the gates would have needed its own copy of the module map, which is the duplication this whole
  * system argues against.
  *
- * The modules are imported statically because a bundler cannot follow a specifier assembled at
- * runtime, and because a renderer that could load anything would be proving less, not more. A
- * contract joins the map when it joins the catalogue.
+ * Every specifier is written out because a bundler cannot follow one assembled at runtime, and
+ * because a renderer that could load anything would be proving less, not more. A contract joins
+ * the map when it joins the catalogue.
+ *
+ * They are LOADERS, not static imports. Static, every React stage paid for the whole binding
+ * (~2MB: an Accordion demo pulled in date-picker's machine, combobox, tree-view, color-picker), in
+ * every preview frame on a page, including the ones prewarmed behind a tab nobody clicked. Now a
+ * tree loads the families it names and nothing else: `await loadTree(tree)`, then `renderTree`.
  */
-const modules: Record<string, Record<string, unknown>> = {
-  "@skryensya/react/annotation": annotationModule,
-  "@skryensya/react/diagram": diagramModule,
-  "@skryensya/react/select": selectModule,
-  "@skryensya/react/menu": menuModule,
-  "@skryensya/react/combobox": comboboxModule,
-  "@skryensya/react/calendar": calendarModule,
-  "@skryensya/react/date-picker": datePickerModule,
-  "@skryensya/react/dialog": dialogModule,
-  "@skryensya/react/split-button": splitButtonModule,
-  "@skryensya/react/popover": popoverModule,
-  "@skryensya/react/command-palette": commandPaletteModule,
-  "@skryensya/react/code-preview": codePreviewModule,
-  "@skryensya/react/details": detailsModule,
-  "@skryensya/react/vaul": vaulModule,
-  "@skryensya/react/select-native": selectNativeModule,
-  "@skryensya/react/tag": tagModule,
-  "@skryensya/react/progress": progressModule,
-  "@skryensya/react/avatar": avatarModule,
-  "@skryensya/react/typography": typographyModule,
-  "@skryensya/react/layout": layoutModule,
-  "@skryensya/react/breadcrumb": breadcrumbModule,
-  "@skryensya/react/empty-state": emptyStateModule,
-  "@skryensya/react/stat": statModule,
-  "@skryensya/react/callout": calloutModule,
-  "@skryensya/react/process-list": processListModule,
-  "@skryensya/react/description-list": descriptionListModule,
-  "@skryensya/react/quote": quoteModule,
-  "@skryensya/react/tags-input": tagsInputModule,
-  "@skryensya/react/separator": separatorModule,
-  "@skryensya/react/timeline": timelineModule,
-  "@skryensya/react/changelog": changelogModule,
-  "@skryensya/react/steps": stepsModule,
-  "@skryensya/react/list": listModule,
-  "@skryensya/react/navbar": navbarModule,
-  "@skryensya/react/toolbar": toolbarModule,
-  "@skryensya/react/media-gradient": mediaGradientModule,
-  "@skryensya/react/segmented": segmentedModule,
-  "@skryensya/react/slider": sliderModule,
-  "@skryensya/react/content": contentModule,
-  "@skryensya/react/pagination": paginationModule,
-  "@skryensya/react/accordion": accordionModule,
-  "@skryensya/react/sidebar": sidebarModule,
-  "@skryensya/react/back-to-top": backToTopModule,
-  "@skryensya/react/canvas": canvasModule,
-  "@skryensya/react/skip-link": skipLinkModule,
-  "@skryensya/react/carousel": carouselModule,
-  "@skryensya/react/marquee": marqueeModule,
-  "@skryensya/react/file-upload": fileUploadModule,
-  "@skryensya/react/time-field": timeFieldModule,
-  "@skryensya/react/tree-view": treeViewModule,
-  "@skryensya/react/tile": tileModule,
-  "@skryensya/react/state-button": stateButtonModule,
-  "@skryensya/react/number-field": numberFieldModule,
-  "@skryensya/react/tooltip": tooltipModule,
-  "@skryensya/react/badge": badgeModule,
-  "@skryensya/react/color-picker": colorPickerModule,
-  "@skryensya/react/kbd": kbdModule,
-  "@skryensya/react/loader": loaderModule,
-  "@skryensya/react/placeholder": placeholderModule,
-  "@skryensya/react/button": buttonModule,
-  "@skryensya/react/icon": iconModule,
-  "@skryensya/react/image-frame": imageFrameModule,
-  "@skryensya/react/fade-edge": fadeEdgeModule,
-  "@skryensya/react/qr-code": qrModule,
-  "@skryensya/react/form-field": formFieldModule,
-  "@skryensya/react/input": inputModule,
-  "@skryensya/react/nav-list": navListModule,
-  "@skryensya/react/selection": selectionModule,
-  "@skryensya/react/table": tableModule,
-  "@skryensya/react/treegrid": treegridModule,
-  "@skryensya/react/meter": meterModule,
-  "@skryensya/react/chart": chartModule,
-  "@skryensya/react/data-grid": dataGridModule,
-  "@skryensya/react/feed": feedModule,
-  "@skryensya/react/comment-thread": commentThreadModule,
-  "@skryensya/react/questionnaire": questionnaireModule,
-  "@skryensya/react/menubar": menubarModule,
-  "@skryensya/react/megamenu": megamenuModule,
-  "@skryensya/react/tabs": tabsModule,
-  "@skryensya/react/toc": tocModule,
-  "@skryensya/react/component-preview": componentPreviewModule,
-  "@skryensya/react/editor": editorModule,
-  "@skryensya/react/folder": folderModule,
+const loaders: Record<string, () => Promise<Record<string, unknown>>> = {
+  "@skryensya/react/annotation": () => import("./components/annotation.js"),
+  "@skryensya/react/diagram": () => import("./components/diagram.js"),
+  "@skryensya/react/select": () => import("./components/select.js"),
+  "@skryensya/react/menu": () => import("./components/menu.js"),
+  "@skryensya/react/combobox": () => import("./components/combobox.js"),
+  "@skryensya/react/calendar": () => import("./components/calendar.js"),
+  "@skryensya/react/date-picker": () => import("./components/date-picker.js"),
+  "@skryensya/react/dialog": () => import("./components/dialog.js"),
+  "@skryensya/react/split-button": () => import("./components/split-button.js"),
+  "@skryensya/react/popover": () => import("./components/popover.js"),
+  "@skryensya/react/command-palette": () => import("./components/command-palette.js"),
+  "@skryensya/react/code-preview": () => import("./components/code-preview.js"),
+  "@skryensya/react/details": () => import("./components/details.js"),
+  "@skryensya/react/vaul": () => import("./components/vaul.js"),
+  "@skryensya/react/select-native": () => import("./components/select-native.js"),
+  "@skryensya/react/tag": () => import("./components/tag.js"),
+  "@skryensya/react/progress": () => import("./components/progress.js"),
+  "@skryensya/react/avatar": () => import("./components/avatar.js"),
+  "@skryensya/react/typography": () => import("./components/typography.js"),
+  "@skryensya/react/layout": () => import("./components/layout.js"),
+  "@skryensya/react/breadcrumb": () => import("./components/breadcrumb.js"),
+  "@skryensya/react/empty-state": () => import("./components/empty-state.js"),
+  "@skryensya/react/stat": () => import("./components/stat.js"),
+  "@skryensya/react/callout": () => import("./components/callout.js"),
+  "@skryensya/react/process-list": () => import("./components/process-list.js"),
+  "@skryensya/react/description-list": () => import("./components/description-list.js"),
+  "@skryensya/react/quote": () => import("./components/quote.js"),
+  "@skryensya/react/tags-input": () => import("./components/tags-input.js"),
+  "@skryensya/react/separator": () => import("./components/separator.js"),
+  "@skryensya/react/timeline": () => import("./components/timeline.js"),
+  "@skryensya/react/changelog": () => import("./components/changelog.js"),
+  "@skryensya/react/steps": () => import("./components/steps.js"),
+  "@skryensya/react/list": () => import("./components/list.js"),
+  "@skryensya/react/navbar": () => import("./components/navbar.js"),
+  "@skryensya/react/toolbar": () => import("./components/toolbar.js"),
+  "@skryensya/react/media-gradient": () => import("./components/media-gradient.js"),
+  "@skryensya/react/segmented": () => import("./components/segmented.js"),
+  "@skryensya/react/slider": () => import("./components/slider.js"),
+  "@skryensya/react/content": () => import("./components/content.js"),
+  "@skryensya/react/pagination": () => import("./components/pagination.js"),
+  "@skryensya/react/accordion": () => import("./components/accordion.js"),
+  "@skryensya/react/sidebar": () => import("./components/sidebar.js"),
+  "@skryensya/react/back-to-top": () => import("./components/back-to-top.js"),
+  "@skryensya/react/canvas": () => import("./components/canvas.js"),
+  "@skryensya/react/lightbox": () => import("./components/lightbox.js"),
+  "@skryensya/react/skip-link": () => import("./components/skip-link.js"),
+  "@skryensya/react/carousel": () => import("./components/carousel.js"),
+  "@skryensya/react/marquee": () => import("./components/marquee.js"),
+  "@skryensya/react/file-upload": () => import("./components/file-upload.js"),
+  "@skryensya/react/time-field": () => import("./components/time-field.js"),
+  "@skryensya/react/tree-view": () => import("./components/tree-view.js"),
+  "@skryensya/react/tile": () => import("./components/tile.js"),
+  "@skryensya/react/state-button": () => import("./components/state-button.js"),
+  "@skryensya/react/number-field": () => import("./components/number-field.js"),
+  "@skryensya/react/tooltip": () => import("./components/tooltip.js"),
+  "@skryensya/react/badge": () => import("./components/badge.js"),
+  "@skryensya/react/color-picker": () => import("./components/color-picker.js"),
+  "@skryensya/react/kbd": () => import("./components/kbd.js"),
+  "@skryensya/react/loader": () => import("./components/loader.js"),
+  "@skryensya/react/placeholder": () => import("./components/placeholder.js"),
+  "@skryensya/react/button": () => import("./components/button.js"),
+  "@skryensya/react/icon": () => import("./components/icon.js"),
+  "@skryensya/react/image-frame": () => import("./components/image-frame.js"),
+  "@skryensya/react/fade-edge": () => import("./components/fade-edge.js"),
+  "@skryensya/react/qr-code": () => import("./components/qr-code.js"),
+  "@skryensya/react/form-field": () => import("./components/form-field.js"),
+  "@skryensya/react/input": () => import("./components/input.js"),
+  "@skryensya/react/nav-list": () => import("./components/nav-list.js"),
+  "@skryensya/react/selection": () => import("./components/selection.js"),
+  "@skryensya/react/table": () => import("./components/table.js"),
+  "@skryensya/react/treegrid": () => import("./components/treegrid.js"),
+  "@skryensya/react/meter": () => import("./components/meter.js"),
+  "@skryensya/react/chart": () => import("./components/chart.js"),
+  "@skryensya/react/data-grid": () => import("./components/data-grid.js"),
+  "@skryensya/react/feed": () => import("./components/feed.js"),
+  "@skryensya/react/comment-thread": () => import("./components/comment-thread.js"),
+  "@skryensya/react/questionnaire": () => import("./components/questionnaire.js"),
+  "@skryensya/react/menubar": () => import("./components/menubar.js"),
+  "@skryensya/react/megamenu": () => import("./components/megamenu.js"),
+  "@skryensya/react/tabs": () => import("./components/tabs.js"),
+  "@skryensya/react/toc": () => import("./components/toc.js"),
+  "@skryensya/react/component-preview": () => import("./components/component-preview.js"),
+  "@skryensya/react/editor": () => import("./components/editor.js"),
+  "@skryensya/react/folder": () => import("./components/folder.js"),
 };
 
 /*
@@ -200,6 +123,40 @@ const modules: Record<string, Record<string, unknown>> = {
  * loose regions.
  */
 let portalContainer: RefObject<HTMLElement> | undefined;
+
+/** The loaded modules, by the specifier a signature's `react.from` names. Filled by `loadTree`. */
+const modules: Record<string, Record<string, unknown>> = {};
+
+/** Every `react.from` a tree reaches, nested trees in slots and collection entries included. */
+function specifiersOf(value: unknown, into: Set<string>): Set<string> {
+  if (Array.isArray(value)) {
+    for (const item of value) specifiersOf(item, into);
+  } else if (value !== null && typeof value === "object") {
+    // Structural, not `isUsageTree`: that one only tells a tree from a STRING, and this walk
+    // visits every object in the tree (options, collection entries), not just slot items.
+    const { contract: name, signature: signatureName } = value as Partial<UsageTree>;
+    if (typeof name === "string" && typeof signatureName === "string") {
+      const contract = getContract(name);
+      const from = contract && getSignature(contract, signatureName)?.react.from;
+      if (from) into.add(from);
+    }
+    for (const nested of Object.values(value)) specifiersOf(nested, into);
+  }
+  return into;
+}
+
+/**
+ * Loads the binding modules a tree renders with. Await it before `renderTree`: rendering is
+ * synchronous (React, the gates and the docs frame all call it inside a commit), loading is not.
+ */
+export async function loadTree(tree: UsageTree): Promise<void> {
+  await Promise.all(
+    [...specifiersOf(tree, new Set())].map(async (from) => {
+      const load = loaders[from];
+      if (load && !modules[from]) modules[from] = await load();
+    }),
+  );
+}
 
 export function setPortalContainer(container: RefObject<HTMLElement>): void {
   portalContainer = container;
@@ -220,6 +177,12 @@ export function renderTree(tree: UsageTree, key?: string | number): ReactNode {
     .split(".")
     .reduce<unknown>((held, key) => (held as Record<string, unknown>)?.[key], modules[signature.react.from]);
   if (component === undefined) {
+    if (!(signature.react.from in loaders)) {
+      throw new Error(`No React module "${signature.react.from}" in the render-tree map.`);
+    }
+    if (!modules[signature.react.from]) {
+      throw new Error(`${signature.react.from} is not loaded: await loadTree(tree) before renderTree.`);
+    }
     throw new Error(`${signature.react.from} exports no "${signature.react.name}".`);
   }
 

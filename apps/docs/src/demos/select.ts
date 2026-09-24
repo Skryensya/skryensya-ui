@@ -1,6 +1,7 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 import { planItems } from "./data/select";
+import { anatomyFigureHtml } from "./annotation-parts";
 
 /*
  * Both halves of the page, from one newly published contract.
@@ -74,32 +75,23 @@ const selectAnatomySpecimen = (t: Translate): string => `<div class="sk-select" 
   </div>
 </div>`;
 
-const label = (target: string, side: string, text: string, extra = ""): string =>
-  `<span class="sk-annotation" data-for="${target}" data-side="${side}" data-match="first"${extra} tabindex="0">${text}</span>`;
 
-export const selectAnatomyHtml = (t: Translate): string => `<div
-  class="sk-annotated"
-  data-sk-annotated
-  aria-label="${t("selectPage.anatomyLabel")}"
-  data-ring-placement="inset"
-  data-ring-distance="2"
-  role="group"
->
-  <div class="sk-annotated__subject" inert>
-    ${selectAnatomySpecimen(t)}
-  </div>
-  ${label(".sk-select", "inline-start", "sk-select")}
-  ${label(".sk-select__label", "inline-start", "sk-select__label")}
-  ${label(".sk-select__trigger", "inline-start", "sk-select__trigger")}
-  ${label(".sk-select__value", "inline-end", "sk-select__value", ' data-ring-placement="offset" data-ring-distance="4"')}
-  ${label(".sk-select__indicator", "inline-end", "sk-select__indicator")}
-  ${label(".sk-select__positioner", "inline-start", "sk-select__positioner")}
-  ${label(".sk-select__content", "inline-start", "sk-select__content")}
-  ${label(".sk-select__item", "inline-end", "sk-select__item", ' data-ring-placement="offset" data-ring-distance="3"')}
-  <svg class="sk-annotated__leaders" aria-hidden="true" focusable="false"></svg>
-</div>`;
+export const selectAnatomyHtml = (t: Translate): string => anatomyFigureHtml(t, {
+  label: t("selectPage.anatomyLabel"),
+  specimen: selectAnatomySpecimen(t),
+  parts: [
+    { for: ".sk-select", side: "inline-start", mark: "bracket" },
+    { for: ".sk-select__label", side: "inline-start" },
+    { for: ".sk-select__trigger", side: "inline-start" },
+    { for: ".sk-select__value", side: "inline-end", ringPlacement: "offset", ringDistance: 4 },
+    { for: ".sk-select__indicator", side: "inline-end" },
+    { for: ".sk-select__positioner", side: "inline-start" },
+    { for: ".sk-select__content", side: "inline-start" },
+    { for: ".sk-select__item", side: "inline-end", ringPlacement: "offset", ringDistance: 3 },
+  ],
+});
 
-export const selectAnatomyCss = `.sk-annotated {
+export const selectAnatomyCss = `.sk-annotated-figure {
   --sk-annotation-font-family: var(--font-family-code);
 }
 

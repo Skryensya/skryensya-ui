@@ -277,6 +277,17 @@
     --sk-diagram-edge-line-height: var(--font-line-height-caption);
 
     /*
+     * THE DESIGN WIDTH, read only on a `Canvas`: the width at which every column gets a node at its
+     * widest, which is how the drawing would sit on a desktop page with room to spare. Derived from
+     * the grid rather than a flat length, so a one-column flow is not stretched to a 4-column tree's
+     * width and scaled down for nothing. A hook, so a drawing that wants more air says so here.
+     */
+    --sk-diagram-canvas-inline-size: calc(
+      var(--sk-diagram-columns) * var(--sk-diagram-node-max-inline-size) +
+        (var(--sk-diagram-columns) - 1) * var(--sk-diagram-column-gap)
+    );
+
+    /*
      * `relative` is STRUCTURE: the connector overlay and the edge overlay are both `absolute` and
      * this is the containing block they resolve against, which is also the coordinate space the
      * binding measures in. Written explicitly rather than inherited from anything, because a diagram
@@ -286,6 +297,26 @@
     display: block;
     inline-size: 100%;
     max-inline-size: 100%;
+  }
+
+  /*
+   * ON A CANVAS the drawing is laid out at its design width and SHOWN scaled, never rewrapped: that
+   * is the canvas's whole job, and a phone gets the desktop drawing to zoom into instead of one
+   * whose nodes are squeezed a word per line.
+   *
+   * A FLOOR IS REQUIRED, not a nicety. The frame is a size container, and size containment gives it
+   * an intrinsic width of zero; the canvas lays its content out at `max-content`, so without one the
+   * whole drawing collapsed to a 0px column. `min-inline-size` still counts toward a contained box's
+   * contribution, which is what gives the content a width to be. The content itself is floored at
+   * the viewport, so on a wide screen the drawing fills the room it has, exactly as off a canvas.
+   */
+  .sk-canvas__content > .sk-diagram {
+    min-inline-size: var(--sk-diagram-canvas-inline-size);
+    max-inline-size: none;
+  }
+
+  .sk-canvas__content:has(> .sk-diagram) {
+    min-inline-size: 100%;
   }
 
   /*

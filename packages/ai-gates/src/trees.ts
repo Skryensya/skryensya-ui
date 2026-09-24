@@ -3024,8 +3024,8 @@ const signatureTrees: readonly Canonical[] = [
     },
   },
   /*
-   * A canvas around ordinary content, and the same annotation with `zoomable`: the second is what
-   * proves the embedded canvas (the frame on the canvas, the legend-free figure) renders the same
+   * A canvas around ordinary content, and an annotation, which always sits on one: the second is what
+   * proves the embedded canvas (the frame on the canvas, the legend outside it) renders the same
    * structure from both bindings as the standalone one.
    */
   {
@@ -3046,12 +3046,12 @@ const signatureTrees: readonly Canonical[] = [
     },
   },
   {
-    name: "annotation/zoomable",
+    name: "annotation/canvas",
     enhanced: true,
     tree: {
       contract: "annotation",
       signature: "Annotated",
-      options: { label: "Anatomía de Stat", inert: true, zoomable: true, numbered: true },
+      options: { label: "Anatomía de Stat", inert: true },
       slots: {
         subject: {
           contract: "stat",

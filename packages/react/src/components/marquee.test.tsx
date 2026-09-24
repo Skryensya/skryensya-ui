@@ -1,6 +1,6 @@
 import { act, fireEvent, render } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { renderTree } from "../render-tree.js";
+import { loadTree, renderTree } from "../render-tree.js";
 import { AutoplayMarquee, Marquee } from "./marquee.js";
 
 describe("Marquee", () => {
@@ -167,7 +167,7 @@ describe("Marquee", () => {
     expect(ui.getByRole("button", { name: "Play motion" })).toBeTruthy();
   });
 
-  it("renders marquee contract trees, including FadeEdge composition", () => {
+  it("renders marquee contract trees, including FadeEdge composition", async () => {
     const tree = {
       contract: "fade-edge",
       signature: "FadeEdge",
@@ -189,6 +189,7 @@ describe("Marquee", () => {
       },
     } as const;
 
+    await loadTree(tree);
     const ui = render(renderTree(tree));
 
     expect(ui.getByRole("button", { name: "Pause motion" })).toBeTruthy();

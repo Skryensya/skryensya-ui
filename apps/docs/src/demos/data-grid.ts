@@ -1,14 +1,15 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 
 /** Grid, row and cell: the three levels WAI names for a data grid. */
 export const dataGridAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("dataGridPage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("dataGridPage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "data-grid",
       signature: "DataGrid",
@@ -27,7 +28,7 @@ export const dataGridAnatomyTree = (t: Translate): UsageTree => ({
       })),
     },
     items: [
-      namePart(".sk-data-grid", "block-start"),
+      namePart(".sk-data-grid", "block-start", { mark: "bracket" }),
       namePart(".sk-data-grid__row", "inline-start"),
       namePart(".sk-data-grid__cell", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
     ],

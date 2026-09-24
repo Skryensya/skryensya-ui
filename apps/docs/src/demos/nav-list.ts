@@ -1,6 +1,7 @@
+import { placeholderHrefs } from "../lib/placeholder-hrefs";
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /*
  * ONE group with a labelled list, an icon link, a trailing count, and a nested sub-list: enough of
@@ -9,8 +10,9 @@ import { namePart } from "./annotation-parts";
 export const navListAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("navListPage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("navListPage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "nav-list",
       signature: "NavList",
@@ -38,7 +40,7 @@ export const navListAnatomyTree = (t: Translate): UsageTree => ({
       ],
     },
     items: [
-      namePart(".sk-nav-list", "block-start"),
+      namePart(".sk-nav-list", "block-start", { mark: "bracket" }),
       namePart(".sk-nav-list__group", "inline-start"),
       namePart(".sk-nav-list__group-label", "inline-end"),
       namePart(".sk-nav-list__list", "inline-start", { ringPlacement: "offset", ringDistance: 4 }),
@@ -80,7 +82,7 @@ const link = (
  */
 export const navListProductTree = (
   t: Translate,
-  hrefs: { dashboard: string; inbox: string; customers: string; segments: string; automations: string; settings: string },
+  hrefs: { dashboard: string; inbox: string; customers: string; segments: string; automations: string; settings: string } = placeholderHrefs(),
 ): UsageTree => ({
   contract: "nav-list",
   signature: "NavList",
@@ -120,7 +122,7 @@ export const navListProductTree = (
 /* Horizontal nav-list as a navbar guest: the same NavListGroup wrapper remains, just unlabelled. */
 export const navListHorizontalTree = (
   t: Translate,
-  hrefs: { overview: string; projects: string; reports: string; team: string },
+  hrefs: { overview: string; projects: string; reports: string; team: string } = placeholderHrefs(),
 ): UsageTree => ({
   contract: "nav-list",
   signature: "NavList",
@@ -144,7 +146,7 @@ export const navListHorizontalTree = (
  */
 export const navListCollapsibleTree = (
   t: Translate,
-  hrefs: { start: string; components: string; tokens: string; profile: string; billing: string },
+  hrefs: { start: string; components: string; tokens: string; profile: string; billing: string } = placeholderHrefs(),
 ): UsageTree => ({
   contract: "nav-list",
   signature: "NavList",

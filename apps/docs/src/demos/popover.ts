@@ -1,5 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { anatomyFigureHtml } from "./annotation-parts";
 
 /*
  * THE ANATOMY SPECIMEN: frozen open markup. A live Popover sits in the top layer behind `popover`
@@ -31,31 +32,22 @@ const popoverAnatomySpecimen = (t: Translate): string => `<div class="sk-popover
   </div>
 </div>`;
 
-const label = (target: string, side: string, text: string, extra = ""): string =>
-  `<span class="sk-annotation" data-for="${target}" data-side="${side}" data-match="first"${extra} tabindex="0">${text}</span>`;
 
-export const popoverAnatomyHtml = (t: Translate): string => `<div
-  class="sk-annotated"
-  data-sk-annotated
-  aria-label="${t("popoverPage.anatomyLabel")}"
-  data-ring-placement="inset"
-  data-ring-distance="2"
-  role="group"
->
-  <div class="sk-annotated__subject" inert>
-    ${popoverAnatomySpecimen(t)}
-  </div>
-  ${label(".sk-popover", "block-start", "sk-popover", ' data-ring-placement="offset" data-ring-distance="8"')}
-  ${label(".sk-popover__trigger", "inline-start", "sk-popover__trigger")}
-  ${label(".sk-popover__content", "inline-start", "sk-popover__content")}
-  ${label(".sk-anchored-arrow", "inline-end", "sk-anchored-arrow")}
-  ${label(".sk-popover__title", "inline-end", "sk-popover__title", ' data-ring-placement="offset" data-ring-distance="2"')}
-  ${label(".sk-popover__description", "inline-end", "sk-popover__description", ' data-ring-placement="offset" data-ring-distance="2"')}
-  ${label(".sk-popover__close", "block-end", "sk-popover__close")}
-  <svg class="sk-annotated__leaders" aria-hidden="true" focusable="false"></svg>
-</div>`;
+export const popoverAnatomyHtml = (t: Translate): string => anatomyFigureHtml(t, {
+  label: t("popoverPage.anatomyLabel"),
+  specimen: popoverAnatomySpecimen(t),
+  parts: [
+    { for: ".sk-popover", side: "block-start", mark: "bracket", ringPlacement: "offset", ringDistance: 8 },
+    { for: ".sk-popover__trigger", side: "inline-start" },
+    { for: ".sk-popover__content", side: "inline-start" },
+    { for: ".sk-anchored-arrow", side: "inline-end" },
+    { for: ".sk-popover__title", side: "inline-end", ringPlacement: "offset", ringDistance: 2 },
+    { for: ".sk-popover__description", side: "inline-end", ringPlacement: "offset", ringDistance: 2 },
+    { for: ".sk-popover__close", side: "block-end" },
+  ],
+});
 
-export const popoverAnatomyCss = `.sk-annotated {
+export const popoverAnatomyCss = `.sk-annotated-figure {
   --sk-annotation-font-family: var(--font-family-code);
 }
 
@@ -334,29 +326,22 @@ const popupAnatomySpecimen = (t: Translate): string => `<div class="sk-popover">
 </div>`;
 
 
-export const popupAnatomyHtml = (t: Translate): string => `<div
-  class="sk-annotated"
-  data-sk-annotated
-  aria-label="${t("popoverPage.popupAnatomyLabel")}"
-  data-ring-placement="inset"
-  data-ring-distance="2"
-  role="group"
->
-  <div class="sk-annotated__subject" inert>
-    ${popupAnatomySpecimen(t)}
-  </div>
-  ${label(".sk-popover", "block-start", "sk-popover", ' data-ring-placement="offset" data-ring-distance="6"')}
-  ${label(".sk-popover__trigger", "inline-start", "sk-popover__trigger")}
-  ${label(".sk-popover__content", "inline-start", "sk-popover__content")}
-  ${label(".sk-anchored", "inline-end", "sk-anchored", ' data-ring-placement="offset" data-ring-distance="4"')}
-  ${label(".sk-anchored-arrow", "inline-end", "sk-anchored-arrow", ' data-ring-placement="offset" data-ring-distance="3"')}
-  <svg class="sk-annotated__leaders" aria-hidden="true" focusable="false"></svg>
-</div>`;
+export const popupAnatomyHtml = (t: Translate): string => anatomyFigureHtml(t, {
+  label: t("popoverPage.popupAnatomyLabel"),
+  specimen: popupAnatomySpecimen(t),
+  parts: [
+    { for: ".sk-popover", side: "block-start", mark: "bracket", ringPlacement: "offset", ringDistance: 6 },
+    { for: ".sk-popover__trigger", side: "inline-start" },
+    { for: ".sk-popover__content", side: "inline-start" },
+    { for: ".sk-anchored", side: "inline-end", ringPlacement: "offset", ringDistance: 4 },
+    { for: ".sk-anchored-arrow", side: "inline-end", ringPlacement: "offset", ringDistance: 3 },
+  ],
+});
 
 /* Lifted from Popover's own anatomy sheet, because the two specimens have the same problem: a fixed
    surface has to come back into flow before it can be measured, and a panel that paints itself
    closed until `:popover-open` has to be told to look open. */
-export const popupAnatomyCss = `.sk-annotated {
+export const popupAnatomyCss = `.sk-annotated-figure {
   --sk-annotation-font-family: var(--font-family-code);
 }
 

@@ -1,6 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate, UIKey } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /*
  * MARQUEE DEMOS.
@@ -15,8 +15,9 @@ import { namePart } from "./annotation-parts";
 export const marqueeAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("marquee.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("marquee.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "marquee",
       signature: "Marquee",
@@ -29,7 +30,7 @@ export const marqueeAnatomyTree = (t: Translate): UsageTree => ({
       },
     },
     items: [
-      namePart(".sk-marquee", "block-start"),
+      namePart(".sk-marquee", "block-start", { mark: "bracket" }),
       namePart(".sk-marquee__viewport", "inline-start"),
       namePart(".sk-marquee__track", "block-end", { ringPlacement: "offset", ringDistance: 4 }),
       namePart(".sk-marquee__content", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),

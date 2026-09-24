@@ -1,15 +1,16 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 import { segmentedItems } from "./data/segmented";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 
 /** Root, sliding indicator and options: the segmented control at rest. */
 export const segmentedAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("segmentedPage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("segmentedPage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "segmented",
       signature: "Segmented",
@@ -17,7 +18,7 @@ export const segmentedAnatomyTree = (t: Translate): UsageTree => ({
       slots: { items: segmentedItems(t) },
     },
     items: [
-      namePart(".sk-segmented", "block-start"),
+      namePart(".sk-segmented", "block-start", { mark: "bracket" }),
       namePart(".sk-segmented__indicator", "inline-start", { ringPlacement: "offset", ringDistance: 2 }),
       namePart(".sk-segmented__option", "inline-end"),
     ],

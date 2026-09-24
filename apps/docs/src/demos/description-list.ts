@@ -2,7 +2,7 @@ import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 
 type UIKey = Parameters<Translate>[0];
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /** One pair. The keys are typed off Translate so a misspelled message id fails the build. */
 const item = (t: Translate, term: UIKey, value: UIKey): UsageTree => ({
@@ -15,8 +15,9 @@ const item = (t: Translate, term: UIKey, value: UIKey): UsageTree => ({
 export const descriptionListAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("descriptionListPage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("descriptionListPage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "description-list",
       signature: "DescriptionList",
@@ -26,7 +27,7 @@ export const descriptionListAnatomyTree = (t: Translate): UsageTree => ({
       ],
     },
     items: [
-      namePart(".sk-description-list", "block-start"),
+      namePart(".sk-description-list", "block-start", { mark: "bracket" }),
       namePart(".sk-description-list__group", "inline-start"),
       namePart(".sk-description-list__term", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
       namePart(".sk-description-list__details", "inline-end", { ringPlacement: "offset", ringDistance: 4 }),

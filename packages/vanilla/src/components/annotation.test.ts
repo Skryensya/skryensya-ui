@@ -142,6 +142,22 @@ describe("connectAnnotated", () => {
     });
   });
 
+  it("leaves the specimen live when inert is refused", () => {
+    const root = frame([{ for: "button", text: "trigger" }]);
+    const subject = root.querySelector(`.${annotationParts.subject}`)!;
+    subject.setAttribute("inert", "false");
+    subject.innerHTML = `<button type="button">open</button>`;
+    withBox(root, { x: 0, y: 0, width: 600, height: 300 });
+    withBox(subject, { x: 200, y: 0, width: 400, height: 300 });
+    withBox(subject.querySelector("button")!, { x: 200, y: 100, width: 80, height: 32 });
+    for (const label of labelsOf(root)) withBox(label, { x: 0, y: 0, width: 140, height: 20 });
+
+    connectAnnotated(root);
+
+    expect(subject.hasAttribute("inert")).toBe(false);
+    expect(subject.querySelector("button")!.getAttribute("tabindex")).not.toBe("-1");
+  });
+
   it("lifts each label level with the part it names", () => {
     const root = frame([{ for: ".part-a", text: "part a" }, { for: ".part-b", text: "part b" }]);
     layOut(root);
@@ -151,21 +167,6 @@ describe("connectAnnotated", () => {
     // part-a's middle is y=130, so a 20px label sits at 120; part-b's is 230, so 220.
     expect(first!.style.translate).toBe("0px 120px");
     expect(second!.style.translate).toBe("0px 220px");
-  });
-
-  /* The narrow cluster packs itself (annotation.css wraps the labels into rows), so the binding only
-     has to stay out of the way: no lane distribution, and the same leader route as every other
-     label  -  out of the facing edge of the box the stylesheet put it in. */
-  it("keeps clustered narrow-screen labels in their flow positions", () => {
-    vi.stubGlobal("matchMedia", () => ({ matches: true }));
-    const root = frame([{ for: ".part-a", text: "part a" }, { for: ".part-b", text: "part b" }]);
-    layOut(root);
-    connectAnnotated(root);
-
-    const [first, second] = labelsOf(root);
-    expect(first!.style.translate).toBe("0px 0px");
-    expect(second!.style.translate).toBe("0px 0px");
-    expect(overlayOf(root).querySelector("path")!.getAttribute("d")).toBe("M 140 10 L 202 72 L 202 108");
   });
 
   it("draws one mark per label, each a leader and a ring, in the labels' own order", () => {
@@ -245,21 +246,55 @@ describe("connectAnnotated", () => {
     expect(overlay.children[1]!.children[0]!.getAttribute("d")).not.toBe("");
   });
 
-  it("names every match when the label asks for all of them", () => {
-    // `.part` matches both; one label, one bubble, two leaders and two rings inside one group.
-    const root = frame([{ for: "p", match: "all", text: "every part" }]);
+  it("gives every match its own bubble, right after the first and wearing the same number", () => {
+    // `p` matches both parts: two bubbles, one mark each, and the copy does not count.
+    const root = frame([
+      { for: "p", match: "all", text: "every part" },
+      { for: ".part-b", text: "part b" },
+    ]);
     layOut(root);
     connectAnnotated(root);
 
-    const group = overlayOf(root).children[0]!;
-    expect(group.childElementCount).toBe(4);
-    expect([...group.children].map((child) => child.tagName)).toEqual(["path", "rect", "path", "rect"]);
-    /* The two leaders leave the label's edge at DIFFERENT points: all of them from one pixel is a
-       starburst, not a fan. Both still leave the same edge, which is what makes it one gesture. */
-    const starts = [group.children[0]!, group.children[2]!].map(
-      (p) => p.getAttribute("d")!.split(" L ")[0],
-    );
-    expect(new Set(starts).size).toBe(2);
+    const bubbles = labelsOf(root);
+    expect(bubbles).toHaveLength(3);
+    expect(bubbles.map((bubble) => bubble.getAttribute("data-for"))).toEqual(["p", "p", ".part-b"]);
+    expect(bubbles.map((bubble) => bubble.hasAttribute("data-sk-instance"))).toEqual([false, true, false]);
+    const marks = [...overlayOf(root).children];
+    expect(marks).toHaveLength(3);
+    for (const mark of marks) expect([...mark.children].map((c) => c.tagName)).toEqual(["path", "rect"]);
+  });
+
+  it("lights every bubble of a plural name together, and nothing else", () => {
+    const root = frame([
+      { for: "p", match: "all", text: "every part" },
+      { for: ".part-b", text: "part b" },
+    ]);
+    layOut(root);
+    connectAnnotated(root);
+
+    labelsOf(root)[1]!.dispatchEvent(new Event("pointerenter"));
+    expect(labelsOf(root).map((bubble) => bubble.hasAttribute("data-sk-active"))).toEqual([true, true, false]);
+    expect([...overlayOf(root).children].map((mark) => mark.hasAttribute("data-sk-active"))).toEqual([
+      true,
+      true,
+      false,
+    ]);
+  });
+
+  it("drops the copies it made when the matches go, and never duplicates them on reconnect", () => {
+    const root = frame([{ for: "p", match: "all", text: "every part" }]);
+    layOut(root);
+    const cleanup = connectAnnotated(root);
+    expect(labelsOf(root)).toHaveLength(2);
+
+    cleanup();
+    connectAnnotated(root);
+    expect(labelsOf(root)).toHaveLength(2);
+
+    root.querySelector(".part-b")!.remove();
+    fire!();
+    expect(labelsOf(root)).toHaveLength(1);
+    expect(overlayOf(root).childElementCount).toBe(1);
   });
 
   it("ignores selector matches in an aria-hidden measurement copy", () => {
@@ -275,7 +310,8 @@ describe("connectAnnotated", () => {
     }
     connectAnnotated(root);
 
-    expect(overlayOf(root).children[0]!.childElementCount).toBe(4);
+    // Two visible parts, two bubbles: the shadow copies get none.
+    expect(overlayOf(root).childElementCount).toBe(2);
   });
 
   it("names a target that is itself aria-hidden", () => {
@@ -372,21 +408,11 @@ describe("connectAnnotated", () => {
     expect(overlayOf(root).children[1]!.hasAttribute("data-sk-active")).toBe(false);
   });
 
-  it("reveals on focus too, so the marks are reachable without a pointer", () => {
-    const root = frame([{ for: ".part-a", text: "part a" }]);
-    layOut(root);
-    connectAnnotated(root);
-
-    labelsOf(root)[0]!.dispatchEvent(new Event("focusin", { bubbles: true }));
-    expect(overlayOf(root).children[0]!.hasAttribute("data-sk-active")).toBe(true);
-  });
-
-  it("reveals from the legend in a numbered frame, lighting its number and its mark together", () => {
+  it("reveals from the legend, lighting its number and its mark together", () => {
     /* The template's own shape: the FIGURE is the mount point, the frame is one child of it and the
        legend another, so the list is outside the frame's grid. */
     const root = frame([{ for: ".part-a", text: "" }, { for: ".part-b", text: "" }]);
     root.removeAttribute("data-sk-annotated");
-    root.setAttribute("data-numbered", "");
     const figure = document.createElement("div");
     figure.className = annotationParts.figure;
     figure.setAttribute("data-sk-annotated", "");
@@ -405,7 +431,7 @@ describe("connectAnnotated", () => {
 
     const entries = [...figure.querySelectorAll<HTMLElement>(`.${annotationParts.legendItem}`)];
     const marks = [...overlayOf(root).children];
-    // The bubbles are still what the leaders leave from: one mark each, as without a legend.
+    // The bubbles are what the leaders leave from: one mark each.
     expect(marks).toHaveLength(2);
 
     entries[1]!.dispatchEvent(new Event("focusin", { bubbles: true }));
@@ -424,8 +450,8 @@ describe("connectAnnotated", () => {
     expect(marks[0]!.hasAttribute("data-sk-active")).toBe(true);
   });
 
-  it("finds its frame one canvas deeper when the figure is zoomable", () => {
-    /* The template's `zoomable` shape: figure > canvas > viewport > content > frame. A lookup that
+  it("finds its frame one canvas deeper, where the template puts it", () => {
+    /* The template's shape: figure > canvas > viewport > content > frame. A lookup that
        only tried the figure's direct child found nothing here, and the diagram drew no leaders. */
     const root = frame([{ for: ".part-a", text: "part a" }]);
     root.removeAttribute("data-sk-annotated");

@@ -1,5 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { anatomyFigureHtml } from "./annotation-parts";
 
 /*
  * A button and a dialog, composed under one marker the way `tabsAdvancedTree` composes tabs and a
@@ -113,36 +114,27 @@ const commandPaletteAnatomySpecimen = (t: Translate): string => `<dialog
   <footer class="sk-command-palette__footer"><span>${t("demo.commandPalette.footer")}</span></footer>
 </dialog>`;
 
-const label = (target: string, side: string, text: string, extra = ""): string =>
-  `<span class="sk-annotation" data-for="${target}" data-side="${side}" data-match="first"${extra} tabindex="0">${text}</span>`;
 
-export const commandPaletteAnatomyHtml = (t: Translate): string => `<div
-  class="sk-annotated"
-  data-sk-annotated
-  aria-label="${t("commandPalette.anatomyLabel")}"
-  data-ring-placement="inset"
-  data-ring-distance="2"
-  role="group"
->
-  <div class="sk-annotated__subject" inert>
-    ${commandPaletteAnatomySpecimen(t)}
-  </div>
-  ${label(".sk-command-palette", "block-start", "sk-command-palette")}
-  ${label(".sk-command-palette__search", "block-start", "sk-command-palette__search", ' data-ring-placement="offset" data-ring-distance="2"')}
-  ${label(".sk-command-palette__input", "inline-start", "sk-command-palette__input", ' data-ring-placement="offset" data-ring-distance="2"')}
-  ${label(".sk-command-palette__close", "inline-end", "sk-command-palette__close")}
-  ${label(".sk-command-palette__list", "inline-start", "sk-command-palette__list")}
-  ${label(".sk-command-palette__option", "inline-end", "sk-command-palette__option", ' data-ring-placement="offset" data-ring-distance="3"')}
-  ${label(".sk-command-palette__empty", "inline-end", "sk-command-palette__empty")}
-  ${label(".sk-command-palette__footer", "block-end", "sk-command-palette__footer")}
-  <svg class="sk-annotated__leaders" aria-hidden="true" focusable="false"></svg>
-</div>`;
+export const commandPaletteAnatomyHtml = (t: Translate): string => anatomyFigureHtml(t, {
+  label: t("commandPalette.anatomyLabel"),
+  specimen: commandPaletteAnatomySpecimen(t),
+  parts: [
+    { for: ".sk-command-palette", side: "block-start", mark: "bracket" },
+    { for: ".sk-command-palette__search", side: "block-start", ringPlacement: "offset", ringDistance: 2 },
+    { for: ".sk-command-palette__input", side: "inline-start", ringPlacement: "offset", ringDistance: 2 },
+    { for: ".sk-command-palette__close", side: "inline-end" },
+    { for: ".sk-command-palette__list", side: "inline-start" },
+    { for: ".sk-command-palette__option", side: "inline-end", ringPlacement: "offset", ringDistance: 3 },
+    { for: ".sk-command-palette__empty", side: "inline-end" },
+    { for: ".sk-command-palette__footer", side: "block-end" },
+  ],
+});
 
 /*
  * A native `<dialog open>` still centres itself; for the diagram, keep it in the subject's flow so
  * Annotated measures the whole palette. Narrower than the live overlay so class-name gutters fit.
  */
-export const commandPaletteAnatomyCss = `.sk-annotated {
+export const commandPaletteAnatomyCss = `.sk-annotated-figure {
   --sk-annotation-font-family: var(--font-family-code);
 }
 

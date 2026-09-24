@@ -3,7 +3,7 @@ import { createRef } from "react";
 import { render } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { Carousel, CarouselSlide, type CarouselHandle } from "./carousel.js";
-import { renderTree } from "../render-tree.js";
+import { loadTree, renderTree } from "../render-tree.js";
 
 describe("Carousel", () => {
   it("renders a section region with a scroll-snap track of slides", () => {
@@ -26,7 +26,7 @@ describe("Carousel", () => {
     expect(track.querySelectorAll("div.sk-carousel__slide")).toHaveLength(3);
   });
 
-  it("maps style-backed tree options onto the Carousel host", () => {
+  it("maps style-backed tree options onto the Carousel host", async () => {
     const tree: UsageTree = {
       contract: "carousel",
       signature: "Carousel",
@@ -38,6 +38,7 @@ describe("Carousel", () => {
       },
     };
 
+    await loadTree(tree);
     const ui = render(<>{renderTree(tree)}</>);
     const region = ui.container.querySelector<HTMLElement>(".sk-carousel")!;
 

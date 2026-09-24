@@ -7,7 +7,7 @@ import {
   splitButtonGhostMenuItems,
   splitButtonDangerMenuItems,
 } from "./data/split-button";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /*
  * Both halves are composed, real signatures. A real `Button.action` for the action, a real
@@ -88,11 +88,12 @@ export const splitButtonTree = (t: Translate): UsageTree => ({
 export const splitButtonAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("splitButtonPage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("splitButtonPage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: splitButtonTree(t),
     items: [
-      namePart(".sk-split-button", "block-start", { ringPlacement: "offset", ringDistance: 6 }),
+      namePart(".sk-split-button", "block-start", { mark: "bracket", ringPlacement: "offset", ringDistance: 6 }),
       namePart(".sk-button", "inline-start", { ringPlacement: "offset", ringDistance: 2 }),
       namePart(".sk-menu__trigger", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
     ],

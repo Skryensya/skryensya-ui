@@ -1,6 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /*
  * The two directions of one contract, in the order the page argues them: the reading first, because
@@ -85,8 +85,9 @@ export const ratingSizesTree = (t: Translate): UsageTree => ({
 export const ratingAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("ratingPage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("ratingPage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "layout",
       signature: "Stack",

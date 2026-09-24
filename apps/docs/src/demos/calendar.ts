@@ -1,6 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyFigureHtml, anatomyHints, namePart } from "./annotation-parts";
 
 /*
  * The three calendar demos, from the contract published for it.
@@ -37,11 +37,12 @@ const isoDate = (date: Date) => date.toISOString().slice(0, 10);
 export const calendarAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("calendar.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("calendar.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: calendarTree(t),
     items: [
-      namePart(".sk-calendar", "block-start", { ringPlacement: "offset", ringDistance: 6 }),
+      namePart(".sk-calendar", "block-start", { mark: "bracket", ringPlacement: "offset", ringDistance: 6 }),
       namePart(".sk-calendar__label", "block-start", { ringPlacement: "offset", ringDistance: 2 }),
       namePart(".sk-calendar__header", "inline-start"),
       namePart(".sk-calendar__previous", "inline-start", { ringPlacement: "offset", ringDistance: 2 }),
@@ -130,27 +131,6 @@ const shortMonths = (locale: string): string[] =>
 const decadeYears = (start = 2020): string[] =>
   Array.from({ length: 12 }, (_, i) => String(start - 1 + i));
 
-const annotationLabel = (target: string, side: string, text: string, extra = ""): string =>
-  `<span class="sk-annotation" data-for="${target}" data-side="${side}" data-match="first"${extra} tabindex="0">${text}</span>`;
-
-const wrapAnnotated = (opts: {
-  label: string;
-  specimen: string;
-  parts: readonly { for: string; side: string; text: string; extra?: string }[];
-}): string => `<div
-  class="sk-annotated"
-  data-sk-annotated
-  aria-label="${opts.label}"
-  data-ring-placement="inset"
-  data-ring-distance="2"
-  role="group"
->
-  <div class="sk-annotated__subject" inert>
-    ${opts.specimen}
-  </div>
-  ${opts.parts.map((part) => annotationLabel(part.for, part.side, part.text, part.extra ?? "")).join("\n  ")}
-  <svg class="sk-annotated__leaders" aria-hidden="true" focusable="false"></svg>
-</div>`;
 
 /** Month view: the climbed grid where `sk-calendar__month-grid` is the part that only exists here. */
 export const calendarMonthAnatomyHtml = (t: Translate): string => {
@@ -166,31 +146,28 @@ export const calendarMonthAnatomyHtml = (t: Translate): string => {
   </table>
 </div>`;
 
-  return wrapAnnotated({
+  return anatomyFigureHtml(t, {
     label: t("calendar.anatomyMonthLabel"),
     specimen,
     parts: [
-      { for: ".sk-calendar", side: "block-start", text: "sk-calendar", extra: ' data-ring-placement="offset" data-ring-distance="6"' },
-      { for: ".sk-calendar__header", side: "inline-start", text: "sk-calendar__header" },
-      { for: ".sk-calendar__view-trigger", side: "inline-end", text: "sk-calendar__view-trigger" },
+      { for: ".sk-calendar", side: "block-start", mark: "bracket", ringPlacement: "offset", ringDistance: 6 },
+      { for: ".sk-calendar__header", side: "inline-start" },
+      { for: ".sk-calendar__view-trigger", side: "inline-end" },
       {
         for: ".sk-calendar__month-grid",
         side: "inline-start",
-        text: "sk-calendar__month-grid",
-        extra: ' data-ring-placement="offset" data-ring-distance="4"',
+        ringPlacement: "offset", ringDistance: 4,
       },
-      { for: ".sk-calendar__table-body", side: "inline-end", text: "sk-calendar__table-body" },
+      { for: ".sk-calendar__table-body", side: "inline-end" },
       {
         for: ".sk-calendar__cell",
         side: "block-end",
-        text: "sk-calendar__cell",
-        extra: ' data-ring-placement="offset" data-ring-distance="2"',
+        ringPlacement: "offset", ringDistance: 2,
       },
       {
         for: ".sk-calendar__cell-trigger",
         side: "inline-end",
-        text: "sk-calendar__cell-trigger",
-        extra: ' data-ring-placement="offset" data-ring-distance="2"',
+        ringPlacement: "offset", ringDistance: 2,
       },
     ],
   });
@@ -209,31 +186,28 @@ export const calendarYearAnatomyHtml = (t: Translate): string => {
   </table>
 </div>`;
 
-  return wrapAnnotated({
+  return anatomyFigureHtml(t, {
     label: t("calendar.anatomyYearLabel"),
     specimen,
     parts: [
-      { for: ".sk-calendar", side: "block-start", text: "sk-calendar", extra: ' data-ring-placement="offset" data-ring-distance="6"' },
-      { for: ".sk-calendar__header", side: "inline-start", text: "sk-calendar__header" },
-      { for: ".sk-calendar__view-trigger", side: "inline-end", text: "sk-calendar__view-trigger" },
+      { for: ".sk-calendar", side: "block-start", mark: "bracket", ringPlacement: "offset", ringDistance: 6 },
+      { for: ".sk-calendar__header", side: "inline-start" },
+      { for: ".sk-calendar__view-trigger", side: "inline-end" },
       {
         for: ".sk-calendar__year-grid",
         side: "inline-start",
-        text: "sk-calendar__year-grid",
-        extra: ' data-ring-placement="offset" data-ring-distance="4"',
+        ringPlacement: "offset", ringDistance: 4,
       },
-      { for: ".sk-calendar__table-body", side: "inline-end", text: "sk-calendar__table-body" },
+      { for: ".sk-calendar__table-body", side: "inline-end" },
       {
         for: ".sk-calendar__cell",
         side: "block-end",
-        text: "sk-calendar__cell",
-        extra: ' data-ring-placement="offset" data-ring-distance="2"',
+        ringPlacement: "offset", ringDistance: 2,
       },
       {
         for: ".sk-calendar__cell-trigger",
         side: "inline-end",
-        text: "sk-calendar__cell-trigger",
-        extra: ' data-ring-placement="offset" data-ring-distance="2"',
+        ringPlacement: "offset", ringDistance: 2,
       },
     ],
   });

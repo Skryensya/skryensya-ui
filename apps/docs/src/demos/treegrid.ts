@@ -2,7 +2,7 @@ import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 import { treegridColumns, treegridRows } from "./data/treegrid";
 import { treegridStressColumns, treegridStressRows } from "./data/treegrid-stress";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /*
  * `TreegridRow` is authored FLAT, in document order: never nested inside another `TreegridRow`, a
@@ -97,11 +97,12 @@ export const treegridStressTree = (t: Translate): UsageTree =>
 export const treegridAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("treegridPage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("treegridPage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: treegridInboxTree(t),
     items: [
-      namePart(".sk-treegrid-scroll", "block-start", { ringPlacement: "offset", ringDistance: 6 }),
+      namePart(".sk-treegrid-scroll", "block-start", { mark: "bracket", ringPlacement: "offset", ringDistance: 6 }),
       namePart(".sk-treegrid", "block-start", { ringPlacement: "offset", ringDistance: 2 }),
       namePart(".sk-treegrid__head", "inline-start"),
       namePart(".sk-treegrid__column-header", "inline-start", { ringPlacement: "offset", ringDistance: 2 }),

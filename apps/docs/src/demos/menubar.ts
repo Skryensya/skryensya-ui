@@ -1,5 +1,6 @@
 import type { ItemInput, UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { anatomyFigureHtml } from "./annotation-parts";
 
 /*
  * THE ANATOMY SPECIMEN: frozen open markup. A live Menubar cannot hold a dropdown open in an inert
@@ -57,31 +58,22 @@ const menubarAnatomySpecimen = (t: Translate): string => `<div class="sk-menubar
   </div>
 </div>`;
 
-const label = (target: string, side: string, text: string, extra = ""): string =>
-  `<span class="sk-annotation" data-for="${target}" data-side="${side}" data-match="first"${extra} tabindex="0">${text}</span>`;
 
-export const menubarAnatomyHtml = (t: Translate): string => `<div
-  class="sk-annotated"
-  data-sk-annotated
-  aria-label="${t("menubarPage.anatomyLabel")}"
-  data-ring-placement="inset"
-  data-ring-distance="2"
-  role="group"
->
-  <div class="sk-annotated__subject" inert>
-    ${menubarAnatomySpecimen(t)}
-  </div>
-  ${label(".sk-menubar", "block-start", "sk-menubar", ' data-ring-placement="offset" data-ring-distance="8"')}
-  ${label(".sk-menubar__item-wrapper", "inline-start", "sk-menubar__item-wrapper")}
-  ${label(".sk-menubar__item", "inline-start", "sk-menubar__item", ' data-ring-placement="offset" data-ring-distance="2"')}
-  ${label(".sk-menubar__item-indicator", "inline-end", "sk-menubar__item-indicator")}
-  ${label(".sk-menu__positioner", "inline-start", "sk-menu__positioner")}
-  ${label(".sk-menu__content", "inline-end", "sk-menu__content")}
-  ${label(".sk-menu__item", "inline-end", "sk-menu__item", ' data-ring-placement="offset" data-ring-distance="3"')}
-  <svg class="sk-annotated__leaders" aria-hidden="true" focusable="false"></svg>
-</div>`;
+export const menubarAnatomyHtml = (t: Translate): string => anatomyFigureHtml(t, {
+  label: t("menubarPage.anatomyLabel"),
+  specimen: menubarAnatomySpecimen(t),
+  parts: [
+    { for: ".sk-menubar", side: "block-start", mark: "bracket", ringPlacement: "offset", ringDistance: 8 },
+    { for: ".sk-menubar__item-wrapper", side: "inline-start" },
+    { for: ".sk-menubar__item", side: "inline-start", ringPlacement: "offset", ringDistance: 2 },
+    { for: ".sk-menubar__item-indicator", side: "inline-end" },
+    { for: ".sk-menu__positioner", side: "inline-start" },
+    { for: ".sk-menu__content", side: "inline-end" },
+    { for: ".sk-menu__item", side: "inline-end", ringPlacement: "offset", ringDistance: 3 },
+  ],
+});
 
-export const menubarAnatomyCss = `.sk-annotated {
+export const menubarAnatomyCss = `.sk-annotated-figure {
   --sk-annotation-font-family: var(--font-family-code);
   --sk-demo-menu-panel: 9.5rem;
 }

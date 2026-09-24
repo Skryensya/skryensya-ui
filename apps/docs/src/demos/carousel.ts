@@ -1,6 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /*
  * The four page demos share the same Carousel contract. Authored options cover both former gaps:
@@ -96,8 +96,9 @@ function featureSlide(
 export const carouselAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("carousel.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("carousel.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "carousel",
       signature: "Carousel",
@@ -106,7 +107,7 @@ export const carouselAnatomyTree = (t: Translate): UsageTree => ({
       children: features.slice(0, 2).map(([feature, position]) => featureSlide(t, feature, position)),
     },
     items: [
-      namePart(".sk-carousel", "block-start"),
+      namePart(".sk-carousel", "block-start", { mark: "bracket" }),
       namePart(".sk-carousel__track", "inline-start"),
       namePart(".sk-carousel__slide", "inline-start", { ringPlacement: "offset", ringDistance: 2 }),
       namePart(".sk-carousel__controls", "block-end"),

@@ -6,7 +6,7 @@ Canvas:
     - "en un teléfono el contenido se reescribiría palabra por palabra: acá se ve entero y chico, y quien lee hace zoom en la parte que le interesa"
     - "el zoom tiene que sentirse como en una herramienta de diseño: arrastrar mueve, Ctrl/Cmd + rueda y el pellizco del trackpad acercan alrededor del puntero, `+`/`-`/`0` desde el teclado"
     - "no puede secuestrar el scroll de la página: un dedo y la rueda sola siguen siendo de la página; dos dedos y Ctrl + rueda son del canvas, y un aviso breve lo explica cuando alguien intenta lo otro"
-    - "para un Annotated no hace falta envolverlo: `zoomable` pone el mismo canvas alrededor del marco y deja la leyenda afuera, sin escalar"
+    - "para un Annotated no hace falta envolverlo: ya trae el mismo canvas alrededor del marco y deja la leyenda afuera, sin escalar"
   avoidWhen:
     - "el contenido entra en la pantalla o se puede reacomodar sin perder sentido: un canvas agrega un gesto que nadie necesitaba"
     - "es una imagen que sólo hay que ver más grande: eso es ImageFrame con un enlace a la imagen completa, o un Dialog con la imagen"

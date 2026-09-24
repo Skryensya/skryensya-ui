@@ -18,7 +18,7 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 import { toolbarBindingItems, toolbarScreenItems } from "./data/toolbar";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 import { genericIcon } from "./anatomy-subject";
 
 const iconButton = (
@@ -47,8 +47,9 @@ const iconButton = (
 export const toolbarAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("toolbarPage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("toolbarPage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "toolbar",
       signature: "Toolbar",
@@ -85,7 +86,7 @@ export const toolbarAnatomyTree = (t: Translate): UsageTree => ({
       ],
     },
     items: [
-      namePart(".sk-toolbar", "block-start"),
+      namePart(".sk-toolbar", "block-start", { mark: "bracket" }),
       namePart(".sk-toolbar__group", "inline-start"),
       namePart(".sk-toolbar__separator", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
     ],

@@ -1,12 +1,14 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { localeOf } from "../i18n";
+import { anatomyFigureHtml } from "./annotation-parts";
 
 /* Segmented and native time controls share the page's locale-owned field name. */
 
 /** A departure time, already set. Locale and field name are owned by the page. */
 export const timeFieldTree = (
   t: Translate,
-  opts: { locale: string; name: string },
+  opts: { locale: string; name: string } = { locale: localeOf(t), name: "time" },
 ): UsageTree => ({
   contract: "time-field",
   signature: "TimeField",
@@ -63,39 +65,30 @@ const timeFieldAnatomySpecimen = (t: Translate): string => `<div class="sk-time-
   </div>
 </div>`;
 
-const label = (target: string, side: string, text: string, extra = ""): string =>
-  `<span class="sk-annotation" data-for="${target}" data-side="${side}" data-match="first"${extra} tabindex="0">${text}</span>`;
 
-export const timeFieldAnatomyHtml = (t: Translate): string => `<div
-  class="sk-annotated"
-  data-sk-annotated
-  aria-label="${t("timeFieldPage.anatomyLabel")}"
-  data-ring-placement="inset"
-  data-ring-distance="2"
-  role="group"
->
-  <div class="sk-annotated__subject" inert>
-    ${timeFieldAnatomySpecimen(t)}
-  </div>
-  ${label(".sk-time-field", "block-start", "sk-time-field", ' data-ring-placement="offset" data-ring-distance="8"')}
-  ${label(".sk-time-field__label", "inline-start", "sk-time-field__label")}
-  ${label(".sk-time-field__control", "inline-start", "sk-time-field__control")}
-  ${label(".sk-time-field__segment", "inline-end", "sk-time-field__segment", ' data-ring-placement="offset" data-ring-distance="4"')}
-  ${label(".sk-time-field__literal", "inline-end", "sk-time-field__literal")}
-  ${label(".sk-time-field__clear", "inline-end", "sk-time-field__clear")}
-  ${label(".sk-time-field__options-trigger", "inline-end", "sk-time-field__options-trigger")}
-  ${label(".sk-time-field__options-positioner", "inline-start", "sk-time-field__options-positioner")}
-  ${label(".sk-select__content", "inline-start", "sk-select__content")}
-  ${label(".sk-select__item", "inline-end", "sk-select__item", ' data-ring-placement="offset" data-ring-distance="3"')}
-  <svg class="sk-annotated__leaders" aria-hidden="true" focusable="false"></svg>
-</div>`;
+export const timeFieldAnatomyHtml = (t: Translate): string => anatomyFigureHtml(t, {
+  label: t("timeFieldPage.anatomyLabel"),
+  specimen: timeFieldAnatomySpecimen(t),
+  parts: [
+    { for: ".sk-time-field", side: "block-start", mark: "bracket", ringPlacement: "offset", ringDistance: 8 },
+    { for: ".sk-time-field__label", side: "inline-start" },
+    { for: ".sk-time-field__control", side: "inline-start" },
+    { for: ".sk-time-field__segment", side: "inline-end", ringPlacement: "offset", ringDistance: 4 },
+    { for: ".sk-time-field__literal", side: "inline-end" },
+    { for: ".sk-time-field__clear", side: "inline-end" },
+    { for: ".sk-time-field__options-trigger", side: "inline-end" },
+    { for: ".sk-time-field__options-positioner", side: "inline-start" },
+    { for: ".sk-select__content", side: "inline-start" },
+    { for: ".sk-select__item", side: "inline-end", ringPlacement: "offset", ringDistance: 3 },
+  ],
+});
 
 /*
  * Put the preset listbox back in flow: the positioner is `position: fixed` / anchored, which is
  * right for a live field and useless for a diagram. Static under the control, same move Select and
  * Combobox anatomy CSS make. Cap the list so three rows name the part without a tall scroll region.
  */
-export const timeFieldAnatomyCss = `.sk-annotated {
+export const timeFieldAnatomyCss = `.sk-annotated-figure {
   --sk-annotation-font-family: var(--font-family-code);
 }
 
@@ -130,7 +123,7 @@ export const timeFieldAnatomyCss = `.sk-annotated {
  */
 export const timeFieldForced24Tree = (
   t: Translate,
-  opts: { locale: string; name: string },
+  opts: { locale: string; name: string } = { locale: localeOf(t), name: "time" },
 ): UsageTree => ({
   contract: "time-field",
   signature: "TimeField",
@@ -155,7 +148,7 @@ export const timeFieldForced24Tree = (
  */
 export const timeFieldQuarterHourTree = (
   t: Translate,
-  opts: { locale: string; name: string },
+  opts: { locale: string; name: string } = { locale: localeOf(t), name: "time" },
 ): UsageTree => ({
   contract: "time-field",
   signature: "TimeField",
@@ -175,7 +168,7 @@ export const timeFieldQuarterHourTree = (
 
 export const timeFieldNativeTree = (
   t: Translate,
-  opts: { name: string },
+  opts: { name: string } = { name: "time" },
 ): UsageTree => ({
   contract: "form-field",
   signature: "FormField",

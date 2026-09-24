@@ -1,3 +1,4 @@
+import { PLACEHOLDER_HREF, placeholderHrefs } from "../lib/placeholder-hrefs";
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 import {
@@ -27,7 +28,7 @@ export const breadcrumbTwoTree = (t: Translate): UsageTree => ({
 /** Three links deep, then the current page. */
 export const breadcrumbMultiTree = (
   t: Translate,
-  hrefs: { projects: string; kit: string },
+  hrefs: { projects: string; kit: string } = placeholderHrefs(),
 ): UsageTree => ({
   contract: "breadcrumb",
   signature: "Breadcrumb",
@@ -36,7 +37,7 @@ export const breadcrumbMultiTree = (
 });
 
 /** The separator is content, so it can be a chevron instead of the `/` the template defaults to. */
-export const breadcrumbIconTree = (t: Translate, projectsHref: string): UsageTree => ({
+export const breadcrumbIconTree = (t: Translate, projectsHref: string = PLACEHOLDER_HREF): UsageTree => ({
   contract: "breadcrumb",
   signature: "Breadcrumb",
   options: { label: t("demo.breadcrumb.label"), collapsedLabel: t("kit.showHiddenLevels") },
@@ -49,7 +50,7 @@ export const breadcrumbIconTree = (t: Translate, projectsHref: string): UsageTre
 /**
  * A long intermediate link truncates; the current page wraps. The middle href is locale-owned.
  */
-export const breadcrumbLongTree = (t: Translate, projectsHref: string): UsageTree => ({
+export const breadcrumbLongTree = (t: Translate, projectsHref: string = PLACEHOLDER_HREF): UsageTree => ({
   contract: "breadcrumb",
   signature: "Breadcrumb",
   options: { label: t("demo.breadcrumb.label"), collapsedLabel: t("kit.showHiddenLevels") },
@@ -62,7 +63,7 @@ export const breadcrumbLongTree = (t: Translate, projectsHref: string): UsageTre
  */
 export const breadcrumbCollapseTree = (
   t: Translate,
-  hrefs: { documents: string; projects: string; designSystem: string; components: string },
+  hrefs: { documents: string; projects: string; designSystem: string; components: string } = placeholderHrefs(),
 ): UsageTree => ({
   contract: "breadcrumb",
   signature: "Breadcrumb",

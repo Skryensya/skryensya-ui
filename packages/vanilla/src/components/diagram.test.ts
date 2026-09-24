@@ -165,6 +165,20 @@ describe("connectDiagram", () => {
     expect(overlayOf(root).querySelector("path")!.getAttribute("d")).toBe("M 150 40 L 150 88");
   });
 
+  it("divides a canvas's zoom back out, so a scaled drawing routes exactly as an unscaled one", () => {
+    const root = linear();
+    /* The same drawing inside a Canvas zoomed to 200%: every rect arrives doubled while the layout
+       box stays 300 wide. Undivided, the path would be written in screen pixels and land twice as
+       far from the origin as the boxes it joins. */
+    Object.defineProperty(root, "offsetWidth", { configurable: true, value: 300 });
+    withBox(root, { x: 0, y: 0, width: 600, height: 400 });
+    withBox(root.querySelector(`.${diagramParts.nodes}`)!, { x: 0, y: 0, width: 600, height: 280 });
+    withBox(nodesOf(root)[0]!, { x: 200, y: 0, width: 200, height: 80 });
+    withBox(nodesOf(root)[1]!, { x: 200, y: 200, width: 200, height: 80 });
+    connectDiagram(root);
+    expect(overlayOf(root).querySelector("path")!.getAttribute("d")).toBe("M 150 40 L 150 88");
+  });
+
   it("anchors each edge label to a point on its own stroke, clear of the arrowhead", () => {
     const root = linear();
     connectDiagram(root);

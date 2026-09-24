@@ -1,14 +1,15 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 
 /** Feed, article and article label: two posts so the stack and labels both read. */
 export const feedAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("feedPage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("feedPage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "feed",
       signature: "Feed",
@@ -31,7 +32,7 @@ export const feedAnatomyTree = (t: Translate): UsageTree => ({
       ],
     },
     items: [
-      namePart(".sk-feed", "block-start"),
+      namePart(".sk-feed", "block-start", { mark: "bracket" }),
       namePart(".sk-feed__article", "inline-start"),
       namePart(".sk-feed__article-label", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
     ],

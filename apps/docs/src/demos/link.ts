@@ -1,10 +1,11 @@
+import { PLACEHOLDER_HREF } from "../lib/placeholder-hrefs";
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 
 /* Link demos shared by both locales. Locale-owned hrefs come from the pages. */
 
 /** Two links in a paragraph: underline always, tone optional. */
-export const linkTree = (t: Translate, href: string): UsageTree => ({
+export const linkTree = (t: Translate, href: string = PLACEHOLDER_HREF): UsageTree => ({
   contract: "typography",
   signature: "Text",
   children: [
@@ -26,7 +27,7 @@ export const linkTree = (t: Translate, href: string): UsageTree => ({
   ],
 });
 
-export const tileLinkTree = (_t: Translate, href: string): UsageTree => ({
+export const tileLinkTree = (_t: Translate, href: string = PLACEHOLDER_HREF): UsageTree => ({
   contract: "tile",
   signature: "TileLink",
   options: { href },

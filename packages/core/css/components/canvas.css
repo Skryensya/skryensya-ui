@@ -13,7 +13,8 @@
  * a desktop margin stays laid out that way on a phone and is shown SCALED rather than rewrapped.
  *
  * THE VIEWPORT IS AS TALL AS THE FITTED CONTENT, which the binding writes as
- * `--sk-canvas-fit-block-size` after measuring, capped by `--sk-canvas-max-block-size`. With no
+ * `--sk-canvas-fit-block-size` after measuring, capped by `--sk-canvas-max-block-size` and
+ * floored by `--sk-canvas-min-block-size`. With no
  * script the content simply shows at 100%, clipped at the sides: a readable degradation, not a
  * blank box.
  */
@@ -24,6 +25,18 @@
     --sk-canvas-radius: var(--radius-surface);
     --sk-canvas-content-inline-size: max-content;
     --sk-canvas-max-block-size: min(80vh, 48rem);
+    /*
+     * A FLOOR, so a small drawing does not become a sliver. Fitted, a badge or a single control is a
+     * strip a few dozen pixels tall with a zoom bar taller than the drawing it zooms; at this height
+     * the canvas reads as a board with something on it. The drawing is never enlarged to fill it (a
+     * fitted view tops out at 100%): the binding centres it in whatever height the viewport ends up
+     * with, so the floor is air around it.
+     *
+     * A LENGTH, NOT A `vh`. `min(16rem, 50vh)` was the first version, and inside a docs preview it
+     * floored nothing: a preview is an iframe sized to its content, so its `vh` is a fraction of the
+     * drawing's own height and the floor shrank with the very thing it was propping up.
+     */
+    --sk-canvas-min-block-size: 16rem;
     /*
      * THE GROUND: a design tool's board. A tone between the surface and the sunken ground, so it
      * reads as its own place both against the card around it and against a sunken band (an
@@ -50,6 +63,9 @@
     position: relative;
     contain: inline-size;
     block-size: var(--sk-canvas-fit-block-size, auto);
+    /* Not bounded by the cap: the cap is `vh`-based, and in a content-sized iframe that is the same
+       circle the floor note above describes. Where the two disagree, CSS lets the floor win. */
+    min-block-size: var(--sk-canvas-min-block-size);
     max-block-size: var(--sk-canvas-max-block-size);
     overflow: hidden;
     /*

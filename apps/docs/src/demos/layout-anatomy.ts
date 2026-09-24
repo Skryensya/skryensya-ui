@@ -1,6 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { namePart, type AnnotationPartItem } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart, type AnnotationPartItem } from "./annotation-parts";
 
 /*
  * THE ANATOMY OF A LAYOUT PRIMITIVE IS THE SPACE IT MAKES, and that is why these six diagrams are
@@ -45,8 +45,8 @@ const frame = (
 ): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t(label as never), inert: true },
-  slots: { subject, items: [...items] },
+  options: { ...anatomyCanvas(t), label: t(label as never), inert: true },
+  slots: { ...anatomyHints(t), subject, items: [...items] },
 });
 
 /*
@@ -64,7 +64,7 @@ export const boxAnatomyTree = (t: Translate): UsageTree =>
       children: cell(t, "cellA"),
     },
     [
-      namePart(".sk-box", "inline-start"),
+      namePart(".sk-box", "inline-start", { mark: "bracket" }),
       /* The nested Box is itself a `.sk-box`, so the selector has to say CHILD or `match: "all"`
          would ring the container a second time from inside its own label. */
       namePart(".sk-box > *", "inline-end", { match: "all" }),
@@ -87,7 +87,7 @@ export const stackAnatomyTree = (t: Translate): UsageTree =>
       children: [cell(t, "cellA"), cell(t, "cellB"), cell(t, "cellC")],
     },
     [
-      namePart(".sk-stack", "inline-start"),
+      namePart(".sk-stack", "inline-start", { mark: "bracket" }),
       namePart(".sk-stack > *", "inline-end", { match: "all" }),
     ],
   );
@@ -109,7 +109,7 @@ export const inlineAnatomyTree = (t: Translate): UsageTree =>
       children: [cell(t, "cellA"), cell(t, "cellB"), cell(t, "cellC")],
     },
     [
-      namePart(".sk-inline", "block-start"),
+      namePart(".sk-inline", "block-start", { mark: "bracket" }),
       namePart(".sk-inline > *", "block-end", { match: "all" }),
     ],
   );
@@ -130,7 +130,7 @@ export const gridAnatomyTree = (t: Translate): UsageTree =>
       children: [cell(t, "cellA"), cell(t, "cellB"), cell(t, "cellC")],
     },
     [
-      namePart(".sk-grid", "block-start"),
+      namePart(".sk-grid", "block-start", { mark: "bracket" }),
       namePart(".sk-grid > *", "block-end", { match: "all" }),
     ],
   );
@@ -179,7 +179,7 @@ export const layoutGridAnatomyTree = (t: Translate): UsageTree =>
        * Worth it: a reader who follows it finds a ring at the end, while three identical rows would
        * have made the label itself a lie.
        */
-      namePart(".sk-layout-grid", "block-start"),
+      namePart(".sk-layout-grid", "block-start", { mark: "bracket" }),
       namePart(".sk-layout-grid > [data-width]", "block-end", { match: "all" }),
     ],
   );
@@ -196,7 +196,7 @@ export const layoutGridAnatomyTree = (t: Translate): UsageTree =>
  * `data-size` gave back, the outer ring is the column at its measure, and the band inside it is the
  * wrapper's own `padding-inline`, which is the part people forget it has.
  */
-export const layoutAnatomyFillCss = `.sk-annotated {
+export const layoutAnatomyFillCss = `.sk-annotated-figure {
   --sk-annotation-font-family: var(--font-family-code);
 }
 
@@ -229,7 +229,7 @@ export const wrapperAnatomyTree = (t: Translate): UsageTree =>
       children: cell(t, "cellA"),
     },
     [
-      namePart(".sk-wrapper", "block-start"),
+      namePart(".sk-wrapper", "block-start", { mark: "bracket" }),
       namePart(".sk-wrapper > *", "block-end", { match: "all" }),
     ],
   );

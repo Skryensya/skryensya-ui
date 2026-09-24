@@ -1,13 +1,14 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /** The rail, one event, and the three rungs inside it: dot, eyebrow, heading, detail. */
 export const timelineAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("timelinePage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("timelinePage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "timeline",
       signature: "Timeline",
@@ -41,7 +42,7 @@ export const timelineAnatomyTree = (t: Translate): UsageTree => ({
       ],
     },
     items: [
-      namePart(".sk-timeline", "block-start"),
+      namePart(".sk-timeline", "block-start", { mark: "bracket" }),
       namePart(".sk-timeline__item", "inline-start"),
       namePart(".sk-timeline__marker", "inline-start", { ringPlacement: "offset", ringDistance: 4 }),
       namePart(".sk-timeline__time", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),

@@ -1,13 +1,14 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /** Label, value and change with a trend glyph: the metric's own parts at rest. */
 export const statAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("statPage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("statPage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "stat",
       signature: "Stat",
@@ -22,7 +23,7 @@ export const statAnatomyTree = (t: Translate): UsageTree => ({
       },
     },
     items: [
-      namePart(".sk-stat", "block-start"),
+      namePart(".sk-stat", "block-start", { mark: "bracket" }),
       namePart(".sk-stat__label", "inline-start"),
       namePart(".sk-stat__value", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
       namePart(".sk-stat__change", "block-end"),

@@ -1,6 +1,8 @@
+import { placeholderHrefs } from "../lib/placeholder-hrefs";
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import { DEMO_IMAGE_FRAME_SRC } from "./image-frame.js";
 import type { Translate } from "../i18n";
+import { anatomyFigureHtml } from "./annotation-parts";
 
 /*
  * THE ANATOMY SPECIMEN: frozen open markup. A live Megamenu cannot be held open in an inert frame
@@ -55,32 +57,23 @@ const megamenuAnatomySpecimen = (t: Translate): string => `<nav class="sk-megame
   </ul>
 </nav>`;
 
-const label = (target: string, side: string, text: string, extra = ""): string =>
-  `<span class="sk-annotation" data-for="${target}" data-side="${side}" data-match="first"${extra} tabindex="0">${text}</span>`;
 
-export const megamenuAnatomyHtml = (t: Translate): string => `<div
-  class="sk-annotated"
-  data-sk-annotated
-  aria-label="${t("megamenuPage.anatomyLabel")}"
-  data-ring-placement="inset"
-  data-ring-distance="2"
-  role="group"
->
-  <div class="sk-annotated__subject" inert>
-    ${megamenuAnatomySpecimen(t)}
-  </div>
-  ${label(".sk-megamenu", "block-start", "sk-megamenu", ' data-ring-placement="offset" data-ring-distance="8"')}
-  ${label(".sk-megamenu__list", "inline-start", "sk-megamenu__list")}
-  ${label(".sk-megamenu__item", "inline-start", "sk-megamenu__item", ' data-ring-placement="offset" data-ring-distance="2"')}
-  ${label(".sk-megamenu__trigger", "inline-end", "sk-megamenu__trigger")}
-  ${label(".sk-megamenu__positioner", "inline-start", "sk-megamenu__positioner")}
-  ${label(".sk-megamenu__content", "inline-end", "sk-megamenu__content")}
-  ${label(".sk-nav-list__group", "inline-start", "sk-nav-list__group", ' data-ring-placement="offset" data-ring-distance="3"')}
-  ${label(".sk-nav-list__link", "inline-end", "sk-nav-list__link", ' data-ring-placement="offset" data-ring-distance="2"')}
-  <svg class="sk-annotated__leaders" aria-hidden="true" focusable="false"></svg>
-</div>`;
+export const megamenuAnatomyHtml = (t: Translate): string => anatomyFigureHtml(t, {
+  label: t("megamenuPage.anatomyLabel"),
+  specimen: megamenuAnatomySpecimen(t),
+  parts: [
+    { for: ".sk-megamenu", side: "block-start", mark: "bracket", ringPlacement: "offset", ringDistance: 8 },
+    { for: ".sk-megamenu__list", side: "inline-start" },
+    { for: ".sk-megamenu__item", side: "inline-start", ringPlacement: "offset", ringDistance: 2 },
+    { for: ".sk-megamenu__trigger", side: "inline-end" },
+    { for: ".sk-megamenu__positioner", side: "inline-start" },
+    { for: ".sk-megamenu__content", side: "inline-end" },
+    { for: ".sk-nav-list__group", side: "inline-start", ringPlacement: "offset", ringDistance: 3 },
+    { for: ".sk-nav-list__link", side: "inline-end", ringPlacement: "offset", ringDistance: 2 },
+  ],
+});
 
-export const megamenuAnatomyCss = `.sk-annotated {
+export const megamenuAnatomyCss = `.sk-annotated-figure {
   --sk-annotation-font-family: var(--font-family-code);
 }
 
@@ -131,7 +124,7 @@ export const megamenuAnatomyCss = `.sk-annotated {
  */
 export const megamenuTree = (
   t: Translate,
-  hrefs: { overview: string; pricing: string; integrations: string; teams: string; enterprise: string },
+  hrefs: { overview: string; pricing: string; integrations: string; teams: string; enterprise: string } = placeholderHrefs(),
 ): UsageTree => ({
   contract: "megamenu",
   signature: "Megamenu",

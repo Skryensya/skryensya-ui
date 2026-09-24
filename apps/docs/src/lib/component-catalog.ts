@@ -160,6 +160,10 @@ const componentDescriptions = {
     es: "Representa acciones y conceptos con iconografía consistente.",
     en: "Represents actions and concepts with consistent iconography.",
   },
+  "/components/lightbox": {
+    es: "Muestra una imagen o una galería en grande, con zoom, en un diálogo modal.",
+    en: "Shows an image or a gallery large, with zoom, in a modal dialog.",
+  },
   "/components/image-frame": {
     es: "Recorta y posiciona imágenes con una proporción controlada.",
     en: "Crops and positions images at a controlled aspect ratio.",

@@ -1,6 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 const tag = (children: string, options: Record<string, string | boolean> = {}): UsageTree => ({
   contract: "tag",
@@ -21,8 +21,9 @@ const tagLink = (children: string, href: string, options: Record<string, string 
 export const tagAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("tagPage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("tagPage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "tag",
       signature: "Tag",
@@ -34,7 +35,7 @@ export const tagAnatomyTree = (t: Translate): UsageTree => ({
       children: "react",
     },
     items: [
-      namePart(".sk-tag", "block-start", { ringPlacement: "offset", ringDistance: 4 }),
+      namePart(".sk-tag", "block-start", { mark: "bracket", ringPlacement: "offset", ringDistance: 4 }),
       namePart(".sk-tag__label", "inline-start"),
       namePart(".sk-tag__remove", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
     ],

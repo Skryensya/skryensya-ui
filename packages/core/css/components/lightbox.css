@@ -1,0 +1,423 @@
+/* The controls are icon-only `sk-button`s and the wait is a Loader; they bring their own sheets. */
+@import url("./button.css");
+@import url("./loader.css");
+
+/*
+ * TIER 3, LIGHTBOX
+ *
+ * One image, or a gallery, as large as the screen allows, in a native modal `<dialog>`. See
+ * `@skryensya/core/lightbox` for the behaviour and why each gesture is what it is; this sheet owns the
+ * full-screen frame, the fitted image, the controls' surfaces and the motion.
+ *
+ * ALWAYS DARK, and that is a statement about photographs, not a theme: a white frame around a photo
+ * changes how every colour in it reads, which is why every photo viewer frames in near-black. It is
+ * done with `color-scheme: dark` rather than new colours, so every semantic token inside (the buttons,
+ * the loader, the focus ring) resolves its own dark half and the viewer is still this system's, just
+ * in the mode the system already has for the dark.
+ *
+ * THE DIALOG IS THE WHOLE SCREEN, so the dimming is the dialog's own background, not `::backdrop`: the
+ * backdrop would be covered anyway, and one surface means one fade. No z-index anywhere: `showModal()`
+ * puts it in the top layer, above every z-index on the page by definition.
+ *
+ * THE IMAGE IS FITTED BY CSS, NEVER BY SCRIPT. `max-inline-size`/`max-block-size: 100%` of the stage,
+ * sizes `auto`, so the browser keeps the ratio (CSS 2's constraint table for replaced elements) and a
+ * small image is never enlarged past its own pixels. With `width`/`height` known, that box exists
+ * before the first byte arrives, so nothing shifts when the photo lands. Zoom is one transform on top
+ * of that box, which moves nothing else.
+ */
+@layer components {
+  .sk-lightbox {
+    --sk-lightbox-backdrop-bg: color-mix(in oklch, var(--color-bg-canvas) 94%, transparent);
+    --sk-lightbox-bg: transparent;
+    --sk-lightbox-fg: var(--color-text-primary);
+    --sk-lightbox-muted-fg: var(--color-text-secondary);
+    /* A STABLE SURFACE under every control, because what is behind it is a photo nobody chose: white
+       sky, black night, or both in one frame. Near-opaque canvas plus a blur keeps the icon's
+       contrast against the chip itself, whatever the pixels underneath do. */
+    --sk-lightbox-control-bg: color-mix(in oklch, var(--color-bg-canvas) 78%, transparent);
+    --sk-lightbox-control-border-color: color-mix(in oklch, var(--color-text-primary) 24%, transparent);
+    --sk-lightbox-caption-bg: color-mix(in oklch, var(--color-bg-canvas) 82%, transparent);
+    /* A long caption scrolls inside this rather than pushing the photo off the screen. */
+    --sk-lightbox-caption-max-block-size: 28dvh;
+    --sk-lightbox-gutter: var(--space-inset-sm);
+    --sk-lightbox-trigger-radius: var(--radius-control);
+    /* The room a nav button needs at the side of the stage, when there is room to give it. */
+    --sk-lightbox-nav-room: 0px;
+
+    color-scheme: dark;
+    box-sizing: border-box;
+    position: fixed;
+    inset: 0;
+    inline-size: 100%;
+    max-inline-size: none;
+    block-size: 100vh;
+    block-size: 100dvh;
+    max-block-size: none;
+    margin: 0;
+    /* The notch, the Dynamic Island and the home indicator are not places to put a button. Needs
+       `viewport-fit=cover` in the page's viewport meta to be anything but zero, which is correct:
+       without it the browser already keeps the page out of those areas. */
+    padding:
+      env(safe-area-inset-top, 0px)
+      env(safe-area-inset-right, 0px)
+      env(safe-area-inset-bottom, 0px)
+      env(safe-area-inset-left, 0px);
+    border: 0;
+    background: var(--sk-lightbox-bg) var(--sk-lightbox-backdrop-bg);
+    color: var(--sk-lightbox-fg);
+    overflow: hidden;
+    overscroll-behavior: contain;
+    isolation: isolate;
+
+    opacity: 0;
+    transition:
+      opacity var(--motion-exit-duration) var(--motion-exit-easing),
+      overlay var(--motion-exit-duration) var(--motion-exit-easing) allow-discrete,
+      display var(--motion-exit-duration) var(--motion-exit-easing) allow-discrete;
+  }
+
+  /* `display` only while open: the UA's own `dialog:not([open]) { display: none }` must keep
+     winning on a closed one, or a closed lightbox would cover the page. */
+  .sk-lightbox[open] {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas:
+      "toolbar"
+      "figure";
+    opacity: 1;
+    transition:
+      opacity var(--motion-enter-duration) var(--motion-enter-easing),
+      overlay var(--motion-enter-duration) var(--motion-enter-easing) allow-discrete,
+      display var(--motion-enter-duration) var(--motion-enter-easing) allow-discrete;
+  }
+
+  @starting-style {
+    .sk-lightbox[open] {
+      opacity: 0;
+    }
+  }
+
+  /* Covered by the dialog itself, which paints its own dimming; see the header. */
+  .sk-lightbox::backdrop {
+    background: transparent;
+  }
+
+  /* `hidden` must beat every `display` in here and in the sheets these parts borrow (an
+     `sk-button` is `inline-flex`), or a hidden nav button stays on screen. */
+  .sk-lightbox [hidden] {
+    display: none;
+  }
+
+  /* ---- toolbar ---- */
+
+  .sk-lightbox__toolbar {
+    grid-area: toolbar;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-inline-sm);
+    padding: var(--sk-lightbox-gutter);
+    /* Above the stage, so a zoomed photo sliding under it never covers a focused control. */
+    position: relative;
+    z-index: 1;
+  }
+
+  .sk-lightbox__counter {
+    margin: 0;
+    padding-inline: var(--space-inset-sm);
+    padding-block: var(--space-inset-xs);
+    border-radius: var(--radius-pill);
+    background: var(--sk-lightbox-control-bg);
+    color: var(--sk-lightbox-fg);
+    font-size: var(--font-size-body-sm);
+    font-variant-numeric: tabular-nums;
+    line-height: var(--font-line-height-body);
+    white-space: nowrap;
+  }
+
+  .sk-lightbox__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-inline-sm);
+    /* Pinned to the end even when the counter is not drawn (a single image). */
+    margin-inline-start: auto;
+  }
+
+  /* ---- controls: Button's translucent variant, over a surface that stays readable on any photo ---- */
+
+  .sk-lightbox .sk-lightbox__control.sk-button {
+    --sk-button-bg: var(--sk-lightbox-control-bg);
+    --sk-button-fg: var(--sk-lightbox-fg);
+    --sk-button-border-color: var(--sk-lightbox-control-border-color);
+    --sk-button-radius: var(--radius-pill);
+
+    backdrop-filter: blur(12px);
+  }
+
+  /*
+   * FOCUS, TWICE OVER. The system's ring is one colour, and over a photo one colour can land on
+   * pixels of the same colour. So the focused control gets a dark halo in the gap between itself and
+   * the ring (the button's own shadow hook), and the ring itself is the foreground: light on dark,
+   * dark on light, at least 3:1 against whatever is behind one of the two. It is also at least 3px,
+   * a step past AA toward 2.4.13's Focus Appearance.
+   */
+  .sk-lightbox .sk-lightbox__control.sk-button:focus-visible {
+    --sk-button-shadow: 0 0 0 calc(var(--focus-ring-offset) + 1px) var(--color-bg-canvas);
+
+    outline: max(var(--focus-ring-width), 3px) solid var(--sk-lightbox-fg);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  /* Unavailable, still focusable (see the controller's note on `aria-disabled`), and dimmed as a
+     second cue after the announcement, never the only one. */
+  .sk-lightbox .sk-lightbox__control[aria-disabled="true"] {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .sk-lightbox__nav {
+    grid-area: figure;
+    align-self: center;
+    z-index: 1;
+    margin-inline: var(--sk-lightbox-gutter);
+  }
+
+  .sk-lightbox__nav[data-lightbox-action="previous"] {
+    justify-self: start;
+  }
+
+  .sk-lightbox__nav[data-lightbox-action="next"] {
+    justify-self: end;
+  }
+
+  /* Wide enough to give the nav its own margin: the photo stops short of the buttons instead of
+     sliding under them. On a phone every pixel is the photo's, and the buttons float over it. */
+  @media (min-width: 48rem) {
+    .sk-lightbox:not([data-sk-single]) {
+      --sk-lightbox-nav-room: calc(var(--size-touch-target) + var(--sk-lightbox-gutter) * 2);
+    }
+  }
+
+  /* ---- the figure: stage above, caption below ---- */
+
+  .sk-lightbox__figure {
+    grid-area: figure;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    min-block-size: 0;
+    margin: 0;
+    padding-inline: var(--sk-lightbox-nav-room);
+  }
+
+  .sk-lightbox__stage {
+    position: relative;
+    display: grid;
+    grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+    place-items: center;
+    min-block-size: 0;
+    padding: var(--sk-lightbox-gutter);
+    overflow: hidden;
+    /* Every touch on the stage is the lightbox's: pan, pinch and swipe are all handled, and the page
+       under a modal has nothing to scroll anyway. */
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .sk-lightbox__image,
+  .sk-lightbox__placeholder {
+    grid-area: 1 / 1;
+    inline-size: auto;
+    block-size: auto;
+    max-inline-size: 100%;
+    max-block-size: 100%;
+    object-fit: contain;
+    -webkit-user-drag: none;
+    /* The swipe offset the controller writes while a finger drags the photo toward a neighbour or
+       toward closing. `translate` and `transform` are separate properties, so this never fights the
+       zoom. */
+    translate: var(--sk-lightbox-drag-x, 0px) var(--sk-lightbox-drag-y, 0px);
+    transition:
+      translate var(--motion-release-duration) var(--motion-release-easing),
+      transform var(--motion-state-change-duration) var(--motion-state-change-easing),
+      opacity var(--motion-state-change-duration) var(--motion-state-change-easing);
+  }
+
+  .sk-lightbox__image {
+    transform-origin: 50% 50%;
+    will-change: transform;
+  }
+
+  /* The thumbnail, blown up and blurred: a preview of the right colours in the right place while the
+     full image arrives, never mistaken for the photo itself. */
+  .sk-lightbox__placeholder {
+    filter: blur(16px);
+    opacity: 0.7;
+  }
+
+  /* Loading: the full image is invisible until it has pixels, so a half-decoded photo never paints
+     and the placeholder is what shows. An error hides it for good: no broken-image glyph. */
+  .sk-lightbox:is([data-sk-status="loading"], [data-sk-status="error"]) .sk-lightbox__image {
+    opacity: 0;
+  }
+
+  /* A finger or the mouse is moving the photo: it follows exactly, no easing behind the pointer. */
+  .sk-lightbox[data-sk-dragging] :is(.sk-lightbox__image, .sk-lightbox__placeholder) {
+    transition: none;
+  }
+
+  .sk-lightbox[data-sk-status="loaded"][data-zoom]:not([data-zoom="false"]) .sk-lightbox__image,
+  .sk-lightbox[data-sk-status="loaded"]:not([data-zoom]) .sk-lightbox__image {
+    cursor: zoom-in;
+  }
+
+  .sk-lightbox[data-sk-zoomed] .sk-lightbox__image {
+    cursor: grab;
+  }
+
+  .sk-lightbox[data-sk-zoomed][data-sk-dragging] .sk-lightbox__image {
+    cursor: grabbing;
+  }
+
+  .sk-lightbox__loader {
+    grid-area: 1 / 1;
+    visibility: hidden;
+    opacity: 0;
+  }
+
+  /* Only a SLOW load shows the spinner: a cached photo arrives in a frame or two, and a spinner that
+     flashes for 40ms reads as a glitch, not as progress. */
+  .sk-lightbox[data-sk-status="loading"] .sk-lightbox__loader {
+    visibility: visible;
+    opacity: 1;
+    transition:
+      opacity var(--motion-state-change-duration) var(--motion-state-change-easing) 250ms,
+      visibility 0s linear 250ms;
+  }
+
+  .sk-lightbox__error {
+    grid-area: 1 / 1;
+    z-index: 1;
+    max-inline-size: min(28rem, 100%);
+    margin: 0;
+    padding: var(--space-inset-sm) var(--space-inset-md);
+    border: 1px solid var(--sk-lightbox-control-border-color);
+    border-radius: var(--radius-control);
+    background: var(--sk-lightbox-control-bg);
+    color: var(--sk-lightbox-fg);
+    font-size: var(--font-size-body);
+    line-height: var(--font-line-height-body);
+    text-align: center;
+  }
+
+  /* ---- caption ---- */
+
+  .sk-lightbox__caption {
+    display: grid;
+    gap: var(--space-stack-xs);
+    justify-self: center;
+    box-sizing: border-box;
+    inline-size: min(100%, 65ch);
+    max-block-size: var(--sk-lightbox-caption-max-block-size);
+    margin-block-end: var(--sk-lightbox-gutter);
+    padding: var(--space-inset-sm) var(--space-inset-md);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border-radius: var(--radius-control);
+    background: var(--sk-lightbox-caption-bg);
+    color: var(--sk-lightbox-fg);
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+
+  .sk-lightbox__caption > p {
+    margin: 0;
+  }
+
+  .sk-lightbox__title {
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-label);
+    line-height: var(--font-line-height-body);
+  }
+
+  .sk-lightbox__description {
+    color: var(--sk-lightbox-muted-fg);
+    font-size: var(--font-size-body-sm);
+    line-height: var(--font-line-height-body);
+  }
+
+  .sk-lightbox__credit {
+    color: var(--sk-lightbox-muted-fg);
+    font-size: var(--font-size-caption);
+    line-height: var(--font-line-height-body);
+  }
+
+  /* ---- trigger: a thumbnail that opens it ---- */
+
+  .sk-lightbox__trigger {
+    display: block;
+    border-radius: var(--sk-lightbox-trigger-radius);
+    color: inherit;
+    cursor: zoom-in;
+  }
+
+  .sk-lightbox__trigger:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  .sk-lightbox__trigger :where(img) {
+    display: block;
+    transition: filter var(--motion-feedback-duration) var(--motion-feedback-easing);
+  }
+
+  .sk-lightbox__trigger:hover :where(img) {
+    filter: brightness(1.08);
+  }
+
+  /* ---- reduced motion: every fade stays, every movement goes ---- */
+
+  @media (prefers-reduced-motion: reduce) {
+    .sk-lightbox :is(.sk-lightbox__image, .sk-lightbox__placeholder) {
+      transition: opacity var(--motion-reduced-duration) var(--motion-reduced-easing);
+    }
+
+    .sk-lightbox__trigger :where(img) {
+      transition: none;
+    }
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    .sk-lightbox {
+      --sk-lightbox-backdrop-bg: var(--color-bg-canvas);
+      --sk-lightbox-control-bg: var(--color-bg-canvas);
+      --sk-lightbox-caption-bg: var(--color-bg-canvas);
+    }
+
+    .sk-lightbox .sk-lightbox__control.sk-button {
+      backdrop-filter: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .sk-lightbox {
+      background: Canvas;
+      color: CanvasText;
+    }
+
+    .sk-lightbox .sk-lightbox__control.sk-button,
+    .sk-lightbox__counter,
+    .sk-lightbox__caption,
+    .sk-lightbox__error {
+      border: 1px solid CanvasText;
+      background: Canvas;
+      color: CanvasText;
+      backdrop-filter: none;
+    }
+
+    .sk-lightbox .sk-lightbox__control.sk-button:focus-visible {
+      outline-color: Highlight;
+    }
+  }
+}

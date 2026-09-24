@@ -285,6 +285,14 @@
       "types": "./src/canvas.ts",
       "default": "./src/canvas.ts"
     },
+    "./lightbox": {
+      "types": "./src/lightbox.ts",
+      "default": "./src/lightbox.ts"
+    },
+    "./lightbox-controller": {
+      "types": "./src/lightbox-controller.ts",
+      "default": "./src/lightbox-controller.ts"
+    },
     "./back-to-top": {
       "types": "./src/back-to-top.ts",
       "default": "./src/back-to-top.ts"

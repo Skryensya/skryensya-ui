@@ -3,6 +3,7 @@ export { connectAnnotated, mountAnnotated } from "./components/annotation.js";
 export { connectDiagram, mountDiagram } from "./components/diagram.js";
 export { connectBackToTop, mountBackToTop } from "./components/back-to-top.js";
 export { connectCanvas, mountCanvas } from "./components/canvas.js";
+export { connectLightboxRoot, getLightbox, mountLightbox, readLightboxConfig } from "./components/lightbox.js";
 export { mountButton } from "./components/button.js";
 export { connectLoader, mountLoader } from "./components/loader.js";
 export { connectMarquee, mountMarquee } from "./components/marquee.js";

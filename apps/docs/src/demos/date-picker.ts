@@ -1,5 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { anatomyFigureHtml } from "./annotation-parts";
 
 /*
  * The date picker three ways: native, enhanced, and disabled.
@@ -119,32 +120,23 @@ const datePickerAnatomySpecimen = (t: Translate): string => `<div class="sk-date
   </div>
 </div>`;
 
-const label = (target: string, side: string, text: string, extra = ""): string =>
-  `<span class="sk-annotation" data-for="${target}" data-side="${side}" data-match="first"${extra} tabindex="0">${text}</span>`;
 
-export const datePickerAnatomyHtml = (t: Translate): string => `<div
-  class="sk-annotated"
-  data-sk-annotated
-  aria-label="${t("datePicker.anatomyLabel")}"
-  data-ring-placement="inset"
-  data-ring-distance="2"
-  role="group"
->
-  <div class="sk-annotated__subject" inert>
-    ${datePickerAnatomySpecimen(t)}
-  </div>
-  ${label(".sk-date-picker", "inline-start", "sk-date-picker")}
-  ${label(".sk-date-picker__label", "inline-start", "sk-date-picker__label")}
-  ${label(".sk-date-picker__control", "inline-start", "sk-date-picker__control")}
-  ${label(".sk-date-picker__input", "inline-end", "sk-date-picker__input", ' data-ring-placement="offset" data-ring-distance="4"')}
-  ${label(".sk-date-picker__clear", "inline-end", "sk-date-picker__clear")}
-  ${label(".sk-date-picker__trigger", "inline-end", "sk-date-picker__trigger")}
-  ${label(".sk-date-picker__positioner", "inline-start", "sk-date-picker__positioner")}
-  ${label(".sk-date-picker__content", "inline-start", "sk-date-picker__content")}
-  <svg class="sk-annotated__leaders" aria-hidden="true" focusable="false"></svg>
-</div>`;
+export const datePickerAnatomyHtml = (t: Translate): string => anatomyFigureHtml(t, {
+  label: t("datePicker.anatomyLabel"),
+  specimen: datePickerAnatomySpecimen(t),
+  parts: [
+    { for: ".sk-date-picker", side: "inline-start", mark: "bracket" },
+    { for: ".sk-date-picker__label", side: "inline-start" },
+    { for: ".sk-date-picker__control", side: "inline-start" },
+    { for: ".sk-date-picker__input", side: "inline-end", ringPlacement: "offset", ringDistance: 4 },
+    { for: ".sk-date-picker__clear", side: "inline-end" },
+    { for: ".sk-date-picker__trigger", side: "inline-end" },
+    { for: ".sk-date-picker__positioner", side: "inline-start" },
+    { for: ".sk-date-picker__content", side: "inline-start" },
+  ],
+});
 
-export const datePickerAnatomyCss = `.sk-annotated {
+export const datePickerAnatomyCss = `.sk-annotated-figure {
   --sk-annotation-font-family: var(--font-family-code);
 }
 

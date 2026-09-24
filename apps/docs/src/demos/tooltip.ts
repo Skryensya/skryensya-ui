@@ -1,5 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { anatomyFigureHtml } from "./annotation-parts";
 
 
 /*
@@ -38,29 +39,20 @@ const tooltipAnatomySpecimen = (t: Translate): string => `<div class="sk-tooltip
   </div>
 </div>`;
 
-const tooltipLabel = (target: string, side: string, text: string, extra = ""): string =>
-  `<span class="sk-annotation" data-for="${target}" data-side="${side}" data-match="first"${extra} tabindex="0">${text}</span>`;
 
-export const tooltipAnatomyHtml = (t: Translate): string => `<div
-  class="sk-annotated"
-  data-sk-annotated
-  aria-label="${t("tooltipPage.anatomyLabel")}"
-  data-ring-placement="inset"
-  data-ring-distance="2"
-  role="group"
->
-  <div class="sk-annotated__subject" inert>
-    ${tooltipAnatomySpecimen(t)}
-  </div>
-  ${tooltipLabel(".sk-tooltip", "block-start", "sk-tooltip", ' data-ring-placement="offset" data-ring-distance="6"')}
-  ${tooltipLabel(".sk-tooltip__trigger", "inline-start", "sk-tooltip__trigger")}
-  ${tooltipLabel(".sk-tooltip__content", "inline-end", "sk-tooltip__content")}
-  ${tooltipLabel(".sk-anchored-arrow", "inline-end", "sk-anchored-arrow", ' data-ring-placement="offset" data-ring-distance="2"')}
-  ${tooltipLabel(".sk-tooltip__positioner", "block-end", "sk-tooltip__positioner", ' data-ring-placement="offset" data-ring-distance="4"')}
-  <svg class="sk-annotated__leaders" aria-hidden="true" focusable="false"></svg>
-</div>`;
+export const tooltipAnatomyHtml = (t: Translate): string => anatomyFigureHtml(t, {
+  label: t("tooltipPage.anatomyLabel"),
+  specimen: tooltipAnatomySpecimen(t),
+  parts: [
+    { for: ".sk-tooltip", side: "block-start", mark: "bracket", ringPlacement: "offset", ringDistance: 6 },
+    { for: ".sk-tooltip__trigger", side: "inline-start" },
+    { for: ".sk-tooltip__content", side: "inline-end" },
+    { for: ".sk-anchored-arrow", side: "inline-end", ringPlacement: "offset", ringDistance: 2 },
+    { for: ".sk-tooltip__positioner", side: "block-end", ringPlacement: "offset", ringDistance: 4 },
+  ],
+});
 
-export const tooltipAnatomyCss = `.sk-annotated {
+export const tooltipAnatomyCss = `.sk-annotated-figure {
   --sk-annotation-font-family: var(--font-family-code);
 }
 

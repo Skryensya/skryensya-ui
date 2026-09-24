@@ -1,7 +1,8 @@
+import { placeholderHrefs } from "../lib/placeholder-hrefs";
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 import { sidebarFileNodes } from "./data/sidebar";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /*
  * A collapsible shell with NavList as its guest, and enough adjacent content to make the rail legible.
@@ -19,8 +20,9 @@ import { namePart } from "./annotation-parts";
 export const sidebarAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("sidebarPage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("sidebarPage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "sidebar",
       signature: "Sidebar",
@@ -58,7 +60,7 @@ export const sidebarAnatomyTree = (t: Translate): UsageTree => ({
       ],
     },
     items: [
-      namePart(".sk-sidebar", "block-start"),
+      namePart(".sk-sidebar", "block-start", { mark: "bracket" }),
       namePart(".sk-sidebar__resize-handle", "inline-start"),
       namePart(".sk-sidebar__header", "block-start"),
       namePart(".sk-sidebar__trigger", "inline-end"),
@@ -71,7 +73,7 @@ export const sidebarAnatomyTree = (t: Translate): UsageTree => ({
 
 export const sidebarTree = (
   t: Translate,
-  hrefs: { home: string; reports: string },
+  hrefs: { home: string; reports: string } = placeholderHrefs(),
 ): UsageTree => ({
   contract: "layout",
   signature: "Stack",
@@ -167,7 +169,7 @@ export const sidebarTree = (
  */
 export const sidebarFloatingTriggerTree = (
   t: Translate,
-  hrefs: { home: string; reports: string },
+  hrefs: { home: string; reports: string } = placeholderHrefs(),
 ): UsageTree => ({
   contract: "layout",
   signature: "Stack",

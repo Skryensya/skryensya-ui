@@ -1,6 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /*
  * THE ANATOMY: labelled pill so every part is painted. Default chrome clips the label to a name-only
@@ -11,8 +11,9 @@ import { namePart } from "./annotation-parts";
 export const backToTopAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("backToTop.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("backToTop.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "back-to-top",
       signature: "BackToTop",
@@ -20,7 +21,7 @@ export const backToTopAnatomyTree = (t: Translate): UsageTree => ({
       children: t("backToTop.demoLabel"),
     },
     items: [
-      namePart(".sk-back-to-top", "block-start"),
+      namePart(".sk-back-to-top", "block-start", { mark: "bracket" }),
       namePart(".sk-back-to-top__icon", "inline-start"),
       namePart(".sk-back-to-top__label", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
     ],
@@ -28,7 +29,7 @@ export const backToTopAnatomyTree = (t: Translate): UsageTree => ({
 });
 
 /** In-flow labelled pill for the anatomy frame: not the page-corner placement the live demos use. */
-export const backToTopAnatomyCss = `.sk-annotated {
+export const backToTopAnatomyCss = `.sk-annotated-figure {
   --sk-annotation-font-family: var(--font-family-code);
 }
 

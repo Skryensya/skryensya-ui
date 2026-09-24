@@ -1,6 +1,7 @@
+import { placeholderHrefs } from "../lib/placeholder-hrefs";
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /*
  * The bar holds a brand, a horizontal nav-list guest, and two actions. "Atlas" stays written: it
@@ -11,7 +12,7 @@ import { namePart } from "./annotation-parts";
  */
 export const navbarTree = (
   t: Translate,
-  hrefs: { home: string; projects: string; reports: string; team: string },
+  hrefs: { home: string; projects: string; reports: string; team: string } = placeholderHrefs(),
 ): UsageTree => ({
   contract: "navbar",
   signature: "Navbar",
@@ -82,15 +83,16 @@ export const navbarTree = (
 /** Brand, nav guest and actions: the three regions a Navbar always composes. */
 export const navbarAnatomyTree = (
   t: Translate,
-  hrefs: { home: string; projects: string; reports: string; team: string },
+  hrefs: { home: string; projects: string; reports: string; team: string } = placeholderHrefs(),
 ): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("navbarPage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("navbarPage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: navbarTree(t, hrefs),
     items: [
-      namePart(".sk-navbar", "block-start"),
+      namePart(".sk-navbar", "block-start", { mark: "bracket" }),
       namePart(".sk-navbar__brand", "inline-start"),
       namePart(".sk-nav-list", "block-end", { ringPlacement: "offset", ringDistance: 2 }),
       namePart(".sk-navbar__actions", "inline-end"),

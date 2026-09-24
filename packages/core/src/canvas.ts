@@ -18,8 +18,10 @@ import type { ComponentContract, ContractTemplate, OptionsOf } from "./contract.
  * the scale back out (see `annotationScale`).
  *
  * AT REST IT IS FITTED: scaled down (never up) until the whole content is visible, and the viewport
- * is exactly as tall as the fitted content, capped by `--sk-canvas-max-block-size`. A reader who never
- * touches it sees a plain, complete drawing with a small zoom bar in its corner.
+ * is exactly as tall as the fitted content, capped by `--sk-canvas-max-block-size` and floored by
+ * `--sk-canvas-min-block-size` (the drawing is centred in the extra height, never enlarged into
+ * it). A reader who never touches it sees a plain, complete drawing with a small zoom bar in its
+ * corner.
  *
  * IT NEVER TAKES THE PAGE'S SCROLL. This is the rule every embedded map learned the hard way, and it
  * decides every gesture below:
@@ -73,6 +75,8 @@ export const canvasAttrs = {
   zoomed: "data-sk-zoomed",
   minZoom: "data-min-zoom",
   maxZoom: "data-max-zoom",
+  /** Authored: the canvas only fits. No zoom, no pan, no zoom bar. */
+  fitOnly: "data-fit-only",
 } as const;
 
 export type CanvasAction = "zoom-out" | "zoom-in" | "fit";
@@ -265,7 +269,12 @@ function round(value: number): number {
  * The controller: the one place the gestures are wired. DOM-touching, framework-free.
  * ---------------------------------------------------------------------------------------------- */
 
-export type CanvasViewOptions = { readonly minZoom?: number; readonly maxZoom?: number };
+export type CanvasViewOptions = {
+  readonly minZoom?: number;
+  readonly maxZoom?: number;
+  /** Fit and refit, nothing else: no gesture, key or button is wired. See the `fitOnly` option. */
+  readonly fitOnly?: boolean;
+};
 
 /**
  * Wire one canvas. Both bindings call exactly this on a root carrying the canvas's parts, and it
@@ -474,27 +483,40 @@ export function connectCanvasView(root: HTMLElement, options: CanvasViewOptions 
     else if (action === "fit") fit();
   };
 
-  viewport.addEventListener("wheel", onWheel, { passive: false });
-  viewport.addEventListener("pointerdown", onPointerDown);
-  viewport.addEventListener("pointermove", onPointerMove);
-  viewport.addEventListener("pointerup", onPointerUp);
-  viewport.addEventListener("pointercancel", onPointerUp);
-  viewport.addEventListener("touchstart", onTouchStart, { passive: true });
-  viewport.addEventListener("touchmove", onTouchMove, { passive: false });
-  viewport.addEventListener("touchend", onTouchEnd);
-  viewport.addEventListener("touchcancel", onTouchEnd);
-  viewport.addEventListener("gesturestart", onGesture);
-  viewport.addEventListener("keydown", onKeyDown);
-  for (const control of controls) control.addEventListener("click", onControl);
+  /* FIT ONLY: the drawing still fits and refits (the observers below), and that is all. Not one
+     listener is attached, so the wheel, a drag and a pinch all stay the page's. */
+  if (!options.fitOnly) {
+    viewport.addEventListener("wheel", onWheel, { passive: false });
+    viewport.addEventListener("pointerdown", onPointerDown);
+    viewport.addEventListener("pointermove", onPointerMove);
+    viewport.addEventListener("pointerup", onPointerUp);
+    viewport.addEventListener("pointercancel", onPointerUp);
+    viewport.addEventListener("touchstart", onTouchStart, { passive: true });
+    viewport.addEventListener("touchmove", onTouchMove, { passive: false });
+    viewport.addEventListener("touchend", onTouchEnd);
+    viewport.addEventListener("touchcancel", onTouchEnd);
+    viewport.addEventListener("gesturestart", onGesture);
+    viewport.addEventListener("keydown", onKeyDown);
+    for (const control of controls) control.addEventListener("click", onControl);
+  }
 
   const observer = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(() => layout());
   observer?.observe(viewport);
   observer?.observe(content);
+  /*
+   * THE WINDOW TOO, because the cap is `vh` and neither observed box has to change when it does. In
+   * a content-sized iframe (every docs preview) the first fit ran at the default 150px frame, capped
+   * the drawing at 120px, and the floor then pinned the viewport at one height while the frame grew
+   * around it: nothing observed ever resized, and the diagram stayed at a third of its size.
+   */
+  const win = root.ownerDocument.defaultView;
+  win?.addEventListener("resize", layout);
   layout();
 
   return () => {
     clearTimeout(hintTimer);
     observer?.disconnect();
+    win?.removeEventListener("resize", layout);
     viewport.removeEventListener("wheel", onWheel);
     viewport.removeEventListener("pointerdown", onPointerDown);
     viewport.removeEventListener("pointermove", onPointerMove);
@@ -516,8 +538,26 @@ export function connectCanvasView(root: HTMLElement, options: CanvasViewOptions 
 
 /**
  * The canvas's own labels and hints, as options and slots. `Annotated` declares the same names when
- * it is `zoomable`, so a tree says "Acercar" to either one the same way.
+ * it holds one, so a tree says "Acercar" to either one the same way.
  */
+/**
+ * FIT ONLY: the canvas as a frame that scales its drawing to fit and nothing more. For a drawing
+ * that is read at rest and never explored (the docs' anatomy diagrams): no zoom bar, no hints, no
+ * gestures, and the viewport is not a tab stop, because a focusable box that does nothing on any
+ * key is a trap for the keyboard. It still refits on every resize, which is the part of the canvas
+ * such a drawing needs: the same desktop layout, shown smaller on a phone. `Annotated` declares it
+ * under the same name, so a tree says it to either one the same way.
+ */
+export const canvasFitOnlyOption = {
+  fitOnly: {
+    type: "boolean",
+    default: false,
+    attr: canvasAttrs.fitOnly,
+    trueValue: "",
+    machineInput: true,
+  },
+} as const;
+
 export const canvasLabelOptions = {
   zoomInLabel: { type: "string", default: "Zoom in", attr: "aria-label" },
   zoomOutLabel: { type: "string", default: "Zoom out", attr: "aria-label" },
@@ -547,6 +587,7 @@ const hintNode = (kind: CanvasHint, slot: string, fallback: string): ContractTem
   element: "p",
   part: "hint",
   attrs: { [canvasAttrs.hint]: kind, "aria-hidden": "true" },
+  whenMissing: "fitOnly",
   children: [
     { element: "span", slot, whenGiven: slot },
     { element: "span", whenMissing: slot, text: fallback },
@@ -563,13 +604,15 @@ export const canvasTemplateChildren = (inner: ContractTemplate): readonly Contra
     {
       element: "div",
       part: "viewport",
-      /* Focusable, so the keyboard reaches the zoom; the root's group name is what it announces. */
-      attrs: { tabindex: "0" },
+      /* Focusable, so the keyboard reaches the zoom; the root's group name is what it announces.
+         Not when it only fits: there is nothing for the keyboard to do there. */
+      attrsWhen: [{ option: "fitOnly", given: false, attrs: { tabindex: "0" } }],
       children: [{ element: "div", part: "content", children: [inner] }],
     },
     {
       element: "div",
       part: "controls",
+      whenMissing: "fitOnly",
       children: [
         /* Top to bottom, the way a vertical zoom bar reads: in, out, then fit. */
         control("zoom-in", "zoomInLabel", "zoom-in"),
@@ -596,6 +639,7 @@ export const canvasContract = {
     "--sk-canvas-radius",
     "--sk-canvas-content-inline-size",
     "--sk-canvas-max-block-size",
+    "--sk-canvas-min-block-size",
     "--sk-canvas-viewport-bg",
     "--sk-canvas-grid-color",
     "--sk-canvas-grid-size",
@@ -620,6 +664,7 @@ export const canvasContract = {
       attr: canvasAttrs.maxZoom,
       machineInput: true,
     },
+    ...canvasFitOnlyOption,
     ...canvasLabelOptions,
   },
 
@@ -635,7 +680,7 @@ export const canvasContract = {
       ],
       host: { element: "div" },
       mount: canvasAttrs.root,
-      options: ["label", "minZoom", "maxZoom", "zoomInLabel", "zoomOutLabel", "fitLabel"],
+      options: ["label", "minZoom", "maxZoom", "fitOnly", "zoomInLabel", "zoomOutLabel", "fitLabel"],
       slots: {
         /** What is shown. Laid out at its own width (`--sk-canvas-content-inline-size`). */
         children: { accepts: "node", required: true },

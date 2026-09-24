@@ -1,7 +1,7 @@
 import type { ChartPoint } from "@skryensya/core/chart";
 import type { ItemInput, UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 import {
   budgetByTeam,
   bundleWeightPerWeek,
@@ -228,8 +228,9 @@ export const chartsBarTree = (t: Translate): UsageTree => ({
 export const chartsAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("chartsPage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("chartsPage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "chart",
       signature: "Chart",
@@ -243,7 +244,7 @@ export const chartsAnatomyTree = (t: Translate): UsageTree => ({
       slots: { items: chartItems(documentedPerQuarter.slice(0, 3)) },
     },
     items: [
-      namePart(".sk-chart", "block-start"),
+      namePart(".sk-chart", "block-start", { mark: "bracket" }),
       namePart(".sk-chart__caption", "inline-start"),
       namePart(".sk-chart__plot", "inline-start"),
       namePart(".sk-chart__series", "inline-start", { ringPlacement: "offset", ringDistance: 4 }),
@@ -257,7 +258,7 @@ export const chartsAnatomyTree = (t: Translate): UsageTree => ({
 
 /* Caption is `display: none` by default (a composition's own heading usually names the series). Show
  * it here so the diagram can point at `sk-chart__caption` instead of labelling a hidden box. */
-export const chartsAnatomyCss = `.sk-annotated {
+export const chartsAnatomyCss = `.sk-annotated-figure {
   --sk-annotation-font-family: var(--font-family-code);
 }
 

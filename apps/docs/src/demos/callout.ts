@@ -1,5 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { anatomyCanvas, anatomyHints } from "./annotation-parts";
 
 /*
  * THE ANATOMY, and the one thing a Callout's parts have in common is that almost none of them are
@@ -24,8 +25,9 @@ import type { Translate } from "../i18n";
 export const calloutAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("callout.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("callout.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "callout",
       signature: "Callout",
@@ -45,7 +47,7 @@ export const calloutAnatomyTree = (t: Translate): UsageTree => ({
     items: [
       /* The panel and the icon cell are the two parts with air of their own, so both keep the inset
          default: a ring just inside an edge that exists. */
-      { options: { for: ".sk-callout", side: "block-start" }, slots: { children: "sk-callout" } },
+      { options: { for: ".sk-callout", mark: "bracket", side: "block-start" }, slots: { children: "sk-callout" } },
       { options: { for: ".sk-callout__icon", side: "inline-start" }, slots: { children: "sk-callout__icon" } },
       {
         options: {

@@ -1,6 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 import { genericIcon } from "./anatomy-subject";
 
 /* Icon, title, description and the action that resolves the state: EmptyState's four slots. */
@@ -31,8 +31,9 @@ export const emptyStateTree = (t: Translate): UsageTree => ({
 export const emptyStateAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("emptyState.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("emptyState.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "empty-state",
       signature: "EmptyState",
@@ -48,7 +49,7 @@ export const emptyStateAnatomyTree = (t: Translate): UsageTree => ({
       },
     },
     items: [
-      namePart(".sk-empty-state", "block-start"),
+      namePart(".sk-empty-state", "block-start", { mark: "bracket" }),
       namePart(".sk-empty-state__icon", "inline-start"),
       namePart(".sk-empty-state__title", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
       namePart(".sk-empty-state__description", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),

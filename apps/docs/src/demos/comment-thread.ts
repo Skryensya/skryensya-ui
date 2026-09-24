@@ -1,7 +1,7 @@
 import { avatarInitials } from "@skryensya/core/avatar";
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate, UIKey } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /*
  * FIVE DEMOS, in the order the page teaches them: one comment, that comment with its action row, a
@@ -337,8 +337,9 @@ export const commentAloneTree = (t: Translate): UsageTree => ({
 export const commentAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("commentThread.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("commentThread.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       ...thread(t, [
         comment(t, {
@@ -357,7 +358,7 @@ export const commentAnatomyTree = (t: Translate): UsageTree => ({
       attrs: { style: "inline-size: 100%" },
     },
     items: [
-      namePart(".sk-comment", "block-start", { ringPlacement: "offset", ringDistance: 4 }),
+      namePart(".sk-comment", "block-start", { mark: "bracket", ringPlacement: "offset", ringDistance: 4 }),
       namePart(".sk-comment__avatar", "inline-start"),
       namePart(".sk-comment__collapse", "inline-start"),
       namePart(".sk-comment__author", "block-start", { ringPlacement: "offset", ringDistance: 2 }),

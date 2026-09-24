@@ -1,0 +1,238 @@
+---
+/*
+ * THE Lightbox page. The demos are usage trees, so each renders in both bindings from one source; the
+ * programmatic API is shown as code, because a handle is a call, and a call is never markup.
+ *
+ * A preview only gets the CSS this page imports (and whatever its slotted children need): the
+ * lightbox sheet brings button + loader, the thumbnails need ImageFrame's pattern, and the keyboard
+ * table below is an `sk-table`.
+ */
+import "@skryensya/core/components/lightbox.css";
+import "@skryensya/core/patterns/image-frame.css";
+import "@skryensya/core/components/table.css";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import {
+  lightboxDemoCss,
+  lightboxGalleryTree,
+  lightboxLoopTree,
+  lightboxSingleTree,
+} from "../../demos/lightbox";
+import { getLocale, useTranslations } from "../../i18n";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const install = `pnpm add @skryensya/core @skryensya/react
+# or, for authored HTML
+pnpm add @skryensya/core @skryensya/vanilla`;
+
+const styles = `@import "@skryensya/core/components/lightbox.css";
+@import "@skryensya/core/patterns/scroll-lock.css";
+@import "@skryensya/core/patterns/visually-hidden.css";`;
+
+const reactHandle = `import { useRef } from "react";
+import { Lightbox, type LightboxHandle } from "@skryensya/react/lightbox";
+
+const images = [
+  { src: "https://cdn.example.com/photos/lake.jpg", alt: "A lake at dawn", title: "Dawn", width: 1800, height: 1200 },
+  { src: "https://cdn.example.com/photos/forest.jpg", alt: "A pine forest", thumbnailSrc: "https://cdn.example.com/photos/forest-480.jpg" },
+];
+
+export function Trip() {
+  const lightbox = useRef<LightboxHandle>(null);
+  return (
+    <>
+      <button type="button" onClick={() => lightbox.current?.open({ images, index: 1 })}>
+        View photos
+      </button>
+      <Lightbox ref={lightbox} label="Trip photos" />
+    </>
+  );
+}`;
+
+const reactProvider = `import { LightboxProvider, useLightbox, useLightboxState } from "@skryensya/react/lightbox";
+
+// Once, near the root: one dialog for the whole app.
+<LightboxProvider label="Image viewer">
+  <App />
+</LightboxProvider>;
+
+// Anywhere below it.
+function ProductPhotos({ photos }) {
+  const lightbox = useLightbox();
+  const { open, index } = useLightboxState();
+
+  return (
+    <button type="button" onClick={() => lightbox.open({ images: photos, index: 0, loop: true })}>
+      See all {photos.length} photos
+    </button>
+  );
+}
+
+// The rest of the handle:
+lightbox.open({ images: [{ src: imageUrl, alt: "Image description" }] }); // one image
+lightbox.next();
+lightbox.previous();
+lightbox.goTo(3);
+lightbox.zoomIn();
+lightbox.resetZoom();
+lightbox.setImages(nextImages); // stays on the same photo if it is still there
+lightbox.close();`;
+
+const reactDeclarative = `const [open, setOpen] = useState(false);
+const [index, setIndex] = useState(0);
+
+<Lightbox
+  images={images}
+  open={open}
+  index={index}
+  onOpenChange={setOpen}
+  onIndexChange={setIndex}
+  onImageError={(image) => report(image.src)}
+/>;`;
+
+const reactTriggers = `<Lightbox id="trip" label="Trip photos" loop />
+
+{photos.map((photo) => (
+  <Lightbox.Trigger key={photo.src} opens="trip" src={photo.src} title={photo.title} width={photo.width} height={photo.height}>
+    <ImageFrame aspect="1/1" src={photo.thumb} alt={photo.alt} />
+  </Lightbox.Trigger>
+))}`;
+
+const vanillaHtml = `<!-- A thumbnail: a link to the full image. Works with no script at all. -->
+<a class="sk-lightbox__trigger" href="https://cdn.example.com/photos/lake.jpg" data-sk-lightbox-open="trip"
+   data-lightbox-title="Dawn" data-lightbox-width="1800" data-lightbox-height="900" aria-haspopup="dialog">
+  <img src="https://cdn.example.com/photos/lake-480.jpg" alt="A lake at dawn">
+</a>
+
+<!-- The lightbox itself: the markup the contract emits (see the HTML tab of any preview). -->
+<dialog class="sk-lightbox" id="trip" data-sk-lightbox aria-label="Trip photos" data-loop>
+  …
+</dialog>`;
+
+const vanillaJs = `import { initComponents } from "@skryensya/vanilla/auto";
+import { getLightbox, lightboxEvents } from "@skryensya/vanilla/lightbox";
+
+await initComponents();
+
+const lightbox = getLightbox("trip");
+lightbox?.open({ images, index: 2 });
+lightbox?.goTo(0);
+lightbox?.close();
+
+document.getElementById("trip")?.addEventListener(lightboxEvents.indexChange, (event) => {
+  console.log(event.detail.index, event.detail.image.src);
+});`;
+
+const keys = [
+  ["Esc", "lightbox.key.escape"],
+  ["Tab / Shift + Tab", "lightbox.key.tab"],
+  ["← →", "lightbox.key.arrows"],
+  ["Home / End", "lightbox.key.homeEnd"],
+  ["+ / -", "lightbox.key.zoom"],
+  ["0", "lightbox.key.reset"],
+] as const;
+---
+
+<ComponentPageShell
+  title="Lightbox"
+  description={t("lightbox.description")}
+  contractId="lightbox"
+  testFiles={[
+    "packages/core/src/lightbox.test.ts",
+    "packages/vanilla/src/components/lightbox.test.ts",
+    "packages/react/src/components/lightbox.test.tsx",
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("lightbox.lede")} />
+
+    <h3>{t("lightbox.galleryTitle")}</h3>
+    <p set:html={t("lightbox.galleryBody")} />
+    <p set:html={t("lightbox.tryBody")} />
+    <ComponentPreview
+      tree={lightboxGalleryTree(t)}
+      css={lightboxDemoCss}
+      label={t("lightbox.demo.galleryLabel")}
+      viewport="overlay"
+    />
+
+    <h3>{t("lightbox.singleTitle")}</h3>
+    <p set:html={t("lightbox.singleBody")} />
+    <ComponentPreview
+      tree={lightboxSingleTree(t)}
+      css={lightboxDemoCss}
+      label={t("lightbox.singleTitle")}
+      viewport="overlay"
+    />
+
+    <h3>{t("lightbox.loopTitle")}</h3>
+    <p set:html={t("lightbox.loopBody")} />
+    <ComponentPreview
+      tree={lightboxLoopTree(t)}
+      css={lightboxDemoCss}
+      label={t("lightbox.loopTitle")}
+      viewport="overlay"
+    />
+
+    <h3>{t("lightbox.programmaticTitle")}</h3>
+    <p set:html={t("lightbox.programmaticBody")} />
+    <CodeBlock code={reactHandle} label="React" lang="tsx" />
+
+    <h4>{t("lightbox.reactProviderTitle")}</h4>
+    <p set:html={t("lightbox.reactProviderBody")} />
+    <CodeBlock code={reactProvider} label="React" lang="tsx" />
+
+    <h4>{t("lightbox.declarativeTitle")}</h4>
+    <p set:html={t("lightbox.declarativeBody")} />
+    <CodeBlock code={reactDeclarative} label="React" lang="tsx" />
+    <CodeBlock code={reactTriggers} label="React" lang="tsx" />
+
+    <h4>{t("lightbox.vanillaTitle")}</h4>
+    <p set:html={t("lightbox.vanillaBody")} />
+    <CodeBlock code={vanillaHtml} label="HTML" lang="html" />
+    <CodeBlock code={vanillaJs} label="JavaScript" />
+
+    <h3>{t("lightbox.optionsTitle")}</h3>
+    <p set:html={t("lightbox.optionsBody")} />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("lightbox.contractItem1")} />
+      <li set:html={t("lightbox.contractItem2")} />
+      <li set:html={t("lightbox.contractItem3")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+    <CodeBlock code={styles} label="CSS" lang="css" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("lightbox.a11yP1")} />
+    <ul>
+      <li set:html={t("lightbox.a11yItem1")} />
+      <li set:html={t("lightbox.a11yItem2")} />
+      <li set:html={t("lightbox.a11yItem3")} />
+      <li set:html={t("lightbox.a11yItem4")} />
+      <li set:html={t("lightbox.a11yItem5")} />
+    </ul>
+    <h3>{t("lightbox.keyboardTitle")}</h3>
+    <div class="sk-table-scroll">
+      <table class="sk-table">
+        <tbody class="sk-table__body">
+          {
+            keys.map(([combo, key]) => (
+              <tr class="sk-table__row">
+                <th class="sk-table__header" scope="row"><kbd>{combo}</kbd></th>
+                <td class="sk-table__cell" set:html={t(key)} />
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </Fragment>
+</ComponentPageShell>

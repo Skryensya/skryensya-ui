@@ -1,0 +1,29 @@
+# The structure lives in packages/core/src/lightbox.ts. Here, only why it is chosen.
+
+Lightbox:
+  useWhen:
+    - "hay fotos que se muestran en miniatura y quien lee necesita verlas grandes, de a una, sin salir de la página: una galería, las fotos de un producto, las capturas de un informe"
+    - "la imagen tiene detalle que sólo se lee de cerca (un plano, una captura con texto chico, una foto de producto): el visor trae zoom con botones, rueda, teclado y pellizco"
+    - "hay que abrir una imagen desde código, sin miniatura en la página: el handle abre, cierra y navega con el mismo ciclo de foco y bloqueo de scroll que un clic"
+    - "una galería larga: sólo carga la imagen actual y sus dos vecinas, nunca la galería entera"
+  avoidWhen:
+    - "la imagen se entiende a su tamaño en la página: agrandarla agrega un paso que nadie pidió; eso es ImageFrame"
+    - "lo que se quiere mostrar grande no es una imagen sino un diagrama o un dibujo que hay que explorar dentro de la página: eso es Canvas, que no tapa la página"
+    - "el contenido del modal es texto, un formulario o acciones: eso es Dialog; un Lightbox no tiene cuerpo propio más allá de la imagen y su leyenda"
+    - "las imágenes tienen que recorrerse en la página misma, varias a la vista: eso es Carousel"
+  alternatives:
+    - ImageFrame
+    - Canvas
+    - Dialog
+    - Carousel
+
+Lightbox.Trigger:
+  useWhen:
+    - "una miniatura en la página tiene que abrir su imagen en un Lightbox: el enlace apunta a la imagen completa, así que sin JavaScript igual la abre"
+    - "varias miniaturas forman una galería: todas nombran el mismo Lightbox en `opens` y el orden de la página es el orden de la galería"
+  avoidWhen:
+    - "la imagen se abre desde un botón que no es una miniatura (\"Ver fotos\"): eso es un Button que llama al handle del Lightbox"
+    - "la miniatura tiene que llevar a otra página y no a la imagen: eso es un Link"
+  alternatives:
+    - Button.action
+    - Link

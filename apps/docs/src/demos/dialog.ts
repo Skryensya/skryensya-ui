@@ -1,6 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /*
  * A confirmation, composed the way `command-palette` solved the same problem: the tree emits the
@@ -24,8 +24,9 @@ import { namePart } from "./annotation-parts";
 export const dialogAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("dialog.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("dialog.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "dialog",
       signature: "Dialog",
@@ -52,7 +53,7 @@ export const dialogAnatomyTree = (t: Translate): UsageTree => ({
       },
     },
     items: [
-      namePart(".sk-dialog", "block-start"),
+      namePart(".sk-dialog", "block-start", { mark: "bracket" }),
       namePart(".sk-dialog__header", "block-start"),
       namePart(".sk-dialog__title", "inline-start", { ringPlacement: "offset", ringDistance: 2 }),
       namePart(".sk-dialog__close", "inline-end"),
@@ -66,7 +67,7 @@ export const dialogAnatomyTree = (t: Translate): UsageTree => ({
  * A native `<dialog open>` still centres itself; for the diagram, keep it in the subject's flow so
  * Annotated measures the whole panel. Narrower than the live modal so class-name gutters fit.
  */
-export const dialogAnatomyCss = `.sk-annotated {
+export const dialogAnatomyCss = `.sk-annotated-figure {
   --sk-annotation-font-family: var(--font-family-code);
 }
 

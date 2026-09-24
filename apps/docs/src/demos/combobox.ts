@@ -1,6 +1,8 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Locale, Translate } from "../i18n";
+import { localeOf } from "../i18n";
 import { countries, slug } from "./data/countries";
+import { anatomyFigureHtml } from "./annotation-parts";
 
 /*
  * One combobox over the whole country list, from the contract published for it.
@@ -12,7 +14,7 @@ import { countries, slug } from "./data/countries";
  * The names come from `./data/countries` rather than from `demo.*` keys: 194 keys pairing two proper
  * nouns would be a dictionary pretending to be a translation table.
  */
-export const comboboxTree = (t: Translate, locale: Locale): UsageTree => ({
+export const comboboxTree = (t: Translate, locale: Locale = localeOf(t)): UsageTree => ({
   contract: "combobox",
   signature: "Combobox",
   options: { name: "country", placeholder: t("demo.combobox.placeholder") },
@@ -68,38 +70,29 @@ const comboboxAnatomySpecimen = (t: Translate): string => `<div class="sk-combob
   </div>
 </div>`;
 
-const label = (target: string, side: string, text: string, extra = ""): string =>
-  `<span class="sk-annotation" data-for="${target}" data-side="${side}" data-match="first"${extra} tabindex="0">${text}</span>`;
 
-export const comboboxAnatomyHtml = (t: Translate): string => `<div
-  class="sk-annotated"
-  data-sk-annotated
-  aria-label="${t("combobox.anatomyLabel")}"
-  data-ring-placement="inset"
-  data-ring-distance="2"
-  role="group"
->
-  <div class="sk-annotated__subject" inert>
-    ${comboboxAnatomySpecimen(t)}
-  </div>
-  ${label(".sk-combobox", "inline-start", "sk-combobox")}
-  ${label(".sk-combobox__label", "inline-start", "sk-combobox__label")}
-  ${label(".sk-combobox__control", "inline-start", "sk-combobox__control")}
-  ${label(".sk-combobox__input", "inline-end", "sk-combobox__input", ' data-ring-placement="offset" data-ring-distance="4"')}
-  ${label(".sk-combobox__clear", "inline-end", "sk-combobox__clear")}
-  ${label(".sk-combobox__trigger", "inline-end", "sk-combobox__trigger")}
-  ${label(".sk-combobox__positioner", "inline-start", "sk-combobox__positioner")}
-  ${label(".sk-combobox__content", "inline-start", "sk-combobox__content")}
-  ${label(".sk-combobox__item", "inline-end", "sk-combobox__item", ' data-ring-placement="offset" data-ring-distance="3"')}
-  <svg class="sk-annotated__leaders" aria-hidden="true" focusable="false"></svg>
-</div>`;
+export const comboboxAnatomyHtml = (t: Translate): string => anatomyFigureHtml(t, {
+  label: t("combobox.anatomyLabel"),
+  specimen: comboboxAnatomySpecimen(t),
+  parts: [
+    { for: ".sk-combobox", side: "inline-start", mark: "bracket" },
+    { for: ".sk-combobox__label", side: "inline-start" },
+    { for: ".sk-combobox__control", side: "inline-start" },
+    { for: ".sk-combobox__input", side: "inline-end", ringPlacement: "offset", ringDistance: 4 },
+    { for: ".sk-combobox__clear", side: "inline-end" },
+    { for: ".sk-combobox__trigger", side: "inline-end" },
+    { for: ".sk-combobox__positioner", side: "inline-start" },
+    { for: ".sk-combobox__content", side: "inline-start" },
+    { for: ".sk-combobox__item", side: "inline-end", ringPlacement: "offset", ringDistance: 3 },
+  ],
+});
 
 /*
  * Put the listbox back in flow: `.sk-combobox__positioner` is `position: fixed` / anchored, which
  * is right for a live field and useless for a diagram (the panel contributes nothing to the box
  * Annotated measures). Static under the control, same move Menu's anatomy CSS makes.
  */
-export const comboboxAnatomyCss = `.sk-annotated {
+export const comboboxAnatomyCss = `.sk-annotated-figure {
   --sk-annotation-font-family: var(--font-family-code);
 }
 

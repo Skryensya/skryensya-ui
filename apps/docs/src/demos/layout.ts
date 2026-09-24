@@ -1,3 +1,4 @@
+import { PLACEHOLDER_HREF } from "../lib/placeholder-hrefs";
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 
@@ -714,7 +715,7 @@ export const heroTestimonialTree = (t: Translate): UsageTree => ({
 });
 
 /** A short status summary with a locale-owned destination. */
-export const stackTree = (t: Translate, href: string): UsageTree => ({
+export const stackTree = (t: Translate, href: string = PLACEHOLDER_HREF): UsageTree => ({
   contract: "layout",
   signature: "Stack",
   options: { gap: "md", align: "start" },
@@ -895,7 +896,7 @@ export const inlineCardFloorTree = (t: Translate): UsageTree => ({
  * A raised summary beside a three-column grid: the layout + typography vocabulary on one stage.
  * Locale-owned destination comes from the page.
  */
-export const primitivesTree = (t: Translate, href: string): UsageTree => ({
+export const primitivesTree = (t: Translate, href: string = PLACEHOLDER_HREF): UsageTree => ({
   contract: "layout",
   signature: "Stack",
   options: { gap: "lg" },
@@ -1198,7 +1199,7 @@ export const gridResponsiveTree = (t: Translate): UsageTree => ({
 
 /** A full site footer: a row of link columns over a legal line. `Wrapper` holds it at the page's
  *  own measure; `Grid` gives the columns; each column is a `Stack` of `Link`s under a heading. */
-export const footerColumnsTree = (t: Translate, href: string): UsageTree => ({
+export const footerColumnsTree = (t: Translate, href: string = PLACEHOLDER_HREF): UsageTree => ({
   contract: "footer",
   signature: "Footer",
   children: [

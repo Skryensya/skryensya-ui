@@ -1,7 +1,7 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 import { deploymentRows, pageSizeItems } from "./data/table";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /*
  * The deepest composition the catalogue has: eight signatures, nested four levels, with two rules
@@ -95,11 +95,12 @@ export const tableTree = (t: Translate): UsageTree => ({
 export const tableAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("tablePage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("tablePage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: tableTree(t),
     items: [
-      namePart(".sk-table-scroll", "block-start"),
+      namePart(".sk-table-scroll", "block-start", { mark: "bracket" }),
       namePart(".sk-table", "inline-start"),
       namePart(".sk-table__caption", "block-start", { ringPlacement: "offset", ringDistance: 2 }),
       namePart(".sk-table__head", "inline-end"),
@@ -351,7 +352,7 @@ export const tablePagerTree = (t: Translate): UsageTree => ({
   ],
 });
 
-export const tableDensityTree = (t: Translate, densityFactor: number): UsageTree => {
+export const tableDensityTree = (t: Translate, densityFactor: number = 1): UsageTree => {
   const tree = deploymentsTable(t);
   return {
     ...tree,

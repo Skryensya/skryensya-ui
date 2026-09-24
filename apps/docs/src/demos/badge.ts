@@ -1,6 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 import { genericIcon } from "./anatomy-subject";
 
 const tones = ["neutral", "accent", "success", "warning", "danger"] as const;
@@ -24,8 +24,9 @@ const tones = ["neutral", "accent", "success", "warning", "danger"] as const;
 export const badgeAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("badge.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("badge.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "layout",
       signature: "Inline",
@@ -61,7 +62,7 @@ export const badgeAnatomyTree = (t: Translate): UsageTree => ({
       ],
     },
     items: [
-      namePart(".sk-badge-holder", "inline-start"),
+      namePart(".sk-badge-holder", "inline-start", { mark: "bracket" }),
       /*
        * FROM ABOVE, so both leaders come DOWN onto what they name. Which edge a leader leaves and
        * which edge it enters are both decided by the gutter the label is in (`leaderTarget`), so

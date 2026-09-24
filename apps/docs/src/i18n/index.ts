@@ -93,13 +93,23 @@ export function getLocale(url: URL | string): Locale {
 export type Translate = (key: UIKey, vars?: Record<string, string>) => string;
 
 export function useTranslations(locale: Locale): Translate {
-  return function t(key: UIKey, vars?: Record<string, string>): string {
+  const t = function t(key: UIKey, vars?: Record<string, string>): string {
     const table = ui[locale] as Record<string, string>;
     const fallback = ui[defaultLocale] as Record<string, string>;
     const value = table[key] ?? fallback[key] ?? key;
     if (!vars) return value;
     return value.replace(/\{(\w+)\}/g, (match, name: string) => vars[name] ?? match);
   };
+  return Object.assign(t, { locale });
+}
+
+/**
+ * The locale a `t` translates into. A demo factory whose output depends on the locale (a country
+ * list, a time format) defaults to it, so `demo(t)` alone is already the right tree: the playground
+ * calls every demo that way and has no second argument to hand in.
+ */
+export function localeOf(t: Translate): Locale {
+  return (t as Translate & { locale?: Locale }).locale ?? defaultLocale;
 }
 
 /*

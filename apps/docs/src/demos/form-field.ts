@@ -1,7 +1,7 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 import { planItems } from "./data/select";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /*
  * Two demos for one claim: the chrome is not the control's.
@@ -15,14 +15,15 @@ import { namePart } from "./annotation-parts";
 export const formFieldAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("formFieldPage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("formFieldPage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: formFieldTree(t),
     items: [
       /* The field's own box has no corner of its own to borrow, and its parts sit flush against its
          edges: an inset ring would trace the same line as the label's. Offset far enough to read as
          the box AROUND them, with a corner so it reads as a mark and not as a crop. */
-      namePart(".sk-form-field", "block-start", { ringPlacement: "offset", ringDistance: 10, ringRadius: 10 }),
+      namePart(".sk-form-field", "block-start", { mark: "bracket", ringPlacement: "offset", ringDistance: 10, ringRadius: 10 }),
       /* Text has square corners and no edge to speak of, so a ring drawn 2px off the glyphs reads as
          an underline that failed. Clear of the text, and rounded, so each one reads as one mark. */
       namePart(".sk-form-field__label", "inline-start", { ringPlacement: "offset", ringDistance: 3, ringRadius: 6 }),

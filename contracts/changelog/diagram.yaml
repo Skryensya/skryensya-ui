@@ -3,8 +3,24 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribe la entrada y pega el
 # hash nuevo.
-surface: "278d191e513e8716"
+surface: "a9648cc352c05c06"
 entries:
+  - date: 2026-09-23
+    kind: feature
+    es:
+      title: Un diagrama puede ir adentro de un Canvas
+      body: >-
+        Adentro de un <code>Canvas</code> el dibujo se diseña a un ancho propio y se muestra ajustado, así un teléfono ve el
+        diagrama de escritorio entero y hace zoom en vez de recibir cajas de una palabra por línea. Antes colapsaba a cero de ancho
+        (el marco es un contenedor de tamaño) y, con zoom, cada medida venía escalada y los conectores caían fuera de sus cajas.
+        El ancho es <code>--sk-diagram-canvas-inline-size</code>: por defecto, cada columna con su nodo más ancho.
+    en:
+      title: A diagram can sit inside a Canvas
+      body: >-
+        Inside a <code>Canvas</code> the drawing is laid out at a design width of its own and shown fitted, so a phone sees the
+        whole desktop diagram and zooms instead of getting boxes one word per line. It used to collapse to zero width (the frame
+        is a size container) and, once zoomed, every measurement came in scaled and the connectors landed off their boxes. The
+        width is <code>--sk-diagram-canvas-inline-size</code>: by default, every column at its widest node.
   - date: 2026-09-22
     kind: bugfix
     es:

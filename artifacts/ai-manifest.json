@@ -360,6 +360,19 @@
             "target": "Annotated"
           },
           {
+            "date": "2026-09-23",
+            "en": {
+              "body": "It is the only form left. Each bubble carries only its number (<code>aria-hidden</code>), the names move to the legend (<code>sk-annotated__legend</code>, whose entries are the tab stops) and the frame always lives inside a <code>Canvas</code>. Gone: the <code>numbered</code> and <code>zoomable</code> options, the <code>data-numbered</code> attribute, the per-entry <code>mobileAlign</code> option and the clustered layout below 40rem: a number fits any margin and the canvas shows the same drawing fitted, so nothing has to change shape on a narrow screen. With <code>match: \"all\"</code>, every match gets its own bubble and its own leader, all showing the same number, instead of one bubble fanning out several leaders.",
+              "title": "Numbers in the margin, names in the legend, and always on a canvas"
+            },
+            "es": {
+              "body": "Es la única forma que queda. Cada burbuja lleva sólo su número (<code>aria-hidden</code>), los nombres pasan a la leyenda (<code>sk-annotated__legend</code>, cuyas entradas son las paradas de Tab) y el marco vive siempre dentro de un <code>Canvas</code>. Se van las opciones <code>numbered</code> y <code>zoomable</code>, el atributo <code>data-numbered</code>, la opción por entrada <code>mobileAlign</code> y el layout de racimos debajo de 40rem: un número cabe en cualquier margen y el canvas muestra el mismo dibujo ajustado, así que nada tiene que cambiar de forma en pantallas angostas. Con <code>match: \"all\"</code>, cada coincidencia tiene su propia burbuja y su propia guía, todas con el mismo número, en vez de una burbuja con un abanico de guías.",
+              "title": "Números en el margen, nombres en la leyenda, y siempre sobre un canvas"
+            },
+            "kind": "breaking",
+            "target": "Annotated"
+          },
+          {
             "date": "2026-09-22",
             "en": {
               "body": "A <code>numbered</code> option and <code>sk-annotated__legend</code> and <code>sk-annotated__legend-item</code> parts: each bubble carries only its number (a CSS counter) and the names move to an <code>&lt;ol&gt;</code> under the frame. Leaders and rings are unchanged, and reading a list entry lights its number, its leader and its part. The bubbles become <code>aria-hidden</code> and focus moves to the entries. A numbered frame does not stack on narrow screens: its gutters are one bubble wide, so every number stays beside its part.",
@@ -11652,7 +11665,7 @@
         "--sk-annotated-figure-inset": {
           "default": "var(--space-inset-md)",
           "output": false,
-          "part": "legend",
+          "part": "figure",
           "sheet": "@skryensya/core/components/annotation.css"
         },
         "--sk-annotated-gap": {
@@ -11711,12 +11724,6 @@
           "attr": "aria-label",
           "type": "string"
         },
-        "numbered": {
-          "attr": "data-numbered",
-          "default": false,
-          "trueValue": "",
-          "type": "boolean"
-        },
         "ringDistance": {
           "attr": "data-ring-distance",
           "default": 2,
@@ -11739,12 +11746,6 @@
           "machineInput": true,
           "min": 0,
           "type": "number"
-        },
-        "zoomable": {
-          "attr": "data-zoomable",
-          "default": false,
-          "trueValue": "",
-          "type": "boolean"
         },
         "zoomInLabel": {
           "attr": "aria-label",
@@ -11783,7 +11784,7 @@
             "List"
           ],
           "avoidWhen": [
-            "lo que se quiere es una leyenda numerada debajo de una imagen estática, sin guías ni anillos: eso es una List o una Table. Si los nombres no caben en los márgenes, es `numbered` de este mismo componente, que conserva las guías",
+            "lo que se quiere es una leyenda numerada debajo de una imagen estática, sin guías ni anillos: eso es una List o una Table",
             "la etiqueta tiene que aparecer al pasar el puntero o al enfocar: eso es Tooltip, que es chrome flotante y efímero; esto está siempre dibujado",
             "hay que explicar un dato al lado de un control dentro de un formulario real: eso es el `hint` de FormField, que además queda enlazado por aria-describedby",
             "el sujeto tiene que seguir siendo usable: `inert` es todo o nada, así que un diagrama sobre una UI viva es dos cosas peleando por el mismo markup",
@@ -11791,10 +11792,10 @@
           ],
           "useWhen": [
             "hay que señalar las piezas de algo que ya está renderizado y decir cómo se llama cada una: la anatomía de un componente, las partes de una composición, un diagrama de armado",
-            "las etiquetas no pueden taparlo: viven en los cuatro márgenes de una grilla y el sujeto ocupa la celda del medio, así que el solape no se evita, no se puede representar",
-            "cada etiqueta llega a su parte por una línea guía de uno o dos tramos, sólo rectos o de 45 grados: la menor cantidad que alcanza",
+            "las marcas no pueden taparlo: cada parte lleva un número en uno de los cuatro márgenes de una grilla y el sujeto ocupa la celda del medio, así que el solape no se evita, no se puede representar; los nombres van en una leyenda ordenada debajo",
+            "cada número llega a su parte por una línea guía de uno o dos tramos, sólo rectos o de 45 grados: la menor cantidad que alcanza",
             "el dibujo se recalcula solo cuando cambia el tamaño del contenedor, cuando el sujeto reflowea o cuando llega una tipografía: dónde cae una parte no es un valor que se pueda escribir al componer",
-            "los nombres son largos o muchos y en los márgenes le comen el ancho al sujeto: `numbered` deja sólo el número en cada burbuja y pasa los nombres a una lista ordenada debajo, con la misma guía y el mismo anillo",
+            "el diagrama tiene que leerse en un teléfono: el dibujo vive en un canvas, se diseña a su propio ancho y se muestra ajustado, con zoom para acercarse a una parte",
             "algunas partes son áreas que contienen otras (un acordeón, uno de sus ítems, un panel): `mark: bracket` las marca con un corchete del largo de la parte, anidado hacia afuera, en vez de una guía que caería sobre un hijo cualquiera",
             "el sujeto es una muestra y no un control: `inert` viene prendido, no toma puntero, ni foco, ni teclado, y sale del árbol de accesibilidad"
           ]
@@ -11820,8 +11821,6 @@
             "ringPlacement",
             "ringDistance",
             "ringRadius",
-            "numbered",
-            "zoomable",
             "zoomInLabel",
             "zoomOutLabel",
             "fitLabel"
@@ -11856,14 +11855,6 @@
                     "values": [
                       "first",
                       "all"
-                    ]
-                  },
-                  "mobileAlign": {
-                    "attr": "data-mobile-align",
-                    "type": "enum",
-                    "values": [
-                      "start",
-                      "end"
                     ]
                   },
                   "ringDistance": {
@@ -11935,77 +11926,6 @@
             ],
             "children": [
               {
-                "children": [
-                  {
-                    "element": "div",
-                    "options": [
-                      "inert"
-                    ],
-                    "part": "subject",
-                    "slot": "subject"
-                  },
-                  {
-                    "element": "p",
-                    "part": "key",
-                    "slot": "key",
-                    "whenGiven": "key"
-                  },
-                  {
-                    "attrs": {
-                      "tabindex": "0"
-                    },
-                    "element": "span",
-                    "itemOptions": [
-                      "for",
-                      "side",
-                      "mark",
-                      "mobileAlign",
-                      "match",
-                      "ringPlacement",
-                      "ringDistance",
-                      "ringRadius"
-                    ],
-                    "itemSlot": "children",
-                    "part": "label",
-                    "repeat": "items",
-                    "whenMissing": "numbered"
-                  },
-                  {
-                    "attrs": {
-                      "aria-hidden": "true"
-                    },
-                    "element": "span",
-                    "itemOptions": [
-                      "for",
-                      "side",
-                      "mark",
-                      "mobileAlign",
-                      "match",
-                      "ringPlacement",
-                      "ringDistance",
-                      "ringRadius"
-                    ],
-                    "part": "label",
-                    "repeat": "items",
-                    "whenGiven": "numbered"
-                  },
-                  {
-                    "attrs": {
-                      "aria-hidden": "true",
-                      "focusable": "false"
-                    },
-                    "element": "svg",
-                    "part": "leaders"
-                  }
-                ],
-                "element": "div",
-                "options": [
-                  "numbered"
-                ],
-                "part": "root",
-                "whenMissing": "zoomable"
-              },
-              {
                 "also": [
                   "sk-canvas"
                 ],
@@ -12035,26 +11955,6 @@
                               },
                               {
                                 "attrs": {
-                                  "tabindex": "0"
-                                },
-                                "element": "span",
-                                "itemOptions": [
-                                  "for",
-                                  "side",
-                                  "mark",
-                                  "mobileAlign",
-                                  "match",
-                                  "ringPlacement",
-                                  "ringDistance",
-                                  "ringRadius"
-                                ],
-                                "itemSlot": "children",
-                                "part": "label",
-                                "repeat": "items",
-                                "whenMissing": "numbered"
-                              },
-                              {
-                                "attrs": {
                                   "aria-hidden": "true"
                                 },
                                 "element": "span",
@@ -12062,15 +11962,13 @@
                                   "for",
                                   "side",
                                   "mark",
-                                  "mobileAlign",
                                   "match",
                                   "ringPlacement",
                                   "ringDistance",
                                   "ringRadius"
                                 ],
                                 "part": "label",
-                                "repeat": "items",
-                                "whenGiven": "numbered"
+                                "repeat": "items"
                               },
                               {
                                 "attrs": {
@@ -12082,9 +11980,6 @@
                               }
                             ],
                             "element": "div",
-                            "options": [
-                              "numbered"
-                            ],
                             "part": "root"
                           }
                         ],
@@ -12224,8 +12119,7 @@
                   }
                 ],
                 "element": "div",
-                "mount": "data-sk-canvas",
-                "whenGiven": "zoomable"
+                "mount": "data-sk-canvas"
               },
               {
                 "children": [
@@ -12240,8 +12134,7 @@
                   }
                 ],
                 "element": "ol",
-                "part": "legend",
-                "whenGiven": "numbered"
+                "part": "legend"
               }
             ],
             "element": "div",
@@ -14706,7 +14599,7 @@
             "en un teléfono el contenido se reescribiría palabra por palabra: acá se ve entero y chico, y quien lee hace zoom en la parte que le interesa",
             "el zoom tiene que sentirse como en una herramienta de diseño: arrastrar mueve, Ctrl/Cmd + rueda y el pellizco del trackpad acercan alrededor del puntero, `+`/`-`/`0` desde el teclado",
             "no puede secuestrar el scroll de la página: un dedo y la rueda sola siguen siendo de la página; dos dedos y Ctrl + rueda son del canvas, y un aviso breve lo explica cuando alguien intenta lo otro",
-            "para un Annotated no hace falta envolverlo: `zoomable` pone el mismo canvas alrededor del marco y deja la leyenda afuera, sin escalar"
+            "para un Annotated no hace falta envolverlo: ya trae el mismo canvas alrededor del marco y deja la leyenda afuera, sin escalar"
           ]
         }
       },
@@ -47176,7 +47069,7 @@
     "working": "0.0.1"
   },
   "schemaVersion": "2.3",
-  "sourceHash": "56c4e33a64cd8fbe",
+  "sourceHash": "d47be5b13565615e",
   "vocabulary": {
     "a11y": "When `when` holds, one of `requiresOneOf` must be given: an option, a raw attribute, a filled slot, or a child signature by name.",
     "atLeastOneOf": "At least one member of each group counts: a filled slot, a boolean option set to true, or an option other than its default.",

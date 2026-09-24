@@ -1,6 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /*
  * Header, label, value text, track and bar: one measurement named at rest. The live stack of three
@@ -9,8 +9,9 @@ import { namePart } from "./annotation-parts";
 export const meterAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("meterPage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("meterPage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "meter",
       signature: "Meter",
@@ -22,7 +23,7 @@ export const meterAnatomyTree = (t: Translate): UsageTree => ({
       attrs: { style: "inline-size: min(100%, 16rem)" },
     },
     items: [
-      namePart(".sk-meter-group", "block-start"),
+      namePart(".sk-meter-group", "block-start", { mark: "bracket" }),
       namePart(".sk-meter-group__header", "inline-start"),
       namePart(".sk-meter-group__label", "inline-start", { ringPlacement: "offset", ringDistance: 2 }),
       namePart(".sk-meter-group__value", "inline-end"),

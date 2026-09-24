@@ -90,15 +90,13 @@ describe("Canvas", () => {
   });
 });
 
-describe("Annotated zoomable", () => {
+describe("Annotated on a canvas", () => {
   it("puts a canvas around the frame and leaves the legend outside it", () => {
     const { container } = render(
       <Annotated
         annotations={[{ for: ".part", children: "part" }]}
         label="Anatomy"
-        numbered
         subject={<p className="part">a</p>}
-        zoomable
       />,
     );
     const figure = container.querySelector(`.${annotationParts.figure}`)!;
@@ -107,13 +105,5 @@ describe("Annotated zoomable", () => {
     expect(canvasRoot.querySelector(`.${canvasParts.content} > .${annotationParts.root}`)).not.toBeNull();
     expect(figure.querySelector(`:scope > .${annotationParts.legend}`)).not.toBeNull();
     expect(canvasRoot.querySelector(`.${annotationParts.legend}`)).toBeNull();
-  });
-
-  it("renders no canvas when not asked", () => {
-    const { container } = render(
-      <Annotated annotations={[{ for: ".part", children: "part" }]} subject={<p className="part">a</p>} />,
-    );
-    expect(container.querySelector(`.${canvasParts.root}`)).toBeNull();
-    expect(container.querySelector(`.${annotationParts.figure} > .${annotationParts.root}`)).not.toBeNull();
   });
 });

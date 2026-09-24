@@ -1,6 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { namePart } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 const seedHTML =
   "<h2>Notas de lanzamiento</h2><p>Esta versión agrega <strong>negrita</strong>, <em>cursiva</em> y <u>subrayado</u>, además de listas:</p><ul><li><p>Encabezados H1–H3</p></li><li><p>Citas y bloques de código</p></li></ul><blockquote><p>Un editor real, no una maqueta.</p></blockquote>";
@@ -12,8 +12,9 @@ const seedHTML =
 export const editorAnatomyTree = (t: Translate): UsageTree => ({
   contract: "annotation",
   signature: "Annotated",
-  options: { label: t("editorPage.anatomyLabel"), inert: true },
+  options: { ...anatomyCanvas(t), label: t("editorPage.anatomyLabel"), inert: true },
   slots: {
+    ...anatomyHints(t),
     subject: {
       contract: "editor",
       signature: "Editor",
@@ -27,7 +28,7 @@ export const editorAnatomyTree = (t: Translate): UsageTree => ({
       attrs: { style: "inline-size: min(100%, 22rem)" },
     },
     items: [
-      namePart(".sk-editor", "block-start"),
+      namePart(".sk-editor", "block-start", { mark: "bracket" }),
       namePart(".sk-toolbar", "inline-start"),
       namePart(".sk-editor__toolbar-button", "inline-end"),
       namePart(".sk-editor__content", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),

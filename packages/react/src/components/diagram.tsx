@@ -4,6 +4,7 @@ import {
   diagramNodeText,
   diagramParts,
   diagramRoutes,
+  diagramScale,
   diagramZoneHeaders,
   diagramZoneNames,
   placeDiagramZones,
@@ -193,11 +194,19 @@ export function Diagram({
     const rect = root.getBoundingClientRect();
     /* `inset: 0` on the overlay resolves against the PADDING box, which is the border box shifted in
        by the border itself: one origin for the measurements and for the path data. */
-    const originX = rect.left + root.clientLeft;
-    const originY = rect.top + root.clientTop;
+    /* Inside a zoomed canvas every rect is in screen pixels and the overlay is drawn in the frame's
+       own, so each length is divided back out; the border (`clientLeft`) is a layout length already. */
+    const scale = diagramScale(root, rect);
+    const originX = rect.left + root.clientLeft * scale;
+    const originY = rect.top + root.clientTop * scale;
     const relative = (element: Element): DiagramBox => {
       const box = element.getBoundingClientRect();
-      return { x: box.left - originX, y: box.top - originY, width: box.width, height: box.height };
+      return {
+        x: (box.left - originX) / scale,
+        y: (box.top - originY) / scale,
+        width: box.width / scale,
+        height: box.height / scale,
+      };
     };
 
     /*
@@ -245,7 +254,7 @@ export function Diagram({
           fromRow: edge.fromRow,
           toRow: edge.toRow,
           arrow: edge.arrow ?? edgeArrow.default,
-          label: chip ? { width: chip.width, height: chip.height } : undefined,
+          label: chip ? { width: chip.width / scale, height: chip.height / scale } : undefined,
         };
       }),
       {
@@ -254,7 +263,7 @@ export function Diagram({
         keepPortsOut: diagramZoneNames(
           regions,
           (zones ?? []).map(
-            (_, index) => zoneLabelRefs.current[index]?.getBoundingClientRect().width ?? 0,
+            (_, index) => (zoneLabelRefs.current[index]?.getBoundingClientRect().width ?? 0) / scale,
           ),
           { direction },
         ),

@@ -3,14 +3,14 @@
 Annotated:
   useWhen:
     - "hay que señalar las piezas de algo que ya está renderizado y decir cómo se llama cada una: la anatomía de un componente, las partes de una composición, un diagrama de armado"
-    - "las etiquetas no pueden taparlo: viven en los cuatro márgenes de una grilla y el sujeto ocupa la celda del medio, así que el solape no se evita, no se puede representar"
-    - "cada etiqueta llega a su parte por una línea guía de uno o dos tramos, sólo rectos o de 45 grados: la menor cantidad que alcanza"
+    - "las marcas no pueden taparlo: cada parte lleva un número en uno de los cuatro márgenes de una grilla y el sujeto ocupa la celda del medio, así que el solape no se evita, no se puede representar; los nombres van en una leyenda ordenada debajo"
+    - "cada número llega a su parte por una línea guía de uno o dos tramos, sólo rectos o de 45 grados: la menor cantidad que alcanza"
     - "el dibujo se recalcula solo cuando cambia el tamaño del contenedor, cuando el sujeto reflowea o cuando llega una tipografía: dónde cae una parte no es un valor que se pueda escribir al componer"
-    - "los nombres son largos o muchos y en los márgenes le comen el ancho al sujeto: `numbered` deja sólo el número en cada burbuja y pasa los nombres a una lista ordenada debajo, con la misma guía y el mismo anillo"
+    - "el diagrama tiene que leerse en un teléfono: el dibujo vive en un canvas, se diseña a su propio ancho y se muestra ajustado, con zoom para acercarse a una parte"
     - "algunas partes son áreas que contienen otras (un acordeón, uno de sus ítems, un panel): `mark: bracket` las marca con un corchete del largo de la parte, anidado hacia afuera, en vez de una guía que caería sobre un hijo cualquiera"
     - "el sujeto es una muestra y no un control: `inert` viene prendido, no toma puntero, ni foco, ni teclado, y sale del árbol de accesibilidad"
   avoidWhen:
-    - "lo que se quiere es una leyenda numerada debajo de una imagen estática, sin guías ni anillos: eso es una List o una Table. Si los nombres no caben en los márgenes, es `numbered` de este mismo componente, que conserva las guías"
+    - "lo que se quiere es una leyenda numerada debajo de una imagen estática, sin guías ni anillos: eso es una List o una Table"
     - "la etiqueta tiene que aparecer al pasar el puntero o al enfocar: eso es Tooltip, que es chrome flotante y efímero; esto está siempre dibujado"
     - "hay que explicar un dato al lado de un control dentro de un formulario real: eso es el `hint` de FormField, que además queda enlazado por aria-describedby"
     - "el sujeto tiene que seguir siendo usable: `inert` es todo o nada, así que un diagrama sobre una UI viva es dos cosas peleando por el mismo markup"

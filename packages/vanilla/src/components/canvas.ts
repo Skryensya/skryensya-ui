@@ -12,17 +12,18 @@ const rootSelector = `[${canvasAttrs.root}]`;
  * CANVAS, the DOM shell around `@skryensya/core/canvas`.
  *
  * Thinner than any other enhancer, on purpose: the gestures are wired by `connectCanvasView`, which
- * the React binding calls too, so the only thing left here is reading the two limits off the
+ * the React binding calls too, so the only thing left here is reading the two limits and `fitOnly` off the
  * authored markup. Anything else this file did would be a second implementation of something the
  * other binding does not do.
  *
- * It also attaches to the canvas `Annotated` embeds around its frame when `zoomable` is set: that
+ * It also attaches to the canvas `Annotated` embeds around its frame: that
  * node carries the same `data-sk-canvas`, so the same enhancer finds it.
  */
 export function connectCanvas(root: HTMLElement): () => void {
   return connectCanvasView(root, {
     minZoom: numberOf(root, canvasAttrs.minZoom, CANVAS_MIN_ZOOM),
     maxZoom: numberOf(root, canvasAttrs.maxZoom, CANVAS_MAX_ZOOM),
+    fitOnly: root.hasAttribute(canvasAttrs.fitOnly),
   });
 }
 

@@ -12,8 +12,7 @@
  * this same module a second time through its own glob. A static import here made both loads pay for
  * `render-tree.tsx`'s full component graph (every published family, ~60 modules) even though the
  * parent copy never calls it, measured at several hundred KB of JS on the FIRST preview of any
- * page. `render-tree.tsx` itself stays static inside: the closed, catalogue-verified module map that
- * comment argues for is unchanged, this only defers WHEN the one low-value call site loads it.
+ * page. Inside the frame, `loadTree` then loads only the families the tree actually names.
  *
  * The lazy load is a plain `preload()` export, not `React.lazy` + `Suspense`. `Suspense` committed
  * an EMPTY fallback the instant the frame's React root first flushed, which is exactly the render
@@ -45,9 +44,13 @@ function withLiveSafetyTriangle(tree: UsageTree): UsageTree {
 
 let renderTreeModule: typeof import("@skryensya/react/render-tree") | undefined;
 
-/** Awaited by `mountReactDemo()` before it renders. See the note above for why. */
-export async function preload(): Promise<void> {
+/**
+ * Awaited by `mountReactDemo()` before it renders. See the note above for why. It also loads the
+ * families THIS tree names (`loadTree`), so a Button demo's frame never evaluates a date picker.
+ */
+export async function preload({ tree }: Partial<TreeDemoProps>): Promise<void> {
   renderTreeModule ??= await import("@skryensya/react/render-tree");
+  if (tree) await renderTreeModule.loadTree(tree);
 }
 
 /*

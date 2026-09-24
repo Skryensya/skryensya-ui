@@ -58,6 +58,10 @@ export const diagramMessages = {
     "diagram.treeTransfer": "transferencia",
     "diagram.treeCard": "tarjeta",
 
+    "diagram.canvasTitle": "En un canvas",
+    "diagram.canvasBody":
+      "La otra respuesta al mismo árbol en un teléfono es no reacomodarlo. Envuelto en un <code>Canvas</code>, el diagrama se compone a su ancho de escritorio (cada columna con su nodo más ancho, <code>--sk-diagram-canvas-inline-size</code>) y se muestra ajustado: se ve entero y chico, y quien lee hace zoom en la rama que le interesa. Sin hoja de estilos propia, sin container queries. Los conectores se miden en las coordenadas del dibujo y no en las de la pantalla, así que el zoom no vuelve a trazar nada.",
+    "diagram.canvasPreviewLabel": "Triaje de un reclamo, en un canvas",
     "diagram.stateTitle": "Una máquina de estados, con su ciclo",
     "diagram.stateBody":
       "El mismo dibujo con aristas que apuntan <strong>hacia arriba</strong>. <code>ready → idle</code> (invalidar) y <code>failed → loading</code> (reintentar) tienen su destino más arriba que su origen, y por eso no toman el camino directo: el camino directo es el corredor por donde ya bajan las aristas de ida, y una línea de vuelta dibujada ahí no se distingue de la línea por la que vuelve. Salen por el margen, suben y entran por el mismo lado, que es como se dibuja «y vuelve a empezar» desde siempre. Las dos vueltas van por márgenes distintos, y eso tampoco se pide: la de la derecha es la preferida, y la otra cede sólo porque su recorrido hasta ese margen atravesaría al vecino que no es ninguno de sus extremos. Acá ida y vuelta entre <code>loading</code> y <code>failed</code> son dos aristas porque tienen dos nombres distintos; una relación que corre en los dos sentidos y se llama de una sola manera es <code>arrow: \"both\"</code>, una línea con punta en cada punta.",
@@ -270,6 +274,10 @@ export const diagramMessages = {
     "diagram.treeTransfer": "transfer",
     "diagram.treeCard": "card",
 
+    "diagram.canvasTitle": "On a canvas",
+    "diagram.canvasBody":
+      "The other answer to the same tree on a phone is not to re-flow it at all. Wrapped in a <code>Canvas</code>, the diagram is laid out at its desktop width (every column at its widest node, <code>--sk-diagram-canvas-inline-size</code>) and shown fitted: whole and small, and the reader zooms into the branch they care about. No stylesheet of its own, no container queries. The connectors are measured in the drawing's coordinates rather than the screen's, so zooming never re-routes anything.",
+    "diagram.canvasPreviewLabel": "Triaging a complaint, on a canvas",
     "diagram.stateTitle": "A state machine, and its cycle",
     "diagram.stateBody":
       "The same drawing with edges pointing <strong>upward</strong>. <code>ready → idle</code> (invalidate) and <code>failed → loading</code> (retry) have their target above their source, so they do not take the direct route: the direct route is the corridor the forward edges are already running down, and a return line drawn through it is indistinguishable from the line it is returning along. They step out through the margin, climb, and come back in on the same side, which is how a state chart has always drawn \"and then it starts over\". The two returns take different margins, and that is not asked for either: the right-hand one is preferred, and the other yields only because its run out to that margin would pass through the neighbour that is neither of its own ends. Here the trip out and the trip back between <code>loading</code> and <code>failed</code> are two edges because they have two different names; a relationship that runs both ways under ONE name is <code>arrow: \"both\"</code>, a single line with a head at each end.",

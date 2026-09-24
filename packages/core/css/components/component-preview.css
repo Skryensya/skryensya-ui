@@ -83,6 +83,25 @@
   }
 
   /*
+   * An anatomy diagram is already a complete surface (`Annotated` owns its canvas, legend, border
+   * and corners). Chrome-less previews are only its isolated runtime frame, not a second card
+   * around it. Keeping this outer surface made the same anatomy read as two nested containers.
+   */
+  .sk-component-preview[data-sk-component-preview-surface="none"] {
+    margin-block-end: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .sk-component-preview[data-sk-component-preview-surface="none"] .sk-component-preview__stage {
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  /*
    * FOUC: prefer React panels before the enhancer mounts when the document already carries the
    * shared preference (docs FOUC script / prior navigation).
    *

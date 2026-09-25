@@ -15,19 +15,34 @@
  * the loader, the focus ring) resolves its own dark half and the viewer is still this system's, just
  * in the mode the system already has for the dark.
  *
- * THE DIALOG IS THE WHOLE SCREEN, so the dimming is the dialog's own background, not `::backdrop`: the
- * backdrop would be covered anyway, and one surface means one fade. No z-index anywhere: `showModal()`
- * puts it in the top layer, above every z-index on the page by definition.
+ * THE DIMMING IS THE REAL `::backdrop`: a dark scrim plus a blur, so the page stays visible behind
+ * the photo, out of focus and out of the way, and the viewer reads as a layer above it rather than a
+ * page that replaced it. The dialog itself covers the screen (so every click and swipe is its own)
+ * but is transparent by default. No z-index anywhere: `showModal()` puts both in the top layer, above
+ * every z-index on the page by definition.
  *
  * THE IMAGE IS FITTED BY CSS, NEVER BY SCRIPT. `max-inline-size`/`max-block-size: 100%` of the stage,
  * sizes `auto`, so the browser keeps the ratio (CSS 2's constraint table for replaced elements) and a
  * small image is never enlarged past its own pixels. With `width`/`height` known, that box exists
  * before the first byte arrives, so nothing shifts when the photo lands. Zoom is one transform on top
  * of that box, which moves nothing else.
+ *
+ * QUIET CHROME. The photo is the point, so everything else is as small as it can be while staying
+ * usable: a counter in plain text, and every button the same sm ghost: Close, previous and next,
+ * and Canvas's own zoom bar (one pill, three of them) at the bottom end. The zoom is the buttons' and the keyboard's with a mouse,
+ * and the photo's own (pinch, double tap) on touch; the cursor never promises a click-to-zoom.
+ *
+ * MOTION. The dialog itself never fades: the backdrop fades, the chrome fades and drifts in from its
+ * own edge, and the photo is the controller's (it flies out of its thumbnail and back; see MOTION in
+ * `lightbox-controller.ts`). A fading dialog would fade the photo too, and a photo that is flying
+ * from its thumbnail must be opaque the whole way. `data-sk-closing` is the controller holding the
+ * dialog open while the photo flies back, and it fades everything else exactly as closing does.
  */
 @layer components {
   .sk-lightbox {
-    --sk-lightbox-backdrop-bg: color-mix(in oklch, var(--color-bg-canvas) 94%, transparent);
+    /* Resolved under `color-scheme: dark`, like everything here: a near-black scrim, see-through
+       enough that the blurred page behind still says where the viewer was opened from. */
+    --sk-lightbox-backdrop-bg: color-mix(in oklch, var(--color-bg-canvas) 82%, transparent);
     --sk-lightbox-bg: transparent;
     --sk-lightbox-fg: var(--color-text-primary);
     --sk-lightbox-muted-fg: var(--color-text-secondary);
@@ -36,10 +51,17 @@
        contrast against the chip itself, whatever the pixels underneath do. */
     --sk-lightbox-control-bg: color-mix(in oklch, var(--color-bg-canvas) 78%, transparent);
     --sk-lightbox-control-border-color: color-mix(in oklch, var(--color-text-primary) 24%, transparent);
-    --sk-lightbox-caption-bg: color-mix(in oklch, var(--color-bg-canvas) 82%, transparent);
+    /* Transparent: the caption has a row of its own under the photo, never over it, so the scrim is
+       already its surface. A theme that floats it over the photo gives it one here. */
+    --sk-lightbox-caption-bg: transparent;
     /* A long caption scrolls inside this rather than pushing the photo off the screen. */
     --sk-lightbox-caption-max-block-size: 28dvh;
     --sk-lightbox-gutter: var(--space-inset-sm);
+    /* The photo's corners and lift off the scrim. */
+    --sk-lightbox-image-radius: var(--radius-control);
+    --sk-lightbox-image-shadow: 0 1.5rem 4rem -1rem rgb(0 0 0 / 0.6);
+    /* How far each piece of chrome drifts in from its own edge. */
+    --sk-lightbox-chrome-distance: var(--motion-enter-distance);
     --sk-lightbox-trigger-radius: var(--radius-control);
     /* The room a nav button needs at the side of the stage, when there is room to give it. */
     --sk-lightbox-nav-room: 0px;
@@ -63,15 +85,14 @@
       env(safe-area-inset-bottom, 0px)
       env(safe-area-inset-left, 0px);
     border: 0;
-    background: var(--sk-lightbox-bg) var(--sk-lightbox-backdrop-bg);
+    background: var(--sk-lightbox-bg);
     color: var(--sk-lightbox-fg);
     overflow: hidden;
     overscroll-behavior: contain;
     isolation: isolate;
 
-    opacity: 0;
+    /* Kept displayed, and in the top layer, for as long as its chrome takes to fade out. */
     transition:
-      opacity var(--motion-exit-duration) var(--motion-exit-easing),
       overlay var(--motion-exit-duration) var(--motion-exit-easing) allow-discrete,
       display var(--motion-exit-duration) var(--motion-exit-easing) allow-discrete;
   }
@@ -85,6 +106,77 @@
     grid-template-areas:
       "toolbar"
       "figure";
+  }
+
+  /* ---- the chrome's entrance and exit: a fade, and a short drift from the edge it lives on ---- */
+
+  .sk-lightbox :is(.sk-lightbox__toolbar, .sk-lightbox__nav, .sk-lightbox__zoom, .sk-lightbox__caption) {
+    transition:
+      opacity var(--motion-exit-duration) var(--motion-exit-easing),
+      translate var(--motion-exit-duration) var(--motion-exit-easing);
+  }
+
+  .sk-lightbox[open]:not([data-sk-closing]) :is(.sk-lightbox__toolbar, .sk-lightbox__nav, .sk-lightbox__zoom, .sk-lightbox__caption) {
+    transition:
+      opacity var(--motion-enter-duration) var(--motion-enter-easing) 60ms,
+      translate var(--motion-enter-duration) var(--motion-enter-easing) 60ms;
+  }
+
+  .sk-lightbox:is(:not([open]), [data-sk-closing]) :is(.sk-lightbox__toolbar, .sk-lightbox__nav, .sk-lightbox__zoom, .sk-lightbox__caption) {
+    opacity: 0;
+  }
+
+  .sk-lightbox:is(:not([open]), [data-sk-closing]) .sk-lightbox__toolbar {
+    translate: 0 calc(var(--sk-lightbox-chrome-distance) * -1);
+  }
+
+  .sk-lightbox:is(:not([open]), [data-sk-closing]) :is(.sk-lightbox__zoom, .sk-lightbox__caption) {
+    translate: 0 var(--sk-lightbox-chrome-distance);
+  }
+
+  .sk-lightbox:is(:not([open]), [data-sk-closing]) .sk-lightbox__nav[data-lightbox-action="previous"] {
+    translate: calc(var(--sk-lightbox-chrome-distance) * -1) 0;
+  }
+
+  .sk-lightbox:is(:not([open]), [data-sk-closing]) .sk-lightbox__nav[data-lightbox-action="next"] {
+    translate: var(--sk-lightbox-chrome-distance) 0;
+  }
+
+  @starting-style {
+    .sk-lightbox[open] :is(.sk-lightbox__toolbar, .sk-lightbox__nav, .sk-lightbox__zoom, .sk-lightbox__caption) {
+      opacity: 0;
+    }
+
+    .sk-lightbox[open] .sk-lightbox__toolbar {
+      translate: 0 calc(var(--sk-lightbox-chrome-distance) * -1);
+    }
+
+    .sk-lightbox[open] :is(.sk-lightbox__zoom, .sk-lightbox__caption) {
+      translate: 0 var(--sk-lightbox-chrome-distance);
+    }
+
+    .sk-lightbox[open] .sk-lightbox__nav[data-lightbox-action="previous"] {
+      translate: calc(var(--sk-lightbox-chrome-distance) * -1) 0;
+    }
+
+    .sk-lightbox[open] .sk-lightbox__nav[data-lightbox-action="next"] {
+      translate: var(--sk-lightbox-chrome-distance) 0;
+    }
+  }
+
+  /* The scrim: dims and blurs the page, fading with the dialog. See the header. */
+  .sk-lightbox::backdrop {
+    background: var(--sk-lightbox-backdrop-bg);
+    -webkit-backdrop-filter: blur(20px) saturate(1.2);
+    backdrop-filter: blur(20px) saturate(1.2);
+    opacity: 0;
+    transition:
+      opacity var(--motion-exit-duration) var(--motion-exit-easing),
+      overlay var(--motion-exit-duration) var(--motion-exit-easing) allow-discrete,
+      display var(--motion-exit-duration) var(--motion-exit-easing) allow-discrete;
+  }
+
+  .sk-lightbox[open]:not([data-sk-closing])::backdrop {
     opacity: 1;
     transition:
       opacity var(--motion-enter-duration) var(--motion-enter-easing),
@@ -93,14 +185,9 @@
   }
 
   @starting-style {
-    .sk-lightbox[open] {
+    .sk-lightbox[open]::backdrop {
       opacity: 0;
     }
-  }
-
-  /* Covered by the dialog itself, which paints its own dimming; see the header. */
-  .sk-lightbox::backdrop {
-    background: transparent;
   }
 
   /* `hidden` must beat every `display` in here and in the sheets these parts borrow (an
@@ -123,13 +210,13 @@
     z-index: 1;
   }
 
+  /* Plain text, no container: the toolbar sits on the backdrop, never on the photo. */
   .sk-lightbox__counter {
     margin: 0;
-    padding-inline: var(--space-inset-sm);
-    padding-block: var(--space-inset-xs);
-    border-radius: var(--radius-pill);
-    background: var(--sk-lightbox-control-bg);
-    color: var(--sk-lightbox-fg);
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--sk-lightbox-muted-fg);
     font-size: var(--font-size-body-sm);
     font-variant-numeric: tabular-nums;
     line-height: var(--font-line-height-body);
@@ -144,15 +231,66 @@
     margin-inline-start: auto;
   }
 
-  /* ---- controls: Button's translucent variant, over a surface that stays readable on any photo ---- */
+  /* ---- controls ---- */
 
+  /* Every control is round and light-on-dark; the ghost ones (Close, the zoom bar) take their
+     surface only on hover, from Button itself. */
   .sk-lightbox .sk-lightbox__control.sk-button {
-    --sk-button-bg: var(--sk-lightbox-control-bg);
     --sk-button-fg: var(--sk-lightbox-fg);
-    --sk-button-border-color: var(--sk-lightbox-control-border-color);
     --sk-button-radius: var(--radius-pill);
+  }
 
+  /* ---- the zoom bar: Canvas's, a vertical pill of xs ghost buttons ---- */
+
+  .sk-lightbox__zoom {
+    grid-area: figure;
+    align-self: end;
+    justify-self: end;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(var(--space-inline-xs) / 2);
+    margin: var(--sk-lightbox-gutter);
+    padding: calc(var(--space-inset-xs) / 2);
+    border: 1px solid var(--sk-lightbox-control-border-color);
+    border-radius: var(--radius-pill);
+    background: var(--sk-lightbox-control-bg);
+    box-shadow: var(--elevation-raised);
     backdrop-filter: blur(12px);
+  }
+
+  /* NARROW, AND A MOUSE: there is no margin beside the photo to hold a vertical bar, so it does what
+     Canvas's does on a narrow screen and lies down, in the toolbar, just before Close. */
+  @media (width < 48rem) {
+    .sk-lightbox__zoom {
+      grid-area: toolbar;
+      align-self: center;
+      flex-direction: row;
+      margin-block: 0;
+      /* Clear of Close: its sm face and the toolbar's gap. */
+      margin-inline-end: calc(var(--sk-lightbox-gutter) + var(--size-control-sm) + var(--space-inline-sm));
+    }
+
+    .sk-lightbox:is(:not([open]), [data-sk-closing]) .sk-lightbox__zoom {
+      translate: 0 calc(var(--sk-lightbox-chrome-distance) * -1);
+    }
+  }
+
+  @starting-style {
+    @media (width < 48rem) {
+      .sk-lightbox[open] .sk-lightbox__zoom {
+        translate: 0 calc(var(--sk-lightbox-chrome-distance) * -1);
+      }
+    }
+  }
+
+  /* A touchscreen zooms with the photo itself (pinch, double tap), and on a phone the bar would sit
+     on the photo and the caption: it goes, and the keyboard never reaches a phone without a mouse. */
+  @media (hover: none) and (pointer: coarse) {
+    .sk-lightbox__zoom {
+      display: none;
+    }
   }
 
   /*
@@ -194,7 +332,12 @@
   /* Wide enough to give the nav its own margin: the photo stops short of the buttons instead of
      sliding under them. On a phone every pixel is the photo's, and the buttons float over it. */
   @media (min-width: 48rem) {
-    .sk-lightbox:not([data-sk-single]) {
+    .sk-lightbox {
+      --sk-lightbox-gutter: var(--space-inset-md);
+    }
+
+    /* Always, not only for a gallery: the zoom bar lives in the same margin. */
+    .sk-lightbox {
       --sk-lightbox-nav-room: calc(var(--size-touch-target) + var(--sk-lightbox-gutter) * 2);
     }
   }
@@ -211,13 +354,19 @@
   }
 
   .sk-lightbox__stage {
+    /* A size container, so a photo of known size can be fitted in `cq` units before it loads. Its
+       size comes from the grid track, never from the photo, which is what `size` requires. */
+    container-type: size;
     position: relative;
     display: grid;
     grid-template: minmax(0, 1fr) / minmax(0, 1fr);
     place-items: center;
     min-block-size: 0;
     padding: var(--sk-lightbox-gutter);
-    overflow: hidden;
+    /* NOT A FRAME, A TABLE TOP. The stage never clips: the photo's shadow is drawn whole, and a photo
+       that is dragged or zoomed goes wherever it is taken, under the chrome (every piece of which
+       sits above it, `z-index: 1`) up to the edge of the screen. The dialog is what clips. */
+    overflow: visible;
     /* Every touch on the stage is the lightbox's: pan, pinch and swipe are all handled, and the page
        under a modal has nothing to scroll anyway. */
     touch-action: none;
@@ -244,16 +393,81 @@
       opacity var(--motion-state-change-duration) var(--motion-state-change-easing);
   }
 
+  /*
+   * A PHOTO OF KNOWN SIZE gets its fitted box before a single byte arrives: as wide as the stage, as
+   * its own pixels, or as the stage's height times its ratio allows, whichever is least, and its
+   * height from the ratio. So it never enlarges, never shifts when it lands, and the controller can
+   * measure where it will be the moment the lightbox opens. The placeholder gets the PHOTO's
+   * box too, not its own square thumbnail's.
+   */
+  .sk-lightbox :is(.sk-lightbox__image, .sk-lightbox__placeholder)[data-sk-sized] {
+    inline-size: min(
+      100cqi,
+      var(--sk-lightbox-image-width, 100cqi),
+      100cqb * var(--sk-lightbox-image-ratio, 1)
+    );
+    aspect-ratio: var(--sk-lightbox-image-ratio, auto);
+  }
+
   .sk-lightbox__image {
+    border-radius: var(--sk-lightbox-image-radius);
+    box-shadow: var(--sk-lightbox-image-shadow);
     transform-origin: 50% 50%;
     will-change: transform;
   }
 
-  /* The thumbnail, blown up and blurred: a preview of the right colours in the right place while the
-     full image arrives, never mistaken for the photo itself. */
+  /*
+   * THE THUMBNAIL, SHARP, in the photo's box while the full image arrives. It is what flies out of
+   * the page, so it has to look like the thumbnail the reader clicked, not a blur of it; `cover`,
+   * because a thumbnail is often a crop (a square of a 3:2 photo) and bars around it would read as
+   * broken. When the full image lands it swaps in over it in one frame (below), a gain in sharpness
+   * and nothing else.
+   */
   .sk-lightbox__placeholder {
+    border-radius: var(--sk-lightbox-image-radius);
+    object-fit: cover;
+  }
+
+  /* Not until it is whole: a small image arriving line by line is noise where the photo will be. */
+  .sk-lightbox__placeholder:not([data-sk-ready]) {
+    opacity: 0;
+  }
+
+  /* Failed: the thumbnail stays under the message, dimmed and blurred, so it is never mistaken for
+     the photo that did not come. */
+  .sk-lightbox[data-sk-status="error"] .sk-lightbox__placeholder {
     filter: blur(16px);
-    opacity: 0.7;
+    opacity: 0.5;
+  }
+
+  /*
+   * NO IMAGE WITHOUT A SOURCE, AND NONE ONCE CLOSED. Closing clears the photo right away, but the
+   * dialog stays drawn for its exit transition; an `<img>` with no `src` is the browser's
+   * broken-image glyph and its alt text, at full size, for exactly that long. The photo has already
+   * flown back into its thumbnail (or faded) by then, so nothing is lost by hiding it.
+   */
+  .sk-lightbox:not([open]) :is(.sk-lightbox__image, .sk-lightbox__placeholder),
+  .sk-lightbox :is(.sk-lightbox__image, .sk-lightbox__placeholder):not([src]) {
+    visibility: hidden;
+  }
+
+  /* The outgoing photo during a swap: a frozen copy, placed by the controller where the photo was
+     drawn, under the incoming one. Not in the grid, never hit, never the target of a gesture. */
+  .sk-lightbox__ghost {
+    position: absolute;
+    margin: 0;
+    max-inline-size: none;
+    max-block-size: none;
+    object-fit: contain;
+    border-radius: var(--sk-lightbox-image-radius);
+    box-shadow: var(--sk-lightbox-image-shadow);
+    pointer-events: none;
+    -webkit-user-drag: none;
+  }
+
+  .sk-lightbox__ghost[data-sk-ghost-placeholder] {
+    box-shadow: none;
+    object-fit: cover;
   }
 
   /* Loading: the full image is invisible until it has pixels, so a half-decoded photo never paints
@@ -262,21 +476,26 @@
     opacity: 0;
   }
 
-  /* A finger or the mouse is moving the photo: it follows exactly, no easing behind the pointer. */
-  .sk-lightbox[data-sk-dragging] :is(.sk-lightbox__image, .sk-lightbox__placeholder) {
+  /* Over a placeholder the full image does not fade in: a fade would show the backdrop through both
+     for its first frames, since the placeholder hides the moment the photo loads. */
+  .sk-lightbox__stage:has(> .sk-lightbox__placeholder[src]) > .sk-lightbox__image {
+    transition:
+      translate var(--motion-release-duration) var(--motion-release-easing),
+      transform var(--motion-state-change-duration) var(--motion-state-change-easing);
+  }
+
+  /* A finger or the mouse is moving the photo, or the controller's spring is carrying it home after
+     one let go: either way the script writes every frame, and an easing behind it would only lag. */
+  .sk-lightbox:is([data-sk-dragging], [data-sk-settling]) :is(.sk-lightbox__image, .sk-lightbox__placeholder) {
     transition: none;
   }
 
-  .sk-lightbox[data-sk-status="loaded"][data-zoom]:not([data-zoom="false"]) .sk-lightbox__image,
-  .sk-lightbox[data-sk-status="loaded"]:not([data-zoom]) .sk-lightbox__image {
-    cursor: zoom-in;
-  }
-
-  .sk-lightbox[data-sk-zoomed] .sk-lightbox__image {
+  /* Loose on the stage at any zoom: at fit it can be picked up too, and springs back when let go. */
+  .sk-lightbox__image {
     cursor: grab;
   }
 
-  .sk-lightbox[data-sk-zoomed][data-sk-dragging] .sk-lightbox__image {
+  .sk-lightbox[data-sk-dragging] .sk-lightbox__image {
     cursor: grabbing;
   }
 
@@ -294,6 +513,13 @@
     transition:
       opacity var(--motion-state-change-duration) var(--motion-state-change-easing) 250ms,
       visibility 0s linear 250ms;
+  }
+
+  /* The stage's own words go with the chrome, not with the photo. After the
+     loader's own rules, which it ties with. */
+  .sk-lightbox:is(:not([open]), [data-sk-closing]) :is(.sk-lightbox__error, .sk-lightbox__loader) {
+    opacity: 0;
+    transition: opacity var(--motion-exit-duration) var(--motion-exit-easing);
   }
 
   .sk-lightbox__error {
@@ -314,6 +540,9 @@
   /* ---- caption ---- */
 
   .sk-lightbox__caption {
+    /* Above the stage, like the rest of the chrome: a photo that is dragged down passes under it. */
+    position: relative;
+    z-index: 1;
     display: grid;
     gap: var(--space-stack-xs);
     justify-self: center;
@@ -321,7 +550,7 @@
     inline-size: min(100%, 65ch);
     max-block-size: var(--sk-lightbox-caption-max-block-size);
     margin-block-end: var(--sk-lightbox-gutter);
-    padding: var(--space-inset-sm) var(--space-inset-md);
+    padding: var(--space-inset-xs) var(--space-inset-md);
     overflow-y: auto;
     overscroll-behavior: contain;
     border-radius: var(--radius-control);
@@ -351,15 +580,23 @@
     color: var(--sk-lightbox-muted-fg);
     font-size: var(--font-size-caption);
     line-height: var(--font-line-height-body);
+    opacity: 0.8;
   }
 
   /* ---- trigger: a thumbnail that opens it ---- */
 
+  /* The photo is standing in for this thumbnail, on its way out of it or back into it. */
+  [data-sk-lightbox-source] {
+    visibility: hidden;
+  }
+
+  /* `pointer`, not `zoom-in`: the click opens a viewer, it does not enlarge this image in place, and
+     `zoom-in` is what the photo's own zoom would promise. Same cursor as every other thing that opens. */
   .sk-lightbox__trigger {
     display: block;
     border-radius: var(--sk-lightbox-trigger-radius);
     color: inherit;
-    cursor: zoom-in;
+    cursor: pointer;
   }
 
   .sk-lightbox__trigger:focus-visible {
@@ -392,23 +629,27 @@
     .sk-lightbox {
       --sk-lightbox-backdrop-bg: var(--color-bg-canvas);
       --sk-lightbox-control-bg: var(--color-bg-canvas);
-      --sk-lightbox-caption-bg: var(--color-bg-canvas);
     }
 
-    .sk-lightbox .sk-lightbox__control.sk-button {
+    .sk-lightbox::backdrop {
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+
+    .sk-lightbox__zoom {
       backdrop-filter: none;
     }
   }
 
   @media (forced-colors: active) {
-    .sk-lightbox {
+    .sk-lightbox,
+    .sk-lightbox::backdrop {
       background: Canvas;
       color: CanvasText;
     }
 
     .sk-lightbox .sk-lightbox__control.sk-button,
-    .sk-lightbox__counter,
-    .sk-lightbox__caption,
+    .sk-lightbox__zoom,
     .sk-lightbox__error {
       border: 1px solid CanvasText;
       background: Canvas;

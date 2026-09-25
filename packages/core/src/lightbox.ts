@@ -67,12 +67,16 @@ export type LightboxImage = {
 export const lightboxParts = {
   /** The `<dialog>`. */
   root: "sk-lightbox",
-  /** The strip along the top: counter at the start, actions at the end. */
+  /** The outgoing photo during a swap, frozen where it was drawn. Created by the controller, never authored. */
+  ghost: "sk-lightbox__ghost",
+  /** The strip along the top: counter at the start, Close at the end. */
   toolbar: "sk-lightbox__toolbar",
   /** "3 / 12". Visual only; the live region says it in words. */
   counter: "sk-lightbox__counter",
-  /** The action cluster: zoom out, zoom in, reset, close. */
+  /** The end of the toolbar: Close, on its own. */
   actions: "sk-lightbox__actions",
+  /** The zoom bar, Canvas's own: zoom in, zoom out and fit, stacked in one pill at the bottom end. */
+  zoom: "sk-lightbox__zoom",
   /** Every icon-only button the lightbox draws. Which one is `data-lightbox-action`. */
   control: "sk-lightbox__control",
   /** Previous and next, over the inline edges of the stage. */
@@ -115,6 +119,7 @@ export const lightboxAttrs = {
   title: "data-lightbox-title",
   description: "data-lightbox-description",
   credit: "data-lightbox-credit",
+  thumbnail: "data-lightbox-thumbnail",
   width: "data-lightbox-width",
   height: "data-lightbox-height",
   /** Configuration read by the controller off the root. */
@@ -131,8 +136,20 @@ export const lightboxAttrs = {
   zoomed: "data-sk-zoomed",
   /** Written while a finger or the mouse is moving the image. */
   dragging: "data-sk-dragging",
+  /** On the placeholder once it has loaded whole (and is the photo's shape): only then is it drawn. */
+  ready: "data-sk-ready",
+  /** On a ghost copied from the blurred placeholder rather than the photo: it keeps the blur. */
+  ghostPlaceholder: "data-sk-ghost-placeholder",
+  /** Written while a released image springs or glides home: the script is moving it, not CSS. */
+  settling: "data-sk-settling",
   /** Written when the gallery holds a single image, so the stage can take the nav's room back. */
   single: "data-sk-single",
+  /** On each image the controller knows the size of: the stylesheet can fit its box before it loads. */
+  sized: "data-sk-sized",
+  /** On the page's thumbnail while the photo is flying out of it or back into it: it hides there. */
+  source: "data-sk-lightbox-source",
+  /** Written while the closing animation runs, before the dialog actually closes. */
+  closing: "data-sk-closing",
 } as const;
 
 export type LightboxAction = "close" | "previous" | "next" | "zoom-in" | "zoom-out" | "reset-zoom";
@@ -220,7 +237,7 @@ export const LIGHTBOX_MAX_ZOOM = 4;
 export const LIGHTBOX_ZOOM_CEILING = 10;
 /** One press of a button or a key multiplies or divides the scale by this. */
 export const LIGHTBOX_ZOOM_STEP = 1.5;
-/** Where a double click or a double tap goes from fit. */
+/** Where a double tap goes from fit. */
 export const LIGHTBOX_DOUBLE_TAP_ZOOM = 2.5;
 /** One arrow key moves a zoomed image this far, in screen px. */
 export const LIGHTBOX_PAN_STEP = 60;
@@ -228,6 +245,12 @@ export const LIGHTBOX_PAN_STEP = 60;
 export type LightboxView = CanvasView;
 export type LightboxSize = CanvasSize;
 export type LightboxPoint = CanvasPoint;
+
+/** Two sizes are one shape: within 2%, the rounding of a thumbnail resized to whole pixels. */
+export function lightboxSameShape(aWidth: number, aHeight: number, bWidth: number, bHeight: number): boolean {
+  if (!(aWidth > 0 && aHeight > 0 && bWidth > 0 && bHeight > 0)) return false;
+  return Math.abs(Math.log(aWidth / aHeight / (bWidth / bHeight))) < 0.02;
+}
 
 /** The view at rest: fitted and centred. */
 export const LIGHTBOX_FIT_VIEW: LightboxView = { x: 0, y: 0, scale: 1 };
@@ -257,6 +280,102 @@ export function lightboxClampView(view: LightboxView, fitted: LightboxSize, stag
     return round(Math.min(slack, Math.max(-slack, at)));
   };
   return { x: axis(view.x, fitted.width, stage.width), y: axis(view.y, fitted.height, stage.height), scale: view.scale };
+}
+
+/**
+ * How far past its limit a dragged photo actually goes, for `overshoot` px of pull. Never a wall:
+ * the photo keeps following the hand, less and less, up to `limit`, and on release it springs back
+ * (the stylesheet's transition). The curve is the one every phone uses at the end of a scroll.
+ */
+export function lightboxRubberBand(overshoot: number, limit: number): number {
+  if (overshoot === 0 || limit <= 0) return 0;
+  const pulled = Math.abs(overshoot);
+  return Math.sign(overshoot) * (1 - 1 / ((pulled * 0.55) / limit + 1)) * limit;
+}
+
+/**
+ * THE TETHER: where a photo at fit is drawn for `pulled` px of drag. It is held to the centre by
+ * something elastic, not a wall: almost 1:1 near the centre, so it feels picked up rather than stuck,
+ * and ever heavier further out, never past `reach`. `lightboxUntether` is the inverse, so a photo
+ * caught mid-spring is picked up exactly where it is drawn.
+ */
+export function lightboxTether(pulled: number, reach: number): number {
+  if (reach <= 0) return 0;
+  return pulled / (1 + Math.abs(pulled) / reach);
+}
+
+export function lightboxUntether(drawn: number, reach: number): number {
+  if (reach <= 0) return 0;
+  const held = Math.min(Math.abs(drawn), reach * 0.999);
+  return (Math.sign(drawn) * held) / (1 - held / reach);
+}
+
+/**
+ * How far the tether lets a photo go, per axis: a share of the stage, so it scales with the screen,
+ * but never more than `LIGHTBOX_TETHER_MAX` px. The photo is held, not carried: it gives a little
+ * under the hand and no more. A swipe is judged on the HAND's travel, not the photo's, so a short
+ * reach costs no swipe.
+ */
+export const LIGHTBOX_TETHER_REACH = 0.2;
+export const LIGHTBOX_TETHER_MAX = 120;
+
+/**
+ * A damped spring, per axis, in px and px/s. Two tunings: `release` carries a photo let go at fit
+ * back to the centre with the hand's own speed and one barely-there overshoot (damping ratio 0.84),
+ * which is what makes it read as elastic rather than eased, and quickly: home in about 0.15s, because a photo that dawdles back reads as sluggish, not as soft; `glide` lands a flung, zoomed photo at the end
+ * of its momentum without a bounce (critically damped), because a photo in a frame should not wobble
+ * against its edge.
+ */
+export type LightboxSpring = { readonly stiffness: number; readonly damping: number };
+export const LIGHTBOX_SPRING_RELEASE: LightboxSpring = { stiffness: 1100, damping: 56 };
+export const LIGHTBOX_SPRING_GLIDE: LightboxSpring = { stiffness: 170, damping: 26 };
+
+export type LightboxSpringAxis = { position: number; velocity: number };
+
+/**
+ * Advance one axis by `dtMs` toward `target`. Semi-implicit Euler in fixed sub-steps of at most 4ms,
+ * so a dropped frame (or a 30 Hz screen) takes more steps instead of exploding.
+ */
+export function lightboxSpringStep(
+  axis: LightboxSpringAxis,
+  target: number,
+  dtMs: number,
+  spring: LightboxSpring,
+): LightboxSpringAxis {
+  let { position, velocity } = axis;
+  let remaining = Math.min(Math.max(dtMs, 0), 64) / 1000;
+  while (remaining > 0) {
+    const dt = Math.min(remaining, 0.004);
+    velocity += (-spring.stiffness * (position - target) - spring.damping * velocity) * dt;
+    position += velocity * dt;
+    remaining -= dt;
+  }
+  return { position, velocity };
+}
+
+/** At rest: within half a pixel of the target and slower than a pixel every 100ms. */
+export const lightboxSpringSettled = (axis: LightboxSpringAxis, target: number): boolean =>
+  Math.abs(axis.position - target) < 0.5 && Math.abs(axis.velocity) < 10;
+
+/**
+ * Where a fling would coast to on its own, from its release speed in px/ms: the momentum of a
+ * scroll view (a 0.995-per-ms decay, summed). The controller aims the glide spring there, clamped
+ * into the frame, so a flick carries on and settles instead of stopping under the finger.
+ */
+export const lightboxFlingDistance = (velocityPxPerMs: number): number => velocityPxPerMs * (0.995 / (1 - 0.995));
+
+/**
+ * A pan of a zoomed photo WHILE the hand is still on it: `lightboxClampView`'s bounds, but elastic.
+ * Past an edge the photo still moves, damped by `lightboxRubberBand`, so the edge is felt rather than
+ * hit. The controller lets go by gliding it back inside.
+ */
+export function lightboxElasticView(view: LightboxView, fitted: LightboxSize, stage: LightboxSize): LightboxView {
+  const held = lightboxClampView(view, fitted, stage);
+  return {
+    x: round(held.x + lightboxRubberBand(view.x - held.x, stage.width / 2)),
+    y: round(held.y + lightboxRubberBand(view.y - held.y, stage.height / 2)),
+    scale: view.scale,
+  };
 }
 
 /**
@@ -413,27 +532,35 @@ function round(value: number): number {
  * Template
  * ---------------------------------------------------------------------------------------------- */
 
+/*
+ * ONE KIND OF BUTTON: ghost, sm (a 44px hit area around a smaller face). The zoom bar is Canvas's,
+ * ghost buttons in one pill; Close, previous and next are the same lone ghost button, so the chrome
+ * reads as one set and the photo stays the loudest thing on the screen.
+ */
+const controlLook = {
+  zoom: { variant: "ghost", size: "sm", icon: "md" },
+  close: { variant: "ghost", size: "sm", icon: "md" },
+  nav: { variant: "ghost", size: "sm", icon: "md" },
+} as const;
+
 const control = (
   action: LightboxAction,
   option: string,
   icon: string,
-  part: "control" | "nav" = "control",
+  look: keyof typeof controlLook,
 ): ContractTemplate => ({
   element: "button",
-  part,
-  also: part === "nav" ? [lightboxParts.control, "sk-button", "sk-interactive"] : ["sk-button", "sk-interactive"],
+  part: look === "nav" ? "nav" : "control",
+  also: look === "nav" ? [lightboxParts.control, "sk-button", "sk-interactive"] : ["sk-button", "sk-interactive"],
   options: [option],
   attrs: {
     type: "button",
     [lightboxAttrs.action]: action,
     "data-icon-only": "",
-    /* Translucent is the Button variant made for an unknown surface behind it: over a photo. The
-       lightbox sheet adds a stable scrim under it, so it holds its contrast over white skies too. */
-    "data-variant": "translucent",
-    /* md is the size whose face IS the touch target: 44px square, before any `::after` help. */
-    "data-size": "md",
+    "data-variant": controlLook[look].variant,
+    "data-size": controlLook[look].size,
   },
-  children: [{ element: "span", attrs: { "data-sk-icon": icon, "data-sk-icon-size": "md" } }],
+  children: [{ element: "span", attrs: { "data-sk-icon": icon, "data-sk-icon-size": controlLook[look].icon } }],
 });
 
 /* ---------------------------------------------------------------------------------------------- *
@@ -466,7 +593,10 @@ export const lightboxContract = {
     "--sk-lightbox-control-border-color",
     "--sk-lightbox-caption-bg",
     "--sk-lightbox-caption-max-block-size",
+    "--sk-lightbox-chrome-distance",
     "--sk-lightbox-gutter",
+    "--sk-lightbox-image-radius",
+    "--sk-lightbox-image-shadow",
     "--sk-lightbox-nav-room",
     "--sk-lightbox-trigger-radius",
   ],
@@ -563,6 +693,13 @@ export const lightboxContract = {
     triggerCredit: { type: "string", attr: lightboxAttrs.credit, prop: "credit" },
     triggerWidth: { type: "number", min: 1, integer: true, attr: lightboxAttrs.width, prop: "width" },
     triggerHeight: { type: "number", min: 1, integer: true, attr: lightboxAttrs.height, prop: "height" },
+    /**
+     * A small copy of the full image, at ITS proportions: shown blurred while the full one loads, and
+     * what flies out of the thumbnail when that is not loaded yet. Needed whenever the thumbnail on the
+     * page is a crop (a square grid): a crop is never used, because turning into a different shape
+     * when the real photo lands is exactly the jump this exists to avoid.
+     */
+    triggerThumbnail: { type: "string", attr: lightboxAttrs.thumbnail, prop: "thumbnailSrc" },
   },
 
   signatures: {
@@ -608,12 +745,7 @@ export const lightboxContract = {
               {
                 element: "div",
                 part: "actions",
-                children: [
-                  control("zoom-out", "zoomOutLabel", "zoom-out"),
-                  control("zoom-in", "zoomInLabel", "zoom-in"),
-                  control("reset-zoom", "resetZoomLabel", "fit"),
-                  control("close", "closeLabel", "close"),
-                ],
+                children: [control("close", "closeLabel", "close", "close")],
               },
             ],
           },
@@ -655,6 +787,16 @@ export const lightboxContract = {
           control("previous", "previousLabel", "chevron-left", "nav"),
           control("next", "nextLabel", "chevron-right", "nav"),
           {
+            element: "div",
+            part: "zoom",
+            children: [
+              /* Top to bottom, the way Canvas's vertical zoom bar reads: in, out, then fit. */
+              control("zoom-in", "zoomInLabel", "zoom-in", "zoom"),
+              control("zoom-out", "zoomOutLabel", "zoom-out", "zoom"),
+              control("reset-zoom", "resetZoomLabel", "fit", "zoom"),
+            ],
+          },
+          {
             element: "p",
             part: "live",
             also: ["sk-visually-hidden"],
@@ -682,6 +824,7 @@ export const lightboxContract = {
         "triggerCredit",
         "triggerWidth",
         "triggerHeight",
+        "triggerThumbnail",
       ],
       requires: ["opens", "triggerSrc"],
       forward: ["id", "aria-*"],

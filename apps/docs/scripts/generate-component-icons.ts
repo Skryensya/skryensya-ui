@@ -43,6 +43,7 @@ const MAP: Record<string, string> = {
   "/components/calendar": "role:calendar",
   "/components/callout": "Megaphone",
   "/components/card": "RectangleHorizontal",
+  "/components/canvas": "ZoomIn",
   "/components/carousel": "GalleryHorizontal",
   "/components/changelog": "History",
   "/components/charts": "ChartColumn",

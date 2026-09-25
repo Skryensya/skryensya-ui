@@ -4,13 +4,22 @@ import {
   LIGHTBOX_MAX_ZOOM,
   LIGHTBOX_PAN_STEP,
   LIGHTBOX_ZOOM_CEILING,
+  LIGHTBOX_SPRING_GLIDE,
+  LIGHTBOX_SPRING_RELEASE,
   LIGHTBOX_ZOOM_STEP,
   formatLightboxCounter,
   lightboxClampView,
+  lightboxElasticView,
+  lightboxFlingDistance,
+  lightboxSpringSettled,
+  lightboxSpringStep,
+  lightboxTether,
+  lightboxUntether,
   lightboxKeyAction,
   lightboxPinchView,
   lightboxPreloadIndices,
   lightboxReindex,
+  lightboxSameShape,
   lightboxStep,
   lightboxSwipeVerdict,
   lightboxTransform,
@@ -273,5 +282,73 @@ describe("lightboxKeyAction", () => {
     expect(lightboxKeyAction({ key: "Tab" }, atFit)).toBeNull();
     expect(lightboxKeyAction({ key: "Enter" }, atFit)).toBeNull();
     expect(lightboxKeyAction({ key: " " }, atFit)).toBeNull();
+  });
+});
+
+describe("the tether and the springs", () => {
+  it("holds a photo at fit almost 1:1 near the centre, heavier further out, never past its reach", () => {
+    expect(lightboxTether(10, 400)).toBeGreaterThan(9.7);
+    expect(lightboxTether(400, 400)).toBe(200);
+    expect(lightboxTether(-100_000, 400)).toBeGreaterThan(-400);
+  });
+
+  it("untethers back to the pull that draws it there, so a caught photo does not jump", () => {
+    for (const pulled of [-600, -40, 0, 25, 380]) {
+      expect(lightboxUntether(lightboxTether(pulled, 400), 400)).toBeCloseTo(pulled, 6);
+    }
+  });
+
+  it("lets a zoomed pan past an edge only elastically", () => {
+    const fitted = { width: 400, height: 300 };
+    const stage = { width: 400, height: 300 };
+    const held = lightboxElasticView({ x: 1000, y: 0, scale: 2 }, fitted, stage);
+    const edge = lightboxClampView({ x: 1000, y: 0, scale: 2 }, fitted, stage).x;
+    expect(held.x).toBeGreaterThan(edge);
+    expect(held.x).toBeLessThan(edge + stage.width / 2);
+  });
+
+  const settle = (spring: typeof LIGHTBOX_SPRING_RELEASE, from: number, velocity: number) => {
+    let axis = { position: from, velocity };
+    let lowest = from;
+    let frames = 0;
+    while (!lightboxSpringSettled(axis, 0) && frames < 600) {
+      axis = lightboxSpringStep(axis, 0, 1000 / 60, spring);
+      lowest = Math.min(lowest, axis.position);
+      frames += 1;
+    }
+    return { frames, lowest };
+  };
+
+  it("brings a released photo home with one barely-there overshoot, in about 0.15s", () => {
+    const { frames, lowest } = settle(LIGHTBOX_SPRING_RELEASE, 200, 0);
+    expect(frames).toBeLessThan(14);
+    expect(lowest).toBeLessThan(0);
+    expect(lowest).toBeGreaterThan(-4);
+  });
+
+  it("glides a flung, zoomed photo to rest without bouncing off its edge", () => {
+    expect(settle(LIGHTBOX_SPRING_GLIDE, 200, 0).lowest).toBeGreaterThan(-0.5);
+  });
+
+  it("survives a long frame instead of exploding", () => {
+    const axis = lightboxSpringStep({ position: 200, velocity: 3000 }, 0, 500, LIGHTBOX_SPRING_RELEASE);
+    expect(Number.isFinite(axis.position)).toBe(true);
+    expect(Math.abs(axis.position)).toBeLessThan(400);
+  });
+
+  it("coasts a fling in the direction it was thrown", () => {
+    expect(lightboxFlingDistance(1)).toBeGreaterThan(100);
+    expect(lightboxFlingDistance(-1)).toBeLessThan(-100);
+    expect(lightboxFlingDistance(0)).toBe(0);
+  });
+});
+
+describe("lightboxSameShape", () => {
+  it("matches a resized copy, rounding included, and never a crop", () => {
+    expect(lightboxSameShape(480, 320, 1800, 1200)).toBe(true);
+    expect(lightboxSameShape(192, 480, 800, 2000)).toBe(true);
+    expect(lightboxSameShape(481, 320, 1800, 1200)).toBe(true);
+    expect(lightboxSameShape(400, 400, 1800, 1200)).toBe(false);
+    expect(lightboxSameShape(0, 400, 1800, 1200)).toBe(false);
   });
 });

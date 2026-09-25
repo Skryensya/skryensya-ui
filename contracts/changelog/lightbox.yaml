@@ -3,7 +3,7 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribe la entrada y pega el
 # hash nuevo.
-surface: "853bcb2c08960fd4"
+surface: "65d1f39639bc18bc"
 entries:
   - date: 2026-09-24
     kind: feature
@@ -30,3 +30,82 @@ entries:
         buttons, <code>+</code>/<code>-</code>/<code>0</code>, the wheel, a double click, a double tap and a pinch; zoomed in, dragging and the arrows
         move the image inside its frame. A swipe changes photo and a swipe down closes. Only the two neighbours are preloaded, and a failed image
         says so in words without blocking navigation.
+  - date: 2026-09-24
+    kind: bugfix
+    target: Lightbox
+    es:
+      title: Un fondo real detrás del visor, y la foto separada de él
+      body: >-
+        El visor no oscurecía la página: su fondo era una declaración inválida que el navegador descartaba. Ahora el <code>::backdrop</code>
+        oscurece y desenfoca la página (<code>--sk-lightbox-backdrop-bg</code>), la foto tiene esquinas y sombra propias
+        (<code>--sk-lightbox-image-radius</code>, <code>--sk-lightbox-image-shadow</code>) y el pie de foto va sin caja, sobre el fondo.
+    en:
+      title: A real backdrop behind the viewer, and the photo lifted off it
+      body: >-
+        The viewer did not dim the page: its background was an invalid declaration the browser dropped. Now the <code>::backdrop</code> dims and
+        blurs the page (<code>--sk-lightbox-backdrop-bg</code>), the photo has its own corners and shadow (<code>--sk-lightbox-image-radius</code>,
+        <code>--sk-lightbox-image-shadow</code>) and the caption sits on the backdrop with no box of its own.
+  - date: 2026-09-24
+    kind: rework
+    target: Lightbox
+    es:
+      title: Menos botones, la barra de zoom de Canvas y una foto que sale de su miniatura
+      body: >-
+        Acercar, alejar y ajustar pasan a una barra vertical como la de Canvas (<code>sk-lightbox__zoom</code>), que en pantallas angostas se acuesta
+        en la barra superior y en táctil se oculta; Cerrar y el contador quedan sin superficie, y todo es <code>sm</code> salvo Anterior y Siguiente
+        en escritorio. Con mouse, la rueda y el doble clic ya no hacen zoom: sólo los botones y el teclado; en táctil siguen el pellizco y el doble
+        toque. La foto de un tamaño conocido tiene su caja antes de cargar, la miniatura se oculta en la página mientras la foto vuela, cerrar a mitad de
+        la apertura la devuelve desde donde va, y sin miniatura a la vista (o con zoom) se desvanece en vez de desaparecer. Arrastrar la foto
+        sólo la mueve un poco (un 20% del cuadro, 120 px como mucho) y vuelve al centro en un quinto de segundo; soltar fuera de la ventana ya no
+        la deja pegada al cursor. La foto crece desde la miniatura que la abrió y vuelve
+        a ella al cerrar, la siguiente entra desde su lado y los controles aparecen desde su borde. Con movimiento reducido sólo quedan los fundidos.
+    en:
+      title: Fewer buttons, Canvas's zoom bar, and a photo that grows out of its thumbnail
+      body: >-
+        Zoom in, zoom out and fit move to a vertical bar like Canvas's (<code>sk-lightbox__zoom</code>), which lies down in the toolbar on narrow
+        screens and hides on touch; Close and the counter lose their surfaces, and every button is <code>sm</code> except Previous and Next on a
+        desktop. With a mouse, the wheel and a double click no longer zoom: only the buttons and the keyboard do; touch keeps pinch and double tap. A photo of known size has
+        its box before it loads, the thumbnail hides on the page while the photo is in flight, closing mid-open turns the flight around from where
+        it is, and with no thumbnail on screen (or zoomed in) it fades instead of vanishing. Dragging the photo only moves it a little
+        (a fifth of the stage, 120px at most) and it is home in a fifth of a second; letting go outside the window no longer leaves it stuck
+        to the cursor. The photo grows out of the thumbnail that opened it and flies back on
+        close, the next one slides in from its side, and the controls drift in from their edge. Reduced motion keeps only the fades.
+  - date: 2026-09-24
+    kind: rework
+    target: Lightbox
+    es:
+      title: Una foto suelta que vuelve con un resorte, y un cambio de foto que se cruza en vez de cortar
+      body: >-
+        Anterior y Siguiente pasan a ser el mismo botón <code>ghost</code> <code>sm</code> que Cerrar. El escenario ya no recorta: la sombra de la
+        foto se ve entera y una foto arrastrada o con zoom pasa por debajo de los controles. Sin zoom, la foto se puede arrastrar (también con mouse),
+        atada al centro por un elástico, y al soltarla vuelve con un resorte que conserva la velocidad de la mano; atrapada a mitad de camino, se
+        detiene donde está. Con zoom, el borde es elástico y un lanzamiento sigue por inercia hasta posarse dentro del marco. Al cambiar de foto, la
+        anterior se congela donde estaba (<code>sk-lightbox__ghost</code>) y sale desvaneciéndose mientras la nueva entra, así nada cambia de tamaño
+        de golpe; ningún movimiento se cancela a la mitad. Mientras el resorte corre, el visor lleva <code>data-sk-settling</code>.
+    en:
+      title: A loose photo that springs back, and a photo change that crosses instead of cutting
+      body: >-
+        Previous and Next become the same <code>ghost</code> <code>sm</code> button as Close. The stage no longer clips: the photo's shadow shows
+        whole and a dragged or zoomed photo passes under the controls. At fit the photo can be dragged (with a mouse too), tethered to the centre,
+        and on release it springs home carrying the hand's speed; caught on the way, it stops where it is. Zoomed in, the edge is elastic and a fling
+        coasts on its momentum until it settles inside the frame. On a photo change the outgoing one is frozen where it was
+        (<code>sk-lightbox__ghost</code>) and fades out as the new one comes in, so nothing changes size in one frame; no motion is cut short.
+        While the spring runs the viewer carries <code>data-sk-settling</code>.
+  - date: 2026-09-24
+    kind: feature
+    target: Lightbox
+    es:
+      title: Un placeholder con la forma de la foto, nunca un recorte
+      body: >-
+        Nueva opción <code>triggerThumbnail</code> (<code>data-lightbox-thumbnail</code>; <code>thumbnail</code> en React): una copia pequeña
+        de la foto en sus propias proporciones, que se muestra mientras carga la completa y es lo que vuela desde la miniatura. La miniatura del
+        trigger sólo se usa como placeholder si tiene la forma de la foto: un recorte cuadrado de una grilla ya no se convierte en otra imagen al
+        llegar la real. El placeholder se dibuja sólo cuando está completo (<code>data-sk-ready</code>), y apuntar o enfocar una miniatura precarga
+        su placeholder y su foto.
+    en:
+      title: A placeholder in the photo's shape, never a crop
+      body: >-
+        New <code>triggerThumbnail</code> option (<code>data-lightbox-thumbnail</code>; <code>thumbnail</code> in React): a small copy of the
+        photo at its own proportions, shown while the full one loads and what flies out of the thumbnail. The trigger's own image stands in only
+        when it is the photo's shape: a square crop from a grid no longer turns into a different picture when the real one lands. The placeholder
+        is drawn only once whole (<code>data-sk-ready</code>), and pointing at or focusing a thumbnail preloads its placeholder and its photo.

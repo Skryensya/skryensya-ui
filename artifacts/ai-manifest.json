@@ -4983,6 +4983,58 @@
             },
             "kind": "feature",
             "target": "Lightbox"
+          },
+          {
+            "date": "2026-09-24",
+            "en": {
+              "body": "The viewer did not dim the page: its background was an invalid declaration the browser dropped. Now the <code>::backdrop</code> dims and blurs the page (<code>--sk-lightbox-backdrop-bg</code>), the photo has its own corners and shadow (<code>--sk-lightbox-image-radius</code>, <code>--sk-lightbox-image-shadow</code>) and the caption sits on the backdrop with no box of its own.",
+              "title": "A real backdrop behind the viewer, and the photo lifted off it"
+            },
+            "es": {
+              "body": "El visor no oscurecía la página: su fondo era una declaración inválida que el navegador descartaba. Ahora el <code>::backdrop</code> oscurece y desenfoca la página (<code>--sk-lightbox-backdrop-bg</code>), la foto tiene esquinas y sombra propias (<code>--sk-lightbox-image-radius</code>, <code>--sk-lightbox-image-shadow</code>) y el pie de foto va sin caja, sobre el fondo.",
+              "title": "Un fondo real detrás del visor, y la foto separada de él"
+            },
+            "kind": "bugfix",
+            "target": "Lightbox"
+          },
+          {
+            "date": "2026-09-24",
+            "en": {
+              "body": "Zoom in, zoom out and fit move to a vertical bar like Canvas's (<code>sk-lightbox__zoom</code>), which lies down in the toolbar on narrow screens and hides on touch; Close and the counter lose their surfaces, and every button is <code>sm</code> except Previous and Next on a desktop. With a mouse, the wheel and a double click no longer zoom: only the buttons and the keyboard do; touch keeps pinch and double tap. A photo of known size has its box before it loads, the thumbnail hides on the page while the photo is in flight, closing mid-open turns the flight around from where it is, and with no thumbnail on screen (or zoomed in) it fades instead of vanishing. Dragging the photo only moves it a little (a fifth of the stage, 120px at most) and it is home in a fifth of a second; letting go outside the window no longer leaves it stuck to the cursor. The photo grows out of the thumbnail that opened it and flies back on close, the next one slides in from its side, and the controls drift in from their edge. Reduced motion keeps only the fades.",
+              "title": "Fewer buttons, Canvas's zoom bar, and a photo that grows out of its thumbnail"
+            },
+            "es": {
+              "body": "Acercar, alejar y ajustar pasan a una barra vertical como la de Canvas (<code>sk-lightbox__zoom</code>), que en pantallas angostas se acuesta en la barra superior y en táctil se oculta; Cerrar y el contador quedan sin superficie, y todo es <code>sm</code> salvo Anterior y Siguiente en escritorio. Con mouse, la rueda y el doble clic ya no hacen zoom: sólo los botones y el teclado; en táctil siguen el pellizco y el doble toque. La foto de un tamaño conocido tiene su caja antes de cargar, la miniatura se oculta en la página mientras la foto vuela, cerrar a mitad de la apertura la devuelve desde donde va, y sin miniatura a la vista (o con zoom) se desvanece en vez de desaparecer. Arrastrar la foto sólo la mueve un poco (un 20% del cuadro, 120 px como mucho) y vuelve al centro en un quinto de segundo; soltar fuera de la ventana ya no la deja pegada al cursor. La foto crece desde la miniatura que la abrió y vuelve a ella al cerrar, la siguiente entra desde su lado y los controles aparecen desde su borde. Con movimiento reducido sólo quedan los fundidos.",
+              "title": "Menos botones, la barra de zoom de Canvas y una foto que sale de su miniatura"
+            },
+            "kind": "rework",
+            "target": "Lightbox"
+          },
+          {
+            "date": "2026-09-24",
+            "en": {
+              "body": "Previous and Next become the same <code>ghost</code> <code>sm</code> button as Close. The stage no longer clips: the photo's shadow shows whole and a dragged or zoomed photo passes under the controls. At fit the photo can be dragged (with a mouse too), tethered to the centre, and on release it springs home carrying the hand's speed; caught on the way, it stops where it is. Zoomed in, the edge is elastic and a fling coasts on its momentum until it settles inside the frame. On a photo change the outgoing one is frozen where it was (<code>sk-lightbox__ghost</code>) and fades out as the new one comes in, so nothing changes size in one frame; no motion is cut short. While the spring runs the viewer carries <code>data-sk-settling</code>.",
+              "title": "A loose photo that springs back, and a photo change that crosses instead of cutting"
+            },
+            "es": {
+              "body": "Anterior y Siguiente pasan a ser el mismo botón <code>ghost</code> <code>sm</code> que Cerrar. El escenario ya no recorta: la sombra de la foto se ve entera y una foto arrastrada o con zoom pasa por debajo de los controles. Sin zoom, la foto se puede arrastrar (también con mouse), atada al centro por un elástico, y al soltarla vuelve con un resorte que conserva la velocidad de la mano; atrapada a mitad de camino, se detiene donde está. Con zoom, el borde es elástico y un lanzamiento sigue por inercia hasta posarse dentro del marco. Al cambiar de foto, la anterior se congela donde estaba (<code>sk-lightbox__ghost</code>) y sale desvaneciéndose mientras la nueva entra, así nada cambia de tamaño de golpe; ningún movimiento se cancela a la mitad. Mientras el resorte corre, el visor lleva <code>data-sk-settling</code>.",
+              "title": "Una foto suelta que vuelve con un resorte, y un cambio de foto que se cruza en vez de cortar"
+            },
+            "kind": "rework",
+            "target": "Lightbox"
+          },
+          {
+            "date": "2026-09-24",
+            "en": {
+              "body": "New <code>triggerThumbnail</code> option (<code>data-lightbox-thumbnail</code>; <code>thumbnail</code> in React): a small copy of the photo at its own proportions, shown while the full one loads and what flies out of the thumbnail. The trigger's own image stands in only when it is the photo's shape: a square crop from a grid no longer turns into a different picture when the real one lands. The placeholder is drawn only once whole (<code>data-sk-ready</code>), and pointing at or focusing a thumbnail preloads its placeholder and its photo.",
+              "title": "A placeholder in the photo's shape, never a crop"
+            },
+            "es": {
+              "body": "Nueva opción <code>triggerThumbnail</code> (<code>data-lightbox-thumbnail</code>; <code>thumbnail</code> en React): una copia pequeña de la foto en sus propias proporciones, que se muestra mientras carga la completa y es lo que vuela desde la miniatura. La miniatura del trigger sólo se usa como placeholder si tiene la forma de la foto: un recorte cuadrado de una grilla ya no se convierte en otra imagen al llegar la real. El placeholder se dibuja sólo cuando está completo (<code>data-sk-ready</code>), y apuntar o enfocar una miniatura precarga su placeholder y su foto.",
+              "title": "Un placeholder con la forma de la foto, nunca un recorte"
+            },
+            "kind": "feature",
+            "target": "Lightbox"
           }
         ],
         "version": "0.0.1-dev"
@@ -27266,7 +27318,7 @@
       "css": "@skryensya/core/components/lightbox.css",
       "hookDetails": {
         "--sk-lightbox-backdrop-bg": {
-          "default": "color-mix(in oklch, var(--color-bg-canvas) 94%, transparent)",
+          "default": "color-mix(in oklch, var(--color-bg-canvas) 82%, transparent)",
           "output": false,
           "part": "root",
           "sheet": "@skryensya/core/components/lightbox.css"
@@ -27278,13 +27330,19 @@
           "sheet": "@skryensya/core/components/lightbox.css"
         },
         "--sk-lightbox-caption-bg": {
-          "default": "color-mix(in oklch, var(--color-bg-canvas) 82%, transparent)",
+          "default": "transparent",
           "output": false,
           "part": "root",
           "sheet": "@skryensya/core/components/lightbox.css"
         },
         "--sk-lightbox-caption-max-block-size": {
           "default": "28dvh",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/lightbox.css"
+        },
+        "--sk-lightbox-chrome-distance": {
+          "default": "var(--motion-enter-distance)",
           "output": false,
           "part": "root",
           "sheet": "@skryensya/core/components/lightbox.css"
@@ -27309,6 +27367,18 @@
         },
         "--sk-lightbox-gutter": {
           "default": "var(--space-inset-sm)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/lightbox.css"
+        },
+        "--sk-lightbox-image-radius": {
+          "default": "var(--radius-control)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/lightbox.css"
+        },
+        "--sk-lightbox-image-shadow": {
+          "default": "0 1.5rem 4rem -1rem rgb(0 0 0 / 0.6)",
           "output": false,
           "part": "root",
           "sheet": "@skryensya/core/components/lightbox.css"
@@ -27341,7 +27411,10 @@
         "--sk-lightbox-control-border-color",
         "--sk-lightbox-caption-bg",
         "--sk-lightbox-caption-max-block-size",
+        "--sk-lightbox-chrome-distance",
         "--sk-lightbox-gutter",
+        "--sk-lightbox-image-radius",
+        "--sk-lightbox-image-shadow",
         "--sk-lightbox-nav-room",
         "--sk-lightbox-trigger-radius"
       ],
@@ -27467,6 +27540,11 @@
           "prop": "src",
           "type": "string"
         },
+        "triggerThumbnail": {
+          "attr": "data-lightbox-thumbnail",
+          "prop": "thumbnailSrc",
+          "type": "string"
+        },
         "triggerTitle": {
           "attr": "data-lightbox-title",
           "prop": "title",
@@ -27506,6 +27584,7 @@
         "description": "sk-lightbox__description",
         "error": "sk-lightbox__error",
         "figure": "sk-lightbox__figure",
+        "ghost": "sk-lightbox__ghost",
         "image": "sk-lightbox__image",
         "live": "sk-lightbox__live",
         "loader": "sk-lightbox__loader",
@@ -27515,7 +27594,8 @@
         "stage": "sk-lightbox__stage",
         "title": "sk-lightbox__title",
         "toolbar": "sk-lightbox__toolbar",
-        "trigger": "sk-lightbox__trigger"
+        "trigger": "sk-lightbox__trigger",
+        "zoom": "sk-lightbox__zoom"
       },
       "semantics": {
         "Lightbox": {
@@ -27533,7 +27613,7 @@
           ],
           "useWhen": [
             "hay fotos que se muestran en miniatura y quien lee necesita verlas grandes, de a una, sin salir de la página: una galería, las fotos de un producto, las capturas de un informe",
-            "la imagen tiene detalle que sólo se lee de cerca (un plano, una captura con texto chico, una foto de producto): el visor trae zoom con botones, rueda, teclado y pellizco",
+            "la imagen tiene detalle que sólo se lee de cerca (un plano, una captura con texto chico, una foto de producto): el visor trae zoom con botones y teclado, y en táctil con pellizco y doble toque",
             "hay que abrir una imagen desde código, sin miniatura en la página: el handle abre, cierra y navega con el mismo ciclo de foco y bloqueo de scroll que un clic",
             "una galería larga: sólo carga la imagen actual y sus dos vecinas, nunca la galería entera"
           ]
@@ -27632,90 +27712,9 @@
                         ],
                         "attrs": {
                           "data-icon-only": "",
-                          "data-lightbox-action": "zoom-out",
-                          "data-size": "md",
-                          "data-variant": "translucent",
-                          "type": "button"
-                        },
-                        "children": [
-                          {
-                            "attrs": {
-                              "data-sk-icon": "zoom-out",
-                              "data-sk-icon-size": "md"
-                            },
-                            "element": "span"
-                          }
-                        ],
-                        "element": "button",
-                        "options": [
-                          "zoomOutLabel"
-                        ],
-                        "part": "control"
-                      },
-                      {
-                        "also": [
-                          "sk-button",
-                          "sk-interactive"
-                        ],
-                        "attrs": {
-                          "data-icon-only": "",
-                          "data-lightbox-action": "zoom-in",
-                          "data-size": "md",
-                          "data-variant": "translucent",
-                          "type": "button"
-                        },
-                        "children": [
-                          {
-                            "attrs": {
-                              "data-sk-icon": "zoom-in",
-                              "data-sk-icon-size": "md"
-                            },
-                            "element": "span"
-                          }
-                        ],
-                        "element": "button",
-                        "options": [
-                          "zoomInLabel"
-                        ],
-                        "part": "control"
-                      },
-                      {
-                        "also": [
-                          "sk-button",
-                          "sk-interactive"
-                        ],
-                        "attrs": {
-                          "data-icon-only": "",
-                          "data-lightbox-action": "reset-zoom",
-                          "data-size": "md",
-                          "data-variant": "translucent",
-                          "type": "button"
-                        },
-                        "children": [
-                          {
-                            "attrs": {
-                              "data-sk-icon": "fit",
-                              "data-sk-icon-size": "md"
-                            },
-                            "element": "span"
-                          }
-                        ],
-                        "element": "button",
-                        "options": [
-                          "resetZoomLabel"
-                        ],
-                        "part": "control"
-                      },
-                      {
-                        "also": [
-                          "sk-button",
-                          "sk-interactive"
-                        ],
-                        "attrs": {
-                          "data-icon-only": "",
                           "data-lightbox-action": "close",
-                          "data-size": "md",
-                          "data-variant": "translucent",
+                          "data-size": "sm",
+                          "data-variant": "ghost",
                           "type": "button"
                         },
                         "children": [
@@ -27814,8 +27813,8 @@
                 "attrs": {
                   "data-icon-only": "",
                   "data-lightbox-action": "previous",
-                  "data-size": "md",
-                  "data-variant": "translucent",
+                  "data-size": "sm",
+                  "data-variant": "ghost",
                   "type": "button"
                 },
                 "children": [
@@ -27842,8 +27841,8 @@
                 "attrs": {
                   "data-icon-only": "",
                   "data-lightbox-action": "next",
-                  "data-size": "md",
-                  "data-variant": "translucent",
+                  "data-size": "sm",
+                  "data-variant": "ghost",
                   "type": "button"
                 },
                 "children": [
@@ -27860,6 +27859,93 @@
                   "nextLabel"
                 ],
                 "part": "nav"
+              },
+              {
+                "children": [
+                  {
+                    "also": [
+                      "sk-button",
+                      "sk-interactive"
+                    ],
+                    "attrs": {
+                      "data-icon-only": "",
+                      "data-lightbox-action": "zoom-in",
+                      "data-size": "sm",
+                      "data-variant": "ghost",
+                      "type": "button"
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "data-sk-icon": "zoom-in",
+                          "data-sk-icon-size": "md"
+                        },
+                        "element": "span"
+                      }
+                    ],
+                    "element": "button",
+                    "options": [
+                      "zoomInLabel"
+                    ],
+                    "part": "control"
+                  },
+                  {
+                    "also": [
+                      "sk-button",
+                      "sk-interactive"
+                    ],
+                    "attrs": {
+                      "data-icon-only": "",
+                      "data-lightbox-action": "zoom-out",
+                      "data-size": "sm",
+                      "data-variant": "ghost",
+                      "type": "button"
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "data-sk-icon": "zoom-out",
+                          "data-sk-icon-size": "md"
+                        },
+                        "element": "span"
+                      }
+                    ],
+                    "element": "button",
+                    "options": [
+                      "zoomOutLabel"
+                    ],
+                    "part": "control"
+                  },
+                  {
+                    "also": [
+                      "sk-button",
+                      "sk-interactive"
+                    ],
+                    "attrs": {
+                      "data-icon-only": "",
+                      "data-lightbox-action": "reset-zoom",
+                      "data-size": "sm",
+                      "data-variant": "ghost",
+                      "type": "button"
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "data-sk-icon": "fit",
+                          "data-sk-icon-size": "md"
+                        },
+                        "element": "span"
+                      }
+                    ],
+                    "element": "button",
+                    "options": [
+                      "resetZoomLabel"
+                    ],
+                    "part": "control"
+                  }
+                ],
+                "element": "div",
+                "part": "zoom"
               },
               {
                 "also": [
@@ -27899,7 +27985,8 @@
             "triggerDescription",
             "triggerCredit",
             "triggerWidth",
-            "triggerHeight"
+            "triggerHeight",
+            "triggerThumbnail"
           ],
           "react": {
             "from": "@skryensya/react/lightbox",
@@ -47891,7 +47978,7 @@
     "working": "0.0.1"
   },
   "schemaVersion": "2.3",
-  "sourceHash": "ff939903fdab75ec",
+  "sourceHash": "1cb2fecd44e045a0",
   "vocabulary": {
     "a11y": "When `when` holds, one of `requiresOneOf` must be given: an option, a raw attribute, a filled slot, or a child signature by name.",
     "atLeastOneOf": "At least one member of each group counts: a filled slot, a boolean option set to true, or an option other than its default.",

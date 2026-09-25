@@ -206,6 +206,42 @@ function forwardWheelToParent(event: WheelEvent): void {
   window.parent.scrollBy({ left: event.deltaX, top: event.deltaY });
 }
 
+/**
+ * A MODAL IN A PREVIEW LOCKS THE PREVIEW, NEVER THE DOCS PAGE. `scroll-lock.css` freezes the
+ * frame's own document (`html:has(dialog:modal)` only sees that one), and that is the demo working
+ * as it would on a real page; the docs around it keep scrolling, because the reader is reading a
+ * page about the component, not using it. The frame's wheel forwarding carries on as usual.
+ *
+ * What the frame does do is bring itself into view as the modal opens: the modal fills the FRAME,
+ * not the screen, and a frame taller than the window would open the photo centred on a spot the
+ * reader has to go looking for.
+ */
+function watchFrameModal(): void {
+  if (!frame) return;
+  const host = frame;
+  let modal = false;
+  const sync = () => {
+    const next = document.querySelector("dialog:modal") !== null;
+    if (next === modal) return;
+    modal = next;
+    if (!next) return;
+    const rect = host.getBoundingClientRect();
+    const viewport = window.parent.innerHeight;
+    if (rect.top < 0 || rect.bottom > viewport) {
+      host.scrollIntoView({ block: rect.height > viewport ? "center" : "nearest", behavior: "instant" });
+    }
+  };
+  /* `showModal()` and `close()` both write `open`, and a demo that re-renders swaps the node. */
+  const observer = new MutationObserver(sync);
+  observer.observe(document.documentElement, {
+    subtree: true,
+    childList: true,
+    attributes: true,
+    attributeFilter: ["open"],
+  });
+  window.addEventListener("pagehide", () => observer.disconnect(), { once: true });
+}
+
 function syncRootState(): void {
   for (const name of rootAttributes) {
     const value = parentRoot.getAttribute(name);
@@ -719,6 +755,7 @@ async function boot(): Promise<void> {
   // Not passive: forwarding depends on preventDefault() to stop the (otherwise no-op) local scroll
   // attempt cleanly, rather than racing it.
   window.addEventListener("wheel", forwardWheelToParent, { passive: false });
+  watchFrameModal();
   window.addEventListener(
     "pagehide",
     () => window.removeEventListener("wheel", forwardWheelToParent),

@@ -202,10 +202,7 @@ export function Lightbox({
       <div className={lightboxParts.toolbar}>
         <p aria-hidden="true" className={lightboxParts.counter} />
         <div className={lightboxParts.actions}>
-          <LightboxControl action="zoom-out" icon="zoom-out" label={zoomOutLabel} />
-          <LightboxControl action="zoom-in" icon="zoom-in" label={zoomInLabel} />
-          <LightboxControl action="reset-zoom" icon="fit" label={resetZoomLabel} />
-          <LightboxControl action="close" icon="close" label={closeLabel} />
+          <LightboxControl action="close" icon="close" label={closeLabel} look="close" />
         </div>
       </div>
       <figure className={lightboxParts.figure}>
@@ -222,24 +219,37 @@ export function Lightbox({
           <p className={lightboxParts.credit} hidden />
         </figcaption>
       </figure>
-      <LightboxControl action="previous" icon="chevron-left" label={previousLabel} nav />
-      <LightboxControl action="next" icon="chevron-right" label={nextLabel} nav />
+      <LightboxControl action="previous" icon="chevron-left" label={previousLabel} look="nav" />
+      <LightboxControl action="next" icon="chevron-right" label={nextLabel} look="nav" />
+      <div className={lightboxParts.zoom}>
+        <LightboxControl action="zoom-in" icon="zoom-in" label={zoomInLabel} look="zoom" />
+        <LightboxControl action="zoom-out" icon="zoom-out" label={zoomOutLabel} look="zoom" />
+        <LightboxControl action="reset-zoom" icon="fit" label={resetZoomLabel} look="zoom" />
+      </div>
       <p aria-atomic="true" aria-live="polite" className={`${lightboxParts.live} sk-visually-hidden`} />
     </dialog>
   );
 }
 
+/* The contract's three looks, see `controlLook` in `@skryensya/core/lightbox`. */
+const controlLook = {
+  zoom: { variant: "ghost", size: "sm", icon: "md" },
+  close: { variant: "ghost", size: "sm", icon: "md" },
+  nav: { variant: "translucent", size: "md", icon: "md" },
+} as const;
+
 function LightboxControl({
   action,
   icon,
   label,
-  nav = false,
+  look,
 }: {
   action: LightboxAction;
   icon: StableIconName;
   label: string;
-  nav?: boolean;
+  look: keyof typeof controlLook;
 }) {
+  const nav = look === "nav";
   return (
     <button
       aria-label={label}
@@ -249,12 +259,12 @@ function LightboxControl({
           : `${lightboxParts.control} sk-button sk-interactive`
       }
       data-icon-only=""
-      data-size="md"
-      data-variant="translucent"
+      data-size={controlLook[look].size}
+      data-variant={controlLook[look].variant}
       type="button"
       {...{ [lightboxAttrs.action]: action }}
     >
-      <Icon name={icon} size="md" />
+      <Icon name={icon} size={controlLook[look].icon} />
     </button>
   );
 }
@@ -275,6 +285,11 @@ export type LightboxTriggerProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>,
   credit?: string;
   width?: number;
   height?: number;
+  /**
+   * A small copy of the full image at its own proportions, shown blurred while it loads. Give one
+   * whenever the thumbnail is a crop: a crop is never used as the placeholder.
+   */
+  thumbnail?: string;
   /** The thumbnail. Its `alt` names the link. */
   children: ReactNode;
 };
@@ -293,6 +308,7 @@ function LightboxTrigger({
   credit,
   width,
   height,
+  thumbnail,
   children,
   className,
   ...props
@@ -311,6 +327,7 @@ function LightboxTrigger({
         [lightboxAttrs.credit]: credit,
         [lightboxAttrs.width]: width,
         [lightboxAttrs.height]: height,
+        [lightboxAttrs.thumbnail]: thumbnail,
       }}
     >
       {children}

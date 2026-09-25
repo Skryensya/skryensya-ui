@@ -520,12 +520,13 @@ describe("Lightbox: accessibility", () => {
     act(() => handle.open({ images: gallery }));
     fireEvent.load(image());
     act(() => handle.zoomIn());
-    const next = button("Next image");
-    next.focus();
+    /* Close opens the order; the zoom bar, after previous and next, ends it. */
+    const last = button("Reset zoom");
+    last.focus();
     key("Tab");
-    expect(document.activeElement).toBe(button("Zoom out"));
+    expect(document.activeElement).toBe(button("Close"));
     key("Tab", { shiftKey: true });
-    expect(document.activeElement).toBe(next);
+    expect(document.activeElement).toBe(last);
   });
 
   it("returns focus to the thumbnail that opened it", () => {

@@ -11,11 +11,24 @@ import {
   lightboxAttrs,
   lightboxClampView,
   lightboxContract,
+  lightboxElasticView,
+  lightboxFlingDistance,
+  LIGHTBOX_SPRING_GLIDE,
+  LIGHTBOX_SPRING_RELEASE,
+  LIGHTBOX_TETHER_REACH,
+  LIGHTBOX_TETHER_MAX,
+  lightboxSpringSettled,
+  lightboxSpringStep,
+  lightboxTether,
+  lightboxUntether,
+  type LightboxSpring,
+  type LightboxSpringAxis,
   lightboxKeyAction,
   lightboxParts,
   lightboxPinchView,
   lightboxPreloadIndices,
   lightboxReindex,
+  lightboxSameShape,
   lightboxStep,
   lightboxSwipeVerdict,
   lightboxTransform,
@@ -38,7 +51,8 @@ import {
  *
  * WHAT IT WRITES, and nothing else: the two `<img>` it creates inside the stage, the text of the
  * counter, caption and live region, `hidden`/`aria-disabled` on the parts that come and go, the
- * image's `transform`, and a few `data-sk-*` flags on the root. React renders none of those, so the
+ * image's `transform`, the Web Animations it runs on the images (see MOTION below), and a few
+ * `data-sk-*` flags on the root. React renders none of those, so the
  * two never fight over an attribute.
  *
  * ONE LIFECYCLE, whatever opens it. A thumbnail click, a button, another component and `open()` from
@@ -158,7 +172,13 @@ export function getLightboxController(dialog: HTMLElement): LightboxController |
   return controllers.get(dialog) ?? null;
 }
 
-/** A trigger, read as the image it opens. `href` is the image; the rest are data attributes. */
+/**
+ * A trigger, read as the image it opens. `href` is the image; the rest are data attributes.
+ *
+ * THE PLACEHOLDER IS NEVER A CROP. `data-lightbox-thumbnail` names one outright. Otherwise the
+ * trigger's own `<img>` stands in only when it is the photo's shape: a square crop from a grid,
+ * blurred inside a 3:2 box, turned into a different picture the moment the real photo landed.
+ */
 export function lightboxImageFromTrigger(trigger: Element): LightboxImage {
   const thumb = trigger.querySelector("img");
   const number = (attr: string): number | undefined => {
@@ -166,7 +186,16 @@ export function lightboxImageFromTrigger(trigger: Element): LightboxImage {
     return Number.isFinite(value) && value > 0 ? value : undefined;
   };
   const text = (attr: string): string | undefined => trigger.getAttribute(attr)?.trim() || undefined;
-  const thumbnailSrc = thumb?.currentSrc || thumb?.getAttribute("src") || undefined;
+  const width = number(lightboxAttrs.width);
+  const height = number(lightboxAttrs.height);
+  const own = thumb?.currentSrc || thumb?.getAttribute("src") || undefined;
+  /* Measured when it can be (a thumbnail on the page has almost always loaded by the click); one that
+     cannot be yet is checked again as the placeholder loads (`onPlaceholderLoad`). */
+  const ownFits =
+    !thumb?.naturalWidth || !thumb.naturalHeight || !width || !height
+      ? true
+      : lightboxSameShape(thumb.naturalWidth, thumb.naturalHeight, width, height);
+  const thumbnailSrc = text(lightboxAttrs.thumbnail) ?? (ownFits ? own : undefined);
   return {
     src: trigger.getAttribute(lightboxAttrs.src) ?? trigger.getAttribute("href") ?? "",
     alt: trigger.getAttribute(lightboxAttrs.alt) ?? thumb?.getAttribute("alt") ?? "",
@@ -174,8 +203,8 @@ export function lightboxImageFromTrigger(trigger: Element): LightboxImage {
     title: text(lightboxAttrs.title),
     description: text(lightboxAttrs.description),
     credit: text(lightboxAttrs.credit),
-    width: number(lightboxAttrs.width),
-    height: number(lightboxAttrs.height),
+    width,
+    height,
   };
 }
 
@@ -222,6 +251,7 @@ export function connectLightbox(dialog: HTMLDialogElement, initial: LightboxConf
   const captionCredit = part("credit");
   const errorText = part("error");
   const live = part("live");
+  const zoomBar = part("zoom");
   const controls = Array.from(dialog.querySelectorAll<HTMLButtonElement>(`[${lightboxAttrs.action}]`));
   const control = (action: LightboxAction) =>
     controls.find((button) => button.getAttribute(lightboxAttrs.action) === action) ?? null;
@@ -250,7 +280,21 @@ export function connectLightbox(dialog: HTMLDialogElement, initial: LightboxConf
   let isOpen = false;
   let status: LightboxStatus = "idle";
   let view: LightboxView = LIGHTBOX_FIT_VIEW;
+  type Spring = {
+    readonly kind: "offset" | "pan";
+    readonly tuning: LightboxSpring;
+    readonly target: { x: number; y: number };
+    x: LightboxSpringAxis;
+    y: LightboxSpringAxis;
+    last: number;
+    raf: number;
+  };
+  /* The release spring, if one is running; see THE SPRING below. */
+  let spring: Spring | null = null;
   let returnFocus: HTMLElement | null = null;
+  let closing = false;
+  /* Which close a finished animation belongs to, so a stale one never closes a reopened viewer. */
+  let closeToken = 0;
   let sessionFallback: (() => HTMLElement | null) | null = null;
   let state: LightboxState = snapshot();
   const listeners = new Set<() => void>();
@@ -331,6 +375,7 @@ export function connectLightbox(dialog: HTMLDialogElement, initial: LightboxConf
   const renderZoomControls = (): void => {
     const enabled = zoomEnabled();
     const ready = canZoom();
+    if (zoomBar) zoomBar.hidden = !enabled;
     for (const action of ["zoom-in", "zoom-out", "reset-zoom"] as const) {
       const button = control(action);
       if (!button) continue;
@@ -396,9 +441,17 @@ export function connectLightbox(dialog: HTMLDialogElement, initial: LightboxConf
     if (current.width && current.height) {
       img.width = current.width;
       img.height = current.height;
+      /* The attributes alone do not do it: `inline-size: auto` beats their presentational width, and
+         an image with no pixels yet is 0×0. The stylesheet turns these two into a fitted box. */
+      img.style.setProperty("--sk-lightbox-image-width", `${current.width}px`);
+      img.style.setProperty("--sk-lightbox-image-ratio", `${current.width} / ${current.height}`);
+      img.setAttribute(lightboxAttrs.sized, "");
     } else {
       img.removeAttribute("width");
       img.removeAttribute("height");
+      img.style.removeProperty("--sk-lightbox-image-width");
+      img.style.removeProperty("--sk-lightbox-image-ratio");
+      img.removeAttribute(lightboxAttrs.sized);
     }
   };
 
@@ -415,6 +468,9 @@ export function connectLightbox(dialog: HTMLDialogElement, initial: LightboxConf
       sizeTo(placeholder, current);
       placeholder.src = thumb;
       placeholder.hidden = false;
+      /* Drawn only once it is whole: a placeholder arriving line by line is worse than none. */
+      if (placeholder.complete && placeholder.naturalWidth > 0) onPlaceholderLoad();
+      else placeholder.removeAttribute(lightboxAttrs.ready);
     } else {
       placeholder.hidden = true;
       placeholder.removeAttribute("src");
@@ -455,13 +511,59 @@ export function connectLightbox(dialog: HTMLDialogElement, initial: LightboxConf
   };
   const onImageLoad = onImageSettled("loaded");
   const onImageError = onImageSettled("error");
+  /* The same rule for a thumbnail passed in code (`open({ images })`), checked once it has a size:
+     a crop is dropped before it can stand in for the photo. */
+  function onPlaceholderLoad(): void {
+    const current = images[index];
+    if (!current || placeholder.hidden) return;
+    if (
+      current.width &&
+      current.height &&
+      !lightboxSameShape(placeholder.naturalWidth, placeholder.naturalHeight, current.width, current.height)
+    ) {
+      placeholder.hidden = true;
+      return;
+    }
+    placeholder.setAttribute(lightboxAttrs.ready, "");
+  }
+  placeholder.addEventListener("load", onPlaceholderLoad);
   image.addEventListener("load", onImageLoad);
   image.addEventListener("error", onImageError);
 
+  /*
+   * WARMED ON INTENT. A pointer resting on a thumbnail, or focus landing on one, is a reader about to
+   * open it: its placeholder and its full image start downloading then, so by the click the
+   * placeholder is usually whole (the flight out of the thumbnail has something to fly) and the photo
+   * often is too. Kept apart from the neighbours' cache, and across closes, so a gallery browsed by
+   * hovering does not refetch; a dozen at most. Never on Save-Data.
+   */
+  const warmed = new Map<string, HTMLImageElement>();
+  const saveData = (): boolean =>
+    Boolean((win.navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData);
+  const warm = (src: string | undefined): void => {
+    if (!src || warmed.has(src) || preloaded.has(src)) return;
+    const Ctor = (win as typeof globalThis).Image ?? Image;
+    const img = new Ctor();
+    img.decoding = "async";
+    img.src = src;
+    warmed.set(src, img);
+    while (warmed.size > 12) warmed.delete(warmed.keys().next().value!);
+  };
+  const onTriggerIntent = (event: Event): void => {
+    if (saveData() || !dialog.id) return;
+    const trigger = (event.target as Element | null)?.closest?.<HTMLElement>(`[${lightboxAttrs.opens}]`);
+    if (!trigger || trigger.getAttribute(lightboxAttrs.opens) !== dialog.id) return;
+    const next = lightboxImageFromTrigger(trigger);
+    warm(next.thumbnailSrc);
+    warm(next.src);
+  };
+
   const preloadNeighbours = (): void => {
-    const connection = (win.navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
-    if (connection?.saveData) return;
+    if (saveData()) return;
     for (const at of lightboxPreloadIndices(index, images.length, loop())) {
+      /* The neighbour's placeholder too, so a swap to a photo still loading crosses to its blur, not
+         to nothing. */
+      warm(images[at]!.thumbnailSrc);
       const src = images[at]!.src;
       const cached = preloaded.get(src);
       preloaded.delete(src);
@@ -490,6 +592,7 @@ export function connectLightbox(dialog: HTMLDialogElement, initial: LightboxConf
   }
 
   const setView = (next: LightboxView, publish = true): void => {
+    stopSpring();
     view = next;
     applyView();
     if (publish) commit();
@@ -511,11 +614,303 @@ export function connectLightbox(dialog: HTMLDialogElement, initial: LightboxConf
     else zoomTo(LIGHTBOX_DOUBLE_TAP_ZOOM, anchor);
   };
 
+  /*
+   * ---- MOTION ----
+   *
+   * The photo GROWS OUT OF THE THUMBNAIL that opened it and shrinks back into it on close, so the
+   * reader never loses track of where it came from. It is the classic FLIP: measure the thumbnail
+   * and the photo's fitted box, start the photo scaled and moved onto the thumbnail, clipped to the
+   * thumbnail's crop (a square thumbnail of a 3:2 photo is a `cover` crop), and let it settle. Only
+   * `translate`, `scale`, `clip-path` and `opacity` move, all composited, and none of them is the
+   * `transform` zoom writes. Next and previous slide the new photo in from the side it comes from.
+   *
+   * WHAT KEEPS IT FROM BREAKING, each one a way it did:
+   *   - the thumbnail on the page hides while the photo is in flight (`data-sk-lightbox-source`),
+   *     so there are never two copies of it on screen, and comes back exactly as the photo lands;
+   *   - the photo's box is known before it loads (`data-sk-sized`), so there is always something to
+   *     measure, and what flies before it arrives is the sharp thumbnail, not a blur;
+   *   - closing mid-open REVERSES the flight from wherever it is, instead of jumping to full size;
+   *   - a swipe down flies back from where the finger let go, not from the centre;
+   *   - with no thumbnail on screen, or zoomed in, the photo fades (and settles, motion allowing)
+   *     instead of vanishing, and the fade runs on the stage, so a failed image never shows the
+   *     browser's broken-image glyph on its way out;
+   *   - opening again while it closes cancels the close and carries on, with nothing left behind.
+   *
+   * Web Animations rather than classes, because the numbers are measured, and because an animation
+   * that is cancelled leaves nothing behind. Durations and easings are the system's motion tokens,
+   * read off the dialog, so a theme retunes them in CSS. Reduced motion keeps only the fades. Without
+   * `Element.animate` (jsdom) nothing runs and everything is immediate.
+   */
+  const canAnimate = (): boolean => typeof image.animate === "function";
+  const canMove = (): boolean =>
+    canAnimate() && !win.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  const token = (name: string): string => win.getComputedStyle(dialog).getPropertyValue(name).trim();
+  const ms = (name: string, fallback: number): number => {
+    const raw = token(name);
+    const value = Number.parseFloat(raw);
+    if (!Number.isFinite(value)) return fallback;
+    return raw.endsWith("ms") ? value : raw.endsWith("s") ? value * 1000 : value;
+  };
+  const timing = (kind: "release" | "navigate" | "enter" | "exit", fallback: number): KeyframeAnimationOptions => ({
+    duration: ms(`--motion-${kind}-duration`, fallback),
+    easing: token(`--motion-${kind}-easing`) || "ease",
+  });
+  const px = (value: string): number => Number.parseFloat(value) || 0;
+  const visibleImages = (): HTMLImageElement[] => [image, placeholder].filter((img) => !img.hidden);
+
+  /* The thumbnail currently hidden on the page because the photo is standing in for it. */
+  let source: HTMLElement | null = null;
+  const hideSource = (thumb: HTMLElement): void => {
+    showSource();
+    /* The whole trigger, not only its `<img>`: a frame around it (ImageFrame's ground) would show. */
+    source = thumb.closest<HTMLElement>(`[${lightboxAttrs.opens}]`) ?? thumb;
+    source.setAttribute(lightboxAttrs.source, "");
+  };
+  const showSource = (): void => {
+    source?.removeAttribute(lightboxAttrs.source);
+    source = null;
+  };
+
+  /* The open's flight, kept so a close that lands mid-flight can reverse it. */
+  let flight: Animation[] = [];
+
+  /* Every animation this file started, including the close's, which holds its last frame. CSS
+     transitions on the same elements are left alone. */
+  const stopMotion = (): void => {
+    const Transition = (win as typeof globalThis).CSSTransition;
+    for (const element of [image, placeholder, stage]) {
+      for (const animation of element.getAnimations?.() ?? []) {
+        if (Transition && animation instanceof Transition) continue;
+        animation.cancel();
+      }
+    }
+    flight = [];
+    showSource();
+  };
+
+  /** The thumbnail a trigger shows, which is what the photo flies to and from. */
+  const thumbnailOf = (trigger: Element | null | undefined): HTMLElement | null => {
+    if (!trigger || !trigger.isConnected) return null;
+    const thumb = trigger.querySelector<HTMLElement>("img") ?? (trigger as HTMLElement);
+    const rect = thumb.getBoundingClientRect();
+    const onScreen =
+      rect.width > 0 &&
+      rect.height > 0 &&
+      rect.bottom > 0 &&
+      rect.right > 0 &&
+      rect.top < win.innerHeight &&
+      rect.left < win.innerWidth;
+    return onScreen ? thumb : null;
+  };
+
+  /** Where a swipe left the photo, which the close flies back from. */
+  const dragOffset = (): { x: number; y: number } => ({
+    x: px(dialog.style.getPropertyValue("--sk-lightbox-drag-x")),
+    y: px(dialog.style.getPropertyValue("--sk-lightbox-drag-y")),
+  });
+
+  /** Where the photo is drawn right now: the drag offset plus whatever slide is still running on it. */
+  const drawnTranslate = (img: HTMLElement): { x: number; y: number } => {
+    const [x = "0", y = "0"] = win.getComputedStyle(img).translate.split(" ");
+    return { x: px(x), y: px(y) };
+  };
+
+  /** The two ends of one photo's FLIP between its fitted box and a thumbnail. */
+  const flipFrames = (img: HTMLImageElement, thumb: HTMLElement): { onThumb: Keyframe; fitted: Keyframe } | null => {
+    const drag = drawnTranslate(img);
+    const rect = img.getBoundingClientRect();
+    /* The fitted box itself, without the offset the rect includes: the flight starts where it is drawn. */
+    const to = { left: rect.left - drag.x, top: rect.top - drag.y, width: rect.width, height: rect.height };
+    const from = thumb.getBoundingClientRect();
+    if (!to.width || !to.height || !from.width || !from.height) return null;
+    const scale = Math.max(from.width / to.width, from.height / to.height);
+    const dx = from.left + from.width / 2 - (to.left + to.width / 2);
+    const dy = from.top + from.height / 2 - (to.top + to.height / 2);
+    /* The clip lives in the photo's own, unscaled box: the thumbnail's crop, divided back by the scale. */
+    const insetX = Math.max(0, (to.width - from.width / scale) / 2);
+    const insetY = Math.max(0, (to.height - from.height / scale) / 2);
+    /* The rounding is often the frame's (an ImageFrame clips its `<img>`), so the largest on the way up. */
+    const rounding = [thumb, thumb.parentElement, thumb.closest(`[${lightboxAttrs.opens}]`)].map((element) =>
+      element ? px(win.getComputedStyle(element).borderTopLeftRadius) : 0,
+    );
+    const ownRadius = px(win.getComputedStyle(img).borderTopLeftRadius);
+    return {
+      onThumb: {
+        translate: `${dx}px ${dy}px`,
+        scale: `${scale}`,
+        clipPath: `inset(${insetY}px ${insetX}px round ${Math.max(...rounding) / scale}px)`,
+      },
+      fitted: {
+        translate: `${drag.x}px ${drag.y}px`,
+        scale: "1",
+        clipPath: `inset(0px 0px round ${ownRadius}px)`,
+      },
+    };
+  };
+
+  /** Opening: out of the thumbnail when there is one on screen, otherwise a fade and a small settle. */
+  const animateIn = (trigger: Element | null | undefined): void => {
+    if (!canAnimate()) return;
+    stopMotion();
+    clearGhosts();
+    /* A thumbnail, not whatever button a script opened it from. */
+    const thumb = canMove() && trigger?.hasAttribute(lightboxAttrs.opens) ? thumbnailOf(trigger) : null;
+    const frames = thumb ? visibleImages().map((img) => [img, flipFrames(img, thumb)] as const) : [];
+    if (thumb && frames.length > 0 && frames.every(([, pair]) => pair)) {
+      const settle = timing("release", 320);
+      /* The move is ADDED to the photo's own translate, not written over it: a hand that grabs the
+         photo mid-flight moves it at once, instead of the drag showing up, all at once, on landing.
+         The clip is its own animation because an inset does not add. */
+      flight = frames.flatMap(([img, pair]) => {
+        const { clipPath: fromClip, ...fromMove } = pair!.onThumb;
+        const { clipPath: toClip, ...toMove } = pair!.fitted;
+        return [
+          img.animate([fromMove, { ...toMove, translate: "0px 0px" }], { ...settle, composite: "add" }),
+          img.animate([{ clipPath: fromClip }, { clipPath: toClip }], settle),
+        ];
+      });
+      hideSource(thumb);
+      const landed = flight;
+      void Promise.allSettled(landed.map((animation) => animation.finished)).then(() => {
+        /* Landed, not cancelled or reversed: the backdrop covers the thumbnail from here on. */
+        if (flight === landed && landed.every((animation) => animation.playState === "finished")) {
+          flight = [];
+          showSource();
+        }
+      });
+      return;
+    }
+    const enter = timing("enter", 200);
+    stage.animate([{ opacity: 0 }, { opacity: 1 }], enter);
+    if (canMove()) {
+      for (const img of visibleImages()) {
+        img.animate([{ scale: token("--motion-materialize-scale") || "0.98" }, { scale: "1" }], enter);
+      }
+    }
+  };
+
+  /** Closing: back into the thumbnail of the photo the reader ended on, or a fade. */
+  const animateOut = (): Promise<unknown> | null => {
+    if (!canAnimate()) return null;
+
+    /* Still flying in: turn the same flight around, from exactly where it is. */
+    const inFlight = flight.filter((animation) => animation.playState === "running");
+    if (inFlight.length > 0 && source) {
+      for (const animation of inFlight) {
+        animation.effect?.updateTiming({ fill: "both" });
+        animation.reverse();
+      }
+      flight = [];
+      return Promise.allSettled(inFlight.map((animation) => animation.finished));
+    }
+
+    /* Measured BEFORE anything is cancelled: a close mid-slide flies from where the photo is drawn. */
+    const thumb = canMove() && !zoomed() ? thumbnailOf(sessionFallback?.()) : null;
+    const frames = thumb ? visibleImages().map((img) => [img, flipFrames(img, thumb)] as const) : [];
+    stopMotion();
+    if (thumb && frames.length > 0 && frames.every(([, pair]) => pair)) {
+      const back = { ...timing("navigate", 200), fill: "forwards" as const };
+      hideSource(thumb);
+      return Promise.allSettled(
+        frames.map(([img, pair]) => img.animate([pair!.fitted, pair!.onThumb], back).finished),
+      );
+    }
+
+    /* No thumbnail to go back to: fade, on the stage, and settle a little unless zoomed or reduced. */
+    const exit = { ...timing("exit", 120), fill: "forwards" as const };
+    const animations = [stage.animate([{ opacity: 1 }, { opacity: 0 }], exit)];
+    if (canMove() && !zoomed()) {
+      for (const img of visibleImages()) {
+        animations.push(img.animate([{ scale: "1" }, { scale: token("--motion-materialize-scale") || "0.98" }], exit));
+      }
+    }
+    return Promise.allSettled(animations.map((animation) => animation.finished));
+  };
+
+  /*
+   * THE SWAP CROSSES, IT NEVER CUTS. There is one `<img>`, and changing its `src` replaced the photo in
+   * a single frame: the old one gone, the new one in its own box, at another size, somewhere else.
+   * So just before the swap the outgoing photo is copied, frozen exactly where and how it is drawn
+   * (mid-drag, mid-slide, half faded), into a GHOST under the real one. The ghost leaves toward the
+   * side the reader is moving away from and fades as it goes; the new photo comes in from the other
+   * side and fades up. Neither box ever changes size on screen, which is what read as a layout shift.
+   */
+  const ghosts = new Set<HTMLImageElement>();
+  const clearGhosts = (): void => {
+    for (const ghost of ghosts) ghost.remove();
+    ghosts.clear();
+  };
+
+  const ghostOf = (): HTMLImageElement | null => {
+    if (!canAnimate()) return null;
+    const from = status === "loaded" ? image : !placeholder.hidden && placeholder.src ? placeholder : null;
+    if (!from) return null;
+    const rect = from.getBoundingClientRect();
+    const opacity = Number.parseFloat(win.getComputedStyle(from).opacity);
+    if (!rect.width || !rect.height || !(opacity > 0)) return null;
+    const box = stage.getBoundingClientRect();
+    const ghost = doc.createElement("img");
+    ghost.className = lightboxParts.ghost;
+    if (from === placeholder) ghost.setAttribute(lightboxAttrs.ghostPlaceholder, "");
+    ghost.alt = "";
+    ghost.setAttribute("aria-hidden", "true");
+    ghost.decoding = "sync";
+    ghost.src = from.currentSrc || from.src;
+    ghost.style.left = `${rect.left - box.left}px`;
+    ghost.style.top = `${rect.top - box.top}px`;
+    ghost.style.width = `${rect.width}px`;
+    ghost.style.height = `${rect.height}px`;
+    ghost.style.opacity = String(opacity);
+    stage.insertBefore(ghost, stage.firstChild);
+    ghosts.add(ghost);
+    return ghost;
+  };
+
+  /*
+   * Next and previous: the ghost goes, the new photo comes in from the side it comes from.
+   *
+   * NOTHING IS CANCELLED ON THE WAY. The slide is ADDED to whatever already moves the photo: the
+   * drag offset springing home after a swipe, a slide from the step before that has not landed, even
+   * the open's flight. Cancelling any of them is what made the photo jump to the end of a motion it
+   * had not finished. Each one runs out on its own, and they all end at zero. The fades lead the
+   * slides (done at 60%), so the two photos are never both half there for long.
+   */
+  const animateStep = (direction: 1 | -1, ghost: HTMLImageElement | null): void => {
+    if (!canAnimate()) return;
+    const settle = timing("release", 320);
+    const from = canMove() ? (rtl() ? -direction : direction) * px(token("--motion-navigate-distance")) * 4 : 0;
+    if (ghost) {
+      const out = ghost.animate(
+        [
+          { translate: "0px 0px", opacity: ghost.style.opacity },
+          { opacity: 0, offset: 0.6 },
+          { translate: `${-from}px 0px`, opacity: 0 },
+        ],
+        { ...settle, fill: "forwards" },
+      );
+      const drop = () => {
+        ghost.remove();
+        ghosts.delete(ghost);
+      };
+      void out.finished.then(drop, drop);
+    }
+    for (const img of visibleImages()) {
+      if (from) img.animate([{ translate: `${from}px 0px` }, { translate: "0px 0px" }], { ...settle, composite: "add" });
+      /* Up to the opacity it is meant to have: a photo still loading is 0 (its own transition brings
+         it in when it lands), the blurred placeholder is less than 1. */
+      const target = win.getComputedStyle(img).opacity;
+      if (Number.parseFloat(target) > 0) img.animate([{ opacity: 0 }, { opacity: target, offset: 0.6 }, { opacity: target }], settle);
+    }
+  };
+
   /* ---- navigation ---- */
-  const show = (next: number): void => {
-    if (!isOpen || next === index || next < 0 || next >= images.length) return;
+  const show = (next: number, direction?: 1 | -1): void => {
+    if (!isOpen || closing || next === index || next < 0 || next >= images.length) return;
+    const from = index;
     index = next;
+    const ghost = ghostOf();
     renderImage();
+    animateStep(direction ?? (next > from ? 1 : -1), ghost);
     renderCaption();
     renderChrome();
     announce();
@@ -527,7 +922,7 @@ export function connectLightbox(dialog: HTMLDialogElement, initial: LightboxConf
 
   const step = (delta: 1 | -1): void => {
     const next = lightboxStep(index, delta, images.length, loop());
-    if (next !== null) show(next);
+    if (next !== null) show(next, delta);
   };
 
   /* ---- gestures ---- */
@@ -540,9 +935,15 @@ export function connectLightbox(dialog: HTMLDialogElement, initial: LightboxConf
     readonly startAt: number;
     start: LightboxView;
     moved: boolean;
-    readonly mode: "pan" | "swipe" | "none";
+    readonly mode: "pan" | "swipe";
     dx: number;
     dy: number;
+    /* Where a photo at fit was, in untethered px, when the hand caught it (mid-spring, or 0). */
+    readonly base: { x: number; y: number };
+    /* The last ~100ms of the pointer, for the speed it is let go at. */
+    readonly samples: { t: number; x: number; y: number }[];
+    /* It stopped a spring: a press that catches a moving photo is never also a click on the backdrop. */
+    readonly caught: boolean;
   };
   type Pinch = {
     readonly kind: "pinch";
@@ -555,7 +956,6 @@ export function connectLightbox(dialog: HTMLDialogElement, initial: LightboxConf
   let gestureBounds: { fitted: LightboxSize; stage: LightboxSize } | null = null;
   let suppressClick = false;
   let lastTap: { at: number; x: number; y: number } | null = null;
-  let lastPointerType = "mouse";
   let frame = 0;
   let pendingView: LightboxView | null = null;
 
@@ -577,17 +977,118 @@ export function connectLightbox(dialog: HTMLDialogElement, initial: LightboxConf
     commit();
   };
 
+  /*
+   * ---- THE SPRING ----
+   *
+   * A released photo is not handed to a CSS transition: a transition starts from rest and runs a fixed
+   * curve, so a photo thrown fast and a photo set down gently came home exactly the same way, and a
+   * photo caught on its way back jumped to wherever the transition was going. Here each axis is a
+   * damped spring that starts with the hand's own speed, and grabbing it again simply stops it where
+   * it is drawn. `data-sk-settling` switches the stylesheet's transitions off while it runs. Reduced
+   * motion (and a DOM with nothing to animate, like jsdom) skips it: the photo is set home at once.
+   */
+
+  function stopSpring(): void {
+    if (!spring) return;
+    win.cancelAnimationFrame(spring.raf);
+    const wasPan = spring.kind === "pan";
+    spring = null;
+    dialog.removeAttribute(lightboxAttrs.settling);
+    if (wasPan) commit();
+  }
+
+  const writeSpring = (current: Spring, x: number, y: number): void => {
+    if (current.kind === "offset") writeDragOffset(x, y);
+    else {
+      view = { x, y, scale: view.scale };
+      applyView();
+    }
+  };
+
+  const runSpring = (
+    kind: Spring["kind"],
+    from: { x: number; y: number },
+    velocity: { x: number; y: number },
+    target: { x: number; y: number },
+    tuning: LightboxSpring,
+  ): void => {
+    stopSpring();
+    if (!canMove()) {
+      if (kind === "offset") writeDragOffset(target.x, target.y);
+      else setView({ x: target.x, y: target.y, scale: view.scale });
+      return;
+    }
+    const current: Spring = {
+      kind,
+      tuning,
+      target,
+      x: { position: from.x, velocity: velocity.x },
+      y: { position: from.y, velocity: velocity.y },
+      last: win.performance.now(),
+      raf: 0,
+    };
+    const tick = (now: number): void => {
+      if (spring !== current) return;
+      const dt = now - current.last;
+      current.last = now;
+      current.x = lightboxSpringStep(current.x, target.x, dt, tuning);
+      current.y = lightboxSpringStep(current.y, target.y, dt, tuning);
+      if (lightboxSpringSettled(current.x, target.x) && lightboxSpringSettled(current.y, target.y)) {
+        writeSpring(current, target.x, target.y);
+        stopSpring();
+        return;
+      }
+      writeSpring(current, current.x.position, current.y.position);
+      current.raf = win.requestAnimationFrame(tick);
+    };
+    spring = current;
+    dialog.setAttribute(lightboxAttrs.settling, "");
+    current.raf = win.requestAnimationFrame(tick);
+  };
+
+  /** The pointer's speed over its last ~100ms, in px/ms. Zero for a hand that stopped before letting go. */
+  const releaseVelocity = (samples: Single["samples"]): { x: number; y: number } => {
+    const last = samples[samples.length - 1];
+    const first = samples[0];
+    if (!last || !first || last === first) return { x: 0, y: 0 };
+    if (win.performance.now() - last.t > 60) return { x: 0, y: 0 };
+    /* Two events a millisecond apart are noise, not a speed; and no hand throws faster than this. */
+    const dt = last.t - first.t;
+    if (dt < 8) return { x: 0, y: 0 };
+    const cap = (v: number) => Math.max(-6, Math.min(6, v));
+    return { x: cap((last.x - first.x) / dt), y: cap((last.y - first.y) / dt) };
+  };
+
+  const tetherReach = (bounds: { stage: LightboxSize } | null) => ({
+    x: Math.min((bounds?.stage.width ?? stage.clientWidth) * LIGHTBOX_TETHER_REACH, LIGHTBOX_TETHER_MAX),
+    y: Math.min((bounds?.stage.height ?? stage.clientHeight) * LIGHTBOX_TETHER_REACH, LIGHTBOX_TETHER_MAX),
+  });
+
+  /** A public write: whatever is springing stops, and the offset is exactly this. */
   const setDragOffset = (x: number, y: number): void => {
+    stopSpring();
+    writeDragOffset(x, y);
+  };
+
+  function writeDragOffset(x: number, y: number): void {
     if (x === 0 && y === 0) {
       dialog.style.removeProperty("--sk-lightbox-drag-x");
       dialog.style.removeProperty("--sk-lightbox-drag-y");
       return;
     }
-    dialog.style.setProperty("--sk-lightbox-drag-x", `${Math.round(x)}px`);
-    dialog.style.setProperty("--sk-lightbox-drag-y", `${Math.round(y)}px`);
-  };
+    /* Sub-pixel on purpose: a spring's last frames are fractions of a pixel, and rounding them makes
+       it tick into place instead of settling. */
+    dialog.style.setProperty("--sk-lightbox-drag-x", `${x.toFixed(2)}px`);
+    dialog.style.setProperty("--sk-lightbox-drag-y", `${y.toFixed(2)}px`);
+  }
 
   const beginSingle = (id: number, type: string, x: number, y: number): void => {
+    /* Caught mid-flight: it stops where it is drawn, and the drag carries on from there. */
+    const caught = spring;
+    stopSpring();
+    const bounds = { fitted: fittedSize(), stage: stageSize() };
+    const reach = tetherReach(bounds);
+    const drawn = caught?.kind === "offset" ? dragOffset() : { x: 0, y: 0 };
     gesture = {
       kind: "single",
       id,
@@ -597,19 +1098,25 @@ export function connectLightbox(dialog: HTMLDialogElement, initial: LightboxConf
       startAt: win.performance.now(),
       start: view,
       moved: false,
-      /* THE ZOOM DECIDES WHAT A DRAG IS. Zoomed, one finger (or the mouse) moves the photo and can
-         never change it. At fit, a finger swipes to a neighbour; the mouse does nothing, because a
-         mouse user has buttons and keys and a drag that changes photos is a surprise to them. */
-      mode: zoomed() ? "pan" : type === "mouse" ? "none" : "swipe",
+      /* THE ZOOM DECIDES WHAT A DRAG IS. Zoomed, one finger (or the mouse) pans the photo and can
+         never change it. At fit, the photo is loose on the stage: anything can pick it up and move it
+         anywhere, and it springs back to the centre when let go. Only a finger's release can turn
+         that into a swipe; a mouse user has buttons and keys, and a drag that changes photos under
+         them is a surprise. */
+      mode: zoomed() ? "pan" : "swipe",
       dx: 0,
       dy: 0,
+      base: { x: lightboxUntether(drawn.x, reach.x), y: lightboxUntether(drawn.y, reach.y) },
+      samples: [{ t: win.performance.now(), x, y }],
+      caught: caught !== null,
     };
-    gestureBounds = { fitted: fittedSize(), stage: stageSize() };
+    gestureBounds = bounds;
   };
 
   const onPointerDown = (event: PointerEvent): void => {
     if (!isOpen) return;
-    lastPointerType = event.pointerType;
+    /* The same pointer pressing again means its last release never reached us: close that one first. */
+    if (pointers.has(event.pointerId)) endGesture(event, true);
     if (event.pointerType === "mouse" && event.button !== 0) return;
     if ((event.target as Element | null)?.closest?.("button, a")) return;
     pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
@@ -633,6 +1140,12 @@ export function connectLightbox(dialog: HTMLDialogElement, initial: LightboxConf
 
   const onPointerMove = (event: PointerEvent): void => {
     if (!pointers.has(event.pointerId)) return;
+    /* A mouse that comes back with no button down was released somewhere we could not hear it (outside
+       the window, or outside this frame): that was the release. */
+    if (event.pointerType === "mouse" && event.buttons === 0) {
+      endGesture(event, false);
+      return;
+    }
     pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
     if (!gesture || !gestureBounds) return;
 
@@ -657,6 +1170,9 @@ export function connectLightbox(dialog: HTMLDialogElement, initial: LightboxConf
     if (event.pointerId !== gesture.id) return;
     const dx = event.clientX - gesture.startX;
     const dy = event.clientY - gesture.startY;
+    const now = win.performance.now();
+    gesture.samples.push({ t: now, x: event.clientX, y: event.clientY });
+    while (gesture.samples.length > 2 && now - gesture.samples[0]!.t > 100) gesture.samples.shift();
     if (!gesture.moved) {
       if (Math.hypot(dx, dy) < LIGHTBOX_TAP_SLOP) return;
       gesture.moved = true;
@@ -668,18 +1184,22 @@ export function connectLightbox(dialog: HTMLDialogElement, initial: LightboxConf
     gesture.dx = dx;
     gesture.dy = dy;
     if (gesture.mode === "pan") {
+      /* Elastic past the edges while held; `endGesture` clamps it back. */
       scheduleView(
-        lightboxClampView(
+        lightboxElasticView(
           { x: gesture.start.x + dx, y: gesture.start.y + dy, scale: gesture.start.scale },
           gestureBounds.fitted,
           gestureBounds.stage,
         ),
       );
     } else if (gesture.mode === "swipe") {
-      /* The photo follows the finger along the axis it is going, so the swipe is seen before it
-         commits: sideways toward a neighbour, or down toward closing. */
-      if (Math.abs(dx) >= Math.abs(dy)) setDragOffset(dx, 0);
-      else setDragOffset(0, Math.max(0, dy));
+      /* The photo follows the hand on both axes, on its tether: a swipe is seen before it commits, and
+         a drag that is not one is just the photo being held. */
+      const reach = tetherReach(gestureBounds);
+      writeDragOffset(
+        lightboxTether(gesture.base.x + dx, reach.x),
+        lightboxTether(gesture.base.y + dy, reach.y),
+      );
     }
   };
 
@@ -705,22 +1225,69 @@ export function connectLightbox(dialog: HTMLDialogElement, initial: LightboxConf
     }
 
     if (!current || current.id !== event.pointerId) return;
+    const bounds = gestureBounds;
     gesture = null;
     gestureBounds = null;
     dialog.removeAttribute(lightboxAttrs.dragging);
 
     if (current.moved) {
       suppressClick = true;
-      if (current.mode === "pan") flushView();
-      else if (current.mode === "swipe") {
-        setDragOffset(0, 0);
-        if (cancelled) return;
-        const verdict = lightboxSwipeVerdict(current.dx, current.dy, win.performance.now() - current.startAt, {
-          rtl: rtl(),
-        });
-        if (verdict === "next") step(1);
-        else if (verdict === "previous") step(-1);
-        else if (verdict === "close") close();
+      const velocity = cancelled ? { x: 0, y: 0 } : releaseVelocity(current.samples);
+      if (current.mode === "pan") {
+        /* Let go: it coasts on its momentum and glides to rest inside the frame, or, let go past an
+           edge, glides back to it. */
+        flushView();
+        if (!bounds) return;
+        const landing = lightboxClampView(
+          {
+            x: view.x + lightboxFlingDistance(velocity.x),
+            y: view.y + lightboxFlingDistance(velocity.y),
+            scale: view.scale,
+          },
+          bounds.fitted,
+          bounds.stage,
+        );
+        runSpring("pan", view, { x: velocity.x * 1000, y: velocity.y * 1000 }, landing, LIGHTBOX_SPRING_GLIDE);
+      } else if (current.mode === "swipe") {
+        const verdict = cancelled || current.type === "mouse"
+          ? null
+          : lightboxSwipeVerdict(current.dx, current.dy, win.performance.now() - current.startAt, { rtl: rtl() });
+        /* A swipe down that closes keeps the photo where the finger left it: the close flies back
+           from there. Everything else springs back to the centre first. */
+        if (verdict === "close") return close();
+        /* A swipe to a neighbour does not snap the offset away: the next photo slides in ON TOP of
+           it springing home (the slide adds), and at either end of a gallery with no loop, where there
+           is no neighbour, it simply springs home. */
+        if (verdict === "next" || verdict === "previous") step(verdict === "next" ? 1 : -1);
+        /* Home on the tether, starting at the hand's speed as the photo is drawn: the tether's own
+           slope at that point scales it, so the throw and the drawing agree. */
+        const reach = tetherReach(bounds);
+        const from = dragOffset();
+        const slope = (pulled: number, r: number) => 1 / (1 + Math.abs(pulled) / r) ** 2;
+        const pulled = { x: current.base.x + current.dx, y: current.base.y + current.dy };
+        runSpring(
+          "offset",
+          from,
+          {
+            x: velocity.x * 1000 * slope(pulled.x, reach.x),
+            y: velocity.y * 1000 * slope(pulled.y, reach.y),
+          },
+          { x: 0, y: 0 },
+          LIGHTBOX_SPRING_RELEASE,
+        );
+      }
+      return;
+    }
+
+    /* Caught on its way home and let go where it was: it still has to get there. */
+    if (current.caught) {
+      suppressClick = true;
+      if (current.mode === "swipe") {
+        const at = dragOffset();
+        if (at.x || at.y) runSpring("offset", at, { x: 0, y: 0 }, { x: 0, y: 0 }, LIGHTBOX_SPRING_RELEASE);
+      } else if (bounds) {
+        const home = lightboxClampView(view, bounds.fitted, bounds.stage);
+        if (home.x !== view.x || home.y !== view.y) runSpring("pan", view, { x: 0, y: 0 }, home, LIGHTBOX_SPRING_GLIDE);
       }
       return;
     }
@@ -746,20 +1313,53 @@ export function connectLightbox(dialog: HTMLDialogElement, initial: LightboxConf
   const onPointerUp = (event: PointerEvent): void => endGesture(event, false);
   const onPointerCancel = (event: PointerEvent): void => endGesture(event, true);
 
-  const onDoubleClick = (event: MouseEvent): void => {
-    if (lastPointerType !== "mouse" || event.target !== image || !canZoom()) return;
-    event.preventDefault();
-    toggleZoom(local(event.clientX, event.clientY));
+  /*
+   * A DRAG NEVER OUTLIVES THE HAND. The browser owes us a `pointerup`, but not always: a release
+   * outside the window, over another frame, or after the tab lost focus may never arrive, and the
+   * photo stayed stuck to a cursor that had long let go. Losing the capture, the window losing focus
+   * and the page going hidden each end every gesture in progress, as a cancel: nothing is decided,
+   * the photo just goes home.
+   */
+  const onLostCapture = (event: PointerEvent): void => {
+    if (pointers.has(event.pointerId)) endGesture(event, true);
+  };
+  const cancelGestures = (): void => {
+    for (const pointerId of Array.from(pointers.keys())) {
+      endGesture({ pointerId, pointerType: "mouse", target: null, clientX: 0, clientY: 0 } as unknown as PointerEvent, true);
+    }
+  };
+  const onVisibility = (): void => {
+    if (doc.visibilityState === "hidden") cancelGestures();
   };
 
+  /*
+   * WITH A MOUSE, THE PLAIN WHEEL AND A DOUBLE CLICK DO NOT ZOOM: on a desktop they are how people
+   * scroll and select, and a photo that lurches under a stray notch is worse than one more click.
+   * Touch keeps its own gestures, pinch and double tap, because there the photo is the only thing to
+   * hold.
+   *
+   * CTRL OR CMD + WHEEL DOES, around the pointer: Canvas's gesture, and a trackpad pinch, which the
+   * browser reports as exactly that (a wheel with `ctrlKey`). Holding the key is the intent a stray
+   * notch never has. That wheel, and only that one, is cancelled: left alone, the browser would zoom
+   * the whole page behind the modal. A plain wheel is still not cancelled and not listened to: the
+   * page behind is frozen by `scroll-lock.css`, and a cancelled wheel is a claim that someone
+   * consumed it, which an embedding (a docs preview forwarding the wheel to its host page) reads as
+   * "leave it alone".
+   *
+   * Each notch is applied at once, with the transform's transition off (`data-sk-settling`) until the
+   * wheel goes quiet: eased steps queued behind a pinch felt like zooming through syrup.
+   */
+  let wheelIdle = 0;
   const onWheel = (event: WheelEvent): void => {
-    if (!isOpen) return;
-    /* A long caption scrolls on its own; everything else in a full-screen modal is ours, so the
-       wheel never leaks through to a page that should be standing still. */
-    if (caption && caption.contains(event.target as Node)) return;
+    if (!isOpen || closing || !(event.ctrlKey || event.metaKey)) return;
     event.preventDefault();
     if (!canZoom()) return;
     zoomTo(view.scale * lightboxWheelFactor(event.deltaY, event.deltaMode), local(event.clientX, event.clientY));
+    dialog.setAttribute(lightboxAttrs.settling, "");
+    win.clearTimeout(wheelIdle);
+    wheelIdle = win.setTimeout(() => {
+      if (!spring) dialog.removeAttribute(lightboxAttrs.settling);
+    }, 160);
   };
 
   /* Safari's own pinch-to-zoom of the page, which `touch-action` alone does not stop there. */
@@ -770,6 +1370,7 @@ export function connectLightbox(dialog: HTMLDialogElement, initial: LightboxConf
     target === dialog || target === stage || target === part("figure") || target === part("toolbar");
 
   const onClick = (event: MouseEvent): void => {
+    if (closing) return;
     const button = (event.target as Element | null)?.closest?.<HTMLElement>(`[${lightboxAttrs.action}]`);
     if (button && dialog.contains(button)) {
       if (button.getAttribute("aria-disabled") === "true") return;
@@ -836,6 +1437,10 @@ export function connectLightbox(dialog: HTMLDialogElement, initial: LightboxConf
 
   const onKeyDown = (event: KeyboardEvent): void => {
     if (!isOpen || event.defaultPrevented) return;
+    if (closing) {
+      event.preventDefault();
+      return;
+    }
     const target = event.target as Node | null;
     /* The page is inert, so a key can only come from inside the dialog or from <body> (focus lands
        there after a click on something that cannot hold it). Anything else is not ours. */
@@ -906,6 +1511,8 @@ export function connectLightbox(dialog: HTMLDialogElement, initial: LightboxConf
   const attachSession = (): void => {
     doc.addEventListener("keydown", onKeyDown);
     win.addEventListener("resize", onResize);
+    win.addEventListener("blur", cancelGestures);
+    doc.addEventListener("visibilitychange", onVisibility);
     if (typeof ResizeObserver !== "undefined" && stage !== dialog) {
       resizeObserver = new ResizeObserver(onResize);
       resizeObserver.observe(stage);
@@ -914,6 +1521,8 @@ export function connectLightbox(dialog: HTMLDialogElement, initial: LightboxConf
   const detachSession = (): void => {
     doc.removeEventListener("keydown", onKeyDown);
     win.removeEventListener("resize", onResize);
+    win.removeEventListener("blur", cancelGestures);
+    doc.removeEventListener("visibilitychange", onVisibility);
     resizeObserver?.disconnect();
     resizeObserver = null;
   };
@@ -937,6 +1546,16 @@ export function connectLightbox(dialog: HTMLDialogElement, initial: LightboxConf
     const list = Array.isArray(options?.images) ? options.images.filter(isShowable) : [];
     if (list.length === 0) return;
     const { images: _images, index: requested, returnFocus: focusTarget, ...settings } = options;
+
+    /* Opened again while the close animation runs: the close is called off, and this open replaces
+       what is shown like any other second open. */
+    if (closing) {
+      closing = false;
+      closeToken += 1;
+      dialog.removeAttribute(lightboxAttrs.closing);
+      stopMotion();
+      setDragOffset(0, 0);
+    }
 
     if (isOpen) {
       /* A second open while open REPLACES what is shown; there is never a second overlay, and the
@@ -970,6 +1589,7 @@ export function connectLightbox(dialog: HTMLDialogElement, initial: LightboxConf
     attachSession();
     index = -1;
     renderAll(normalizeLightboxIndex(requested, list.length), true);
+    animateIn(returnFocus);
     /* A known, harmless first stop: Close, the one control every reader can use. Explicit rather
        than `autofocus`, which React does not write to the DOM. */
     (control("close") ?? focusables()[0] ?? dialog).focus({ preventScroll: true });
@@ -994,16 +1614,42 @@ export function connectLightbox(dialog: HTMLDialogElement, initial: LightboxConf
     if (!opening) commit();
   };
 
+  /*
+   * Closing waits for the photo to fly back to its thumbnail, when it has one on screen; the
+   * backdrop and the chrome fade out alongside it (`data-sk-closing`, in the stylesheet). The dialog
+   * stays open, and modal, until then, and every key and click in that window is swallowed.
+   */
   function close(): void {
-    if (!isOpen) return;
-    if (dialog.open) dialog.close();
-    finish();
+    if (!isOpen || closing) return;
+    /* The flight home starts from where the photo is drawn now, and nothing moves it after. */
+    stopSpring();
+    const settled = animateOut();
+    if (!settled) {
+      if (dialog.open) dialog.close();
+      finish();
+      return;
+    }
+    closing = true;
+    closeToken += 1;
+    const mine = closeToken;
+    dialog.setAttribute(lightboxAttrs.closing, "");
+    void settled.then(() => {
+      if (!closing || mine !== closeToken) return;
+      if (dialog.open) dialog.close();
+      finish();
+    });
   }
 
   /** Everything closing means, whatever closed it. Idempotent: the `close` event may come after. */
   function finish(): void {
     if (!isOpen) return;
     isOpen = false;
+    closing = false;
+    dialog.removeAttribute(lightboxAttrs.closing);
+    stopMotion();
+    clearGhosts();
+    win.clearTimeout(wheelIdle);
+    dialog.removeAttribute(lightboxAttrs.settling);
     detachSession();
     win.clearTimeout(announceTimer);
     if (frame) win.cancelAnimationFrame(frame);
@@ -1022,6 +1668,8 @@ export function connectLightbox(dialog: HTMLDialogElement, initial: LightboxConf
     /* Stop whatever is still downloading, and hold nothing a closed viewer does not need. */
     loadToken += 1;
     image.removeAttribute("src");
+    /* An `<img>` with alt text and no source draws as a broken image; the stylesheet hides it too. */
+    image.alt = "";
     placeholder.removeAttribute("src");
     placeholder.hidden = true;
     preloaded.clear();
@@ -1082,14 +1730,17 @@ export function connectLightbox(dialog: HTMLDialogElement, initial: LightboxConf
   dialog.addEventListener("click", onClick);
   dialog.addEventListener("cancel", onCancel);
   dialog.addEventListener("close", onNativeClose);
-  dialog.addEventListener("wheel", onWheel, { passive: false });
-  dialog.addEventListener("dblclick", onDoubleClick);
   stage.addEventListener("pointerdown", onPointerDown);
   stage.addEventListener("pointermove", onPointerMove, { passive: false });
   stage.addEventListener("pointerup", onPointerUp);
   stage.addEventListener("pointercancel", onPointerCancel);
+  stage.addEventListener("lostpointercapture", onLostCapture);
   stage.addEventListener("gesturestart", onGesture);
+  /* On the dialog, not the stage: the key + wheel zooms wherever the pointer is over the viewer. */
+  dialog.addEventListener("wheel", onWheel, { passive: false });
   doc.addEventListener("click", onDocumentClick);
+  doc.addEventListener("pointerover", onTriggerIntent, { passive: true });
+  doc.addEventListener("focusin", onTriggerIntent);
   renderChrome();
 
   const controller: LightboxController = {
@@ -1125,15 +1776,19 @@ export function connectLightbox(dialog: HTMLDialogElement, initial: LightboxConf
       dialog.removeEventListener("click", onClick);
       dialog.removeEventListener("cancel", onCancel);
       dialog.removeEventListener("close", onNativeClose);
-      dialog.removeEventListener("wheel", onWheel);
-      dialog.removeEventListener("dblclick", onDoubleClick);
       stage.removeEventListener("pointerdown", onPointerDown);
       stage.removeEventListener("pointermove", onPointerMove);
       stage.removeEventListener("pointerup", onPointerUp);
       stage.removeEventListener("pointercancel", onPointerCancel);
+      stage.removeEventListener("lostpointercapture", onLostCapture);
       stage.removeEventListener("gesturestart", onGesture);
+      dialog.removeEventListener("wheel", onWheel);
       doc.removeEventListener("click", onDocumentClick);
+      doc.removeEventListener("pointerover", onTriggerIntent);
+      doc.removeEventListener("focusin", onTriggerIntent);
+      warmed.clear();
       image.removeEventListener("load", onImageLoad);
+      placeholder.removeEventListener("load", onPlaceholderLoad);
       image.removeEventListener("error", onImageError);
       image.remove();
       placeholder.remove();

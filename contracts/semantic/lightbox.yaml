@@ -3,7 +3,7 @@
 Lightbox:
   useWhen:
     - "hay fotos que se muestran en miniatura y quien lee necesita verlas grandes, de a una, sin salir de la página: una galería, las fotos de un producto, las capturas de un informe"
-    - "la imagen tiene detalle que sólo se lee de cerca (un plano, una captura con texto chico, una foto de producto): el visor trae zoom con botones, rueda, teclado y pellizco"
+    - "la imagen tiene detalle que sólo se lee de cerca (un plano, una captura con texto chico, una foto de producto): el visor trae zoom con botones y teclado, y en táctil con pellizco y doble toque"
     - "hay que abrir una imagen desde código, sin miniatura en la página: el handle abre, cierra y navega con el mismo ciclo de foco y bloqueo de scroll que un clic"
     - "una galería larga: sólo carga la imagen actual y sus dos vecinas, nunca la galería entera"
   avoidWhen:

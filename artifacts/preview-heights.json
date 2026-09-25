@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-22T01:56:56.855Z",
+  "generatedAt": "2026-09-24T20:12:33.889Z",
   "viewport": {
     "width": 1920,
     "height": 1000
@@ -1361,6 +1361,16 @@
     },
     "/es/componentes/code-preview": {
       "codepreview-parte-por-parte": 450
+    },
+    "/components/lightbox": {
+      "a-single-image": 672,
+      "loop-and-errors": 672,
+      "trip-photos": 672
+    },
+    "/es/componentes/lightbox": {
+      "fotos-del-viaje": 672,
+      "loop-y-errores": 672,
+      "una-sola-imagen": 672
     }
   }
 }

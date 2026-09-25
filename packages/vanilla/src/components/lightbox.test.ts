@@ -105,8 +105,10 @@ const down = (x: number, y: number, pointerType = "touch", target: Element = sta
   fireEvent.pointerDown(target, { pointerId, pointerType, clientX: x, clientY: y, button: 0 });
   return pointerId;
 };
-const move = (pointerId: number, x: number, y: number, pointerType = "touch") =>
-  fireEvent.pointerMove(stage(), { pointerId, pointerType, clientX: x, clientY: y });
+/* `buttons: 1`, as a browser reports a move with the button still held: a mouse moving with none
+   down is how the controller learns a release happened out of its sight. */
+const move = (pointerId: number, x: number, y: number, pointerType = "touch", buttons = 1) =>
+  fireEvent.pointerMove(stage(), { pointerId, pointerType, clientX: x, clientY: y, buttons });
 const up = (pointerId: number, x: number, y: number, pointerType = "touch", target: Element = stage()) =>
   fireEvent.pointerUp(target, { pointerId, pointerType, clientX: x, clientY: y });
 
@@ -143,6 +145,29 @@ describe("Lightbox (Vanilla): mounting and triggers", () => {
     });
     // An explicit data-lightbox-alt wins over the thumbnail's own.
     expect(state().images[2]!.alt).toBe("Snow on the summit");
+  });
+
+  it("never uses a cropped thumbnail as the placeholder, and takes an explicit one instead", () => {
+    setup();
+    const crop = trigger("Lake at dawn").querySelector("img")!;
+    Object.defineProperty(crop, "naturalWidth", { value: 400, configurable: true });
+    Object.defineProperty(crop, "naturalHeight", { value: 400, configurable: true });
+    fireEvent.click(trigger("Lake at dawn"));
+    expect(state().images[0]!.thumbnailSrc).toBeUndefined();
+    getLightbox("photos")!.close();
+
+    trigger("Lake at dawn").setAttribute(lightboxAttrs.thumbnail, "/a-small.jpg");
+    fireEvent.click(trigger("Lake at dawn"));
+    expect(state().images[0]!.thumbnailSrc).toBe("/a-small.jpg");
+  });
+
+  it("keeps a thumbnail of the photo's own shape as the placeholder", () => {
+    setup();
+    const same = trigger("Lake at dawn").querySelector("img")!;
+    Object.defineProperty(same, "naturalWidth", { value: 480, configurable: true });
+    Object.defineProperty(same, "naturalHeight", { value: 270, configurable: true });
+    fireEvent.click(trigger("Lake at dawn"));
+    expect(state().images[0]!.thumbnailSrc).toBe("/a-t.jpg");
   });
 
   it("includes a thumbnail added to the page after mounting", () => {
@@ -300,22 +325,48 @@ describe("Lightbox (Vanilla): gestures", () => {
     }
   });
 
-  it("zooms on a mouse double click on the photo", () => {
+  it("does not zoom on a mouse double click: with a mouse, the zoom is the buttons'", () => {
     setup();
     openLoaded();
     const id = down(200, 150, "mouse", image());
     up(id, 200, 150, "mouse", image());
     fireEvent.dblClick(image(), { clientX: 200, clientY: 150 });
-    expect(state().zoom).toBe(2.5);
+    expect(state().zoom).toBe(1);
   });
 
-  it("zooms with the wheel, and never lets the wheel reach the page", () => {
+  it("does not zoom with the wheel, and leaves the wheel uncancelled for the page's scroll lock", () => {
     setup();
     openLoaded();
     const wheel = new WheelEvent("wheel", { deltaY: -100, clientX: 200, clientY: 150, bubbles: true, cancelable: true });
     image().dispatchEvent(wheel);
-    expect(wheel.defaultPrevented).toBe(true);
+    expect(wheel.defaultPrevented).toBe(false);
+    expect(state().zoom).toBe(1);
+  });
+
+  it("zooms with Ctrl or Cmd + wheel (and a trackpad pinch), and claims only that wheel", () => {
+    setup();
+    openLoaded();
+    const wheel = (init: WheelEventInit) => {
+      const event = new WheelEvent("wheel", { clientX: 200, clientY: 150, bubbles: true, cancelable: true, ...init });
+      image().dispatchEvent(event);
+      return event;
+    };
+    expect(wheel({ deltaY: -100, ctrlKey: true }).defaultPrevented).toBe(true);
     expect(state().zoom).toBeGreaterThan(1);
+    const zoomed = state().zoom;
+    expect(wheel({ deltaY: -100, metaKey: true }).defaultPrevented).toBe(true);
+    expect(state().zoom).toBeGreaterThan(zoomed);
+    for (let notch = 0; notch < 40; notch += 1) wheel({ deltaY: 100, ctrlKey: true });
+    expect(state().zoom).toBe(1);
+  });
+
+  it("claims Ctrl + wheel even where zoom is off, so the browser does not zoom the page behind", () => {
+    setup('data-zoom="false"');
+    openLoaded();
+    const event = new WheelEvent("wheel", { deltaY: -100, ctrlKey: true, bubbles: true, cancelable: true });
+    image().dispatchEvent(event);
+    expect(event.defaultPrevented).toBe(true);
+    expect(state().zoom).toBe(1);
   });
 
   it("lets a long caption scroll under the wheel", () => {
@@ -337,6 +388,42 @@ describe("Lightbox (Vanilla): gestures", () => {
     // …and a failed image still navigates.
     fireEvent.click(button("next"));
     expect(state().index).toBe(1);
+  });
+
+  it("lets go of a mouse drag released outside the window, on its next move with no button down", () => {
+    setup();
+    openLoaded();
+    const id = down(300, 150, "mouse");
+    move(id, 250, 150, "mouse");
+    expect(dialog().hasAttribute(lightboxAttrs.dragging)).toBe(true);
+    move(id, 240, 150, "mouse", 0);
+    expect(dialog().hasAttribute(lightboxAttrs.dragging)).toBe(false);
+  });
+
+  it("lets go of every drag when the window loses focus or the page is hidden", () => {
+    setup();
+    openLoaded();
+    let id = down(300, 150, "mouse");
+    move(id, 250, 150, "mouse");
+    fireEvent.blur(window);
+    expect(dialog().hasAttribute(lightboxAttrs.dragging)).toBe(false);
+
+    id = down(300, 150);
+    move(id, 250, 150);
+    expect(dialog().hasAttribute(lightboxAttrs.dragging)).toBe(true);
+    Object.defineProperty(document, "visibilityState", { configurable: true, get: () => "hidden" });
+    fireEvent(document, new Event("visibilitychange"));
+    delete (document as { visibilityState?: unknown }).visibilityState;
+    expect(dialog().hasAttribute(lightboxAttrs.dragging)).toBe(false);
+  });
+
+  it("lets go of a drag whose pointer capture is lost", () => {
+    setup();
+    openLoaded();
+    const id = down(300, 150);
+    move(id, 250, 150);
+    fireEvent(stage(), Object.assign(new Event("lostpointercapture"), { pointerId: id, pointerType: "touch" }));
+    expect(dialog().hasAttribute(lightboxAttrs.dragging)).toBe(false);
   });
 
   it("forgets a half-finished gesture on close", () => {

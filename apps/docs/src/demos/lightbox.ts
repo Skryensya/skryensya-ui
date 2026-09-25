@@ -2,10 +2,17 @@ import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 
 /*
- * The photos are generated, not stock: six small JPEGs under `public/demos/lightbox/`, each with a
- * 480px thumbnail beside it. They are chosen to be the lightbox's edge cases rather than to be pretty:
- * a 3:2 landscape, a portrait, a 3:1 panorama, a 1:2.5 tower, a near-white snowfield (where a white
- * icon with no surface of its own would vanish) and a 240px image the viewer must NOT enlarge.
+ * Real photos from Unsplash, fetched once through picsum.photos (the docs' default image source) and
+ * kept under `public/demos/lightbox/` so the demos and the gates work offline, each with a square
+ * 400px thumbnail beside it, drawn at a fixed 200×200 (2x for dense screens), and a `-small` copy at
+ * the photo's OWN proportions (480px on the long side) that the lightbox shows blurred while the full
+ * one loads: the square is a crop, and a crop is never a placeholder.
+ *
+ * EVERY PHOTO AT ITS OWN RATIO, never cut to one: a photo cropped to a shape it was not taken in
+ * reads as broken the moment the lightbox shows it whole. So the portrait is a photo taken upright,
+ * not a landscape cut down to one, and the landscapes are 3:2. Still covered: landscape, portrait, a
+ * bright snowfield (where a white icon with no surface of its own would vanish) and a 240px image
+ * the viewer must NOT enlarge.
  */
 const DIR = "/demos/lightbox";
 
@@ -17,54 +24,65 @@ type Photo = {
   readonly title?: string;
   readonly description?: string;
   readonly credit?: string;
+  /** Has a `-small.jpg`: every photo larger than one. The 240px puppy is its own placeholder. */
+  readonly small?: boolean;
 };
 
 const photos = (t: Translate): readonly Photo[] => [
   {
-    file: "dawn-lake",
+    file: "fjord",
+    small: true,
     width: 1800,
     height: 1200,
     alt: t("lightbox.demo.dawnAlt"),
     title: t("lightbox.demo.dawnTitle"),
     description: t("lightbox.demo.dawnDescription"),
-    credit: t("lightbox.demo.credit"),
+    credit: "Alexey Topolyanskiy · Unsplash",
   },
   {
-    file: "forest",
+    file: "street",
+    small: true,
     width: 1200,
     height: 1600,
     alt: t("lightbox.demo.forestAlt"),
     title: t("lightbox.demo.forestTitle"),
-    credit: t("lightbox.demo.credit"),
+    credit: "Nicholas Swanson · Unsplash",
   },
   {
-    file: "panorama",
-    width: 2700,
-    height: 900,
+    file: "coast",
+    small: true,
+    width: 1800,
+    height: 1200,
     alt: t("lightbox.demo.panoramaAlt"),
     title: t("lightbox.demo.panoramaTitle"),
     description: t("lightbox.demo.panoramaDescription"),
+    credit: "Paul Jarvis · Unsplash",
   },
   {
-    file: "lighthouse",
-    width: 800,
-    height: 2000,
+    file: "waterfall",
+    small: true,
+    width: 1800,
+    height: 1201,
     alt: t("lightbox.demo.lighthouseAlt"),
     title: t("lightbox.demo.lighthouseTitle"),
+    credit: "Andrew Coelho · Unsplash",
   },
   {
-    file: "snowfield",
-    width: 1600,
-    height: 1000,
+    file: "snow-camp",
+    small: true,
+    width: 1800,
+    height: 1200,
     alt: t("lightbox.demo.snowAlt"),
     description: t("lightbox.demo.snowDescription"),
+    credit: "Wolfgang Lutz · Unsplash",
   },
   {
-    file: "tiny",
+    file: "puppy",
     width: 240,
-    height: 160,
+    height: 144,
     alt: t("lightbox.demo.tinyAlt"),
     description: t("lightbox.demo.tinyDescription"),
+    credit: "André Spieker · Unsplash",
   },
 ];
 
@@ -80,7 +98,7 @@ const labels = (t: Translate) => ({
   counterLabel: t("lightbox.counterLabel"),
 });
 
-const trigger = (opens: string, photo: Photo, aspect: "1/1" | "3/2" = "1/1"): UsageTree => ({
+const trigger = (opens: string, photo: Photo): UsageTree => ({
   contract: "lightbox",
   signature: "Lightbox.Trigger",
   options: {
@@ -88,6 +106,7 @@ const trigger = (opens: string, photo: Photo, aspect: "1/1" | "3/2" = "1/1"): Us
     triggerSrc: `${DIR}/${photo.file}.jpg`,
     triggerWidth: photo.width,
     triggerHeight: photo.height,
+    ...(photo.small ? { triggerThumbnail: `${DIR}/${photo.file}-small.jpg` } : {}),
     ...(photo.title ? { triggerTitle: photo.title } : {}),
     ...(photo.description ? { triggerDescription: photo.description } : {}),
     ...(photo.credit ? { triggerCredit: photo.credit } : {}),
@@ -97,14 +116,16 @@ const trigger = (opens: string, photo: Photo, aspect: "1/1" | "3/2" = "1/1"): Us
     children: {
       contract: "image-frame",
       signature: "ImageFrame",
-      options: { aspect, radius: "control", src: `${DIR}/${photo.file}-thumb.jpg`, alt: photo.alt },
+      options: { aspect: "1/1", radius: "control", src: `${DIR}/${photo.file}-thumb.jpg`, alt: photo.alt },
     },
   },
 });
 
 /*
  * A GALLERY IS THE TRIGGERS. Six thumbnails naming one lightbox's id, in page order; clicking one
- * opens the lightbox at that position. No script: the controller listens for them itself.
+ * opens the lightbox at that position. No script: the controller listens for them itself. A
+ * wrapping row of fixed 200px thumbnails, not a grid: a thumbnail that grows with the stage is a
+ * second copy of the photo, and the lightbox is where it gets big.
  */
 export const lightboxGalleryTree = (t: Translate): UsageTree => ({
   contract: "layout",
@@ -113,8 +134,8 @@ export const lightboxGalleryTree = (t: Translate): UsageTree => ({
   children: [
     {
       contract: "layout",
-      signature: "Grid",
-      options: { columns: "3", gap: "sm" },
+      signature: "Inline",
+      options: { gap: "sm" },
       attrs: { role: "list", "aria-label": t("lightbox.demo.galleryLabel") },
       children: photos(t).map((photo) => ({
         contract: "layout",
@@ -139,7 +160,7 @@ export const lightboxSingleTree = (t: Translate): UsageTree => {
     signature: "Stack",
     options: { gap: "md" },
     children: [
-      trigger("demo-lightbox-single", photo, "3/2"),
+      trigger("demo-lightbox-single", photo),
       {
         contract: "lightbox",
         signature: "Lightbox",
@@ -166,8 +187,8 @@ export const lightboxLoopTree = (t: Translate): UsageTree => {
     children: [
       {
         contract: "layout",
-        signature: "Grid",
-        options: { columns: "3", gap: "sm" },
+        signature: "Inline",
+        options: { gap: "sm" },
         children: [dawn!, broken, forest!].map((photo) => ({
           contract: "layout",
           signature: "Stack",
@@ -179,7 +200,7 @@ export const lightboxLoopTree = (t: Translate): UsageTree => {
                     children: {
                       contract: "image-frame",
                       signature: "ImageFrame",
-                      options: { aspect: "1/1", radius: "control", src: `${DIR}/snowfield-thumb.jpg`, alt: photo.alt },
+                      options: { aspect: "1/1", radius: "control", src: `${DIR}/snow-camp-thumb.jpg`, alt: photo.alt },
                     },
                   },
                 }
@@ -196,7 +217,7 @@ export const lightboxLoopTree = (t: Translate): UsageTree => {
   };
 };
 
-/* Grid + ImageFrame are the thumbnails' own; the lightbox's sheet brings button + loader. */
+/* ImageFrame is the thumbnail's own; the lightbox's sheet brings button + loader. */
 export const lightboxDemoCss = `.sk-lightbox__trigger {
-  inline-size: 100%;
+  inline-size: 200px;
 }`;

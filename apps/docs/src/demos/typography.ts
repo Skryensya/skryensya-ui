@@ -1,5 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /* Real `Code` nodes between runs of text: a `<code>` written into a translated string is escaped
    by React and is never the contract's own element in either binding. */
@@ -215,4 +216,50 @@ export const textFeedbackTree = (t: Translate): UsageTree => ({
   signature: "Text",
   options: { tone: "danger" },
   children: t("demo.text.feedback"),
+});
+
+/* HEADING: one element, `h1` to `h6`, and the class is the whole contract. */
+export const headingAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { ...anatomyCanvas(t), label: t("heading.anatomyLabel"), inert: true },
+  slots: {
+    ...anatomyHints(t),
+    subject: {
+      contract: "typography",
+      signature: "Heading",
+      options: { headingSize: "h2", flush: true },
+      children: t("heading.anatomyHeading"),
+    },
+    items: [
+      namePart(".sk-heading", "inline-start", { ringPlacement: "offset", ringDistance: 2 }),
+    ],
+  },
+});
+
+/*
+ * TEXT: the paragraph, and the one inline part that travels inside it most. `sk-code` is Code's own
+ * class, not a part of Text, and ringing it inside the paragraph is how a reader learns the two nest.
+ */
+export const textAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { ...anatomyCanvas(t), label: t("textPage.anatomyLabel"), inert: true },
+  slots: {
+    ...anatomyHints(t),
+    subject: {
+      contract: "typography",
+      signature: "Text",
+      attrs: { style: "max-inline-size: 26rem;" },
+      children: [
+        t("textPage.anatomyBefore"),
+        { contract: "typography", signature: "Code", children: "data-size" },
+        t("textPage.anatomyAfter"),
+      ],
+    },
+    items: [
+      namePart(".sk-text", "inline-start", { mark: "bracket" }),
+      namePart(".sk-code", "block-start", { ringPlacement: "offset", ringDistance: 2 }),
+    ],
+  },
 });

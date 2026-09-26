@@ -1,4 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
+import type { Translate } from "../i18n";
 
 /*
  * Four keys. A constant, not a factory: there is nothing here to translate; a glyph and the words
@@ -28,3 +30,28 @@ export const kbdAccentTree: UsageTree = {
     { contract: "kbd", signature: "Kbd", options: { tone: "accent" }, children: "↵" },
   ],
 };
+
+/*
+ * One part, and a combination is several of it side by side: `⌘` and `K` are two `<kbd>`, not one
+ * with a plus sign in it. Ringing every key rather than the row says that.
+ */
+export const kbdAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { ...anatomyCanvas(t), label: t("kbdPage.anatomyLabel"), inert: true },
+  slots: {
+    ...anatomyHints(t),
+    subject: {
+      contract: "layout",
+      signature: "Inline",
+      options: { gap: "xs" },
+      children: [
+        { contract: "kbd", signature: "Kbd", children: "⌘" },
+        { contract: "kbd", signature: "Kbd", children: "K" },
+      ],
+    },
+    items: [
+      namePart(".sk-kbd", "block-start", { match: "all", ringPlacement: "offset", ringDistance: 2 }),
+    ],
+  },
+});

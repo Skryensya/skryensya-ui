@@ -6,7 +6,9 @@ import "@skryensya/core/patterns/vaul.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { drawerScript, drawerTree } from "../../demos/drawer";
+import "@skryensya/core/components/annotation.css";
+import { drawerAnatomyTree, drawerScript, drawerTree } from "../../demos/drawer";
+import { vaulAnatomyCss } from "../../demos/vaul";
 import { getLocale, useTranslations } from "../../i18n";
 
 const t = useTranslations(getLocale(Astro.url));
@@ -88,6 +90,18 @@ trigger?.addEventListener("click", () => {
     },
   ]}
 >
+  <Fragment slot="anatomy">
+    <p set:html={t("drawer.anatomyBody")} />
+    <ComponentPreview
+      tree={drawerAnatomyTree(t)}
+      css={vaulAnatomyCss}
+      label={t("drawer.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+  </Fragment>
+
   <Fragment slot="usage">
     <p class="lede" set:html={t("drawer.lede")} />
     <ComponentPreview tree={drawerTree(t)} previewScript={drawerScript} label="HTML" viewport="overlay" />

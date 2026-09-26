@@ -1,5 +1,9 @@
 export const loaderMessages = {
   es: {
+    "loaderPage.anatomyLabel": "Anatomía de Loader",
+    "loaderPage.anatomyPreviewLabel": "Loader, parte por parte",
+    "loaderPage.anatomyBody": "Una parte visible. Las variantes escalonadas (spokes, ticks, beads, compass) montan hijos <code>sk-loader__tick</code>, pero cada uno es una capa del tamaño de la raíz que gira sobre su centro, así que no se dibujan aparte.",
+    "loaderPage.anatomyStatus": "Cargando",
     "demo.loader.sizesLabel": "Tamaños de Loader",
     "demo.loader.speedsLabel": "Velocidades de Loader",
     "demo.loader.size.sm": "Dentro de controles",
@@ -96,6 +100,10 @@ export const loaderMessages = {
     "loaderPage.test3": "Queda decorativo cuando el control que lo rodea ya aporta el significado de estado.",
   },
   en: {
+    "loaderPage.anatomyLabel": "Loader anatomy",
+    "loaderPage.anatomyPreviewLabel": "Loader, part by part",
+    "loaderPage.anatomyBody": "One visible part. The staggered variants (spokes, ticks, beads, compass) mount <code>sk-loader__tick</code> children, but each is a root-sized layer rotating about its centre, so they are not drawn separately.",
+    "loaderPage.anatomyStatus": "Loading",
     "demo.loader.sizesLabel": "Loader sizes",
     "demo.loader.speedsLabel": "Loader speeds",
     "demo.loader.size.sm": "Inside controls",

@@ -5,6 +5,7 @@ import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import HookPlayground from "../HookPlayground.astro";
 import {
+  loaderAnatomyTree,
   loaderContextsTree,
   loaderHookPlaygroundControls,
   loaderHookPlaygroundTree,
@@ -16,6 +17,8 @@ import {
   loaderStaggeredVariantsTree,
 } from "../../demos/loader";
 import { getLocale, useTranslations } from "../../i18n";
+import { annotationDemoCss } from "../../demos/annotation";
+import "@skryensya/core/components/annotation.css";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 const styles = `@import "@skryensya/core/components/loader.css";`;
@@ -32,6 +35,18 @@ const customSpeed = `.sk-loader.mi-loader {
   contractId="loader"
   testFiles={["packages/react/src/components/loader.test.tsx"]}}
 >
+  <Fragment slot="anatomy">
+    <p set:html={t("loaderPage.anatomyBody")} />
+    <ComponentPreview
+      tree={loaderAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("loaderPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+  </Fragment>
+
   <Fragment slot="usage">
     <p class="lede" set:html={t("loaderPage.lede")} />
 

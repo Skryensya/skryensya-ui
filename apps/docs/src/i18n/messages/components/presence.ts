@@ -1,5 +1,8 @@
 export const presenceMessages = {
   es: {
+    "presence.anatomyLabel": "Anatomía de Presence",
+    "presence.anatomyPreviewLabel": "Presence, parte por parte",
+    "presence.anatomyBody": "Una sola parte: la raíz que entra y sale. Lo que envuelve es tuyo, por eso la etiqueta dice <code>&gt; *</code> y no inventa una parte de contenido.",
     "presence.description": "Contenido que anima su salida antes de irse.",
     "presence.betaBadge": "Beta",
 
@@ -60,6 +63,9 @@ export const presenceMessages = {
       "Mientras sale, el contenido sigue en el árbol de accesibilidad; <code>display: none</code> lo saca cuando la salida termina. Si el botón que lo controla expone <code>aria-expanded</code>, actualízalo en el mismo momento en que cambias <code>hidden</code>",
   },
   en: {
+    "presence.anatomyLabel": "Presence anatomy",
+    "presence.anatomyPreviewLabel": "Presence, part by part",
+    "presence.anatomyBody": "One part: the root that enters and leaves. What it wraps is yours, which is why the label reads <code>&gt; *</code> instead of inventing a content part.",
     "presence.description": "Content that animates its exit before it leaves.",
     "presence.betaBadge": "Beta",
 

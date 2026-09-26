@@ -1,5 +1,8 @@
 export const heroMessages = {
   es: {
+    "hero.anatomyLabel": "Anatomía de Hero",
+    "hero.anatomyPreviewLabel": "Hero, parte por parte",
+    "hero.anatomyBody": "La banda entre el corchete y el anillo es el <code>padding</code> del hero, que es lo que aporta el patrón. La columna de adentro es un Wrapper, y lo que va en ella es composición.",
 
     "demo.hero.title": "Construyo interfaces cuidadas y calladas.",
     "demo.hero.body": "Un titular corto, una bajada de una línea, y como mucho dos acciones: eso es todo lo que Hero necesita.",
@@ -137,6 +140,9 @@ export const heroMessages = {
       "<code>align</code>, <code>padding</code> y <code>surface</code> se pueden cambiar, y <code>as</code> renderiza el hero como cualquier otro elemento (por ejemplo un <code>section</code> con landmark propio).",
   },
   en: {
+    "hero.anatomyLabel": "Hero anatomy",
+    "hero.anatomyPreviewLabel": "Hero, part by part",
+    "hero.anatomyBody": "The band between the bracket and the ring is the hero's own <code>padding</code>, which is what the pattern contributes. The column inside is a Wrapper, and what goes in it is composition.",
 
     "demo.hero.title": "I build careful, quiet software.",
     "demo.hero.body": "A short headline, a one-line sub-line, and at most two actions: that's all Hero needs.",

@@ -1,5 +1,9 @@
 export const headingMessages = {
   es: {
+    "heading.anatomyLabel": "Anatomía de Heading",
+    "heading.anatomyPreviewLabel": "Heading, parte por parte",
+    "heading.anatomyBody": "Una sola parte: el encabezado es su propio elemento, de <code>h1</code> a <code>h6</code>, y el tamaño visual se elige aparte del nivel.",
+    "heading.anatomyHeading": "Configuración de la cuenta",
     "demo.heading.sample": "La plataforma está lista",
     "demo.heading.label.h4Floor": "h4 · 18 · piso (también h5 y h6)",
     "demo.heading.label.h5Same": "h5 · mismo que h4",
@@ -56,6 +60,10 @@ export const headingMessages = {
     "heading.test3": "El tamaño visual de h5 y h6 tiene un piso en h4.",
   },
   en: {
+    "heading.anatomyLabel": "Heading anatomy",
+    "heading.anatomyPreviewLabel": "Heading, part by part",
+    "heading.anatomyBody": "One part: the heading is its own element, <code>h1</code> to <code>h6</code>, and its visual size is chosen apart from its level.",
+    "heading.anatomyHeading": "Account settings",
     "demo.heading.sample": "The platform is ready",
     "demo.heading.label.h4Floor": "h4 · 18 · floor (also h5 and h6)",
     "demo.heading.label.h5Same": "h5 · same as h4",

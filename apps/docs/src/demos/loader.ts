@@ -1,6 +1,7 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { HookControl } from "../lib/hook-control";
 import type { Translate } from "../i18n";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /* Loader specimens use only published surface, layout and typography vocabulary. */
 
@@ -235,3 +236,25 @@ export const loaderHookPlaygroundControls: readonly HookControl[] = [
      on parse, and the output would then show a number the slider itself never lands on again. */
   { hook: "--sk-loader-duration", label: "--sk-loader-duration", type: "range", unit: "s", min: 0.2, max: 3, step: 0.1, default: "1" },
 ];
+
+/*
+ * One visible part. The staggered variants (spokes, ticks, beads, compass) mount `sk-loader__tick`
+ * children, but each is a full-size layer rotated about the centre, so a ring on one is a second ring
+ * on the root; the page says that in words instead of drawing it twice.
+ */
+export const loaderAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { ...anatomyCanvas(t), label: t("loaderPage.anatomyLabel"), inert: true },
+  slots: {
+    ...anatomyHints(t),
+    subject: {
+      contract: "loader",
+      signature: "Loader",
+      options: { size: "lg", variant: "spokes", label: t("loaderPage.anatomyStatus") },
+    },
+    items: [
+      namePart(".sk-loader", "block-start", { ringPlacement: "offset", ringDistance: 4 }),
+    ],
+  },
+});

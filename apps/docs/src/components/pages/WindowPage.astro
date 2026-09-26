@@ -9,7 +9,8 @@ import "@skryensya/core/components/table.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { windowFixedTree, windowTree } from "../../demos/window";
+import "@skryensya/core/components/annotation.css";
+import { windowAnatomyCss, windowAnatomyTree, windowFixedTree, windowTree } from "../../demos/window";
 import { getLocale, useTranslations } from "../../i18n";
 
 const t = useTranslations(getLocale(Astro.url));
@@ -38,6 +39,18 @@ const keys = [
     "packages/react/src/components/window.test.tsx",
   ]}
 >
+  <Fragment slot="anatomy">
+    <p set:html={t("windowPage.anatomyBody")} />
+    <ComponentPreview
+      tree={windowAnatomyTree(t)}
+      css={windowAnatomyCss}
+      label={t("windowPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+  </Fragment>
+
   <Fragment slot="usage">
     <p class="lede" set:html={t("windowPage.lede")} />
     <ComponentPreview tree={windowTree(t)} js={js} label="Window" viewport="overlay" />

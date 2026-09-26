@@ -1,5 +1,8 @@
 export const linkMessages = {
   es: {
+    "linkPage.anatomyLabel": "Anatomía de Link",
+    "linkPage.anatomyPreviewLabel": "Link, parte por parte",
+    "linkPage.anatomyBody": "Una sola parte, y sólo tiene sentido dentro de una frase: el párrafo es <code>sk-text</code>, el enlace dentro de él es <code>sk-link</code>.",
     "demo.link.before": "Un párrafo con un ",
     "demo.link.neutral": "enlace del color del texto",
     "demo.link.middle": " y otro ",
@@ -33,6 +36,9 @@ export const linkMessages = {
     "linkPage.test1": "Renderiza un enlace nativo con el state layer compartido para hover/press/foco.",
   },
   en: {
+    "linkPage.anatomyLabel": "Link anatomy",
+    "linkPage.anatomyPreviewLabel": "Link, part by part",
+    "linkPage.anatomyBody": "One part, and it only makes sense inside a sentence: the paragraph is <code>sk-text</code>, the anchor inside it is <code>sk-link</code>.",
     "demo.link.before": "A paragraph with a ",
     "demo.link.neutral": "text-coloured link",
     "demo.link.middle": " and another ",

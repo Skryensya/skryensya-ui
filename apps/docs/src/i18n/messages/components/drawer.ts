@@ -1,5 +1,11 @@
 export const drawerMessages = {
   es: {
+    "drawer.anatomyLabel": "Anatomía de Drawer",
+    "drawer.anatomyPreviewLabel": "Drawer, parte por parte",
+    "drawer.anatomyBody": "Un drawer es <code>Vaul.drawer</code>: la misma raíz y el mismo tirador que cualquier Vaul, con <code>sk-drawer</code> sumado en la raíz para pintarlo como panel lateral. El contenido es composición libre.",
+    "drawer.anatomyPanelLabel": "Navegación",
+    "drawer.anatomyTitle": "Tu cuenta",
+    "drawer.anatomyBodyText": "Perfil, seguridad y notificaciones.",
 
     "demo.drawer.label": "Navegación",
     "demo.drawer.brand": "Estudio",
@@ -61,6 +67,12 @@ export const drawerMessages = {
     "drawer.test1": "Agrega el modificador de drawer solo para la firma de drawer.",
   },
   en: {
+    "drawer.anatomyLabel": "Drawer anatomy",
+    "drawer.anatomyPreviewLabel": "Drawer, part by part",
+    "drawer.anatomyBody": "A drawer is <code>Vaul.drawer</code>: the same root and handle as any Vaul, with <code>sk-drawer</code> added on the root to paint it as a side panel. The content is free composition.",
+    "drawer.anatomyPanelLabel": "Navigation",
+    "drawer.anatomyTitle": "Your account",
+    "drawer.anatomyBodyText": "Profile, security and notifications.",
 
     "demo.drawer.label": "Navigation",
     "demo.drawer.brand": "Estudio",

@@ -8,6 +8,8 @@ import {
   annotationElbowTree,
   annotationPluralCss,
   annotationPluralTree,
+  annotationSelfAnatomyCss,
+  annotationSelfAnatomyTree,
   annotationSidesTree,
 } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
@@ -115,6 +117,18 @@ const hooks = `.mi-diagrama.sk-annotated-figure {
   contractId="annotation"
   testFiles={["packages/core/src/annotation.test.ts", "packages/vanilla/src/components/annotation.test.ts", "packages/react/src/components/annotation.test.tsx"]}}
 >
+  <Fragment slot="anatomy">
+    <p set:html={t("annotation.selfAnatomyBody")} />
+    <ComponentPreview
+      tree={annotationSelfAnatomyTree(t)}
+      css={annotationSelfAnatomyCss}
+      label={t("annotation.selfAnatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+  </Fragment>
+
   <Fragment slot="usage">
     <p class="lede" set:html={t("annotation.lede")} />
 

@@ -22,7 +22,10 @@ import "@skryensya/core/components/steps.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
+import "@skryensya/core/components/annotation.css";
+import { annotationDemoCss } from "../../demos/annotation";
 import {
+  questionnaireAnatomyTree,
   questionnaireBarTree,
   questionnaireBranchingTree,
   questionnaireChoicesOnlyTree,
@@ -52,6 +55,18 @@ const t = useTranslations(getLocale(Astro.url));
     "packages/vanilla/src/components/questionnaire.test.ts",
   ]}
 >
+  <Fragment slot="anatomy">
+    <p set:html={t("questionnairePage.anatomyBody")} />
+    <ComponentPreview
+      tree={questionnaireAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("questionnairePage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+  </Fragment>
+
   <Fragment slot="usage">
     <p class="lede" set:html={t("questionnairePage.lede")} />
 

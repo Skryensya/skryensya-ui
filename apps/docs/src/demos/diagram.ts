@@ -1,5 +1,6 @@
 import type { ItemInput, UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /*
  * FOUR DEMOS, and the point of having four is that they are NOT four modes.
@@ -996,3 +997,46 @@ export const diagramAwsTree = (t: Translate): UsageTree => ({
     ],
   },
 });
+
+/*
+ * Three nodes and two edges, the smallest drawing that has every part. The nodes and the edge list
+ * are authored; the connectors, their lines and arrowheads are drawn by the enhancer from `edges`,
+ * which is why the edge list itself is visually hidden and the overlay is what gets ringed.
+ */
+export const diagramAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { ...anatomyCanvas(t), label: t("diagram.anatomyLabel"), inert: true },
+  slots: {
+    ...anatomyHints(t),
+    subject: {
+      contract: "diagram",
+      signature: "Diagram",
+      options: { label: t("diagram.flowLabel") },
+      attrs: { style: "inline-size: 16rem;" },
+      slots: {
+        nodes: [
+          { options: { node: "draft", shape: "terminal" }, slots: { children: t("diagram.flowNode1") } },
+          { options: { node: "review" }, slots: { children: t("diagram.flowNode2") } },
+          { options: { node: "live", shape: "terminal" }, slots: { children: t("diagram.flowNode4") } },
+        ],
+        edges: [
+          { options: { from: "draft", to: "review" }, slots: {} },
+          { options: { from: "review", to: "live" }, slots: { children: t("diagram.flowEdge") } },
+        ],
+      },
+    },
+    items: [
+      namePart(".sk-diagram", "inline-start", { mark: "bracket" }),
+      namePart(".sk-diagram__nodes", "inline-end", { mark: "bracket" }),
+      namePart(".sk-diagram__node", "block-start", { match: "first" }),
+      namePart(".sk-diagram__arrow", "inline-start", { match: "first" }),
+      namePart(".sk-diagram__connectors", "block-end"),
+    ],
+  },
+});
+
+export const diagramAnatomyCss = `.sk-annotated-figure {
+  --sk-annotation-font-family: var(--font-family-code);
+}
+${diagramDemoCss}`;

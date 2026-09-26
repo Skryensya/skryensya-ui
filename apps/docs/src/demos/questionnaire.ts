@@ -1,5 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /*
  * THE QUESTIONNAIRE EXAMPLES, as usage trees. One survey, three questions: a required single choice
@@ -407,4 +408,56 @@ export const questionnaireBranchingTree = (t: Translate): UsageTree => ({
       slots: { title: t("demo.questionnaire.branch.closingTitle") },
     },
   ],
+});
+
+/*
+ * One question, so every visible part is on screen at once: the machine shows one item at a time,
+ * and a second item would be a hidden element with nothing to ring. With one required question
+ * there is nothing to skip, go back to or advance past, so the actions row is Submit alone.
+ */
+export const questionnaireAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { ...anatomyCanvas(t), label: t("questionnairePage.anatomyLabel"), inert: true },
+  slots: {
+    ...anatomyHints(t),
+    subject: {
+      contract: "questionnaire",
+      signature: "Questionnaire",
+      options: {
+        previousLabel: t("demo.questionnaire.previous"),
+        nextLabel: t("demo.questionnaire.next"),
+        skipLabel: t("demo.questionnaire.skip"),
+        submitLabel: t("demo.questionnaire.submit"),
+        positionLabel: t("demo.questionnaire.position"),
+        progressLabel: t("demo.questionnaire.progress"),
+        errorLabel: t("demo.questionnaire.error"),
+        skippableErrorLabel: t("demo.questionnaire.skippableError"),
+      },
+      attrs: { "aria-label": t("demo.questionnaire.label"), style: "inline-size: 24rem; max-inline-size: 100%;" },
+      children: {
+        contract: "questionnaire",
+        signature: "QuestionnaireItem",
+        options: { name: "direction", required: true, stepLabel: t("demo.questionnaire.direction.step") },
+        slots: {
+          title: t("demo.questionnaire.direction.title"),
+          description: t("demo.questionnaire.direction.description"),
+          choices: [
+            choice("delegation", t("demo.questionnaire.direction.delegation")),
+            choice("questions", t("demo.questionnaire.direction.questions")),
+          ],
+        },
+      },
+    },
+    items: [
+      namePart(".sk-questionnaire", "inline-end", { mark: "bracket" }),
+      namePart(".sk-questionnaire__progress", "inline-start", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-questionnaire__item", "inline-end", { mark: "bracket" }),
+      namePart(".sk-questionnaire__title", "inline-start", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-questionnaire__description", "inline-start", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-questionnaire__choices", "inline-start", { match: "first" }),
+      namePart(".sk-questionnaire__actions", "inline-start"),
+      namePart(".sk-questionnaire__submit", "block-end"),
+    ],
+  },
 });

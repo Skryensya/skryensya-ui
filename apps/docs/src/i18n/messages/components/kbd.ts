@@ -1,5 +1,8 @@
 export const kbdMessages = {
   es: {
+    "kbdPage.anatomyLabel": "Anatomía de Kbd",
+    "kbdPage.anatomyPreviewLabel": "Kbd, parte por parte",
+    "kbdPage.anatomyBody": "Una sola parte: cada tecla es su propio <code>&lt;kbd&gt;</code>. Una combinación son varias, una al lado de la otra, no una con un signo más adentro.",
     "kbdPage.description": "Kbd: una tecla dibujada, el <kbd> nativo con styling hooks y wrapper React.",
     "kbdPage.lede":
       'Kbd es una <strong>tecla dibujada</strong>: el <code>&lt;kbd&gt;</code> nativo con el aspecto de una tecla física. La usas para mostrar un atajo, el ⌘K del buscador de arriba, el Esc en el pie de una <a href="/es/componentes/command-palette">CommandPalette</a>. Es estática, como Badge: sin estado, sin máquina, sin enhancer vanilla. La semántica del <code>&lt;kbd&gt;</code> es de la plataforma; el componente solo aporta la pinta. El reposo es <code>neutral</code>; <code>tone="accent"</code> es el chip de marca.',
@@ -25,6 +28,9 @@ export const kbdMessages = {
     "kbdPage.test4": "El tono por defecto es <code>neutral</code>; <code>accent</code> se pide.",
   },
   en: {
+    "kbdPage.anatomyLabel": "Kbd anatomy",
+    "kbdPage.anatomyPreviewLabel": "Kbd, part by part",
+    "kbdPage.anatomyBody": "One part: each key is its own <code>&lt;kbd&gt;</code>. A combination is several of them side by side, not one with a plus sign inside.",
     "kbdPage.description": "Kbd: a drawn key, the native <kbd> with styling hooks and a React wrapper.",
     "kbdPage.lede":
       'Kbd is a <strong>drawn key</strong>: the native <code>&lt;kbd&gt;</code> with the look of a physical key. You use it to show a shortcut, the ⌘K on the search bar above, the Esc in a <a href="/components/command-palette">CommandPalette</a>\'s footer. It is static, like Badge: no state, no machine, no vanilla enhancer. The <code>&lt;kbd&gt;</code>\'s semantics belong to the platform; the component only adds the look. Rest is <code>neutral</code>; <code>tone="accent"</code> is the brand chip.',

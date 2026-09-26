@@ -1,5 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /*
  * THE CLIPBOARD EXAMPLES, AS USAGE TREES, so both stages come from one source. Every label goes
@@ -59,3 +60,42 @@ export const clipboardSizesTree = (t: Translate): UsageTree => ({
     options: { value: `${size} · ${variant}`, size, variant, label: t("clipboard.demoCopy"), ...labels(t) },
   })),
 });
+
+/*
+ * The field form, which has every part the short form has plus its own three. What is not drawn,
+ * and why: the second icon (the check) and the feedback bubble only show after a copy, and the
+ * button's visible label is empty on an icon-only button.
+ */
+export const clipboardAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { ...anatomyCanvas(t), label: t("clipboard.anatomyLabel"), inert: true },
+  slots: {
+    ...anatomyHints(t),
+    subject: {
+      contract: "clipboard",
+      signature: "Clipboard",
+      options: { value: "https://ui.skryensya.dev/s/7f3a9c", label: t("clipboard.demoCopyLink"), ...labels(t) },
+      attrs: { style: "inline-size: 22rem; max-inline-size: 100%;" },
+      slots: { fieldLabel: t("clipboard.demoShareLink") },
+    },
+    items: [
+      namePart(".sk-clipboard", "inline-start", { mark: "bracket" }),
+      namePart(".sk-clipboard__label", "block-start", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-clipboard__control", "inline-start", { mark: "bracket" }),
+      namePart(".sk-clipboard__input", "block-end"),
+      namePart(".sk-copy-button", "inline-end"),
+      namePart(".sk-copy-button__icon", "block-start", { match: "first" }),
+    ],
+  },
+});
+
+/* The label is a block the width of the field, so its ring would sit over empty space to the right
+   of the words. Shrunk to its text, which it already looks like, the ring lands on the words. */
+export const clipboardAnatomyCss = `.sk-annotated-figure {
+  --sk-annotation-font-family: var(--font-family-code);
+}
+
+.sk-annotated__subject .sk-clipboard__label {
+  inline-size: fit-content;
+}`;

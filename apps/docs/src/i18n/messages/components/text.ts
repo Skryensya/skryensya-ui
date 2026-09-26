@@ -1,5 +1,10 @@
 export const textMessages = {
   es: {
+    "textPage.anatomyLabel": "Anatomía de Text",
+    "textPage.anatomyPreviewLabel": "Text, parte por parte",
+    "textPage.anatomyBody": "Una parte: el párrafo. Lo que viaja adentro, como el código en línea, trae su propia clase; se nombra acá para que se vea que anida.",
+    "textPage.anatomyBefore": "El atributo ",
+    "textPage.anatomyAfter": " elige el tamaño sin cambiar el elemento.",
     "demo.text.title.eyebrow": "Integración",
     "demo.text.title.heading": "Exportar configuración",
     "demo.text.title.subtitle":
@@ -49,6 +54,11 @@ export const textMessages = {
     "textPage.test1": "Mantiene Text semántico y aplica su rol de lectura nombrado.",
   },
   en: {
+    "textPage.anatomyLabel": "Text anatomy",
+    "textPage.anatomyPreviewLabel": "Text, part by part",
+    "textPage.anatomyBody": "One part: the paragraph. What travels inside it, like inline code, brings its own class; it is named here to show that it nests.",
+    "textPage.anatomyBefore": "The ",
+    "textPage.anatomyAfter": " attribute picks the size without changing the element.",
     "demo.text.title.eyebrow": "Integration",
     "demo.text.title.heading": "Export configuration",
     "demo.text.title.subtitle":

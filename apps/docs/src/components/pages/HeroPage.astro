@@ -17,6 +17,8 @@ import {
   heroVideoDemoTree,
 } from "../../demos/layout";
 import { getLocale, useTranslations } from "../../i18n";
+import { heroAnatomyTree, layoutAnatomyFillCss } from "../../demos/layout-anatomy";
+import "@skryensya/core/components/annotation.css";
 /* The sheet itself, not only its source: the Style hooks table resolves each hook
    against a real element, and a page that never loads `patterns/hero.css` would show every
    value blank. */
@@ -104,6 +106,18 @@ const heroQuoteTree = heroTestimonialTree(t);
     },
   ]}
 >
+  <Fragment slot="anatomy">
+    <p set:html={t("hero.anatomyBody")} />
+    <ComponentPreview
+      tree={heroAnatomyTree(t)}
+      css={layoutAnatomyFillCss}
+      label={t("hero.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+  </Fragment>
+
   <Fragment slot="usage">
     <p class="lede" set:html={t("hero.lede")} />
 

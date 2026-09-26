@@ -233,3 +233,64 @@ export const wrapperAnatomyTree = (t: Translate): UsageTree =>
       namePart(".sk-wrapper > *", "block-end", { match: "all" }),
     ],
   );
+
+/*
+ * HERO: a Wrapper inside a padded, full-bleed band. The band between the bracket and the ring is the
+ * hero's own `padding`, which is what the pattern contributes; the column inside is Wrapper's, and
+ * naming it says where the hero stops and the composition starts. Real copy rather than cells,
+ * because a hero is recognised by its headline and action, not by its boxes. Drawn with
+ * `layoutAnatomyFillCss` so the band spans the frame the way it spans a page.
+ */
+export const heroAnatomyTree = (t: Translate): UsageTree =>
+  frame(
+    t,
+    "hero.anatomyLabel",
+    {
+      contract: "hero",
+      signature: "Hero",
+      options: { padding: "md", surface: "raised" },
+      children: {
+        contract: "wrapper",
+        signature: "Wrapper",
+        options: { wrapperSize: "sm" },
+        children: {
+          contract: "layout",
+          signature: "Stack",
+          options: { gap: "sm", align: "start" },
+          children: [
+            { contract: "typography", signature: "Heading", options: { headingSize: "h2", flush: true }, children: t("demo.hero.title") },
+            { contract: "button", signature: "Button.action", options: { tone: "accent" }, children: t("demo.hero.action") },
+          ],
+        },
+      },
+    },
+    [
+      namePart(".sk-hero", "block-start", { mark: "bracket" }),
+      namePart(".sk-hero > .sk-wrapper", "inline-end"),
+    ],
+  );
+
+/*
+ * FOOTER: the same drawing at the bottom of the page. The bracket is the `<footer>` landmark and its
+ * padding and divider; the ring is the column its content sits in.
+ */
+export const footerAnatomyTree = (t: Translate): UsageTree =>
+  frame(
+    t,
+    "footer.anatomyLabel",
+    {
+      contract: "footer",
+      signature: "Footer",
+      options: { padding: "md", divider: true },
+      children: {
+        contract: "wrapper",
+        signature: "Wrapper",
+        options: { wrapperSize: "sm" },
+        children: { contract: "typography", signature: "Text", options: { tone: "tertiary", size: "sm" }, children: t("demo.footer.credit") },
+      },
+    },
+    [
+      namePart(".sk-footer", "block-start", { mark: "bracket" }),
+      namePart(".sk-footer > .sk-wrapper", "inline-end"),
+    ],
+  );

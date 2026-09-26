@@ -1,6 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
-import { anatomyCanvas, anatomyHints } from "./annotation-parts";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /*
  * FOUR DEMOS, because the component makes four separate claims and no single frame makes all of
@@ -337,3 +337,78 @@ export const annotationElbowTree = (t: Translate): UsageTree => ({
     ],
   },
 });
+
+/*
+ * AN ANATOMY OF AN ANATOMY: a small Annotated (a button with one named part) is the subject, and
+ * the outer drawing names what the inner one is made of: the figure, its canvas, the subject, the
+ * numbered bubble an item becomes, and the legend. The rings and leaders themselves are drawn into
+ * an SVG overlay the size of the frame, so ringing them would ring the whole drawing; the page
+ * names them in words.
+ */
+export const annotationSelfAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { ...anatomyCanvas(t), label: t("annotation.selfAnatomyLabel"), inert: true },
+  slots: {
+    ...anatomyHints(t),
+    subject: {
+      contract: "annotation",
+      signature: "Annotated",
+      options: { ...anatomyCanvas(t), label: t("annotation.selfAnatomyInnerLabel"), inert: true, fitOnly: true },
+      attrs: { style: "inline-size: 20rem;" },
+      slots: {
+        ...anatomyHints(t),
+        subject: { contract: "button", signature: "Button.action", options: { tone: "accent" }, children: t("annotation.selfAnatomyButton") },
+        items: [namePart(".sk-button", "block-start", { mark: "bracket" })],
+      },
+    },
+    items: [
+      namePart(".sk-annotated-figure", "inline-start", { mark: "bracket" }),
+      namePart(".sk-canvas", "inline-start", { mark: "bracket" }),
+      namePart(".sk-annotated__subject", "inline-end", { ringPlacement: "offset", ringDistance: 6, ringRadius: 12 }),
+      /* The whole annotation, not only its bubble: an item is the bubble AND the bracket the enhancer
+         draws for it (a `path.sk-annotated__leader` in the inner overlay). The ring is drawn around
+         that path and pushed out far enough to take in the bubble sitting on it, so it circles the
+         two together; the legend still calls it what it is authored as. */
+      {
+        options: {
+          for: ".sk-annotated__subject .sk-annotated__leader",
+          side: "block-start",
+          match: "first",
+          ringPlacement: "offset",
+          ringDistance: 18,
+          ringRadius: 6,
+        },
+        slots: { children: "sk-annotation" },
+      },
+      namePart(".sk-annotated__legend", "inline-start", { mark: "bracket" }),
+      namePart(".sk-annotated__legend-item", "block-end", { match: "first", ringPlacement: "offset", ringDistance: 6 }),
+    ],
+  },
+});
+
+/* The inner legend's items fill their grid cells, so a label pointing at one would land in the
+   middle of an empty row. Shrunk to their content, which is what they look like, the leader meets
+   the entry itself.
+
+   The inner frame's gutters are sized to what each side holds, and its one label leaves a gutter on
+   the start side only, which pushed the button off centre. Two equal outer tracks centre it; this
+   specimen only, since a real diagram's gutters should stay as wide as their labels. */
+export const annotationSelfAnatomyCss = `${annotationDemoCss}
+
+.sk-annotated__subject .sk-annotated__legend-item {
+  inline-size: fit-content;
+}
+
+.sk-annotated__subject .sk-annotated {
+  grid-template-columns: minmax(0, 1fr) minmax(0, auto) minmax(0, 1fr);
+}
+
+/* The inner figure counts in Roman numerals, so its "I" can never be mistaken for the outer drawing's 1. */
+.sk-annotated__subject .sk-annotated > .sk-annotation::before {
+  content: counter(sk-annotation, upper-roman);
+}
+
+.sk-annotated__subject .sk-annotated__legend-item::before {
+  content: counter(sk-annotation-legend, upper-roman);
+}`;

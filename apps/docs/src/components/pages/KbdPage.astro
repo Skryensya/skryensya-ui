@@ -3,8 +3,10 @@
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { kbdAccentTree, kbdTree } from "../../demos/kbd";
+import { kbdAccentTree, kbdAnatomyTree, kbdTree } from "../../demos/kbd";
 import { getLocale, useTranslations } from "../../i18n";
+import { annotationDemoCss } from "../../demos/annotation";
+import "@skryensya/core/components/annotation.css";
 
 const t = useTranslations(getLocale(Astro.url));
 const install = `pnpm add @skryensya/core @skryensya/react`;
@@ -16,6 +18,18 @@ const install = `pnpm add @skryensya/core @skryensya/react`;
   contractId="kbd"
   testFiles={["packages/react/src/components/kbd.test.tsx"]}}
 >
+  <Fragment slot="anatomy">
+    <p set:html={t("kbdPage.anatomyBody")} />
+    <ComponentPreview
+      tree={kbdAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("kbdPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+  </Fragment>
+
   <Fragment slot="usage">
     <p class="lede" set:html={t("kbdPage.lede")} />
     <ComponentPreview tree={kbdTree} label="Kbd" />

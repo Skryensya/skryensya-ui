@@ -1,5 +1,8 @@
 export const diagramMessages = {
   es: {
+    "diagram.anatomyLabel": "Anatomía de Diagram",
+    "diagram.anatomyPreviewLabel": "Diagram, parte por parte",
+    "diagram.anatomyBody": "Los nodos y la lista de aristas se escriben; los conectores, sus líneas y sus puntas los dibuja el enhancer a partir de las aristas. Por eso la lista de aristas está oculta a la vista y lo que se anilla es la capa de conectores.",
     "diagram.description":
       "Cajas y flechas: nodos de HTML normal en una grilla, y aristas que dicen sólo de dónde a dónde. El runtime mide y dibuja los recorridos.",
     "diagram.betaBadge": "Beta",
@@ -216,6 +219,9 @@ export const diagramMessages = {
       "Los conectores, las puntas de flecha y las listas de lectura son <code>systemOwned</code>: los escribe el binding después de medir, y el emisor de markup deja el overlay vacío. En los nodos y en las aristas no hay nada que un autor no haya escrito.",
   },
   en: {
+    "diagram.anatomyLabel": "Diagram anatomy",
+    "diagram.anatomyPreviewLabel": "Diagram, part by part",
+    "diagram.anatomyBody": "The nodes and the edge list are authored; the connectors, their lines and their arrowheads are drawn by the enhancer from the edges. That is why the edge list is visually hidden and the connector layer is what gets ringed.",
     "diagram.description":
       "Boxes and arrows: nodes of ordinary HTML in a grid, and edges that say only which way they run. The runtime measures and draws the routes.",
     "diagram.betaBadge": "Beta",

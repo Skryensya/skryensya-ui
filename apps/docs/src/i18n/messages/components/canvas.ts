@@ -1,5 +1,8 @@
 export const canvasMessages = {
   es: {
+    "canvas.anatomyLabel": "Anatomía de Canvas",
+    "canvas.anatomyPreviewLabel": "Canvas, parte por parte",
+    "canvas.anatomyBody": "El viewport recorta y recibe los gestos, la capa de contenido es la que se transforma, y los controles hacen zoom. Las dos pistas de gesto aparecen sólo en la primera interacción del dispositivo que las necesita.",
     "canvas.description":
       "Un visor con paneo y zoom para un dibujo que debe conservar su geometría aunque no entre en pantalla.",
     "canvas.betaBadge": "Beta",
@@ -44,6 +47,9 @@ export const canvasMessages = {
       "En React: <code>&lt;Canvas&gt;</code> recibe el dibujo como <code>children</code>. No envuelvas <code>Annotated</code>: ese componente ya incorpora un Canvas y deja su leyenda fuera de la escala.",
   },
   en: {
+    "canvas.anatomyLabel": "Canvas anatomy",
+    "canvas.anatomyPreviewLabel": "Canvas, part by part",
+    "canvas.anatomyBody": "The viewport clips and takes the gestures, the content layer is what gets transformed, and the controls zoom. The two gesture hints only appear on first interaction with a device that needs them.",
     "canvas.description":
       "A pan-and-zoom viewport for a drawing that must retain its geometry even when it does not fit on screen.",
     "canvas.betaBadge": "Beta",

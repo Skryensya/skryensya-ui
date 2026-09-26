@@ -1,5 +1,8 @@
 export const stateButtonMessages = {
   es: {
+    "stateButtonPage.anatomyLabel": "Anatomía de StateButton",
+    "stateButtonPage.anatomyPreviewLabel": "StateButton, parte por parte",
+    "stateButtonPage.anatomyDiagramBody": "El botón es la raíz y cada estado es una cara, un hijo con <code>data-face</code>. Sólo la que lleva <code>data-active</code> se ve; las caras son datos, no partes, por eso no tienen clase.",
     "demo.state-button.viewMode.title": "Modo de vista",
     "demo.state-button.viewMode.grid": "Modo de vista: cuadrícula",
     "demo.state-button.viewMode.list": "Modo de vista: lista",
@@ -55,6 +58,9 @@ export const stateButtonMessages = {
       "El <code>variant</code> y el <code>size</code> vienen de Button: el primitivo no tiene opinión sobre aspecto.",
   },
   en: {
+    "stateButtonPage.anatomyLabel": "StateButton anatomy",
+    "stateButtonPage.anatomyPreviewLabel": "StateButton, part by part",
+    "stateButtonPage.anatomyDiagramBody": "The button is the root and each state is a face, a child with <code>data-face</code>. Only the one carrying <code>data-active</code> is visible; faces are data, not parts, which is why they have no class.",
     "demo.state-button.viewMode.title": "View mode",
     "demo.state-button.viewMode.grid": "View mode: grid",
     "demo.state-button.viewMode.list": "View mode: list",

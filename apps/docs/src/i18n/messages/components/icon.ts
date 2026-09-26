@@ -1,5 +1,8 @@
 export const iconMessages = {
   es: {
+    "iconPage.anatomyLabel": "Anatomía de Icon",
+    "iconPage.anatomyPreviewLabel": "Icon, parte por parte",
+    "iconPage.anatomyBody": "Una parte por glifo. Lo que se escribe es un <code>&lt;span data-sk-icon&gt;</code>; lo que se dibuja, y se nombra acá, es el <code>&lt;svg class=\"sk-icon\"&gt;</code> que lo reemplaza al montar.",
 
     "iconPage.description":
       "Icon: el pattern sk-icon en React y vanilla, con roles del vocabulario, geometría propia, tamaños y a11y en el call site.",
@@ -40,6 +43,9 @@ export const iconMessages = {
     "iconPage.test3": "Es decorativo sin un label, y es contenido con uno.",
   },
   en: {
+    "iconPage.anatomyLabel": "Icon anatomy",
+    "iconPage.anatomyPreviewLabel": "Icon, part by part",
+    "iconPage.anatomyBody": "One part per glyph. What you author is a <code>&lt;span data-sk-icon&gt;</code>; what gets drawn, and is named here, is the <code>&lt;svg class=\"sk-icon\"&gt;</code> that replaces it on mount.",
 
     "iconPage.description":
       "Icon: the sk-icon pattern in React and vanilla, with vocabulary roles, your own geometry, sizes, and a11y at the call site.",

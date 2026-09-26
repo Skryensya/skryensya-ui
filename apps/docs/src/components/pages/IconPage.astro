@@ -2,8 +2,10 @@
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { iconSizeTree, iconTree } from "../../demos/icon";
+import { annotationDemoCss } from "../../demos/annotation";
+import { iconAnatomyTree, iconSizeTree, iconTree } from "../../demos/icon";
 import { getLocale, useTranslations } from "../../i18n";
+import "@skryensya/core/components/annotation.css";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -61,6 +63,18 @@ const sizesCss = `/* another size? you re-declare the hook, like every
   contractId="icon"
   testFiles={["packages/react/src/components/icon.test.tsx"]}}
 >
+  <Fragment slot="anatomy">
+    <p set:html={t("iconPage.anatomyBody")} />
+    <ComponentPreview
+      tree={iconAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("iconPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+  </Fragment>
+
   <Fragment slot="usage">
     <p class="lede" set:html={t("iconPage.lede")} />
     <ComponentPreview tree={iconTree} label="Icon" />

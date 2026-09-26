@@ -1,5 +1,8 @@
 export const questionnaireMessages = {
   es: {
+    "questionnairePage.anatomyLabel": "Anatomía de Questionnaire",
+    "questionnairePage.anatomyPreviewLabel": "Questionnaire, parte por parte",
+    "questionnairePage.anatomyBody": "Una sola pregunta, para que todas las partes visibles estén en pantalla a la vez: la máquina muestra un ítem por vez. Es obligatoria, así que Omitir y Anterior no tienen por qué aparecer y las acciones son sólo Siguiente.",
     "demo.questionnaire.label": "Encuesta de producto",
     "demo.questionnaire.previous": "Anterior",
     "demo.questionnaire.next": "Siguiente",
@@ -134,6 +137,9 @@ export const questionnaireMessages = {
     "demo.questionnaire.branch.closingPlaceholder": "tu@correo.com",
   },
   en: {
+    "questionnairePage.anatomyLabel": "Questionnaire anatomy",
+    "questionnairePage.anatomyPreviewLabel": "Questionnaire, part by part",
+    "questionnairePage.anatomyBody": "A single question, so every visible part is on screen at once: the machine shows one item at a time. It is required, so Skip and Previous have no reason to appear and the actions are Next alone.",
     "demo.questionnaire.label": "Product survey",
     "demo.questionnaire.previous": "Previous",
     "demo.questionnaire.next": "Next",

@@ -1,5 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { anatomyFigureHtml } from "./annotation-parts";
 
 /*
  * Real photos from Unsplash, fetched once through picsum.photos (the docs' default image source) and
@@ -221,3 +222,79 @@ export const lightboxLoopTree = (t: Translate): UsageTree => {
 export const lightboxDemoCss = `.sk-lightbox__trigger {
   inline-size: 200px;
 }`;
+
+/*
+ * THE ANATOMY SPECIMEN: the viewer frozen open on one photo, hand-written because a tree cannot say
+ * it. What the controller fills in at runtime (the image, the counter, the caption) is written out
+ * here, and the dialog is non-modal and pulled into flow by `lightboxAnatomyCss` so it becomes a
+ * panel Annotated can measure instead of a layer over the whole page. The live region and the error
+ * line are omitted: one is visually hidden and the other only shows when an image fails.
+ */
+const lightboxAnatomySpecimen = (t: Translate): string => {
+  const photo = photos(t)[2]!;
+  const control = (action: string, icon: string, label: string, extra = "") =>
+    `<button class="${extra}sk-lightbox__control sk-button sk-interactive" aria-label="${label}" type="button" tabindex="-1" data-lightbox-action="${action}" data-icon-only data-variant="ghost" data-size="sm"><span data-sk-icon="${icon}" data-sk-icon-size="md"></span></button>`;
+  return `<dialog class="sk-lightbox" open aria-label="${t("lightbox.demo.label")}">
+  <div class="sk-lightbox__toolbar">
+    <p class="sk-lightbox__counter" aria-hidden="true">3 / 6</p>
+    <div class="sk-lightbox__actions">${control("close", "close", t("lightbox.closeLabel"))}</div>
+  </div>
+  <figure class="sk-lightbox__figure">
+    <div class="sk-lightbox__stage">
+      <img class="sk-lightbox__image" src="${DIR}/${photo.file}-small.jpg" alt="${photo.alt}" width="${photo.width}" height="${photo.height}">
+    </div>
+    <figcaption class="sk-lightbox__caption">
+      <p class="sk-lightbox__title">${photo.title}</p>
+      <p class="sk-lightbox__description">${photo.description}</p>
+      <p class="sk-lightbox__credit">${photo.credit}</p>
+    </figcaption>
+  </figure>
+  ${control("previous", "chevron-left", t("lightbox.previousLabel"), "sk-lightbox__nav ")}
+  ${control("next", "chevron-right", t("lightbox.nextLabel"), "sk-lightbox__nav ")}
+  <div class="sk-lightbox__zoom">
+    ${control("zoom-in", "zoom-in", t("lightbox.zoomInLabel"))}
+    ${control("zoom-out", "zoom-out", t("lightbox.zoomOutLabel"))}
+    ${control("reset-zoom", "fit", t("lightbox.resetZoomLabel"))}
+  </div>
+</dialog>`;
+};
+
+export const lightboxAnatomyHtml = (t: Translate): string =>
+  anatomyFigureHtml(t, {
+    label: t("lightbox.anatomyLabel"),
+    specimen: lightboxAnatomySpecimen(t),
+    parts: [
+      { for: ".sk-lightbox", side: "inline-start", mark: "bracket" },
+      { for: ".sk-lightbox__toolbar", side: "block-start", mark: "bracket" },
+      { for: ".sk-lightbox__counter", side: "inline-start" },
+      { for: ".sk-lightbox__actions", side: "inline-end" },
+      /* The image rather than the stage: the stage is the same box the image fills. */
+      { for: ".sk-lightbox__image", side: "inline-start" },
+      { for: ".sk-lightbox__nav", side: "inline-end", match: "first" },
+      { for: ".sk-lightbox__zoom", side: "block-start" },
+      { for: ".sk-lightbox__caption", side: "inline-end", mark: "bracket" },
+      { for: ".sk-lightbox__title", side: "inline-start" },
+      { for: ".sk-lightbox__credit", side: "block-end" },
+    ],
+  });
+
+export const lightboxAnatomyCss = `.sk-annotated-figure {
+  --sk-annotation-font-family: var(--font-family-code);
+}
+
+/* A panel, not a layer over the page: the same grid the open dialog uses, at a fixed size. */
+.sk-annotated__subject > .sk-lightbox[open] {
+  position: relative;
+  inset: auto;
+  inline-size: 26rem;
+  block-size: 24rem;
+  padding: 0;
+  background: var(--sk-lightbox-backdrop-bg);
+  border-radius: var(--radius-surface);
+}
+
+.sk-annotated__subject > .sk-lightbox :is(.sk-lightbox__toolbar, .sk-lightbox__nav, .sk-lightbox__zoom, .sk-lightbox__caption) {
+  opacity: 1;
+  translate: none;
+}`;
+

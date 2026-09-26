@@ -1,5 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /*
  * A navigation drawer, `Vaul.drawer`, which is what this page has always said it is: "un drawer ES
@@ -118,3 +119,40 @@ export const drawerTree = (t: Translate): UsageTree => ({
 
 /** Opening is a call, never markup: the same escape hatch the dialog and the palette use. */
 export { default as drawerScript } from "./scripts/drawer-open.ts?raw";
+
+/*
+ * A drawer is `Vaul.drawer`: the same root and handle as any Vaul, with `sk-drawer` added to the
+ * root for the side-sheet paint. Drawn with `vaulAnatomyCss`, which pulls the fixed edge panel back
+ * into flow and keeps the handle visible.
+ */
+export const drawerAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { ...anatomyCanvas(t), label: t("drawer.anatomyLabel"), inert: true },
+  slots: {
+    ...anatomyHints(t),
+    subject: {
+      contract: "vaul",
+      signature: "Vaul.drawer",
+      options: { edge: "inline-start", open: true, label: t("drawer.anatomyPanelLabel") },
+      children: [
+        {
+          contract: "typography",
+          signature: "Heading",
+          options: { headingSize: "h4", flush: true },
+          children: t("drawer.anatomyTitle"),
+        },
+        {
+          contract: "typography",
+          signature: "Text",
+          options: { tone: "secondary" },
+          children: t("drawer.anatomyBodyText"),
+        },
+      ],
+    },
+    items: [
+      namePart(".sk-drawer", "block-start", { mark: "bracket" }),
+      namePart(".sk-vaul__handle", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
+    ],
+  },
+});

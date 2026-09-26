@@ -13,7 +13,10 @@ import "@skryensya/core/components/table.css";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import ComponentPreview from "../ComponentPreview.astro";
+import "@skryensya/core/components/annotation.css";
 import {
+  lightboxAnatomyCss,
+  lightboxAnatomyHtml,
   lightboxDemoCss,
   lightboxGalleryTree,
   lightboxLoopTree,
@@ -145,6 +148,18 @@ const keys = [
     "packages/react/src/components/lightbox.test.tsx",
   ]}
 >
+  <Fragment slot="anatomy">
+    <p set:html={t("lightbox.anatomyBody")} />
+    <ComponentPreview
+      html={lightboxAnatomyHtml(t)}
+      css={lightboxAnatomyCss}
+      label={t("lightbox.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+  </Fragment>
+
   <Fragment slot="usage">
     <p class="lede" set:html={t("lightbox.lede")} />
 

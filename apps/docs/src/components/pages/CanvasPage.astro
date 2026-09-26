@@ -6,6 +6,9 @@ import "@skryensya/core/components/diagram.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
+import "@skryensya/core/components/annotation.css";
+import { canvasAnatomyTree } from "../../demos/canvas";
+import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations, type Translate } from "../../i18n";
 
 const t = useTranslations(getLocale(Astro.url));
@@ -78,6 +81,18 @@ const hooks = `.mi-canvas {
   contractId="canvas"
   testFiles={["packages/core/src/canvas.test.ts", "packages/vanilla/src/components/canvas.test.ts", "packages/react/src/components/canvas.test.tsx"]}
 >
+  <Fragment slot="anatomy">
+    <p set:html={t("canvas.anatomyBody")} />
+    <ComponentPreview
+      tree={canvasAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("canvas.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+  </Fragment>
+
   <Fragment slot="usage">
     <p class="lede" set:html={t("canvas.lede")} />
 

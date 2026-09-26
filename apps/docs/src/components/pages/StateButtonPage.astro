@@ -1,16 +1,19 @@
 ---
 import "@skryensya/core/components/state-button.css";
 import "@skryensya/core/components/button.css";
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import {
+  stateButtonAnatomyTree,
   stateButtonBasicTree,
   stateButtonCopyTree,
   stateButtonDemoScript,
   stateButtonThemeToggleTree,
 } from "../../demos/state-button";
 import { getLocale, useTranslations } from "../../i18n";
+import { annotationDemoCss } from "../../demos/annotation";
 
 const t = useTranslations(getLocale(Astro.url));
 const install = `pnpm add @skryensya/core @skryensya/react`;
@@ -23,6 +26,18 @@ const styles = `@import "@skryensya/core/components/state-button.css";`;
   contractId="state-button"
   testFiles={["packages/react/src/components/state-button.test.tsx"]}
 >
+  <Fragment slot="anatomy">
+    <p set:html={t("stateButtonPage.anatomyDiagramBody")} />
+    <ComponentPreview
+      tree={stateButtonAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("stateButtonPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+  </Fragment>
+
   <Fragment slot="usage">
     <p class="lede" set:html={t("stateButtonPage.lede")} />
 

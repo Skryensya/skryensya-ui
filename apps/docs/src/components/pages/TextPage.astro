@@ -5,12 +5,15 @@ import ComponentPreview from "../ComponentPreview.astro";
 import {
   codeTree,
   outputTree,
+  textAnatomyTree,
   textFeedbackTree,
+  textInlineTree,
   textReadingTree,
   textTitleTree,
-  textInlineTree,
 } from "../../demos/typography";
 import { getLocale, useTranslations } from "../../i18n";
+import { annotationDemoCss } from "../../demos/annotation";
+import "@skryensya/core/components/annotation.css";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 const t = useTranslations(getLocale(Astro.url));
@@ -29,6 +32,18 @@ const t = useTranslations(getLocale(Astro.url));
     },
   ]}
 >
+  <Fragment slot="anatomy">
+    <p set:html={t("textPage.anatomyBody")} />
+    <ComponentPreview
+      tree={textAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("textPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+  </Fragment>
+
   <Fragment slot="usage">
     <p class="lede" set:html={t("textPage.lede")} />
 

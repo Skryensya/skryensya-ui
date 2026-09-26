@@ -1,5 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
 
 /*
  * THE PRESENCE EXAMPLES, AS USAGE TREES.
@@ -126,4 +127,35 @@ export const presenceTuningTree = (t: Translate): UsageTree => ({
       ],
     },
   ],
+});
+
+/*
+ * The root and what it holds. Presence has one part; everything inside it is the author's, and the
+ * `> *` label says so instead of inventing a content part. Drawn present, since the absent state is
+ * an empty box.
+ */
+export const presenceAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { ...anatomyCanvas(t), label: t("presence.anatomyLabel"), inert: true },
+  slots: {
+    ...anatomyHints(t),
+    subject: {
+      contract: "presence",
+      signature: "Presence",
+      options: { present: true },
+      attrs: { style: "inline-size: 22rem; max-inline-size: 100%;" },
+      children: {
+        contract: "callout",
+        signature: "Callout",
+        options: { tone: "success" },
+        slots: { title: t("presence.noticeTitle") },
+        children: t("presence.noticeBody"),
+      },
+    },
+    items: [
+      namePart(".sk-presence", "block-start", { mark: "bracket" }),
+      namePart(".sk-presence > *", "inline-end"),
+    ],
+  },
 });

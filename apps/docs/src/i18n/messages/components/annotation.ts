@@ -1,5 +1,10 @@
 export const annotationMessages = {
   es: {
+    "annotation.selfAnatomyLabel": "Anatomía de Annotated",
+    "annotation.selfAnatomyInnerLabel": "Un diagrama de ejemplo",
+    "annotation.selfAnatomyButton": "Guardar",
+    "annotation.selfAnatomyPreviewLabel": "Annotated, parte por parte",
+    "annotation.selfAnatomyBody": "Un diagrama de un diagrama: el sujeto es un Annotated pequeño. Cada ítem se escribe como una burbuja <code>sk-annotation</code> que apunta a un selector; los anillos y las guías los dibuja el enhancer en una capa SVG del tamaño del marco, así que se nombran acá en palabras y no se anillan.",
     "annotation.description":
       "Un marco que numera las partes de lo que tiene adentro: cada número va en un margen con una línea guía hasta su parte, los nombres en una leyenda debajo, y el dibujo entero sobre un canvas con zoom.",
     "annotation.betaBadge": "Beta",
@@ -205,6 +210,11 @@ export const annotationMessages = {
     "annotation.test71": "Dibuja las mismas marcas que el enhancer, con la misma forma.",
   },
   en: {
+    "annotation.selfAnatomyLabel": "Annotated anatomy",
+    "annotation.selfAnatomyInnerLabel": "An example diagram",
+    "annotation.selfAnatomyButton": "Save",
+    "annotation.selfAnatomyPreviewLabel": "Annotated, part by part",
+    "annotation.selfAnatomyBody": "A diagram of a diagram: the subject is a small Annotated. Each item is authored as an <code>sk-annotation</code> bubble pointing at a selector; the rings and leaders are drawn by the enhancer into an SVG layer the size of the frame, so they are named here in words rather than ringed.",
     "annotation.description":
       "A frame that numbers the parts of whatever is inside it: each number sits in a margin with a leader line to its part, the names in a legend below, and the whole drawing on a zoomable canvas.",
     "annotation.betaBadge": "Beta",

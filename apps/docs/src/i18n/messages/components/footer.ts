@@ -1,5 +1,8 @@
 export const footerMessages = {
   es: {
+    "footer.anatomyLabel": "Anatomía de Footer",
+    "footer.anatomyPreviewLabel": "Footer, parte por parte",
+    "footer.anatomyBody": "El corchete es el landmark <code>&lt;footer&gt;</code> con su padding y su divisor; el anillo es la columna donde vive su contenido.",
 
     "demo.footer.colProduct": "Producto",
     "demo.footer.colResources": "Recursos",
@@ -78,6 +81,9 @@ export const footerMessages = {
     "footer.reportIssue.environment": "\n\n**Entorno:**\n- Navegador: {ua}\n- Tamaño de ventana: {viewport}",
   },
   en: {
+    "footer.anatomyLabel": "Footer anatomy",
+    "footer.anatomyPreviewLabel": "Footer, part by part",
+    "footer.anatomyBody": "The bracket is the <code>&lt;footer&gt;</code> landmark with its padding and divider; the ring is the column its content lives in.",
 
     "demo.footer.colProduct": "Product",
     "demo.footer.colResources": "Resources",

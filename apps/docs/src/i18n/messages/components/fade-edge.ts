@@ -1,5 +1,8 @@
 export const fadeEdgeMessages = {
   es: {
+    "fadeEdge.anatomyLabel": "Anatomía de FadeEdge",
+    "fadeEdge.anatomyPreviewLabel": "FadeEdge, parte por parte",
+    "fadeEdge.anatomyBody": "Una sola parte. El desvanecimiento no es un hijo: en el modo por defecto es una máscara sobre la propia raíz, así que el elemento que desplaza es el mismo que se desvanece. Lo de adentro es composición libre.",
     "fadeEdge.description": "Efecto de desvanecimiento CSS puro para ocultar contenido suavemente en los bordes.",
     "fadeEdge.betaBadge": "Beta",
 
@@ -71,6 +74,9 @@ export const fadeEdgeMessages = {
       "Para accesibilidad, asegúrate de que el contenido crítico no quede oculto detrás del desvanecido",
   },
   en: {
+    "fadeEdge.anatomyLabel": "FadeEdge anatomy",
+    "fadeEdge.anatomyPreviewLabel": "FadeEdge, part by part",
+    "fadeEdge.anatomyBody": "One part. The fade is not a child: in the default mode it is a mask on the root itself, so the element that scrolls is the element that fades. What is inside is free composition.",
     "fadeEdge.description": "Pure CSS fade-out effect to smoothly hide content at the edges.",
     "fadeEdge.betaBadge": "Beta",
 

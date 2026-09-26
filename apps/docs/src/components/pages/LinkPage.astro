@@ -1,10 +1,12 @@
 ---
 import "@skryensya/core/components/tile.css";
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { linkTree, tileLinkTree } from "../../demos/link";
+import { linkAnatomyTree, linkTree, tileLinkTree } from "../../demos/link";
 import { getLocale, useTranslations } from "../../i18n";
+import { annotationDemoCss } from "../../demos/annotation";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 const t = useTranslations(getLocale(Astro.url));
@@ -31,6 +33,18 @@ link.textContent = "Usage details";`;
     },
   ]}
 >
+  <Fragment slot="anatomy">
+    <p set:html={t("linkPage.anatomyBody")} />
+    <ComponentPreview
+      tree={linkAnatomyTree(t, "/components/link")}
+      css={annotationDemoCss}
+      label={t("linkPage.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+  </Fragment>
+
   <Fragment slot="usage">
     <p class="lede" set:html={t("linkPage.lede")} />
     <ComponentPreview tree={linkTree(t, "/components/link")} label="Link" />

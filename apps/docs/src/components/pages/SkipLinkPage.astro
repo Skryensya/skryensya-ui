@@ -4,8 +4,14 @@
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { skipLinkPairTree, skipLinkTree } from "../../demos/skip-link";
+import {
+  skipLinkAnatomyCss,
+  skipLinkAnatomyTree,
+  skipLinkPairTree,
+  skipLinkTree,
+} from "../../demos/skip-link";
 import { getLocale, useTranslations } from "../../i18n";
+import "@skryensya/core/components/annotation.css";
 
 const t = useTranslations(getLocale(Astro.url));
 
@@ -42,6 +48,18 @@ const pair = `<body>
   contractId="skip-link"
   testFiles={["packages/react/src/components/skip-link.test.tsx"]}}
 >
+  <Fragment slot="anatomy">
+    <p set:html={t("skipLink.anatomyBody")} />
+    <ComponentPreview
+      tree={skipLinkAnatomyTree(t)}
+      css={skipLinkAnatomyCss}
+      label={t("skipLink.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+  </Fragment>
+
   <Fragment slot="usage">
     <p class="lede" set:html={t("skipLink.lede")} />
 

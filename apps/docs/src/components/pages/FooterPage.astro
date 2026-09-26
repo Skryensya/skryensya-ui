@@ -3,6 +3,8 @@ import ComponentPageShell from "./ComponentPageShell.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import { footerColumnsTree, footerCreditTree } from "../../demos/layout";
 import { getLocale, useTranslations } from "../../i18n";
+import { footerAnatomyTree, layoutAnatomyFillCss } from "../../demos/layout-anatomy";
+import "@skryensya/core/components/annotation.css";
 /* The sheet itself, not only its source: the Style hooks table resolves each hook against a real
    element, and a page that never loads `patterns/footer.css` shows every value blank. */
 import "@skryensya/core/patterns/footer.css";
@@ -37,6 +39,18 @@ const footerOneLineTree = footerCreditTree(t);
     },
   ]}
 >
+  <Fragment slot="anatomy">
+    <p set:html={t("footer.anatomyBody")} />
+    <ComponentPreview
+      tree={footerAnatomyTree(t)}
+      css={layoutAnatomyFillCss}
+      label={t("footer.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+  </Fragment>
+
   <Fragment slot="usage">
     <p class="lede" set:html={t("footer.lede")} />
 

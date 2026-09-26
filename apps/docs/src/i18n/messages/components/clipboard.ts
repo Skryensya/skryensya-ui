@@ -1,5 +1,8 @@
 export const clipboardMessages = {
   es: {
+    "clipboard.anatomyLabel": "Anatomía de Clipboard",
+    "clipboard.anatomyPreviewLabel": "Clipboard, parte por parte",
+    "clipboard.anatomyBody": "La forma con campo, que tiene todas las partes de <code>CopyButton</code> más las suyas. Lo que no se dibuja: el segundo ícono (el check) y la burbuja de confirmación sólo aparecen después de copiar, y la etiqueta visible del botón está vacía cuando el botón es sólo ícono.",
     "clipboard.description": "Copia un valor al portapapeles con un clic y confirma si funcionó.",
     "clipboard.betaBadge": "Beta",
 
@@ -51,6 +54,9 @@ export const clipboardMessages = {
     "clipboard.demoError": "No se pudo copiar",
   },
   en: {
+    "clipboard.anatomyLabel": "Clipboard anatomy",
+    "clipboard.anatomyPreviewLabel": "Clipboard, part by part",
+    "clipboard.anatomyBody": "The field form, which has every part of <code>CopyButton</code> plus its own. What is not drawn: the second icon (the check) and the confirmation bubble only appear after a copy, and the button's visible label is empty when the button is icon-only.",
     "clipboard.description": "Copies a value to the clipboard in one click, and confirms whether it worked.",
     "clipboard.betaBadge": "Beta",
 

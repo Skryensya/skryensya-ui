@@ -1,5 +1,8 @@
 export const skipLinkMessages = {
   es: {
+    "skipLink.anatomyLabel": "Anatomía de SkipLink",
+    "skipLink.anatomyPreviewLabel": "SkipLink, parte por parte",
+    "skipLink.anatomyBody": "Una sola parte, un <code>&lt;a&gt;</code>. Se dibuja como se ve con foco, que es el único momento en que se ve: en reposo está recortado a un píxel.",
 
     "skipLink.description":
       "SkipLink: el primer enlace del documento, invisible hasta que recibe el foco, para saltar el chrome que se repite.",
@@ -51,6 +54,9 @@ export const skipLinkMessages = {
       "El destino recibe su requisito como valor (<code>skipLinkTarget</code>), y el href apunta al id que lo lleva.",
   },
   en: {
+    "skipLink.anatomyLabel": "SkipLink anatomy",
+    "skipLink.anatomyPreviewLabel": "SkipLink, part by part",
+    "skipLink.anatomyBody": "One part, an <code>&lt;a&gt;</code>. It is drawn as it looks when focused, which is the only time it is visible: at rest it is clipped to one pixel.",
 
     "skipLink.description":
       "SkipLink: the first link in the document, invisible until it is focused, for bypassing the chrome that repeats.",

@@ -1,5 +1,8 @@
 export const lightboxMessages = {
   es: {
+    "lightbox.anatomyLabel": "Anatomía de Lightbox",
+    "lightbox.anatomyPreviewLabel": "Lightbox, parte por parte",
+    "lightbox.anatomyBody": "Congelado abierto sobre una foto. Lo que el controlador llena al abrir (la imagen, el contador, la leyenda) está escrito a mano, y el diálogo se dibuja como un panel y no como una capa sobre toda la página.",
     "lightbox.description": "Muestra una imagen, o una galería, tan grande como permite la pantalla, en un diálogo modal.",
     "lightbox.lede":
       "Lightbox es un <code>&lt;dialog&gt;</code> modal y nada más: no existe un rol <code>lightbox</code>. La plataforma pone la capa superior, la página inerte, <kbd>Esc</kbd> y el fondo; el componente agrega qué imagen se ve, cómo pasar a la siguiente y cómo acercarse a ella.",
@@ -82,6 +85,9 @@ export const lightboxMessages = {
     "lightbox.demo.brokenTitle": "Imagen que falla",
   },
   en: {
+    "lightbox.anatomyLabel": "Lightbox anatomy",
+    "lightbox.anatomyPreviewLabel": "Lightbox, part by part",
+    "lightbox.anatomyBody": "Frozen open on one photo. What the controller fills in on opening (the image, the counter, the caption) is written out by hand, and the dialog is drawn as a panel rather than a layer over the whole page.",
     "lightbox.description": "Shows one image, or a gallery, as large as the screen allows, in a modal dialog.",
     "lightbox.lede":
       "Lightbox is a modal <code>&lt;dialog&gt;</code> and nothing else: there is no <code>lightbox</code> role. The platform provides the top layer, the inert page, <kbd>Esc</kbd> and the backdrop; the component adds which image is showing, how to reach the next one and how to look closer.",

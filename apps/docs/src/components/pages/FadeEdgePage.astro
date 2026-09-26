@@ -4,6 +4,7 @@ import ComponentPreview from "../ComponentPreview.astro";
 import {
   fadeBottomTree,
   fadeColorTree,
+  fadeEdgeAnatomyTree,
   fadeIntensityTree,
   fadeLeftTree,
   fadeRightTree,
@@ -19,6 +20,8 @@ import "@skryensya/core/components/avatar.css";
 import "@skryensya/core/components/tag.css";
 import "@skryensya/core/components/typography.css";
 import "@skryensya/core/patterns/scrollbar.css";
+import "@skryensya/core/components/annotation.css";
+import { annotationDemoCss } from "../../demos/annotation";
 /* `input.css` for the intensity control, which is a real `NativeInput` now rather than a bare
    `<input>` in a string; `stack`/`inline` ride in through `patterns/layout.css` globally. */
 import "@skryensya/core/components/input.css";
@@ -68,6 +71,18 @@ sync();
   badge={t("fadeEdge.betaBadge")}
   contractId="fade-edge"
 >
+  <Fragment slot="anatomy">
+    <p set:html={t("fadeEdge.anatomyBody")} />
+    <ComponentPreview
+      tree={fadeEdgeAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("fadeEdge.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+  </Fragment>
+
   <Fragment slot="usage">
     <p class="lede" set:html={t("fadeEdge.lede")} />
 

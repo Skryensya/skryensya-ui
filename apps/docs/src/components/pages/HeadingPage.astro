@@ -1,17 +1,20 @@
 ---
 import "@skryensya/core/components/dialog.css";
+import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import {
+  headingAnatomyTree,
   headingCompactTree,
   headingDisplayTree,
   headingDocumentTree,
+  headingFlushTree,
   headingOutlineTree,
   headingPageTitleTree,
-  headingFlushTree,
 } from "../../demos/typography";
 import { getLocale, useTranslations } from "../../i18n";
+import { annotationDemoCss } from "../../demos/annotation";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 const t = useTranslations(getLocale(Astro.url));
@@ -32,6 +35,18 @@ const t = useTranslations(getLocale(Astro.url));
     },
   ]}
 >
+  <Fragment slot="anatomy">
+    <p set:html={t("heading.anatomyBody")} />
+    <ComponentPreview
+      tree={headingAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("heading.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+  </Fragment>
+
   <Fragment slot="usage">
     <p class="lede" set:html={t("heading.lede")} />
 

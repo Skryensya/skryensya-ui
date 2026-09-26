@@ -1,5 +1,8 @@
 export const windowMessages = {
   es: {
+    "windowPage.anatomyLabel": "Anatomía de Window",
+    "windowPage.anatomyPreviewLabel": "Window, parte por parte",
+    "windowPage.anatomyBody": "Abierta y dibujada en su lugar: una ventana real la posiciona su máquina. El posicionador y la zona de arrastre ocupan la misma caja que el contenido y el encabezado, así que no se anillan dos veces; los ocho bordes de redimensión miden unos píxeles, y uno se nombra por todos.",
     "demo.window.trigger": "Abrir inspector",
     "demo.window.title": "Inspector",
     "demo.window.body": "Arrastra la barra de título para moverla, y un borde o una esquina para cambiarle el tamaño.",
@@ -29,6 +32,9 @@ export const windowMessages = {
     "window.key.dblclick": "Doble clic en la barra de título: maximiza, o restaura si ya estaba maximizada o minimizada.",
   },
   en: {
+    "windowPage.anatomyLabel": "Window anatomy",
+    "windowPage.anatomyPreviewLabel": "Window, part by part",
+    "windowPage.anatomyBody": "Open and drawn in place: a real window is positioned by its machine. The positioner and the drag region occupy the same box as the content and the header, so they are not ringed twice; the eight resize edges are a few pixels wide, and one is named for all of them.",
     "demo.window.trigger": "Open inspector",
     "demo.window.title": "Inspector",
     "demo.window.body": "Drag the title bar to move it, and an edge or a corner to resize it.",

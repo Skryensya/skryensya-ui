@@ -1,4 +1,6 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
+import { anatomyCanvas, anatomyHints, namePart } from "./annotation-parts";
+import type { Translate } from "../i18n";
 
 /*
  * THE FADE-EDGE EXAMPLES, AS USAGE TREES.
@@ -289,4 +291,23 @@ export const fadeScrollAwareTree: UsageTree = card({
   options: { scrollAware: true },
   attrs: { class: "sk-scrollbar", style: VERTICAL_SCROLL },
   children: [activityList("Actividad reciente, con el fundido atento al scroll")],
+});
+
+/*
+ * One part, and the fade is not a second one: in the default mode it is a `mask-image` on the root
+ * itself, so the element that scrolls IS the element that fades. The bracket is that element; the
+ * ring is what scrolls inside it, which is free composition.
+ */
+export const fadeEdgeAnatomyTree = (t: Translate): UsageTree => ({
+  contract: "annotation",
+  signature: "Annotated",
+  options: { ...anatomyCanvas(t), label: t("fadeEdge.anatomyLabel"), inert: true },
+  slots: {
+    ...anatomyHints(t),
+    subject: fadeBottomTree,
+    items: [
+      namePart(".sk-fade-edge", "inline-start", { mark: "bracket" }),
+      namePart(".sk-fade-edge > *", "inline-end"),
+    ],
+  },
 });

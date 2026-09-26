@@ -2,7 +2,10 @@
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
+import "@skryensya/core/components/annotation.css";
 import {
+  diagramAnatomyCss,
+  diagramAnatomyTree,
   diagramAwsCss,
   diagramAwsTree,
   diagramBranchTree,
@@ -122,6 +125,18 @@ const hooks = `.mi-diagrama {
   contractId="diagram"
   testFiles={["packages/core/src/diagram.test.ts", "packages/vanilla/src/components/diagram.test.ts", "packages/react/src/components/diagram.test.tsx"]}}
 >
+  <Fragment slot="anatomy">
+    <p set:html={t("diagram.anatomyBody")} />
+    <ComponentPreview
+      tree={diagramAnatomyTree(t)}
+      css={diagramAnatomyCss}
+      label={t("diagram.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+  </Fragment>
+
   <Fragment slot="usage">
     <p class="lede" set:html={t("diagram.lede")} />
 

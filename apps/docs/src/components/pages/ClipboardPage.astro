@@ -2,7 +2,14 @@
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { clipboardFieldTree, clipboardSizesTree, clipboardTargetTree } from "../../demos/clipboard";
+import "@skryensya/core/components/annotation.css";
+import {
+  clipboardAnatomyCss,
+  clipboardAnatomyTree,
+  clipboardFieldTree,
+  clipboardSizesTree,
+  clipboardTargetTree,
+} from "../../demos/clipboard";
 import { getLocale, useTranslations } from "../../i18n";
 import "@skryensya/core/components/clipboard.css";
 
@@ -32,6 +39,18 @@ const vanilla = `document.addEventListener("sk:clipboardstatuschange", (event) =
   contractId="clipboard"
   testFiles={["packages/react/src/components/clipboard.test.tsx", "packages/vanilla/src/components/clipboard.svelte.test.ts"]}
 >
+  <Fragment slot="anatomy">
+    <p set:html={t("clipboard.anatomyBody")} />
+    <ComponentPreview
+      tree={clipboardAnatomyTree(t)}
+      css={clipboardAnatomyCss}
+      label={t("clipboard.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+  </Fragment>
+
   <Fragment slot="usage">
     <p class="lede" set:html={t("clipboard.lede")} />
 

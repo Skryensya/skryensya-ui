@@ -41,6 +41,18 @@
       "types": "./src/sheets-for-tree.ts",
       "default": "./src/sheets-for-tree.ts"
     },
+    "./usage-walk": {
+      "types": "./src/usage-walk.ts",
+      "default": "./src/usage-walk.ts"
+    },
+    "./discover": {
+      "types": "./src/discover.ts",
+      "default": "./src/discover.ts"
+    },
+    "./agent": {
+      "types": "./src/agent.ts",
+      "default": "./src/agent.ts"
+    },
     "./artifact": {
       "types": "./src/artifact.ts",
       "default": "./src/artifact.ts"

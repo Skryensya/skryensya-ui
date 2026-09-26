@@ -36,3 +36,6 @@ export {
   type ValidationResult,
 } from "./validate.js";
 export { sheetsForTree, type SheetsForTree } from "./sheets-for-tree.js";
+export { walkUsageTree, contractsIn, signaturesIn } from "./usage-walk.js";
+export { discover, type DiscoverInput, type DiscoverResult } from "./discover.js";
+export { createAgentService, CATALOG_PAGE_SIZE, type AgentService, type AgentResult } from "./agent.js";

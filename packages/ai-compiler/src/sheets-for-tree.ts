@@ -14,14 +14,8 @@
  */
 import { contractIds, getContract } from "@skryensya/core/registry";
 import type { ContractTemplate } from "@skryensya/core/contract";
-import {
-  collectionItems,
-  isUsageTree,
-  slotItems,
-  slotsOf,
-  type SlotContent,
-  type UsageTree,
-} from "@skryensya/core/usage-tree";
+import type { UsageTree } from "@skryensya/core/usage-tree";
+import { walkUsageTree } from "./usage-walk.js";
 
 export type SheetsForTree = {
   /** Stylesheets the composition must load, bare specifier form (`@skryensya/core/…`). */
@@ -65,17 +59,6 @@ function walkTemplate(node: ContractTemplate | undefined, visit: (n: ContractTem
   for (const child of node.children ?? []) walkTemplate(child, visit);
 }
 
-function walkUsage(content: SlotContent | undefined, visit: (tree: UsageTree) => void): void {
-  for (const item of slotItems(content)) {
-    if (!isUsageTree(item)) continue;
-    visit(item);
-    for (const nested of Object.values(slotsOf(item))) walkUsage(nested, visit);
-  }
-  for (const entry of collectionItems(content)) {
-    for (const nested of Object.values(entry.slots)) walkUsage(nested, visit);
-  }
-}
-
 /**
  * Every stylesheet the tree needs, and every class that still has nowhere to live.
  *
@@ -109,9 +92,7 @@ export function sheetsForTree(tree: UsageTree): SheetsForTree {
     });
   };
 
-  visit(tree);
-  walkUsage(tree.children, visit);
-  for (const nested of Object.values(tree.slots ?? {})) walkUsage(nested, visit);
+  walkUsageTree(tree, visit);
 
   const unplaced = [...classes]
     .filter((className) => {

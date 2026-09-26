@@ -3,8 +3,23 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "5e435662b22be94d"
+surface: "9ef19af99a343d35"
 entries:
+  - date: 2026-09-26
+    kind: feature
+    target: appearance
+    es:
+      title: Button suma appearance tactile
+      body: >-
+        <code>Button.action</code> y <code>Button.navigation</code> aceptan <code>appearance</code>.
+        <code>default</code> conserva el look existente; <code>tactile</code> expresa el mismo Button como
+        un control fisico con profundidad y compresion al presionar.
+    en:
+      title: Button adds tactile appearance
+      body: >-
+        <code>Button.action</code> and <code>Button.navigation</code> accept <code>appearance</code>.
+        <code>default</code> keeps the existing look; <code>tactile</code> expresses the same Button as a
+        physical control with depth and press compression.
   - date: 2026-09-17
     kind: feature
     es:

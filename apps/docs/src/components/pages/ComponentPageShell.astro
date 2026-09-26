@@ -58,6 +58,8 @@ interface Props {
    *  this is a per-page callout, not the catalog's own maturity axis (see `navigation.ts`'s
    *  `status`), so adding it here never lights up any other page. */
   badge?: string;
+  /** Selector for the roots this page's appearance menu retunes. Scoped to this page's previews. */
+  appearanceTargetSelector?: string;
 }
 
 const {
@@ -69,6 +71,7 @@ const {
   testFiles,
   hideVanillaMount = true,
   badge,
+  appearanceTargetSelector,
 } = Astro.props;
 const t = useTranslations(getLocale(Astro.url));
 const hasContract = Boolean(contractId);
@@ -138,6 +141,7 @@ const hasStyle = derivedStyleGroups.length > 0 || Astro.slots.has("style");
 const hasAnatomy = Astro.slots.has("anatomy");
 const hasA11y = Astro.slots.has("a11y");
 const hasTests = tests.length > 0 || (testFiles?.length ?? 0) > 0;
+const hasAppearanceControl = Astro.slots.has("appearance");
 
 /*
  * THE SAME GLYPH THE READER CLICKED TO GET HERE. The sidebar row, the drawer row and the catalogue
@@ -171,7 +175,11 @@ const markMarkup = findComponentIconMarkup(Astro.url.pathname, { className: "doc
    * reach the tabs through `closest("[data-sk-tabs]")` and `:scope >` from that root
    * (`hero-tabs-toc.ts:16`, `hero-tabs-url.ts:30`).
    */}
-  <div class="docs-component-shell">
+  <div
+    class="docs-component-shell"
+    data-docs-appearance-scope={hasAppearanceControl ? "" : undefined}
+    data-docs-appearance-target={hasAppearanceControl ? appearanceTargetSelector : undefined}
+  >
     <div class="docs-component-head">
       {/*
        * THE TALL HALF OF THE BAND, and the reason it is a box of its own rather than padding on the
@@ -258,33 +266,36 @@ const markMarkup = findComponentIconMarkup(Astro.url.pathname, { className: "doc
             * site's global enhancer runs the widget and `scripts/page-binding.ts` only listens for
             * the `sk:segmentedvaluechange` it dispatches.
             */}
-          <div
-            class="sk-segmented docs-component-hero__binding"
-            data-sk-segmented
-            data-sk-page-binding-tabs
-            data-value="vanilla"
-            role="radiogroup"
-            aria-label={t("install.bindingGroup")}
-          >
-            <span class="sk-segmented__indicator" aria-hidden="true" />
-            <button
-              class="sk-segmented__option sk-interactive"
-              data-sk-segmented-option
+          <div class="docs-component-hero__controls">
+            {hasAppearanceControl && <slot name="appearance" />}
+            <div
+              class="sk-segmented docs-component-hero__binding"
+              data-sk-segmented
+              data-sk-page-binding-tabs
               data-value="vanilla"
-              type="button"
-              role="radio"
+              role="radiogroup"
+              aria-label={t("install.bindingGroup")}
             >
-              Vanilla
-            </button>
-            <button
-              class="sk-segmented__option sk-interactive"
-              data-sk-segmented-option
-              data-value="react"
-              type="button"
-              role="radio"
-            >
-              React
-            </button>
+              <span class="sk-segmented__indicator" aria-hidden="true" />
+              <button
+                class="sk-segmented__option sk-interactive"
+                data-sk-segmented-option
+                data-value="vanilla"
+                type="button"
+                role="radio"
+              >
+                Vanilla
+              </button>
+              <button
+                class="sk-segmented__option sk-interactive"
+                data-sk-segmented-option
+                data-value="react"
+                type="button"
+                role="radio"
+              >
+                React
+              </button>
+            </div>
           </div>
 
         {/* Head FOUC already wrote the preference on `<html>`; this only keeps the pill from flipping

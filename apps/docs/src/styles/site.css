@@ -3091,7 +3091,7 @@ html[data-sk-component-preview-pref="vanilla"] [data-sk-install-binding="react"]
  * once the band has closed to its bar, which is the point of putting it here: previews are scattered
  * down a long page and the switch has to stay reachable from all of them.
  */
-.docs-component-hero__binding {
+.docs-component-hero__controls {
   /*
    * HELD STILL WHILE THE BAND COLLAPSES. The header is `position: sticky`, so it is already the
    * containing block; its box is a constant 66px tall at every scroll position (the height that goes
@@ -3110,7 +3110,55 @@ html[data-sk-component-preview-pref="vanilla"] [data-sk-install-binding="react"]
   inset-block-start: 50%;
   /* `translate`, not `transform`, so it composes with the pressed `scale()` the option carries. */
   translate: 0 -50%;
+  display: inline-flex;
   flex-shrink: 0;
+  align-items: center;
+  gap: var(--space-inline-xs);
+}
+
+.docs-component-hero__binding {
+  flex-shrink: 0;
+}
+
+.docs-appearance-menu {
+  --sk-anchored-name: --docs-appearance-menu-anchor;
+  position: relative;
+}
+
+.dimensions__appearance-trigger {
+  --sk-button-bg: var(--color-bg-surface-raised);
+  --sk-button-border-color: var(--color-border-default);
+  --sk-button-shadow: var(--elevation-flat);
+}
+
+.docs-appearance-menu .sk-menu__positioner {
+  --sk-anchored-position-area: block-end span-all;
+  --sk-anchored-position-try: none;
+  --sk-anchored-justify: anchor-center;
+  /* Docs chrome keeps this menu inside the sticky component header, where native anchor positioning
+     was resolving above the icon in Blink. This menu is not portalled and never has submenus, so the
+     robust answer is ordinary local positioning against its own root. `!important` is intentional:
+     the Menu machine writes physical `top`/`left` fallback coordinates inline, and this one docs-only
+     menu must not inherit those stale coordinates. */
+  position: absolute !important;
+  inset-block-start: calc(100% + var(--space-stack-xs)) !important;
+  inset-inline-end: 0 !important;
+  inset-block-end: auto !important;
+  inset-inline-start: auto !important;
+  top: calc(100% + var(--space-stack-xs)) !important;
+  right: 0 !important;
+  bottom: auto !important;
+  left: auto !important;
+  margin: 0;
+  transform: none !important;
+}
+
+.docs-appearance-menu .sk-menu__item[data-checked] > .sk-menu__item-indicator {
+  visibility: visible;
+}
+
+.docs-appearance-menu .sk-menu__item:not([data-checked]) > .sk-menu__item-indicator {
+  visibility: hidden;
 }
 
 /*
@@ -3118,7 +3166,7 @@ html[data-sk-component-preview-pref="vanilla"] [data-sk-install-binding="react"]
  * takes a row of its own under the title. Static again: there is nothing beside it to collide with.
  */
 @media (max-width: 40rem) {
-  .docs-component-hero__binding {
+  .docs-component-hero__controls {
     position: static;
     translate: none;
     margin-block-start: var(--space-stack-xs);

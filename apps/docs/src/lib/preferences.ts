@@ -27,13 +27,19 @@ export {
   componentPreviewScreenPreference,
 } from "@skryensya/core/component-preview";
 
+/** Component documentation examples can opt into alternate appearances, currently Button tactile. */
+export const appearancePreference = definePreference<"default" | "tactile">({
+  slot: "appearance",
+  fallback: "default",
+  parse: oneOf(["default", "tactile"]),
+});
+
 /** High contrast, the third color mode. A dimension, so it is the site's to store, not a component's. */
 export const contrastPreference = definePreference<"normal" | "high">({
   slot: "contrast",
   fallback: "normal",
   parse: oneOf(["normal", "high"]),
 });
-
 
 /** The /presets gallery and the header's palette toggle: the id of the chosen preset. */
 export const palettePreference = definePreference<string>({

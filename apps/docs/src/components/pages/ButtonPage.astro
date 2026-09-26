@@ -4,6 +4,7 @@ import "@skryensya/core/components/tile.css";
    frame only ever copies the styles ITS page loaded, so it has to land here too. */
 import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
+import AppearanceMenu from "../AppearanceMenu.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import {
@@ -46,8 +47,13 @@ button.addEventListener("click", runDeployment);`;
   title="Button"
   description={t("button.description")}
   contractId="button"
+  appearanceTargetSelector="[data-sk-button]"
   testFiles={["packages/react/src/components/button.test.tsx", "packages/vanilla/src/components/button.test.ts"]}}
 >
+  <Fragment slot="appearance">
+    <AppearanceMenu label={t("prefs.appearance")} />
+  </Fragment>
+
   <Fragment slot="anatomy">
     <p set:html={t("button.anatomyBody")} />
     <ComponentPreview

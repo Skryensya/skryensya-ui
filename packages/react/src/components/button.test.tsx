@@ -1,5 +1,5 @@
 import { fireEvent, render } from "@testing-library/react";
-import { buttonParts } from "@skryensya/core/button";
+import { buttonContract, buttonParts, type ButtonAppearance } from "@skryensya/core/button";
 import { describe, expect, it, vi } from "vitest";
 import { Button } from "./button.js";
 
@@ -36,7 +36,74 @@ describe("Button", () => {
       // authored markup, so a React button that left one off would diverge at G2.
       expect(button.getAttribute("data-variant")).toBe("solid");
       expect(button.getAttribute("data-tone")).toBe("neutral");
+      expect(button.getAttribute("data-appearance")).toBe("default");
     }
+  });
+
+  it("derives appearance from the Core contract and maps it to data-appearance", () => {
+    const derived: ButtonAppearance = buttonContract.options.appearance.values[1];
+    const ui = render(<Button appearance={derived}>Continue</Button>);
+    const button = ui.getByRole("button", { name: "Continue" });
+
+    expect(buttonContract.options.appearance.attr).toBe("data-appearance");
+    expect(buttonContract.options.appearance.default).toBe("default");
+    expect(button.getAttribute("data-appearance")).toBe("tactile");
+  });
+
+  it("keeps custom host props and classes on tactile action buttons", () => {
+    const ui = render(
+      <Button appearance="tactile" className="cta" data-testid="cta">
+        Continue
+      </Button>,
+    );
+    const button = ui.getByRole("button", { name: "Continue" });
+
+    expect(button.classList.contains("sk-button")).toBe(true);
+    expect(button.classList.contains("sk-interactive")).toBe(true);
+    expect(button.classList.contains("cta")).toBe(true);
+    expect(button.getAttribute("data-testid")).toBe("cta");
+  });
+
+  it("supports tactile appearance across variants and tones without changing the contract axes", () => {
+    const variants = buttonContract.options.variant.values;
+    const tones = buttonContract.options.tone.values;
+    const ui = render(
+      <>
+        {variants.map((variant) => (
+          <Button key={variant} appearance="tactile" variant={variant}>
+            {variant}
+          </Button>
+        ))}
+        {tones.map((tone) => (
+          <Button key={tone} appearance="tactile" tone={tone}>
+            {tone}
+          </Button>
+        ))}
+      </>,
+    );
+
+    for (const variant of variants) {
+      const button = ui.getByRole("button", { name: variant });
+      expect(button.getAttribute("data-appearance")).toBe("tactile");
+      expect(button.getAttribute("data-variant")).toBe(variant);
+    }
+    for (const tone of tones) {
+      const button = ui.getByRole("button", { name: tone });
+      expect(button.getAttribute("data-appearance")).toBe("tactile");
+      expect(button.getAttribute("data-tone")).toBe(tone);
+    }
+  });
+
+  it("keeps aria-pressed independent from tactile physical appearance", () => {
+    const ui = render(
+      <Button appearance="tactile" pressed>
+        Bold
+      </Button>,
+    );
+    const button = ui.getByRole("button", { name: "Bold" });
+
+    expect(button.getAttribute("data-appearance")).toBe("tactile");
+    expect(button.getAttribute("aria-pressed")).toBe("true");
   });
 
   /* The floor of the size scale, and the one size whose whole point is that it is smaller than the
@@ -177,8 +244,24 @@ describe("Button.navigation", () => {
     expect(link.getAttribute("data-tone")).toBe("accent");
     expect(link.getAttribute("data-variant")).toBe("solid");
     expect(link.getAttribute("data-size")).toBe("md");
+    expect(link.getAttribute("data-appearance")).toBe("default");
     expect(link.classList.contains("sk-button")).toBe(true);
     expect(link.classList.contains("sk-interactive")).toBe(true);
+  });
+
+  it("maps tactile appearance on a navigation host", () => {
+    const ui = render(
+      <Button href="/continue" appearance="tactile" className="cta" data-testid="cta">
+        Continue
+      </Button>,
+    );
+    const link = ui.getByRole("link", { name: "Continue" });
+
+    expect(link.getAttribute("data-appearance")).toBe("tactile");
+    expect(link.classList.contains("sk-button")).toBe(true);
+    expect(link.classList.contains("sk-interactive")).toBe(true);
+    expect(link.classList.contains("cta")).toBe(true);
+    expect(link.getAttribute("data-testid")).toBe("cta");
   });
 
   it("does not write aria-pressed or disabled on a navigation host", () => {

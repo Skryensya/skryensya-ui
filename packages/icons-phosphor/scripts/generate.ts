@@ -67,6 +67,7 @@ const MAP = {
   settings: "gear",
   user: "user",
   language: "translate",
+  appearance: "palette",
   visibility: "eye",
   "visibility-off": "eye-slash",
   "mode-system": "monitor",

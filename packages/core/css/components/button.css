@@ -31,6 +31,9 @@
     --sk-button-fg: var(--color-text-primary);
     --sk-button-border-color: var(--color-border-default);
     --sk-button-border-width: 1px;
+    /* Public only because tactile is a physical expression consumers may need to tune with density
+     * or a local surface. Intermediate travel/compression math stays in the rules below. */
+    --sk-button-depth: 5px;
     --sk-button-radius: var(--radius-control);
     /* Buttons stay comfortably tappable even when density contracts the surrounding layout. */
     --sk-button-height: max(var(--size-control-md), var(--size-touch-target));
@@ -53,7 +56,6 @@
      * and a shadow with nothing under it reads as a stray mark in space, not a lifted control. */
     --sk-button-shadow: var(--elevation-raised);
     --sk-button-wash: var(--elevation-wash-raised);
-
     box-sizing: border-box;
     display: inline-flex;
     align-items: center;
@@ -137,7 +139,8 @@
       border-color var(--motion-state-change-duration) var(--motion-state-change-easing),
       color var(--motion-state-change-duration) var(--motion-state-change-easing),
       box-shadow var(--motion-state-change-duration) var(--motion-state-change-easing),
-      scale var(--motion-feedback-duration) var(--motion-feedback-easing);
+      scale var(--motion-feedback-duration) var(--motion-feedback-easing),
+      translate var(--motion-feedback-duration) var(--motion-feedback-easing);
   }
 
   /*
@@ -150,7 +153,7 @@
    * guards live in one selector rather than a later override rule, so there is no specificity
    * order to get wrong between them.
    */
-  .sk-button:active:not(:disabled):not([aria-disabled="true"]):not([data-weld-start]):not([data-weld-end]) {
+  .sk-button:active:not(:disabled):not([aria-disabled="true"]):not([data-weld-start]):not([data-weld-end]):not([data-appearance="tactile"]) {
     scale: var(--motion-press-scale);
     /* Pairs with the squeeze: every variant but `ghost` carries `--elevation-raised` at rest, and
      * flattening it to `--elevation-flat` (`none`) while pressed reads as the button meeting the
@@ -316,6 +319,94 @@
   }
 
   /*
+   * ── APPEARANCE ───────────────────────────────────────────────────────────────────────────────
+   *
+   * `appearance` changes the physical expression of the same Button contract. The default is the
+   * base paint above, matched by absence. Tactile consumes one central depth: as travel increases,
+   * the visible depth and separation shadow shrink. The host's normal-flow footprint is unchanged;
+   * `translate` is paint/compositor feedback only.
+   */
+  .sk-button[data-appearance="tactile"] {
+    background:
+      linear-gradient(
+        to bottom,
+        light-dark(color-mix(in oklab, white 10%, transparent), color-mix(in oklab, white 6%, transparent)),
+        transparent 55%,
+        light-dark(color-mix(in oklab, black 5%, transparent), color-mix(in oklab, black 8%, transparent))
+      ),
+      var(--sk-button-wash) var(--sk-button-bg);
+    box-shadow:
+      0 var(--sk-button-depth) 0 light-dark(
+        color-mix(in oklab, var(--sk-button-bg) 76%, var(--color-text-primary)),
+        color-mix(in oklab, var(--sk-button-bg) 72%, var(--color-bg-surface-sunken))
+      ),
+      0 calc(var(--sk-button-depth) + 1px) 4px light-dark(
+        color-mix(in oklab, var(--color-text-primary) 14%, transparent),
+        color-mix(in oklab, var(--color-bg-surface-sunken) 44%, transparent)
+      );
+    translate: 0 0;
+  }
+
+  .sk-button[data-appearance="tactile"][data-variant="soft"] {
+    --sk-button-depth: 4px;
+  }
+
+  .sk-button[data-appearance="tactile"][data-variant="ghost"] {
+    --sk-button-depth: 3px;
+    box-shadow:
+      0 var(--sk-button-depth) 0 color-mix(in oklab, currentColor 20%, transparent),
+      0 calc(var(--sk-button-depth) + 1px) 3px color-mix(in oklab, currentColor 10%, transparent);
+  }
+
+  .sk-button[data-appearance="tactile"][data-variant="translucent"] {
+    box-shadow:
+      0 var(--sk-button-depth) 0 light-dark(
+        color-mix(in oklab, var(--color-border-subtle) 56%, transparent),
+        color-mix(in oklab, var(--color-action-neutral) 48%, transparent)
+      ),
+      0 calc(var(--sk-button-depth) + 1px) 4px light-dark(
+        color-mix(in oklab, var(--color-text-primary) 14%, transparent),
+        color-mix(in oklab, var(--color-bg-surface-sunken) 44%, transparent)
+      );
+  }
+
+  @media (any-hover: hover) {
+    .sk-button[data-appearance="tactile"]:hover:not(:disabled):not([aria-disabled="true"]) {
+      box-shadow:
+        0 calc(var(--sk-button-depth) * 0.82) 0 light-dark(
+          color-mix(in oklab, var(--sk-button-bg) 76%, var(--color-text-primary)),
+          color-mix(in oklab, var(--sk-button-bg) 72%, var(--color-bg-surface-sunken))
+        ),
+        0 calc(var(--sk-button-depth) * 0.82 + 1px) 4px light-dark(
+          color-mix(in oklab, var(--color-text-primary) 13%, transparent),
+          color-mix(in oklab, var(--color-bg-surface-sunken) 38%, transparent)
+        );
+      translate: 0 calc(var(--sk-button-depth) * 0.18);
+    }
+  }
+
+  .sk-button[data-appearance="tactile"]:active:not(:disabled):not([aria-disabled="true"]) {
+    box-shadow:
+      0 calc(var(--sk-button-depth) * 0.14) 0 light-dark(
+        color-mix(in oklab, var(--sk-button-bg) 76%, var(--color-text-primary)),
+        color-mix(in oklab, var(--sk-button-bg) 72%, var(--color-bg-surface-sunken))
+      );
+    translate: 0 calc(var(--sk-button-depth) * 0.86);
+    scale: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sk-button[data-appearance="tactile"] {
+      transition:
+        background-color var(--motion-state-change-duration) var(--motion-state-change-easing),
+        border-color var(--motion-state-change-duration) var(--motion-state-change-easing),
+        color var(--motion-state-change-duration) var(--motion-state-change-easing),
+        box-shadow var(--motion-feedback-duration) var(--motion-feedback-easing),
+        translate var(--motion-feedback-duration) var(--motion-feedback-easing);
+    }
+  }
+
+  /*
    * ── PRESSED ─────────────────────────────────────────────────────────────────────────────────
    *
    * A toggle that is ON: Bold in a toolbar, an upvote, Play/Pause. `aria-pressed` is already the
@@ -375,6 +466,98 @@
       background: Highlight;
       color: HighlightText;
     }
+  }
+
+  /* Tactile geometry is physical expression, not the toggle state. Re-assert it after
+   * `aria-pressed` paint so a logically-on button still has rest depth and still travels while
+   * clicked again. */
+  .sk-button[data-appearance="tactile"] {
+    box-shadow:
+      0 var(--sk-button-depth) 0 light-dark(
+        color-mix(in oklab, var(--sk-button-bg) 76%, var(--color-text-primary)),
+        color-mix(in oklab, var(--sk-button-bg) 72%, var(--color-bg-surface-sunken))
+      ),
+      0 calc(var(--sk-button-depth) + 1px) 4px light-dark(
+        color-mix(in oklab, var(--color-text-primary) 14%, transparent),
+        color-mix(in oklab, var(--color-bg-surface-sunken) 44%, transparent)
+      );
+    translate: 0 0;
+  }
+
+  .sk-button[data-appearance="tactile"][data-variant="ghost"] {
+    box-shadow:
+      0 var(--sk-button-depth) 0 color-mix(in oklab, currentColor 20%, transparent),
+      0 calc(var(--sk-button-depth) + 1px) 3px color-mix(in oklab, currentColor 10%, transparent);
+  }
+
+  .sk-button[data-appearance="tactile"][data-variant="translucent"] {
+    box-shadow:
+      0 var(--sk-button-depth) 0 light-dark(
+        color-mix(in oklab, var(--color-border-subtle) 56%, transparent),
+        color-mix(in oklab, var(--color-action-neutral) 48%, transparent)
+      ),
+      0 calc(var(--sk-button-depth) + 1px) 4px light-dark(
+        color-mix(in oklab, var(--color-text-primary) 14%, transparent),
+        color-mix(in oklab, var(--color-bg-surface-sunken) 44%, transparent)
+      );
+  }
+
+  @media (any-hover: hover) {
+    .sk-button[data-appearance="tactile"]:hover:not(:disabled):not([aria-disabled="true"]) {
+      box-shadow:
+        0 calc(var(--sk-button-depth) * 0.82) 0 light-dark(
+          color-mix(in oklab, var(--sk-button-bg) 76%, var(--color-text-primary)),
+          color-mix(in oklab, var(--sk-button-bg) 72%, var(--color-bg-surface-sunken))
+        ),
+        0 calc(var(--sk-button-depth) * 0.82 + 1px) 4px light-dark(
+          color-mix(in oklab, var(--color-text-primary) 13%, transparent),
+          color-mix(in oklab, var(--color-bg-surface-sunken) 38%, transparent)
+        );
+      translate: 0 calc(var(--sk-button-depth) * 0.18);
+    }
+
+    .sk-button[data-appearance="tactile"][data-variant="soft"]:hover:not(:disabled):not([aria-disabled="true"]) {
+      box-shadow:
+        0 calc(var(--sk-button-depth) * 0.8) 0 light-dark(
+          color-mix(in oklab, var(--sk-button-bg) 82%, var(--sk-button-ink)),
+          color-mix(in oklab, var(--sk-button-bg) 76%, var(--color-bg-surface-sunken))
+        ),
+        0 calc(var(--sk-button-depth) * 0.8 + 1px) 3px light-dark(
+          color-mix(in oklab, var(--color-text-primary) 11%, transparent),
+          color-mix(in oklab, var(--color-bg-surface-sunken) 32%, transparent)
+        );
+      translate: 0 calc(var(--sk-button-depth) * 0.2);
+    }
+
+    .sk-button[data-appearance="tactile"][data-variant="ghost"]:hover:not(:disabled):not([aria-disabled="true"]) {
+      box-shadow:
+        0 calc(var(--sk-button-depth) * 0.78) 0 color-mix(in oklab, currentColor 19%, transparent),
+        0 calc(var(--sk-button-depth) * 0.78 + 1px) 3px color-mix(in oklab, currentColor 9%, transparent);
+      translate: 0 calc(var(--sk-button-depth) * 0.22);
+    }
+
+    .sk-button[data-appearance="tactile"][data-variant="translucent"]:hover:not(:disabled):not([aria-disabled="true"]) {
+      box-shadow:
+        0 calc(var(--sk-button-depth) * 0.82) 0 light-dark(
+          color-mix(in oklab, var(--color-border-subtle) 54%, transparent),
+          color-mix(in oklab, var(--color-action-neutral) 44%, transparent)
+        ),
+        0 calc(var(--sk-button-depth) * 0.82 + 1px) 4px light-dark(
+          color-mix(in oklab, var(--color-text-primary) 12%, transparent),
+          color-mix(in oklab, var(--color-bg-surface-sunken) 36%, transparent)
+        );
+      translate: 0 calc(var(--sk-button-depth) * 0.18);
+    }
+  }
+
+  .sk-button[data-appearance="tactile"]:active:not(:disabled):not([aria-disabled="true"]) {
+    box-shadow:
+      0 calc(var(--sk-button-depth) * 0.14) 0 light-dark(
+        color-mix(in oklab, var(--sk-button-bg) 76%, var(--color-text-primary)),
+        color-mix(in oklab, var(--sk-button-bg) 72%, var(--color-bg-surface-sunken))
+      );
+    translate: 0 calc(var(--sk-button-depth) * 0.86);
+    scale: 1;
   }
 
   /* Icon-only is a SHAPE, a third axis orthogonal to variant and size, an accent button can be
@@ -544,6 +727,15 @@
     --sk-button-wash: none;
 
     cursor: not-allowed;
+  }
+
+  .sk-button[data-appearance="tactile"]:disabled,
+  .sk-button[data-appearance="tactile"][aria-disabled="true"] {
+    box-shadow:
+      0 calc(var(--sk-button-depth) * 0.55) 0 var(--color-border-subtle),
+      0 calc(var(--sk-button-depth) * 0.55 + 1px) 4px color-mix(in oklab, var(--color-text-disabled) 18%, transparent);
+    translate: 0;
+    scale: 1;
   }
 
   @media (forced-colors: active) {

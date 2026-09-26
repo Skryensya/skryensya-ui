@@ -1022,6 +1022,19 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-26",
+            "en": {
+              "body": "<code>Button.action</code> and <code>Button.navigation</code> accept <code>appearance</code>. <code>default</code> keeps the existing look; <code>tactile</code> expresses the same Button as a physical control with depth and press compression.",
+              "title": "Button adds tactile appearance"
+            },
+            "es": {
+              "body": "<code>Button.action</code> y <code>Button.navigation</code> aceptan <code>appearance</code>. <code>default</code> conserva el look existente; <code>tactile</code> expresa el mismo Button como un control fisico con profundidad y compresion al presionar.",
+              "title": "Button suma appearance tactile"
+            },
+            "kind": "feature",
+            "target": "appearance"
+          },
+          {
             "date": "2026-09-17",
             "en": {
               "body": "<code>forward</code> gains <code>value</code> and <code>autofocus</code>. A submit button that names a field can now say what it submits, and initial focus is the platform's on any focusable host.",
@@ -4532,6 +4545,19 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-26",
+            "en": {
+              "body": "<code>appearance</code> names controls that change a surface's visual presentation. Lucide, Phosphor and Material draw it as a palette, and all three sets in this repo ship it.",
+              "title": "The stable vocabulary gains appearance"
+            },
+            "es": {
+              "body": "<code>appearance</code> nombra los controles que cambian la presentación visual de una superficie. Lucide, Phosphor y Material lo dibujan como una paleta, y los tres sets del repo ya lo traen.",
+              "title": "El vocabulario estable gana appearance"
+            },
+            "kind": "feature",
+            "target": "name"
+          },
           {
             "date": "2026-09-26",
             "en": {
@@ -8700,6 +8726,18 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-26",
+            "en": {
+              "body": "<code>stableIconNames</code> gained <code>appearance</code>, and an IconStateButton's faces are named from that vocabulary, so the enum widens on its own. Nothing that compiled before stops compiling.",
+              "title": "Faces accept appearance"
+            },
+            "es": {
+              "body": "<code>stableIconNames</code> sumó <code>appearance</code>, y las faces de IconStateButton se nombran con ese vocabulario, así que el enum se ensancha solo. Nada que ya compilaba deja de compilar.",
+              "title": "Las faces aceptan appearance"
+            },
+            "kind": "feature"
+          },
           {
             "date": "2026-09-26",
             "en": {
@@ -14063,6 +14101,12 @@
           "part": "root",
           "sheet": "@skryensya/core/components/button.css"
         },
+        "--sk-button-depth": {
+          "default": "5px",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/button.css"
+        },
         "--sk-button-fg": {
           "default": "var(--color-text-primary)",
           "output": false,
@@ -14135,6 +14179,7 @@
         "--sk-button-bg",
         "--sk-button-border-color",
         "--sk-button-border-width",
+        "--sk-button-depth",
         "--sk-button-fg",
         "--sk-button-font-size",
         "--sk-button-font-weight",
@@ -14149,6 +14194,15 @@
       ],
       "id": "button",
       "options": {
+        "appearance": {
+          "attr": "data-appearance",
+          "default": "default",
+          "type": "enum",
+          "values": [
+            "default",
+            "tactile"
+          ]
+        },
         "disabled": {
           "attr": "disabled",
           "default": false,
@@ -14317,6 +14371,7 @@
           "options": [
             "variant",
             "tone",
+            "appearance",
             "size",
             "iconOnly",
             "weldStart",
@@ -14414,6 +14469,7 @@
           "options": [
             "variant",
             "tone",
+            "appearance",
             "size",
             "iconOnly",
             "weldStart",
@@ -26794,6 +26850,7 @@
             "visibility",
             "visibility-off",
             "language",
+            "appearance",
             "mode-system",
             "mode-light",
             "mode-dark",
@@ -41831,6 +41888,7 @@
                       "visibility",
                       "visibility-off",
                       "language",
+                      "appearance",
                       "mode-system",
                       "mode-light",
                       "mode-dark",
@@ -51145,7 +51203,7 @@
     "working": "0.0.1"
   },
   "schemaVersion": "2.3",
-  "sourceHash": "8207f443bb31f59c",
+  "sourceHash": "4f411991a508a993",
   "vocabulary": {
     "a11y": "When `when` holds, one of `requiresOneOf` must be given: an option, a raw attribute, a filled slot, or a child signature by name.",
     "atLeastOneOf": "At least one member of each group counts: a filled slot, a boolean option set to true, or an option other than its default.",

@@ -154,7 +154,7 @@ const stageSrcdocCache = new WeakMap<HTMLIFrameElement, string>();
 
 /** Drops one stage's realm. A no-op on a stage that is already released or never had content. */
 function releaseStage(frame: HTMLIFrameElement): void {
-  const srcdoc = frame.getAttribute("srcdoc") ?? frame.srcdoc;
+  const srcdoc = stageSrcdocCache.get(frame) ?? frame.getAttribute("srcdoc") ?? frame.srcdoc;
   if (!srcdoc) return;
   stageSrcdocCache.set(frame, srcdoc);
 
@@ -242,6 +242,18 @@ export function reloadComponentPreviewStage(root: HTMLElement): void {
     releaseStage(frame);
     requestAnimationFrame(() => restoreStage(frame));
   }
+}
+
+/**
+ * Replace the document a stage will restore from without forcing a live iframe to reboot.
+ *
+ * Docs-level controls such as Button appearance patch the live frame DOM and the deferred source.
+ * The lifecycle also keeps its own release/restore cache, so the same source has to be written here
+ * or an off-screen/released preview would come back with the old document the next time it mounts.
+ */
+export function updateComponentPreviewStageDocument(frame: HTMLIFrameElement, doc: string): void {
+  frame.setAttribute(componentPreviewAttrs.doc, doc);
+  stageSrcdocCache.set(frame, doc);
 }
 
 /** Shared screen preset for every preview on the page, exactly like `sharedBinding` above. */

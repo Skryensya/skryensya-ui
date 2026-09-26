@@ -10,6 +10,7 @@ import { isValidElement, type AnchorHTMLAttributes, type ButtonHTMLAttributes, t
 const {
   variant: variantOption,
   tone: toneOption,
+  appearance: appearanceOption,
   pressed: pressedOption,
   size: sizeOption,
   iconOnly: iconOnlyOption,
@@ -140,6 +141,7 @@ export function Button({
   weldEnd,
   variant = variantOption.default,
   tone = toneOption.default,
+  appearance = appearanceOption.default,
   pressed,
   size = sizeOption.default,
   pre,
@@ -158,6 +160,7 @@ export function Button({
     [sizeOption.attr]: size,
     [variantOption.attr]: variant,
     [toneOption.attr]: tone,
+    [appearanceOption.attr]: appearance,
   } as const;
 
   /*

@@ -24,12 +24,13 @@ describe("contractSurface: public promise, not realization", () => {
     });
 
     const action = (surface.signatures as Record<string, Record<string, unknown>>)["Button.action"];
-    expect(action.options).toEqual(expect.arrayContaining(["variant", "disabled"]));
+    expect(action.options).toEqual(expect.arrayContaining(["variant", "appearance", "disabled"]));
     expect(action.slots).toBeDefined();
     expect(action.mount).toBe("data-sk-button");
     expect(action.forward).toEqual(expect.arrayContaining(["form", "name"]));
 
     const nav = (surface.signatures as Record<string, Record<string, unknown>>)["Button.navigation"];
+    expect(nav.options).toEqual(expect.arrayContaining(["appearance"]));
     expect(nav.requires).toEqual(expect.arrayContaining(["href"]));
     expect(nav.forbids).toEqual(expect.arrayContaining(["disabled", "pressed"]));
 

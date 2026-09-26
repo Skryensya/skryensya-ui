@@ -3,8 +3,21 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "ef8699e96ff6f3d5"
+surface: "0794f6a68d94f73d"
 entries:
+  - date: 2026-09-26
+    kind: feature
+    target: name
+    es:
+      title: El vocabulario estable gana appearance
+      body: >-
+        <code>appearance</code> nombra los controles que cambian la presentación visual de una superficie. Lucide,
+        Phosphor y Material lo dibujan como una paleta, y los tres sets del repo ya lo traen.
+    en:
+      title: The stable vocabulary gains appearance
+      body: >-
+        <code>appearance</code> names controls that change a surface's visual presentation. Lucide, Phosphor and
+        Material draw it as a palette, and all three sets in this repo ship it.
   - date: 2026-09-25
     kind: feature
     target: name

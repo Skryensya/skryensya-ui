@@ -160,6 +160,10 @@ export const stableIconNames = [
    * the name two of the three sets give the drawing, nor `globe`, which would say "region / web"
    * before "change the language". The three published sets cover it. */
   "language",
+  /* Visual appearance / presentation. This intentionally names the reader-facing setting, not a
+   * specific drawing like `palette`: sets can choose a palette, swatches or style cards, and the
+   * role remains "change how this looks". */
+  "appearance",
 
   // color mode (the ThemeToggle's faces)
   "mode-system",

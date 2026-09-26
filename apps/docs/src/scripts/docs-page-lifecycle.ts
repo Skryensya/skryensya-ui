@@ -3,6 +3,7 @@ import { mountCodePreview } from "@skryensya/vanilla/code-preview";
 import { mountComponentPreview } from "@skryensya/vanilla/component-preview";
 import { mountIcons } from "@skryensya/vanilla/icon";
 import { siteIcons } from "../icons";
+import { initAppearance } from "./appearance";
 import { initDocsTour } from "./docs-tour";
 import { initDocsBinding } from "./docs-binding";
 import { initLanguageMenu } from "./language-menu";
@@ -41,6 +42,7 @@ async function initRouteDocument(): Promise<void> {
   initThemeToggle();
   initThemeTogglePersistence();
   initThemeToggleSync();
+  initAppearance();
   initDocsBinding();
   initLanguageMenu();
   initSearchTrigger();

@@ -34,6 +34,17 @@ describe("Button Vanilla contracts", () => {
     expect(root.getAttribute("aria-disabled")).toBe("true");
   });
 
+  it("accepts tactile authored markup without runtime appearance logic", () => {
+    const root = mount(
+      '<button class="sk-button sk-interactive extra" data-sk-button data-appearance="tactile" data-variant="solid" data-tone="accent">Continue</button>',
+    );
+
+    expect(() => mountButton(root)).not.toThrow();
+    expect(root.getAttribute("data-appearance")).toBe("tactile");
+    expect(root.classList.contains("extra")).toBe(true);
+    expect(root.getAttribute("type")).toBe("button");
+  });
+
   it("accepts an icon-only button named by aria-label", () => {
     const root = mount(
       '<button class="sk-button sk-interactive" data-sk-button data-icon-only aria-label="Close"><svg class="sk-icon" data-icon="close"></svg></button>',
@@ -101,6 +112,16 @@ describe("Button.navigation Vanilla contracts", () => {
     expect(root.getAttribute("href")).toBe("/docs");
     expect(root.getAttribute("rel")).toBe("next");
     expect(root.hasAttribute("type")).toBe(false);
+  });
+
+  it("accepts tactile authored navigation markup", () => {
+    const root = mount(
+      '<a class="sk-button sk-interactive" data-sk-button data-appearance="tactile" href="/docs">Documentation</a>',
+    );
+
+    expect(mountButton(root)).toBe(1);
+    expect(root.getAttribute("data-appearance")).toBe("tactile");
+    expect(root.getAttribute("href")).toBe("/docs");
   });
 
   it("refuses an anchor without href", () => {

@@ -1,0 +1,78 @@
+---
+import { iconMarkup } from "../icons";
+
+interface Props {
+  tile?: boolean;
+  label?: string;
+  description?: string;
+}
+
+const { tile = false, label, description } = Astro.props;
+const appearanceIcon = iconMarkup("appearance");
+---
+
+{
+  tile ? (
+    <button
+      class="sk-interactive sk-tile sk-tile--interactive docs-prefs-tile"
+      data-padding="md"
+      data-scope="tile"
+      data-part="root"
+      type="button"
+      data-docs-appearance-toggle
+    >
+      <span class="sk-tile__content" data-part="content">
+        <span class="sk-tile__title">{label}</span>
+        {description && <span class="sk-tile__description">{description}</span>}
+      </span>
+      <span class="docs-prefs-tile__value" data-docs-appearance-label>Default</span>
+    </button>
+  ) : (
+    <div class="sk-menu docs-appearance-menu" data-sk-menu aria-label={label}>
+      <button
+        class="sk-menu__trigger sk-button sk-interactive sk-anchor dimensions__appearance-trigger"
+        data-sk-menu-trigger
+        data-variant="soft"
+        data-size="sm"
+        data-icon-only
+        type="button"
+        aria-label={label}
+      >
+        <Fragment set:html={appearanceIcon} />
+      </button>
+      <div class="sk-menu__positioner sk-anchored" data-sk-menu-positioner>
+        <div class="sk-menu__content" data-sk-menu-content>
+          <div
+            class="sk-menu__item sk-interactive"
+            data-sk-menu-item
+            data-type="radio"
+            data-group="appearance"
+            data-value="default"
+            data-docs-appearance-set="default"
+            data-checked
+            aria-checked="true"
+          >
+            <span class="sk-menu__item-label">Default</span>
+            <span class="sk-menu__item-indicator" aria-hidden="true">
+              <span data-sk-icon="check" data-sk-icon-size="md" />
+            </span>
+          </div>
+          <div
+            class="sk-menu__item sk-interactive"
+            data-sk-menu-item
+            data-type="radio"
+            data-group="appearance"
+            data-value="tactile"
+            data-docs-appearance-set="tactile"
+            aria-checked="false"
+          >
+            <span class="sk-menu__item-label">Tactile</span>
+            <span class="sk-menu__item-indicator" aria-hidden="true">
+              <span data-sk-icon="check" data-sk-icon-size="md" />
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

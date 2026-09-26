@@ -72,6 +72,7 @@ const MAP = {
   settings: "Settings",
   user: "User",
   language: "Languages",
+  appearance: "Palette",
   visibility: "Eye",
   "visibility-off": "EyeOff",
   "mode-system": "Monitor",

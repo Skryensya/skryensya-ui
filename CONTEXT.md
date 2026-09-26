@@ -131,6 +131,13 @@ the machine's. A component with no machine (Presence, Sticker) takes its state a
 consumer writes instead; it is still a data attribute, still never a modifier.
 _Avoid_: modifier, flag, status
 
+**Appearance**:
+A selectable visual and physical expression of one component family. It may change paint, depth,
+elevation, and interaction feedback while preserving that component's meaning, anatomy, semantics,
+logical state, and behavior. It is one axis, not the aggregate of every visible option: Button's
+`variant` is emphasis, `tone` is meaning, and `appearance` is physical expression.
+_Avoid_: variant, tone, state, styling hook, presentation, theme
+
 **Markup contract**:
 The authorable half of a **Contract**: the structure a consumer writes by hand, the parts in the right
 nesting, with the attributes the contract maps its options onto. Documented, never shipped: the system

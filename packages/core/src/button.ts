@@ -37,6 +37,7 @@ export const buttonContract = {
     "--sk-button-bg",
     "--sk-button-border-color",
     "--sk-button-border-width",
+    "--sk-button-depth",
     "--sk-button-fg",
     "--sk-button-font-size",
     "--sk-button-font-weight",
@@ -88,6 +89,19 @@ export const buttonContract = {
       values: ["neutral", "accent", "danger"],
       default: "neutral",
       attr: "data-tone",
+    },
+    /*
+     * HOW IT IS PHYSICALLY EXPRESSED, and nothing about what it means or how loud it is. The
+     * default appearance is the existing flat/raised Button paint and feedback. `tactile` keeps the
+     * same host, anatomy, slots, states and options, but renders the control as a physical push
+     * button with visible travel into its surface. Independent axis: never spell this as
+     * `tactile-solid`, `tactile-danger`, or another compound value.
+     */
+    appearance: {
+      type: "enum",
+      values: ["default", "tactile"],
+      default: "default",
+      attr: "data-appearance",
     },
     /*
      * `xs` is the floor of the scale, not a fourth step someone felt like adding: it paints at
@@ -185,7 +199,18 @@ export const buttonContract = {
     "Button.action": {
       intent: ["action", "submit", "destructive-action"],
       host: { element: "button", when: { href: "absent" } },
-      options: ["variant", "tone", "size", "iconOnly", "weldStart", "weldEnd", "pressed", "disabled", "type"],
+      options: [
+        "variant",
+        "tone",
+        "appearance",
+        "size",
+        "iconOnly",
+        "weldStart",
+        "weldEnd",
+        "pressed",
+        "disabled",
+        "type",
+      ],
       compose: [{ of: "icon", systemOwned: true }],
       hitTesting: { childrenNone: ["Icon"] },
       /*
@@ -242,7 +267,7 @@ export const buttonContract = {
     "Button.navigation": {
       intent: ["navigation", "single-destination"],
       host: { element: "a", when: { href: "present" } },
-      options: ["variant", "tone", "size", "iconOnly", "weldStart", "weldEnd", "href"],
+      options: ["variant", "tone", "appearance", "size", "iconOnly", "weldStart", "weldEnd", "href"],
       compose: [{ of: "icon", systemOwned: true }],
       hitTesting: { childrenNone: ["Icon"] },
       requires: ["href"],
@@ -287,5 +312,6 @@ export const buttonContract = {
  */
 export type ButtonVariant = OptionValue<typeof buttonContract.options.variant>;
 export type ButtonTone = OptionValue<typeof buttonContract.options.tone>;
+export type ButtonAppearance = OptionValue<typeof buttonContract.options.appearance>;
 export type ButtonSize = OptionValue<typeof buttonContract.options.size>;
 export type ButtonOptions = OptionsOf<typeof buttonContract>;

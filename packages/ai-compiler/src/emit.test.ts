@@ -63,13 +63,13 @@ function normalize(markup: string): string {
 describe("emitMarkup", () => {
   it("writes the action signature onto its native host", () => {
     expect(normalize(emitMarkup(saveButton))).toBe(
-      '<button class="sk-button sk-interactive" data-sk-button data-variant="solid" data-tone="accent" data-size="md" type="button">Guardar</button>',
+      '<button class="sk-button sk-interactive" data-sk-button data-variant="solid" data-tone="accent" data-appearance="default" data-size="md" type="button">Guardar</button>',
     );
   });
 
   it("switches host on the discriminant, and drops nothing else", () => {
     expect(normalize(emitMarkup(docsLink))).toBe(
-      '<a class="sk-button sk-interactive" data-sk-button data-variant="solid" data-tone="accent" data-size="md" href="/docs">Documentación</a>',
+      '<a class="sk-button sk-interactive" data-sk-button data-variant="solid" data-tone="accent" data-appearance="default" data-size="md" href="/docs">Documentación</a>',
     );
   });
 
@@ -343,6 +343,7 @@ describe("emitMarkup", () => {
         "  data-sk-button",
         '  data-variant="solid"',
         '  data-tone="accent"',
+        '  data-appearance="default"',
         '  data-size="md"',
         '  href="/docs"',
         ">",

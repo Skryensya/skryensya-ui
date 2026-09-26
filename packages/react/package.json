@@ -169,6 +169,10 @@
       "types": "./src/components/image-frame.tsx",
       "default": "./src/components/image-frame.tsx"
     },
+    "./sticker": {
+      "types": "./src/components/sticker.tsx",
+      "default": "./src/components/sticker.tsx"
+    },
     "./media-gradient": {
       "types": "./src/components/media-gradient.tsx",
       "default": "./src/components/media-gradient.tsx"

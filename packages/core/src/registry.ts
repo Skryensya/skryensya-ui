@@ -83,6 +83,7 @@ import { formFieldContract } from "./form-field.js";
 import { iconContract } from "./icon.js";
 import { inputContract } from "./input.js";
 import { imageFrameContract } from "./image-frame.js";
+import { stickerContract } from "./sticker.js";
 import { navListContract } from "./nav-list.js";
 import { tableContract } from "./table.js";
 import { treegridContract } from "./treegrid.js";
@@ -139,6 +140,7 @@ export const contracts = fromContracts(
   footerContract,
   iconContract,
   imageFrameContract,
+  stickerContract,
   fadeEdgeContract,
   presenceContract,
   passwordInputContract,

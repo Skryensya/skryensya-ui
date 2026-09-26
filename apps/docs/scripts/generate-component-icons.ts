@@ -74,6 +74,7 @@ const MAP: Record<string, string> = {
   "/components/hero": "Presentation",
   "/components/icon": "Shapes",
   "/components/image-frame": "Image",
+  "/components/sticker": "Sticker",
   "/components/lightbox": "Images",
   "/components/inline": "Columns3",
   "/components/input": "TextCursorInput",

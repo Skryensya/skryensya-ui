@@ -465,6 +465,12 @@ const componentItems = [
     ],
   },
   {
+    href: "/components/sticker",
+    label: "Sticker",
+    trailing: "Beta",
+    aliases: ["sticker", "calcomanía", "calcomania", "pegatina", "die-cut", "troquelado", "decal", "peel", "despegar"],
+  },
+  {
     href: "/components/lightbox",
     label: "Lightbox",
     aliases: [
@@ -1063,6 +1069,7 @@ const allComponentNavigation = [
       "/components/tag",
       "/components/avatar",
       "/components/image-frame",
+      "/components/sticker",
       "/components/carousel",
       "/components/qr-code",
       "/components/marquee",

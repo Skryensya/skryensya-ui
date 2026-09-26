@@ -8939,6 +8939,26 @@
         "version": "0.0.1-dev"
       }
     ],
+    "sticker": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-09-26",
+            "en": {
+              "body": "It joins the catalogue with <code>Sticker</code>: artwork turned into a die-cut sticker. The white edge follows the artwork's silhouette, not its box, so a transparent PNG or an SVG keeps its shape. <code>state</code> (<code>idle</code>, <code>peeled</code>, <code>applied</code>) is the consumer's decision, written as <code>data-state</code>; changing it plays the peel or the press with the system's motion tokens. <code>peelOrigin</code> picks the corner that lifts, in logical terms. The artwork comes in through <code>src</code> and <code>alt</code>, or as children, never both. There is no enhancer: <code>components/sticker.css</code> does all of it.",
+              "title": "Sticker is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Sticker</code>: una ilustración convertida en sticker troquelado. El borde blanco sigue la silueta del arte, no su caja, así que un PNG transparente o un SVG conservan su forma. <code>state</code> (<code>idle</code>, <code>peeled</code>, <code>applied</code>) lo decide quien lo usa y se escribe en <code>data-state</code>; cambiarlo reproduce el despegue o la adhesión con los tokens de movimiento del sistema. <code>peelOrigin</code> elige la esquina que se levanta, en términos lógicos. El arte entra por <code>src</code> y <code>alt</code>, o como hijos, nunca las dos cosas. No tiene enhancer: la hoja <code>components/sticker.css</code> hace todo.",
+              "title": "Sticker se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.0.1-dev"
+      }
+    ],
     "switch": [
       {
         "date": null,
@@ -42000,6 +42020,207 @@
         }
       }
     },
+    "sticker": {
+      "a11y": [
+        {
+          "because": "An authored image needs an alt, empty when the sticker is decoration. The sticker never invents one, and its state is not announced.",
+          "requiresOneOf": [
+            "alt"
+          ],
+          "when": {
+            "src": "present"
+          }
+        }
+      ],
+      "bindings": {
+        "Sticker": {
+          "enhancer": null,
+          "markup": true,
+          "portals": false,
+          "react": "@skryensya/react/sticker#Sticker"
+        }
+      },
+      "category": "content",
+      "css": "@skryensya/core/components/sticker.css",
+      "hookDetails": {
+        "--sk-sticker-edge-color": {
+          "default": "var(--color-text-on-media)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/sticker.css"
+        },
+        "--sk-sticker-edge-width": {
+          "default": "0.375rem",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/sticker.css"
+        },
+        "--sk-sticker-peel-size": {
+          "default": "0.5",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/sticker.css"
+        },
+        "--sk-sticker-rotate": {
+          "default": "-3deg",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/sticker.css"
+        }
+      },
+      "hooks": [
+        "--sk-sticker-edge-color",
+        "--sk-sticker-edge-width",
+        "--sk-sticker-peel-size",
+        "--sk-sticker-rotate"
+      ],
+      "id": "sticker",
+      "options": {
+        "alt": {
+          "attr": "alt",
+          "type": "string"
+        },
+        "peelOrigin": {
+          "attr": "data-peel-origin",
+          "default": "block-end-inline-end",
+          "type": "enum",
+          "values": [
+            "block-start-inline-start",
+            "block-start-inline-end",
+            "block-end-inline-start",
+            "block-end-inline-end"
+          ]
+        },
+        "src": {
+          "attr": "src",
+          "type": "string"
+        },
+        "state": {
+          "attr": "data-state",
+          "default": "idle",
+          "type": "enum",
+          "values": [
+            "idle",
+            "peeled",
+            "applied"
+          ]
+        }
+      },
+      "parts": {
+        "art": "sk-sticker__art",
+        "flap": "sk-sticker__flap",
+        "root": "sk-sticker"
+      },
+      "semantics": {
+        "Sticker": {
+          "alternatives": [
+            "ImageFrame",
+            "Avatar.image",
+            "Badge"
+          ],
+          "avoidWhen": [
+            "the media needs a rectangular crop, a fixed aspect ratio or object-fit: that is an ImageFrame",
+            "the image only has to be shown; a plain img carries no material treatment and costs nothing",
+            "the motion is a generic entrance or a call for attention; that is an effect such as sk-fx-reveal or sk-fx-pulse, not a peel",
+            "it is a person's identity: that is an Avatar, whatever shape the photo has",
+            "it is a count or a status next to something else; that is a Badge or a Tag, which are text, not artwork",
+            "clicking it is supposed to do something; a sticker is not a control, so put it inside a Button or give the product its own control"
+          ],
+          "useWhen": [
+            "a graphic needs a die-cut edge that follows its own silhouette, not the rectangle around it",
+            "artwork has to read as a physical, adhesive object on the page: a badge earned, a mark placed, a decal",
+            "the product has a state for the graphic's placement (not yet applied, lifting off, stuck down) and it should be seen"
+          ]
+        }
+      },
+      "signatures": {
+        "Sticker": {
+          "exactlyOneOf": [
+            [
+              "src",
+              "children"
+            ]
+          ],
+          "host": {
+            "element": "span"
+          },
+          "intent": [
+            "sticker",
+            "die-cut-sticker",
+            "peelable-sticker",
+            "silhouette-outline",
+            "badge-sticker"
+          ],
+          "options": [
+            "state",
+            "peelOrigin",
+            "src",
+            "alt"
+          ],
+          "react": {
+            "from": "@skryensya/react/sticker",
+            "name": "Sticker"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node"
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "children": [
+                  {
+                    "element": "img",
+                    "options": [
+                      "src",
+                      "alt"
+                    ],
+                    "whenGiven": "src"
+                  },
+                  {
+                    "slot": "children"
+                  }
+                ],
+                "element": "span",
+                "part": "art"
+              },
+              {
+                "attrs": {
+                  "aria-hidden": "true"
+                },
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "attrs": {
+                          "alt": ""
+                        },
+                        "element": "img",
+                        "options": [
+                          "src"
+                        ],
+                        "whenGiven": "src"
+                      },
+                      {
+                        "slot": "children"
+                      }
+                    ],
+                    "element": "span",
+                    "part": "art"
+                  }
+                ],
+                "element": "span",
+                "part": "flap"
+              }
+            ],
+            "element": "span",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
     "switch": {
       "a11y": [
         {
@@ -50820,7 +51041,7 @@
     "working": "0.0.1"
   },
   "schemaVersion": "2.3",
-  "sourceHash": "6a8848d2f682bd05",
+  "sourceHash": "f327a164cd05016a",
   "vocabulary": {
     "a11y": "When `when` holds, one of `requiresOneOf` must be given: an option, a raw attribute, a filled slot, or a child signature by name.",
     "atLeastOneOf": "At least one member of each group counts: a filled slot, a boolean option set to true, or an option other than its default.",

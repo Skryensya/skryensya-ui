@@ -88,6 +88,7 @@ import { headingMessages } from "./messages/components/heading";
 import { heroMessages } from "./messages/components/hero";
 import { iconMessages } from "./messages/components/icon";
 import { imageFrameMessages } from "./messages/components/image-frame";
+import { stickerMessages } from "./messages/components/sticker";
 import { inlineMessages } from "./messages/components/inline";
 import { inputMessages } from "./messages/components/input";
 import { kbdMessages } from "./messages/components/kbd";
@@ -231,6 +232,7 @@ export const ui = {
     ...heroMessages.es,
     ...iconMessages.es,
     ...imageFrameMessages.es,
+    ...stickerMessages.es,
     ...inlineMessages.es,
     ...inputMessages.es,
     ...kbdMessages.es,
@@ -371,6 +373,7 @@ export const ui = {
     ...heroMessages.en,
     ...iconMessages.en,
     ...imageFrameMessages.en,
+    ...stickerMessages.en,
     ...inlineMessages.en,
     ...inputMessages.en,
     ...kbdMessages.en,

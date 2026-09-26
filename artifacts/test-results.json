@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-26T02:48:57.983Z",
+  "generatedAt": "2026-09-26T14:40:50.444Z",
   "results": {
     "apps/docs/src/components/pages/CardPage.test.ts": {
       "imports tile.css, which Base.astro never loads globally": "passed",
@@ -1950,6 +1950,16 @@
       "reveals from a pointer and swaps to the authored hide label": "passed",
       "is a tab stop and toggles from the keyboard, like React": "passed",
       "starts shown with data-default-visible, and dispatches the visibility event": "passed"
+    },
+    "packages/react/src/components/sticker.test.tsx": {
+      "renders the src path as the contract's anatomy: art, then an aria-hidden flap holding the copy": "passed",
+      "keeps an explicitly empty alt for decoration instead of dropping it": "passed",
+      "takes authored artwork as children and leaves its semantics alone": "passed",
+      "writes the contract defaults, so the first paint is deterministic": "passed",
+      "maps every option to the attribute the contract names": "passed",
+      "moves between states from the outside without remounting the artwork": "passed",
+      "does not change its own state on click: that decision is the consumer's": "passed",
+      "passes ordinary host props through and merges the class": "passed"
     }
   }
 }

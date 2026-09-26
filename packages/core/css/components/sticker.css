@@ -1,0 +1,357 @@
+/*
+ * TIER 3, STICKER
+ *
+ * Authored artwork made into a die-cut sticker. Three things are painted here, and all three follow
+ * the artwork's ALPHA rather than its box, because the box of a transparent PNG is not the sticker:
+ *
+ *   1. THE DIE-CUT EDGE. A chain of zero-blur `drop-shadow()`s in the edge colour. A drop shadow is
+ *      the silhouette filled with a colour, so a ring of them offset around the artwork is the
+ *      silhouette grown outward: a dilation, the same operation an SVG `feMorphology` performs, but
+ *      written in CSS so its width and colour can be styling hooks (an SVG filter's radius is an
+ *      attribute no custom property can reach). Chained rather than listed side by side, because
+ *      each shadow in a `filter` list shadows everything before it: the first four grow the shape
+ *      along the axes, the next four along the diagonals, and the two sets add up to an octagon
+ *      whose reach is within 8% of the width in every direction. A single ring of eight offsets
+ *      would only reach 71% of it on the diagonals, and a round edge is what reads as die-cut.
+ *      Holes narrower than twice the edge fill in, which is what a cutting die does too.
+ *   2. THE ELEVATION. One more `drop-shadow()` after the edge, in the semantic shadow colour, so the
+ *      shadow is cast by the sticker's outline and never by a rectangle. The `--elevation-*`
+ *      composites cannot be reused: they are `box-shadow` lists, with spread, which a
+ *      `drop-shadow()` does not take and which would square the silhouette off if it could.
+ *   3. THE PEEL. The artwork is laid down twice (see `sticker.ts`) and each copy is clipped to its
+ *      side of a fold line cut across the origin corner. The copy in `__flap` turns over about that
+ *      line; the other stays flat. Nothing is ever painted behind the artwork, so what the lifted
+ *      corner uncovers is the page, never a card.
+ *
+ * All three are filters and transforms: no pixel is read, so a cross-origin image needs no CORS and
+ * a canvas never enters.
+ *
+ * EVERY FILTER IS PER PIECE, NONE ON THE ROOT, and that is a measurement rather than a taste. One
+ * chain on the root would be simpler (the edge and shadow of the whole silhouette, drawn once), and
+ * it is what the first version did. But a filter on an ancestor of the 3D-turned flap sends Chromium
+ * down a slow path: a page of 35 stickers took 31s to paint with the eight-shadow edge on the root,
+ * 11s with six, 5s with four, and still 14s with only the elevation shadow left there. With every
+ * filter on the flat pieces themselves, before their own transform, the same page paints in 2s. So
+ * each piece carries its own edge and shadow before it is clipped and turned, and the clip regions
+ * reach past the box far enough to keep both.
+ *
+ * STATE IS THE CONSUMER'S, and the stylesheet only interprets it. Three registered numbers carry the
+ * whole motion, and each state is nothing but a value for each:
+ *
+ *   --sticker-peel     0..1  how far the corner has turned over (the fold line's travel and angle)
+ *   --sticker-lift     0..1  how high the sticker sits over the page (its scale and its shadow)
+ *   --sticker-contact  0..1  the clock of the press onto the page, read through `sin()`, so it
+ *                            squeezes the sticker and lets it go again as it runs from 0 to 1
+ *
+ * Registered with `@property` because a transition only interpolates a custom property the browser
+ * knows the type of. Everything painted is a function of these three, so the fold line, the axis,
+ * the shadow and the scale can never fall out of step with one another. They are internal, never
+ * styling hooks: a consumer who sets one would be fighting the state they chose.
+ *
+ * WHICH MOTION INTENT, by what each change means rather than by how long it lasts (ADR-0004):
+ *   - to `peeled`: someone picking the sticker up by its corner. That is `drag`, pickup feedback.
+ *   - to `applied`: letting go and pressing it home. That is `release`, the one intent allowed to be
+ *     slow, because it is the end of a gesture and not the system acting on its own.
+ *   - to `idle`: the sticker going back to resting loose. A plain `state-change`.
+ *
+ * Example:
+ *  <span class="sk-sticker" data-state="applied" data-peel-origin="block-end-inline-end">
+ *    <span class="sk-sticker__art"><img src="/badge.png" alt="Early supporter"></span>
+ *    <span class="sk-sticker__flap" aria-hidden="true">
+ *      <span class="sk-sticker__art"><img src="/badge.png" alt=""></span>
+ *    </span>
+ *  </span>
+ */
+
+@property --sticker-peel {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --sticker-lift {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --sticker-contact {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@layer components {
+  .sk-sticker {
+    /*
+     * The edge takes the semantic white Switch's thumb already uses, `--color-text-on-media`: a
+     * value that stays white in every colour mode. A sticker's backing is vinyl, a material with
+     * one colour, not a surface that should follow the page into dark mode; `--color-bg-surface`
+     * would turn the edge charcoal exactly where the white cut matters most.
+     */
+    --sk-sticker-edge-color: var(--color-text-on-media);
+    --sk-sticker-edge-width: 0.375rem;
+    /* How far into the artwork the fold reaches when fully peeled, as a fraction of its box,
+       measured from the origin corner along both edges. A number rather than a percentage because
+       it is multiplied into container units as well as into clip coordinates. */
+    --sk-sticker-peel-size: 0.5;
+    /* A loose sticker is rarely square to the page. The same angle holds in every state: applying
+       a sticker presses it down where it lies, it does not straighten it. */
+    --sk-sticker-rotate: -3deg;
+
+    /* The two steps of the dilation. 2.4142 is 1 + √2: an axis step `a` plus two diagonal steps
+       of `a / √2` reaches exactly the edge width along an axis and along a diagonal. */
+    --sticker-step: calc(var(--sk-sticker-edge-width) / 2.4142);
+    --sticker-diagonal: calc(var(--sticker-step) * 0.7071);
+    --sticker-edge:
+      drop-shadow(var(--sticker-step) 0 0 var(--sk-sticker-edge-color))
+      drop-shadow(calc(-1 * var(--sticker-step)) 0 0 var(--sk-sticker-edge-color))
+      drop-shadow(0 var(--sticker-step) 0 var(--sk-sticker-edge-color))
+      drop-shadow(0 calc(-1 * var(--sticker-step)) 0 var(--sk-sticker-edge-color))
+      drop-shadow(var(--sticker-diagonal) var(--sticker-diagonal) 0 var(--sk-sticker-edge-color))
+      drop-shadow(calc(-1 * var(--sticker-diagonal)) calc(-1 * var(--sticker-diagonal)) 0 var(--sk-sticker-edge-color))
+      drop-shadow(var(--sticker-diagonal) calc(-1 * var(--sticker-diagonal)) 0 var(--sk-sticker-edge-color))
+      drop-shadow(calc(-1 * var(--sticker-diagonal)) var(--sticker-diagonal) 0 var(--sk-sticker-edge-color));
+    /*
+     * The shadow the flat piece casts, deeper the higher the sticker sits. Kept TIGHT on purpose:
+     * the flat piece is clipped at the fold, and its shadow with it, so a long soft shadow showed
+     * as a straight diagonal cut through empty page wherever the silhouette crossed the fold line.
+     * At this size the cut is a few pixels, inside the edge's own antialiasing. The flap casts
+     * none: turned over, its shadow landed mirrored as a wedge along the fold.
+     */
+    --sticker-shadow: drop-shadow(
+      0 calc(0.5px + var(--sticker-lift) * 3px) calc(0.5px + var(--sticker-lift) * 5px) var(--shadow-md)
+    );
+
+    /* The origin corner, as signs: +1 is the inline-end or block-end side. Direction flips the
+       inline sign below, so `block-end-inline-end` is the bottom right in LTR and the bottom left
+       in RTL without a second set of rules per corner. */
+    --sticker-inline: 1;
+    --sticker-block: 1;
+    --sticker-direction: 1;
+    --sticker-sx: calc(var(--sticker-inline) * var(--sticker-direction));
+    --sticker-sy: var(--sticker-block);
+    --sticker-x: calc(50% + 50% * var(--sticker-sx));
+    --sticker-y: calc(50% + 50% * var(--sticker-sy));
+
+    /*
+     * THE FOLD LINE crosses the two edges that meet at the origin corner, `--sticker-cut` of the way
+     * along each. Written in percentages on purpose: a line whose two crossings are the same share
+     * of each edge keeps its direction as it travels, so the rotation axis below is one angle
+     * rather than something recomputed, and turned over, every frame.
+     *
+     * At rest it sits well OUTSIDE the corner, so a sticker that is not peeling is one unclipped
+     * piece with no seam across it, and the flap's region holds nothing but empty page. "Well"
+     * because the edge and the shadow spill past the box and have to stay on the flat side: 60% of
+     * the box, measured along both edges. Getting from there to `peel-size` is the cubic below,
+     * which crosses into the artwork a third of the way through the peel rather than half, so most
+     * of the motion is spent on something visible.
+     *
+     * Both clip regions are cut along the SAME line, extended half a box past each edge along its
+     * own direction (`--sticker-spill`), so the edge and the shadow beyond the box land on whichever
+     * side of the fold they belong to and nothing is covered twice or not at all.
+     */
+    --sticker-cut: calc(
+      var(--sticker-peel) * var(--sk-sticker-peel-size) * 100% - pow(1 - var(--sticker-peel), 3) * 60%
+    );
+    --sticker-spill: 50%;
+    --sticker-fold-x: calc(var(--sticker-x) - var(--sticker-sx) * var(--sticker-cut));
+    --sticker-out-x: calc(var(--sticker-x) + var(--sticker-sx) * var(--sticker-spill));
+    --sticker-out-y: calc(var(--sticker-y) + var(--sticker-sy) * var(--sticker-spill));
+    --sticker-end-x: calc(var(--sticker-x) - var(--sticker-sx) * (var(--sticker-cut) + var(--sticker-spill)));
+    --sticker-end-y: calc(var(--sticker-y) - var(--sticker-sy) * (var(--sticker-cut) + var(--sticker-spill)));
+
+    /* Resting, `idle`: loose on the page, a little above it. */
+    --sticker-peel: 0;
+    --sticker-lift: 0.5;
+    --sticker-contact: 0;
+
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    box-sizing: border-box;
+    max-inline-size: 100%;
+    /* Room for the edge, so it is part of the layout rather than an overflow a clipping ancestor
+       would cut off. The artwork's own box is what the peel geometry measures, and `__flap` is
+       inset by the same amount to match it. */
+    padding: var(--sk-sticker-edge-width);
+    rotate: var(--sk-sticker-rotate);
+    /* Nearer the reader when lifted, and squeezed for a moment as it meets the page: `sin()` of the
+       contact clock is 0 at both ends, so the press resolves on its own and `applied` rests at
+       exactly scale 1. */
+    scale: calc(1 + var(--sticker-lift) * 0.03 - sin(var(--sticker-contact) * 180deg) * 0.03);
+    transition:
+      --sticker-peel var(--motion-state-change-duration) var(--motion-state-change-easing),
+      --sticker-lift var(--motion-state-change-duration) var(--motion-state-change-easing),
+      --sticker-contact 0s;
+  }
+
+  .sk-sticker:dir(rtl) {
+    --sticker-direction: -1;
+  }
+
+  .sk-sticker[data-peel-origin="block-start-inline-start"] {
+    --sticker-inline: -1;
+    --sticker-block: -1;
+  }
+
+  .sk-sticker[data-peel-origin="block-start-inline-end"] {
+    --sticker-inline: 1;
+    --sticker-block: -1;
+  }
+
+  .sk-sticker[data-peel-origin="block-end-inline-start"] {
+    --sticker-inline: -1;
+    --sticker-block: 1;
+  }
+
+  .sk-sticker[data-peel-origin="block-end-inline-end"] {
+    --sticker-inline: 1;
+    --sticker-block: 1;
+  }
+
+  /*
+   * Picked up by the corner. The press clock snaps back to 0 with no transition of its own, so
+   * leaving `applied` never plays the squeeze in reverse: that is a landing, and a sticker coming
+   * off the page has not landed.
+   */
+  .sk-sticker[data-state="peeled"] {
+    --sticker-peel: 1;
+    --sticker-lift: 1;
+    --sticker-contact: 0;
+    transition:
+      --sticker-peel var(--motion-drag-duration) var(--motion-drag-easing),
+      --sticker-lift var(--motion-drag-duration) var(--motion-drag-easing),
+      --sticker-contact 0s;
+  }
+
+  /*
+   * Let go and pressed home, in the order a hand does it: the corner comes down and the sticker
+   * sinks toward the page together, and only once it is mostly there does the press start, half a
+   * release in. The glide easing spends most of each move early, so the squeeze peaks as the
+   * sticker lands and the long tail is the settle.
+   */
+  .sk-sticker[data-state="applied"] {
+    --sticker-peel: 0;
+    --sticker-lift: 0;
+    --sticker-contact: 1;
+    transition:
+      --sticker-peel var(--motion-release-duration) var(--motion-release-easing),
+      --sticker-lift var(--motion-release-duration) var(--motion-release-easing),
+      --sticker-contact var(--motion-release-duration) var(--motion-release-easing)
+        calc(var(--motion-release-duration) / 2);
+  }
+
+  .sk-sticker__art {
+    display: block;
+    filter: var(--sticker-edge) var(--sticker-shadow);
+  }
+
+  /*
+   * The flat piece: everything on the near side of the fold line. A pentagon from the fold line's
+   * two extended ends around the three far corners of the box, each pushed out by the spill so the
+   * edge and the shadow past the box stay in.
+   */
+  .sk-sticker > .sk-sticker__art {
+    clip-path: polygon(
+      var(--sticker-end-x) var(--sticker-out-y),
+      var(--sticker-out-x) var(--sticker-end-y),
+      var(--sticker-out-x) calc(100% - var(--sticker-out-y)),
+      calc(100% - var(--sticker-out-x)) calc(100% - var(--sticker-out-y)),
+      calc(100% - var(--sticker-out-x)) var(--sticker-out-y)
+    );
+  }
+
+  /* A replaced image fills its piece, so both copies draw it at the same size whatever width the
+     consumer gives the sticker. Authored children keep the sizing their author gave them. */
+  .sk-sticker__art > img {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+  }
+
+  /*
+   * The region that lifts, laid exactly over the flat piece. It is a size container so the fold
+   * axis can be computed from the artwork's real proportions: a line drawn corner to corner in
+   * percentages points in a different direction on a wide box than on a square one, and only
+   * container units turn that into an angle. It paints nothing, and takes no pointer.
+   */
+  .sk-sticker__flap {
+    position: absolute;
+    inset: var(--sk-sticker-edge-width);
+    container-type: size;
+    pointer-events: none;
+  }
+
+  /*
+   * The lifted piece: the corner beyond the fold line, turned over about that line.
+   *
+   * `rotate(θ) rotateX(φ) rotate(-θ)` is a rotation about an axis at angle θ in the plane of the
+   * page, read right to left: turn the axis onto the x axis, tip it, turn it back. θ is the fold's
+   * direction in real pixels: the line crosses both edges at the same share, so it runs parallel to
+   * the diagonal between the two neighbouring corners, whatever the artwork's proportions. φ changes
+   * sign with the corner, because the corner lies on the other side of the directed axis in half
+   * of them, and tipping the wrong way would push it into the page instead of lifting it off. The
+   * pivot is where the fold crosses the origin's block edge.
+   *
+   * IT TURNS PAST UPRIGHT, to 145°, and that is what makes it read as a peel. Measured on the first
+   * version, which stopped at 50°: a corner tipped toward the reader but still showing its face
+   * looks like a crease drawn across a flat sticker, because the face is the same picture on both
+   * sides of the fold. A corner curled back so its underside shows is the one image everybody reads
+   * as "coming off". Perspective scales with the artwork, three times its longer side, so a small
+   * sticker and a large one curl with the same depth.
+   *
+   * THE UNDERSIDE IS MATERIAL, not the artwork mirrored. Past 90° the reader is looking at the back
+   * of the copy, so the filter turns it into its own silhouette in a near-white: `brightness(0)`
+   * makes every visible pixel black and `invert()` lifts it back up, with alpha untouched, so the
+   * back keeps the artwork's exact outline and its edge. The switch is a 1° ramp placed where the
+   * rotation crosses 90°, the one instant the piece is edge-on and has no area to see it happen in.
+   * Before it, a slight brightening is the face turning toward the light.
+   *
+   * Its region reaches one pixel past the fold, onto the flat side. Without it the flat piece's
+   * antialiased edge showed through as a hairline of the artwork's colour along the crease, right
+   * where the underside should cover it.
+   */
+  .sk-sticker__flap > .sk-sticker__art {
+    --sticker-axis: atan2(calc(-1 * var(--sticker-sy) * 100cqh), calc(var(--sticker-sx) * 100cqw));
+    --sticker-turn: calc(var(--sticker-peel) * 145);
+    --sticker-underside: clamp(0, var(--sticker-turn) - 90, 1);
+
+    position: absolute;
+    inset: 0;
+    clip-path: polygon(
+      calc(var(--sticker-end-x) - var(--sticker-sx) * 1px) var(--sticker-out-y),
+      var(--sticker-out-x) calc(var(--sticker-end-y) - var(--sticker-sy) * 1px),
+      var(--sticker-out-x) var(--sticker-out-y)
+    );
+    transform-origin: var(--sticker-fold-x) var(--sticker-y);
+    transform:
+      perspective(calc(max(100cqw, 100cqh) * 3))
+      rotate(var(--sticker-axis))
+      rotateX(calc(var(--sticker-turn) * var(--sticker-sx) * var(--sticker-sy) * 1deg))
+      rotate(calc(-1 * var(--sticker-axis)));
+    filter:
+      var(--sticker-edge)
+      brightness(calc((1 + var(--sticker-peel) * 0.08) * (1 - var(--sticker-underside))))
+      invert(calc(var(--sticker-underside) * 0.9));
+  }
+
+  .sk-sticker__flap > .sk-sticker__art > * {
+    inline-size: 100%;
+    block-size: 100%;
+  }
+
+  /*
+   * Reduced motion keeps every state and drops the travel between them, the line folder.css draws:
+   * a peeled sticker still shows its corner turned over, an applied one still lies flat, and the
+   * change happens at once instead of being watched. The intent tokens alone would not get there,
+   * since `drag` is deliberately left at full speed for a gesture the user is making, and this peel
+   * is the product's doing, not the reader's hand.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    .sk-sticker,
+    .sk-sticker[data-state] {
+      transition: none;
+    }
+  }
+}

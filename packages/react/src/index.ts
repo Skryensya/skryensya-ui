@@ -126,6 +126,8 @@ export type {
 } from "./components/layout.js";
 export { ImageFrame } from "./components/image-frame.js";
 export type { ImageFrameProps } from "./components/image-frame.js";
+export { Sticker } from "./components/sticker.js";
+export type { StickerProps } from "./components/sticker.js";
 export { Lightbox, LightboxProvider, useLightbox, useLightboxState } from "./components/lightbox.js";
 export type {
   LightboxHandle,

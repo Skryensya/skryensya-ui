@@ -26,6 +26,27 @@ const SAMPLE_MEDIA =
       "</svg>",
   );
 
+/*
+ * STICKER SPECIMENS, the two kinds of artwork its whole claim is about.
+ *
+ * A star with a hole punched through its middle, as a transparent PNG: irregular on the outside,
+ * transparent on the inside, and raster, so the die-cut edge has to come from pixel alpha with no
+ * vector to lean on. Generated once from a canvas and inlined for the reason SAMPLE_MEDIA is.
+ */
+const STICKER_RASTER =
+  "data:image/png;base64,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";
+
+/* The same idea as a vector, loaded as an image: a speech bubble with a tail, concave where it
+   meets the body, which is the shape a box-shaped edge would get most visibly wrong. */
+const STICKER_SVG =
+  "data:image/svg+xml;utf8," +
+  encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="72" height="72">' +
+      '<path d="M50 8C75 8 92 30 80 52L92 90L58 72C30 80 8 62 12 40C16 20 30 8 50 8Z" fill="#805ad5"/>' +
+      '<circle cx="40" cy="42" r="6" fill="#fff"/><circle cx="62" cy="42" r="6" fill="#fff"/>' +
+      "</svg>",
+  );
+
 export type Canonical = {
   readonly name: string;
   readonly tree: UsageTree;
@@ -534,6 +555,42 @@ const signatureTrees: readonly Canonical[] = [
         signature: "Text",
         children: "Un texto que se desvanece en el borde",
       },
+    },
+  },
+  /*
+   * STICKER, one tree per state and one per kind of artwork, since the silhouette is the claim: a
+   * raster with a hole, an SVG loaded as an image, and an inline SVG (an Icon, the one way a usage
+   * tree can author vector markup). No enhancer: state is an attribute and CSS plays it.
+   */
+  {
+    name: "sticker/raster-idle",
+    enhanced: false,
+    tree: {
+      contract: "sticker",
+      signature: "Sticker",
+      options: { src: STICKER_RASTER, alt: "Estrella dorada" },
+    },
+  },
+  {
+    /* Peeled from the top corner, where the bubble has material to lift; decorative, so `alt=""`. */
+    name: "sticker/svg-peeled",
+    enhanced: false,
+    tree: {
+      contract: "sticker",
+      signature: "Sticker",
+      options: { src: STICKER_SVG, alt: "", state: "peeled", peelOrigin: "block-start-inline-end" },
+    },
+  },
+  {
+    /* Not enhanced, like qr-code/with-logo: the harness draws the Icon's svg in both bindings, and
+       the sticker itself mounts nothing. */
+    name: "sticker/inline-svg-applied",
+    enhanced: false,
+    tree: {
+      contract: "sticker",
+      signature: "Sticker",
+      options: { state: "applied" },
+      children: { contract: "icon", signature: "Icon", options: { name: "settings", size: "lg" } },
     },
   },
   {
@@ -2688,6 +2745,18 @@ const signatureTrees: readonly Canonical[] = [
         children: "El deploy quedó bien, gracias por revisar.",
       },
     } },
+    },
+  },
+  /* `voteStyle: "like"`: the same group with thumbs and its own names, so the gates hold both
+   * bindings to the swapped glyphs and to labels that say what the thumbs do. */
+  {
+    name: "comment-thread/vote-like",
+    enhanced: false,
+    tree: {
+      contract: "comment-thread",
+      signature: "CommentVote",
+      options: { voteStyle: "like", voted: "up", voteUpLabel: "Me gusta", voteDownLabel: "No me gusta" },
+      slots: { count: "12" },
     },
   },
   {

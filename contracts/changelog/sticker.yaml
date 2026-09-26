@@ -1,0 +1,31 @@
+# What changed in sticker, in the words its users read. Only appended to, never rewritten.
+#
+# `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
+# does not match, something a consumer depends on has moved: write the entry and paste in the new
+# hash.
+surface: "2b342360a196b45d"
+entries:
+  - date: 2026-09-26
+    kind: feature
+    es:
+      title: Sticker se publica como contrato, con una signature
+      body: >-
+        Entra al catálogo con <code>Sticker</code>: una ilustración convertida en sticker troquelado.
+        El borde blanco sigue la silueta del arte, no su caja, así que un PNG transparente o un SVG
+        conservan su forma. <code>state</code> (<code>idle</code>, <code>peeled</code>,
+        <code>applied</code>) lo decide quien lo usa y se escribe en <code>data-state</code>;
+        cambiarlo reproduce el despegue o la adhesión con los tokens de movimiento del sistema.
+        <code>peelOrigin</code> elige la esquina que se levanta, en términos lógicos. El arte entra
+        por <code>src</code> y <code>alt</code>, o como hijos, nunca las dos cosas. No tiene
+        enhancer: la hoja <code>components/sticker.css</code> hace todo.
+    en:
+      title: Sticker is published as a contract, with one signature
+      body: >-
+        It joins the catalogue with <code>Sticker</code>: artwork turned into a die-cut sticker. The
+        white edge follows the artwork's silhouette, not its box, so a transparent PNG or an SVG keeps
+        its shape. <code>state</code> (<code>idle</code>, <code>peeled</code>,
+        <code>applied</code>) is the consumer's decision, written as <code>data-state</code>;
+        changing it plays the peel or the press with the system's motion tokens.
+        <code>peelOrigin</code> picks the corner that lifts, in logical terms. The artwork comes in
+        through <code>src</code> and <code>alt</code>, or as children, never both. There is no
+        enhancer: <code>components/sticker.css</code> does all of it.

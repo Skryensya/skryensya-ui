@@ -1,0 +1,18 @@
+# The structure lives in packages/core/src/sticker.ts. Here, only why it is chosen.
+
+Sticker:
+  useWhen:
+    - "a graphic needs a die-cut edge that follows its own silhouette, not the rectangle around it"
+    - "artwork has to read as a physical, adhesive object on the page: a badge earned, a mark placed, a decal"
+    - "the product has a state for the graphic's placement (not yet applied, lifting off, stuck down) and it should be seen"
+  avoidWhen:
+    - "the media needs a rectangular crop, a fixed aspect ratio or object-fit: that is an ImageFrame"
+    - "the image only has to be shown; a plain img carries no material treatment and costs nothing"
+    - "the motion is a generic entrance or a call for attention; that is an effect such as sk-fx-reveal or sk-fx-pulse, not a peel"
+    - "it is a person's identity: that is an Avatar, whatever shape the photo has"
+    - "it is a count or a status next to something else; that is a Badge or a Tag, which are text, not artwork"
+    - "clicking it is supposed to do something; a sticker is not a control, so put it inside a Button or give the product its own control"
+  alternatives:
+    - ImageFrame
+    - Avatar.image
+    - Badge

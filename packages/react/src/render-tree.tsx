@@ -100,6 +100,7 @@ const loaders: Record<string, () => Promise<Record<string, unknown>>> = {
   "@skryensya/react/button": () => import("./components/button.js"),
   "@skryensya/react/icon": () => import("./components/icon.js"),
   "@skryensya/react/image-frame": () => import("./components/image-frame.js"),
+  "@skryensya/react/sticker": () => import("./components/sticker.js"),
   "@skryensya/react/fade-edge": () => import("./components/fade-edge.js"),
   "@skryensya/react/presence": () => import("./components/presence.js"),
   "@skryensya/react/password-input": () => import("./components/password-input.js"),

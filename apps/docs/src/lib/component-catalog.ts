@@ -184,6 +184,10 @@ const componentDescriptions = {
     es: "Recorta y posiciona imágenes con una proporción controlada.",
     en: "Crops and positions images at a controlled aspect ratio.",
   },
+  "/components/sticker": {
+    es: "Convierte una ilustración en un sticker troquelado que se despega y se pega.",
+    en: "Turns artwork into a die-cut sticker that peels and applies.",
+  },
   "/components/inline": {
     es: "Alinea elementos relacionados en una fila que puede envolver.",
     en: "Aligns related elements in a wrapping row.",

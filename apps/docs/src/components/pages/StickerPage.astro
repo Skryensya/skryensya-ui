@@ -1,0 +1,117 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import {
+  stickerAnatomyTree,
+  stickerHooksTree,
+  stickerOriginsTree,
+  stickerPlacementTree,
+  stickerStatesTree,
+  stickerTree,
+} from "../../demos/sticker";
+import { annotationDemoCss } from "../../demos/annotation";
+import { getLocale, useTranslations } from "../../i18n";
+import "@skryensya/core/components/sticker.css";
+import "@skryensya/core/components/button.css";
+import "@skryensya/core/components/typography.css";
+import "@skryensya/core/patterns/layout.css";
+/* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
+import "@skryensya/core/components/annotation.css";
+
+const t = useTranslations(getLocale(Astro.url));
+
+/*
+ * Page-level app code, not part of the component: the product deciding where the sticker is. It
+ * writes `data-state`, which is the whole authored-markup API, so the same script drives both stages.
+ */
+const placementScript = `
+const sticker = document.getElementById("sticker-placement");
+for (const button of document.querySelectorAll("[data-sticker-to]")) {
+  button.addEventListener("click", () => sticker.setAttribute("data-state", button.dataset.stickerTo));
+}
+`;
+
+const react = `import { Sticker } from "@skryensya/react/sticker";
+import "@skryensya/core/components/sticker.css";
+
+<Sticker src="/badges/early.png" alt="Early supporter" state={earned ? "applied" : "idle"} />
+
+<Sticker state="peeled" peelOrigin="block-start-inline-end">
+  <svg role="img" aria-label="Moon" viewBox="0 0 100 100">…</svg>
+</Sticker>`;
+
+const html = `<span class="sk-sticker" data-state="idle" data-peel-origin="block-end-inline-end">
+  <span class="sk-sticker__art"><img src="/badges/early.png" alt="Early supporter"></span>
+  <span class="sk-sticker__flap" aria-hidden="true">
+    <span class="sk-sticker__art"><img src="/badges/early.png" alt=""></span>
+  </span>
+</span>`;
+
+const vanilla = `document.querySelector(".sk-sticker").setAttribute("data-state", "applied");`;
+---
+
+<ComponentPageShell
+  title="Sticker"
+  description={t("sticker.description")}
+  badge={t("sticker.betaBadge")}
+  contractId="sticker"
+  testFiles={["packages/react/src/components/sticker.test.tsx"]}
+>
+  <Fragment slot="anatomy">
+    <p set:html={t("sticker.anatomyBody")} />
+    <ComponentPreview
+      tree={stickerAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("sticker.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+  </Fragment>
+
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("sticker.lede")} />
+    <ComponentPreview tree={stickerTree(t)} label="Sticker" />
+
+    <h3>{t("sticker.whenTitle")}</h3>
+    <ul>
+      <li set:html={t("sticker.whenItem1")} />
+      <li set:html={t("sticker.whenItem2")} />
+      <li set:html={t("sticker.whenItem3")} />
+    </ul>
+
+    <h3>{t("sticker.statesHeading")}</h3>
+    <p set:html={t("sticker.statesIntro")} />
+    <ComponentPreview tree={stickerStatesTree(t)} label={t("sticker.statesLabel")} />
+
+    <h3>{t("sticker.placementHeading")}</h3>
+    <p set:html={t("sticker.placementIntro")} />
+    <ComponentPreview tree={stickerPlacementTree(t)} previewScript={placementScript} label={t("sticker.placementLabel")} />
+
+    <h3>{t("sticker.originsHeading")}</h3>
+    <p set:html={t("sticker.originsIntro")} />
+    <ComponentPreview tree={stickerOriginsTree(t)} label={t("sticker.originsLabel")} />
+
+    <h3>{t("sticker.hooksHeading")}</h3>
+    <p set:html={t("sticker.hooksIntro")} />
+    <ComponentPreview tree={stickerHooksTree(t)} label={t("sticker.hooksLabel")} />
+
+    <h3>{t("sticker.reactTitle")}</h3>
+    <p set:html={t("sticker.reactBody")} />
+    <CodeBlock code={react} label="React" lang="tsx" />
+
+    <h3>{t("sticker.vanillaTitle")}</h3>
+    <p set:html={t("sticker.vanillaBody")} />
+    <CodeBlock code={html} label="HTML" lang="html" />
+    <CodeBlock code={vanilla} label="JavaScript" lang="ts" />
+
+    <h3>{t("sticker.notesTitle")}</h3>
+    <ul>
+      <li set:html={t("sticker.notesItem1")} />
+      <li set:html={t("sticker.notesItem2")} />
+      <li set:html={t("sticker.notesItem3")} />
+      <li set:html={t("sticker.notesItem4")} />
+    </ul>
+  </Fragment>
+</ComponentPageShell>

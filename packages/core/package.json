@@ -259,6 +259,10 @@
       "types": "./src/image-frame.ts",
       "default": "./src/image-frame.ts"
     },
+    "./sticker": {
+      "types": "./src/sticker.ts",
+      "default": "./src/sticker.ts"
+    },
     "./media-gradient": {
       "types": "./src/media-gradient.ts",
       "default": "./src/media-gradient.ts"

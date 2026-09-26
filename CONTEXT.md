@@ -104,6 +104,20 @@ CSS vocabulary (`16/9`, `cover`, `top`), never by use (`hero`, `thumbnail`). Dis
 which is a fixed circular identity token, not a general media frame.
 _Avoid_: image component, media box, thumbnail
 
+**Sticker**:
+A component. Authored artwork shown as a die-cut sticker: a material **edge** grown from the
+artwork's own silhouette, never from its box, and three consumer-owned states, `idle` (loose, resting
+above the page), `peeled` (one corner turned over, off the surface) and `applied` (pressed flat).
+Like Presence it has no machine: the state is an option written as `data-state`, and the CSS plays the
+change. Distinct from Image frame, which imposes a rectangle on media; a sticker keeps the shape the
+media already has.
+_Avoid_: decal, badge (that is a count or status), die-cut image, stuck/unstuck, attached/detached
+
+**Die-cut edge**:
+The material border a Sticker draws around its artwork's visible pixels, uniform in width around
+curves, points and holes. It follows alpha, so a transparent corner of the image is outside it.
+_Avoid_: outline (that is the CSS property), stroke, border, halo
+
 **Media gradient**:
 A pattern. A wash nested in a media caption so type stays readable over a photo. Sized to the
 caption (as tall or as wide as the text), tinted with the brand accent, never by use (`hero`,
@@ -113,7 +127,8 @@ _Avoid_: scrim, overlay, veil, shade, vignette (as the product name), ink, paper
 **State**:
 What a component currently *is*, selected, expanded, disabled. Owned by the machine and written by
 it as a data attribute, never as a BEM modifier and never toggled by hand. Parts are ours; state is
-the machine's.
+the machine's. A component with no machine (Presence, Sticker) takes its state as an option the
+consumer writes instead; it is still a data attribute, still never a modifier.
 _Avoid_: modifier, flag, status
 
 **Markup contract**:

@@ -88,6 +88,12 @@ export const stableIconNames = [
    * `trash`). A set decides what occupies it; the system asks for "voting". */
   "vote-up",
   "vote-down",
+  /* LIKING, a different role from voting and not a synonym: a vote ranks (up moves a comment above
+   * others), a like reacts. A CommentVote in `voteStyle: "like"` is the first to ask for it. Every set
+   * happens to draw a thumb here, which is also why no set may draw a thumb for `vote-up` any more:
+   * the two faces of one control have to look different in every set. */
+  "like",
+  "dislike",
   "external-link",
 
   // acción

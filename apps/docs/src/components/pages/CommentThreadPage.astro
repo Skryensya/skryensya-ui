@@ -6,6 +6,7 @@ import {
   commentAnatomyTree,
   commentActionsTree,
   commentAloneTree,
+  commentLikesTree,
   commentDeepTree,
   commentSkeletonTree,
   commentThreadFixedTree,
@@ -209,6 +210,10 @@ thread.addEventListener(commentThreadEvents.reply, async (event) => {
     <h4>{t("commentThread.demoActionsTitle")}</h4>
     <p set:html={t("commentThread.demoActionsBody")} />
     <ComponentPreview js={actionsScript} previewScript={actionsScript} tree={commentActionsTree(t)} label={t("commentThread.demoActionsLabel")} />
+
+    <h4>{t("commentThread.demoLikesTitle")}</h4>
+    <p set:html={t("commentThread.demoLikesBody")} />
+    <ComponentPreview js={actionsScript} previewScript={actionsScript} tree={commentLikesTree(t)} label={t("commentThread.demoLikesLabel")} />
 
     <h4>{t("commentThread.demoThreadTitle")}</h4>
     <p set:html={t("commentThread.demoThreadBody")} />

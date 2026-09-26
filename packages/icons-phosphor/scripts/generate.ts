@@ -28,6 +28,8 @@ const MAP = {
   "arrow-up": "arrow-up",
   "vote-up": "arrow-fat-up",
   "vote-down": "arrow-fat-down",
+  like: "thumbs-up",
+  dislike: "thumbs-down",
   "arrow-down": "arrow-down",
   "arrow-left": "arrow-left",
   "arrow-right": "arrow-right",

@@ -145,6 +145,8 @@ export type CommentThreadAttrName = (typeof commentThreadAttrs)[CommentThreadAtt
 
 /** One viewer's own vote on one comment. Never derived from the count. */
 export type CommentVoteState = "up" | "down" | "none";
+/** `vote` ranks with arrows, `like` reacts with thumbs; see the `voteStyle` option. */
+export type CommentVoteStyle = "vote" | "like";
 
 /**
  * What the Vanilla enhancer re-announces on the thread root, mirroring `checkboxGroupEvents`
@@ -199,6 +201,13 @@ export type CommentDiscardDetails = { parentId: string | null; body: string };
 /** The icon-only `sm` Button shape every control here wears. */
 const iconButtonAttrs = { "data-icon-only": "", "data-size": "sm", "data-variant": "ghost" } as const;
 const textButtonAttrs = { "data-size": "sm", "data-variant": "ghost" } as const;
+
+/** The vote glyph, switched to its `like` counterpart when the group is in `voteStyle: "like"`. */
+const voteIcon = (vote: "vote-up" | "vote-down", like: "like" | "dislike") => {
+  const glyph = icon(vote);
+  const [inner] = glyph.children;
+  return { ...glyph, children: [{ ...inner!, attrsWhen: [{ option: "voteStyle", equals: "like", attrs: { "data-sk-icon": like } }] }] };
+};
 
 /**
  * A decorative glyph, wrapped so the button's own accessible name is the only one announced. `md`
@@ -291,6 +300,14 @@ export const commentThreadContract = {
     collapseLabel: { type: "string", default: "Hide replies", attr: "data-collapse-label" },
     /** The viewer's own past vote. Painted from the group, never inferred from the count. */
     voted: { type: "enum", values: ["up", "down", "none"], default: "none", attr: "data-voted" },
+    /**
+     * What the two buttons MEAN, and so what they look like: `vote` ranks (up and down arrows),
+     * `like` reacts (thumbs up and down). Same control, same events (`direction` is still `up` or
+     * `down`), same count; only the face and the name change. In `like`, both labels must be given
+     * (`implies` below): the defaults say "Upvote"/"Downvote", and a thumb announced as "Upvote" is a
+     * button lying about what it does.
+     */
+    voteStyle: { type: "enum", values: ["vote", "like"], default: "vote", attr: "data-vote-style" },
     voteUpLabel: { type: "string", default: "Upvote", attr: "data-vote-up-label" },
     voteDownLabel: { type: "string", default: "Downvote", attr: "data-vote-down-label" },
     /** Renders the reply trigger. Absent, the row simply has no reply control. */
@@ -654,12 +671,14 @@ export const commentThreadContract = {
 
     /*
      * THE VOTE GROUP, its own signature so it can be used outside a comment at all - the same
-     * up/count/down cluster answers for a poll or a suggestion just as readily.
+     * up/count/down cluster answers for a poll or a suggestion just as readily. `voteStyle: "like"`
+     * turns the arrows into thumbs for a product that reacts rather than ranks.
      */
     CommentVote: {
-      intent: ["vote", "upvote-downvote", "score"],
+      intent: ["vote", "upvote-downvote", "score", "like-dislike", "reaction"],
       host: { element: "div" },
-      options: ["voted", "voteUpLabel", "voteDownLabel"],
+      options: ["voted", "voteStyle", "voteUpLabel", "voteDownLabel"],
+      implies: { "voteStyle=like": ["voteUpLabel", "voteDownLabel"] },
       compose: [
         { of: "button", sheets: ["@skryensya/core/components/button.css"], systemOwned: true },
         { of: "icon", systemOwned: true },
@@ -689,7 +708,7 @@ export const commentThreadContract = {
              * (see comment-thread.css): a static `aria-pressed` was why an already-voted comment
              * looked unvoted everywhere except React. */
             attrsWhen: [{ option: "voted", equals: "up", attrs: { "aria-pressed": "true" } }],
-            children: [icon("vote-up"), { element: "span", also: ["sk-visually-hidden"], textFromOption: "voteUpLabel" }],
+            children: [voteIcon("vote-up", "like"), { element: "span", also: ["sk-visually-hidden"], textFromOption: "voteUpLabel" }],
           },
           { element: "span", part: "voteCount", mount: commentThreadAttrs.voteCount, slot: "count" },
           {
@@ -699,7 +718,7 @@ export const commentThreadContract = {
             mount: commentThreadAttrs.voteDown,
             attrs: { type: "button", "aria-pressed": "false", ...iconButtonAttrs },
             attrsWhen: [{ option: "voted", equals: "down", attrs: { "aria-pressed": "true" } }],
-            children: [icon("vote-down"), { element: "span", also: ["sk-visually-hidden"], textFromOption: "voteDownLabel" }],
+            children: [voteIcon("vote-down", "dislike"), { element: "span", also: ["sk-visually-hidden"], textFromOption: "voteDownLabel" }],
           },
         ],
       },

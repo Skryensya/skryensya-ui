@@ -3,7 +3,7 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "ba191baa8a0c94f8"
+surface: "7ab316893744635c"
 entries:
   - date: 2026-09-25
     kind: feature
@@ -219,3 +219,15 @@ entries:
       title: At least two faces, each with its icon
       body: >-
         A single face is not a state button, and a face with no <code>icon</code> showed nothing when it became current.
+  - date: 2026-09-26
+    kind: chore
+    es:
+      title: Las caras aceptan los íconos like y dislike
+      body: >-
+        El vocabulario de íconos estables sumó <code>like</code> y <code>dislike</code>, y una cara de
+        StateButton acepta cualquier nombre estable. Nada de lo que escribiste cambia.
+    en:
+      title: Faces accept the like and dislike icons
+      body: >-
+        The stable icon vocabulary gained <code>like</code> and <code>dislike</code>, and a
+        StateButton face takes any stable name. Nothing you wrote changes.

@@ -3,7 +3,7 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "34525d1f6e8fc93e"
+surface: "c4472e7fd05ce61c"
 entries:
   - date: 2026-09-17
     kind: feature
@@ -325,3 +325,30 @@ entries:
       body: >-
         The kit is an English library and its defaults were Spanish: <code>collapseLabel</code> Hide replies, <code>voteUpLabel</code> Upvote, <code>voteDownLabel</code> Downvote, <code>replyLabel</code> Reply, <code>deleteLabel</code> Delete, <code>submitLabel</code> Post, <code>cancelLabel</code> Cancel, <code>composerTriggerLabel</code> Write a comment. An interface in another
         language passes its own texts, and the <code>locale</code> it needs.
+  - date: 2026-09-26
+    kind: feature
+    target: CommentVote
+    es:
+      title: CommentVote puede ser like / dislike en vez de voto arriba / abajo
+      body: >-
+        Nueva opción <code>voteStyle</code>: <code>"vote"</code> (por defecto, sin cambios: flechas,
+        "Upvote"/"Downvote") o <code>"like"</code>, que dibuja pulgares (los íconos estables
+        <code>like</code> y <code>dislike</code>). Es el mismo control: los eventos siguen diciendo
+        <code>direction: "up" | "down"</code>, el conteo y <code>voted</code> no cambian. En
+        <code>like</code> hay que pasar <code>voteUpLabel</code> y <code>voteDownLabel</code>
+        (<code>validate_ui</code> lo exige): los nombres por defecto dicen "Upvote" y un pulgar que se
+        anuncia como "Upvote" miente. En React, si se omiten, caen a "Like"/"Dislike". En markup
+        escrito a mano: <code>data-vote-style="like"</code> en el grupo y
+        <code>data-sk-icon="like"</code> / <code>"dislike"</code> en los íconos.
+    en:
+      title: CommentVote can be like / dislike instead of an up / down vote
+      body: >-
+        New option <code>voteStyle</code>: <code>"vote"</code> (the default, unchanged: arrows,
+        "Upvote"/"Downvote") or <code>"like"</code>, which draws thumbs (the stable icons
+        <code>like</code> and <code>dislike</code>). It is the same control: events still say
+        <code>direction: "up" | "down"</code>, and the count and <code>voted</code> do not change. In
+        <code>like</code>, <code>voteUpLabel</code> and <code>voteDownLabel</code> must be passed
+        (<code>validate_ui</code> requires it): the default names say "Upvote", and a thumb announced
+        as "Upvote" is lying. In React, when omitted, they fall back to "Like"/"Dislike". In
+        hand-written markup: <code>data-vote-style="like"</code> on the group and
+        <code>data-sk-icon="like"</code> / <code>"dislike"</code> on the icons.

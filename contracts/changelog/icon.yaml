@@ -3,7 +3,7 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "a1f44abdfcbf8be3"
+surface: "ef8699e96ff6f3d5"
 entries:
   - date: 2026-09-25
     kind: feature
@@ -197,3 +197,26 @@ entries:
         drew Lucide, so the default pulled the other way and each one had to talk it out of Phosphor
         by wrapping its tree. For Phosphor: <code>pnpm add @skryensya/icons-phosphor</code> and
         <code>&lt;IconSetProvider set={phosphorIcons}&gt;</code>.
+  - date: 2026-09-26
+    kind: feature
+    target: Icon
+    es:
+      title: Dos nombres estables nuevos, like y dislike, y el voto de Material deja de ser un pulgar
+      body: >-
+        <code>like</code> y <code>dislike</code> nombran reaccionar, que no es votar: un voto ordena,
+        un like reacciona. Los tres sets los dibujan como pulgares (Lucide <code>ThumbsUp</code>,
+        Phosphor <code>thumbs-up</code>, Material <code>thumb_up</code>). Por eso Material ya no puede
+        dibujar un pulgar para <code>vote-up</code>/<code>vote-down</code>: las dos caras de un mismo
+        CommentVote tienen que verse distintas en todos los sets, así que su voto pasa a la flecha
+        gruesa (<code>arrow_upward_alt</code>). Si usas Material y <code>vote-up</code>, el dibujo
+        cambia; el nombre no.
+    en:
+      title: Two new stable names, like and dislike, and Material's vote stops being a thumb
+      body: >-
+        <code>like</code> and <code>dislike</code> name reacting, which is not voting: a vote ranks,
+        a like reacts. All three sets draw them as thumbs (Lucide <code>ThumbsUp</code>, Phosphor
+        <code>thumbs-up</code>, Material <code>thumb_up</code>). That is why Material can no longer
+        draw a thumb for <code>vote-up</code>/<code>vote-down</code>: the two faces of one
+        CommentVote have to look different in every set, so its vote moves to the heavy arrow
+        (<code>arrow_upward_alt</code>). If you use Material and <code>vote-up</code>, the drawing
+        changes; the name does not.

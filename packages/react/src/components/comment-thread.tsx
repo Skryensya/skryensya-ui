@@ -3,6 +3,7 @@ import {
   commentThreadEvents,
   commentThreadParts,
   type CommentVoteState,
+  type CommentVoteStyle,
   commentThreadContract,
 } from "@skryensya/core/comment-thread";
 import {
@@ -18,7 +19,7 @@ import { Icon } from "./icon.js";
 import { useModalTabWrap } from "./modal-tab-wrap.js";
 
 /* Derived, never restated: the default lives in the contract. */
-const { composerTriggerLabel: composerTriggerLabelOption, collapseLabel: collapseLabelOption, collapsible: collapsibleOption, deletable: deletableOption, deleteLabel: deleteLabelOption, reply: replyOption, replyLabel: replyLabelOption, voteDownLabel: voteDownLabelOption, voteUpLabel: voteUpLabelOption, voted: votedOption, cancelLabel: cancelLabelOption, cancellable: cancellableOption, submitLabel: submitLabelOption } = commentThreadContract.options;
+const { composerTriggerLabel: composerTriggerLabelOption, collapseLabel: collapseLabelOption, collapsible: collapsibleOption, deletable: deletableOption, deleteLabel: deleteLabelOption, reply: replyOption, replyLabel: replyLabelOption, voteDownLabel: voteDownLabelOption, voteStyle: voteStyleOption, voteUpLabel: voteUpLabelOption, voted: votedOption, cancelLabel: cancelLabelOption, cancellable: cancellableOption, submitLabel: submitLabelOption } = commentThreadContract.options;
 
 const cx = (base: string, className: string | undefined) => (className ? `${base} ${className}` : base);
 
@@ -415,21 +416,35 @@ export type CommentVoteProps = Omit<HTMLAttributes<HTMLDivElement>, "children" |
   count: string;
   /** The viewer's own past vote. Never inferred from the count. */
   voted?: CommentVoteState;
+  /** `vote` ranks (arrows), `like` reacts (thumbs). The events and the count do not change. */
+  voteStyle?: CommentVoteStyle;
+  /** Defaults to "Upvote", or "Like" in `voteStyle="like"`. */
   voteUpLabel?: string;
+  /** Defaults to "Downvote", or "Dislike" in `voteStyle="like"`. */
   voteDownLabel?: string;
   onVote?: (direction: "up" | "down") => void;
 };
+
+
+/*
+ * The contract's label defaults name a vote. A tree in `like` has to pass both labels (`implies`), so
+ * emitted code never meets this; it is the fallback for a hand-written <CommentVote voteStyle="like">,
+ * where announcing a thumb as "Upvote" would be the one wrong answer.
+ */
+const LIKE_LABELS = { up: "Like", down: "Dislike" } as const;
 
 export function CommentVote({
   className,
   count,
   onVote,
-  voteDownLabel = voteDownLabelOption.default,
-  voteUpLabel = voteUpLabelOption.default,
+  voteStyle = voteStyleOption.default,
+  voteDownLabel = voteStyle === "like" ? LIKE_LABELS.down : voteDownLabelOption.default,
+  voteUpLabel = voteStyle === "like" ? LIKE_LABELS.up : voteUpLabelOption.default,
   voted = votedOption.default,
   ...props
 }: CommentVoteProps) {
   const rootRef = useRef<HTMLDivElement>(null);
+  const like = voteStyle === "like";
 
   const cast = (direction: "up" | "down") => {
     const host = rootRef.current;
@@ -447,6 +462,7 @@ export function CommentVote({
       {...props}
       className={cx(commentThreadParts.vote, className)}
       data-vote-down-label={voteDownLabel}
+      data-vote-style={voteStyle}
       data-vote-up-label={voteUpLabel}
       data-voted={voted}
       {...{ [commentThreadAttrs.vote]: "" }}
@@ -462,7 +478,7 @@ export function CommentVote({
         type="button"
       >
         <span aria-hidden="true">
-          <Icon name="vote-up" size="md" />
+          <Icon name={like ? "like" : "vote-up"} size="md" />
         </span>
         <span className="sk-visually-hidden">{voteUpLabel}</span>
       </button>
@@ -477,7 +493,7 @@ export function CommentVote({
         type="button"
       >
         <span aria-hidden="true">
-          <Icon name="vote-down" size="md" />
+          <Icon name={like ? "dislike" : "vote-down"} size="md" />
         </span>
         <span className="sk-visually-hidden">{voteDownLabel}</span>
       </button>

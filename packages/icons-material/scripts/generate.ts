@@ -27,8 +27,12 @@ const MAP = {
   "chevron-left": "chevron_left",
   "chevron-right": "chevron_right",
   "arrow-up": "arrow_upward",
-  "vote-up": "thumb_up",
-  "vote-down": "thumb_down",
+  /* The heavy arrow, not the thumb: Material's thumb is `like` now, and a vote and a like on one
+   * CommentVote must not look the same in any set. */
+  "vote-up": "arrow_upward_alt",
+  "vote-down": "arrow_downward_alt",
+  like: "thumb_up",
+  dislike: "thumb_down",
   "arrow-down": "arrow_downward",
   "arrow-left": "arrow_back",
   "arrow-right": "arrow_forward",

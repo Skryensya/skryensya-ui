@@ -1313,6 +1313,27 @@ describe("comment-thread: nested articles with vote/reply/delete", () => {
   });
 });
 
+describe("comment-thread: CommentVote in like style", () => {
+  const vote = (options: Record<string, string>): UsageTree => ({
+    contract: "comment-thread",
+    signature: "CommentVote",
+    options,
+    slots: { count: "3" },
+  });
+
+  it("requires both labels in like style, since the defaults name a vote", () => {
+    expect(rules(vote({ voteStyle: "like" }))).toContain("missing-implied");
+    expect(messageFor(vote({ voteStyle: "like", voteUpLabel: "Like" }), "missing-implied")).toContain("voteDownLabel");
+    expect(validateUsageTree(vote({ voteStyle: "like", voteUpLabel: "Like", voteDownLabel: "Dislike" })).valid).toBe(true);
+  });
+
+  it("leaves the vote style as it was: defaults are enough", () => {
+    expect(validateUsageTree(vote({})).valid).toBe(true);
+    expect(validateUsageTree(vote({ voteStyle: "vote" })).valid).toBe(true);
+    expect(rules(vote({ voteStyle: "thumbs" }))).toContain("invalid-option-value");
+  });
+});
+
 describe("component-preview: labelled demo with composed source", () => {
   const preview = (overrides: Partial<UsageTree> = {}): UsageTree =>
     ({

@@ -323,6 +323,18 @@ describe("emitMarkup", () => {
     ]);
   });
 
+  it("draws CommentVote's thumbs in like style, and its arrows otherwise", () => {
+    const vote = { contract: "comment-thread", signature: "CommentVote", slots: { count: "3" } } as const;
+    const arrows = emitMarkup(vote);
+    expect(arrows).toContain('data-sk-icon="vote-up"');
+    expect(arrows).toContain('data-sk-icon="vote-down"');
+    const thumbs = emitMarkup({ ...vote, options: { voteStyle: "like", voteUpLabel: "Like", voteDownLabel: "Dislike" } });
+    expect(thumbs).toContain('data-vote-style="like"');
+    expect(thumbs.match(/data-sk-icon="[^"]*"/g)).toEqual(['data-sk-icon="like"', 'data-sk-icon="dislike"']);
+    expect(thumbs).toContain(">Like</span>");
+    expect(thumbs).toContain(">Dislike</span>");
+  });
+
   it("wraps a long opening tag one attribute per line, same as JSX", () => {
     expect(emitMarkup(docsLink)).toBe(
       [

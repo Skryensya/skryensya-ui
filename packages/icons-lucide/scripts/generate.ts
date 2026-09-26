@@ -30,6 +30,8 @@ const MAP = {
   "arrow-up": "ArrowUp",
   "vote-up": "ArrowBigUp",
   "vote-down": "ArrowBigDown",
+  like: "ThumbsUp",
+  dislike: "ThumbsDown",
   "arrow-down": "ArrowDown",
   "arrow-left": "ArrowLeft",
   "arrow-right": "ArrowRight",

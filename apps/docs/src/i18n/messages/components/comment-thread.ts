@@ -23,6 +23,10 @@ export const commentThreadMessages = {
     "commentThread.demoActionsBody":
       "El mismo comentario más la fila: un <code>CommentVote</code> compuesto dentro de un <code>CommentActions</code>. Quién puede votar o borrar es composición, no un puñado de flags.",
     "commentThread.demoActionsLabel": "Comentario con acciones",
+    "commentThread.demoLikesTitle": "Me gusta en vez de votos",
+    "commentThread.demoLikesBody":
+      "Con <code>voteStyle: \"like\"</code> las flechas pasan a ser pulgares: un voto ordena, un me gusta reacciona. Es el mismo control, con los mismos eventos (<code>direction</code> sigue siendo <code>up</code> o <code>down</code>). Los dos nombres se pasan siempre, porque los que trae por defecto dicen \"Upvote\" y \"Downvote\".",
+    "commentThread.demoLikesLabel": "Comentario con me gusta",
     "commentThread.demoThreadTitle": "Un hilo corto",
     "commentThread.demoThreadBody":
       "Tres comentarios, uno respondido. El control de plegado sólo aparece donde hay respuestas que plegar, y el último no trae acciones.",
@@ -171,6 +175,10 @@ export const commentThreadMessages = {
     "commentThread.demoActionsBody":
       "The same comment plus the row: a <code>CommentVote</code> composed inside a <code>CommentActions</code>. Who may vote or delete is composition, not a handful of flags.",
     "commentThread.demoActionsLabel": "Comment with actions",
+    "commentThread.demoLikesTitle": "Likes instead of votes",
+    "commentThread.demoLikesBody":
+      "With <code>voteStyle: \"like\"</code> the arrows become thumbs: a vote ranks, a like reacts. It is the same control with the same events (<code>direction</code> is still <code>up</code> or <code>down</code>). Both names are always passed, because the defaults say \"Upvote\" and \"Downvote\".",
+    "commentThread.demoLikesLabel": "Comment with likes",
     "commentThread.demoThreadTitle": "A short thread",
     "commentThread.demoThreadBody":
       "Three comments, one of them answered. The fold control appears only where there are replies to fold, and the last comment carries no actions.",

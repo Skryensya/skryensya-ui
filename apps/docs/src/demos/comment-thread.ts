@@ -38,18 +38,27 @@ const person = (t: Translate, key: UIKey, hue: string): { avatar: UsageTree; aut
   };
 };
 
-const vote = (t: Translate, voted: "up" | "down" | "none", count: string): UsageTree => ({
+const vote = (t: Translate, voted: "up" | "down" | "none", count: string, style: "vote" | "like" = "vote"): UsageTree => ({
   contract: "comment-thread",
   signature: "CommentVote",
-  options: { voted, voteUpLabel: t("kit.upvote"), voteDownLabel: t("kit.downvote") },
+  options:
+    style === "like"
+      ? { voted, voteStyle: "like", voteUpLabel: t("kit.like"), voteDownLabel: t("kit.dislike") }
+      : { voted, voteUpLabel: t("kit.upvote"), voteDownLabel: t("kit.downvote") },
   slots: { count },
 });
 
-const actions = (t: Translate, voted: "up" | "down" | "none", count: string, extra: Record<string, boolean> = {}): UsageTree => ({
+const actions = (
+  t: Translate,
+  voted: "up" | "down" | "none",
+  count: string,
+  extra: Record<string, boolean> = {},
+  style: "vote" | "like" = "vote",
+): UsageTree => ({
   contract: "comment-thread",
   signature: "CommentActions",
   options: { reply: true, ...extra, replyLabel: t("kit.reply"), deleteLabel: t("kit.delete") },
-  slots: { children: vote(t, voted, count) },
+  slots: { children: vote(t, voted, count, style) },
 });
 
 /** The box the Reply trigger opens. It ships no control, so the demo passes one. */
@@ -383,6 +392,24 @@ export const commentActionsTree = (t: Translate): UsageTree =>
         time: "demo.commentThread.time1",
         body: "demo.commentThread.body1",
         actions: actions(t, "up", "4", { deletable: true }),
+      }),
+    ]),
+  ]);
+
+/*
+ * LIKES INSTEAD OF VOTES: the same comment and the same row, with `voteStyle: "like"`. Only the face
+ * and the names change; the script that plays the app is the same one, because the events still say
+ * `up` and `down`.
+ */
+export const commentLikesTree = (t: Translate): UsageTree =>
+  interactive(t, [
+    thread(t, [
+      comment(t, {
+        id: "c1",
+        who: ADA,
+        time: "demo.commentThread.time1",
+        body: "demo.commentThread.body1",
+        actions: actions(t, "up", "12", {}, "like"),
       }),
     ]),
   ]);

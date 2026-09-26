@@ -1,6 +1,7 @@
 import { fireEvent, render } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Comment, CommentActions, CommentComposer, CommentThread, CommentVote } from "./comment-thread.js";
+import { Icon } from "./icon.js";
 import { FormField } from "./form-field.js";
 import { Input, Textarea } from "./input.js";
 
@@ -155,6 +156,23 @@ describe("CommentVote", () => {
 
     fireEvent.click(ui.getByRole("button", { name: "Downvote" }));
     expect(onVote).toHaveBeenCalledWith("down");
+  });
+
+  it("draws thumbs in like style, names them Like/Dislike by default, and still reports up/down", () => {
+    const onVote = vi.fn();
+    const ui = render(<CommentVote count="4" onVote={onVote} voteStyle="like" />);
+    // The React Icon writes the set's drawing, not its name, so compare with the drawing itself.
+    const glyphs = [...ui.container.querySelectorAll("button > span[aria-hidden]")].map((node) => node.innerHTML);
+    const drawn = (name: "like" | "dislike" | "vote-up") => render(<Icon name={name} size="md" />).container.innerHTML;
+    expect(glyphs).toEqual([drawn("like"), drawn("dislike")]);
+    expect(glyphs[0]).not.toBe(drawn("vote-up"));
+    expect(ui.container.querySelector(".sk-comment-vote")?.getAttribute("data-vote-style")).toBe("like");
+    fireEvent.click(ui.getByRole("button", { name: "Like" }));
+    expect(onVote).toHaveBeenCalledWith("up");
+    expect(ui.getByRole("button", { name: "Dislike" })).toBeTruthy();
+
+    const own = render(<CommentVote count="1" voteStyle="like" voteUpLabel="Me gusta" voteDownLabel="No me gusta" />);
+    expect(own.getByRole("button", { name: "Me gusta" })).toBeTruthy();
   });
 
   it("dispatches sk:commentvote on the vote group, matching Vanilla", () => {

@@ -75,8 +75,10 @@ export function connectAnnotated(root: HTMLElement): Cleanup {
         `:scope > .${annotationParts.root}, :scope > .sk-canvas > .${annotationParts.viewport} > .${annotationParts.content} > .${annotationParts.root}`,
       );
   if (!frame) return () => {};
-  const subject = frame.querySelector<HTMLElement>(`.${annotationParts.subject}`);
-  const overlay = frame.querySelector<SVGSVGElement>(`.${annotationParts.leaders}`);
+  /* The frame's OWN subject and overlay, its direct children: a specimen can hold a whole Annotated
+     of its own, and an unscoped lookup finds that one's overlay first in document order. */
+  const subject = frame.querySelector<HTMLElement>(`:scope > .${annotationParts.subject}`);
+  const overlay = frame.querySelector<SVGSVGElement>(`:scope > .${annotationParts.leaders}`);
   /* The AUTHORED bubbles, one per entry. Copies a previous connection left behind go first: they are
      this enhancer's own output, and it writes them again from the matches. */
   for (const stale of frame.querySelectorAll(

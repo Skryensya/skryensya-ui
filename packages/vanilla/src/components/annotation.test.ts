@@ -169,6 +169,27 @@ describe("connectAnnotated", () => {
     expect(second!.style.translate).toBe("0px 220px");
   });
 
+  /*
+   * A diagram OF a diagram: the specimen holds a whole Annotated of its own, overlay included. The
+   * overlay and the subject are looked up on the frame, and an unscoped lookup finds the nested
+   * one first in document order, so the outer drawing was written into the inner figure's SVG
+   * (and wiped the next time the inner one redrew). Both lookups are the frame's direct children.
+   */
+  it("draws into its own overlay when the specimen contains another annotated figure", () => {
+    const root = frame([{ for: ".part-a", text: "part a" }]);
+    const nested = document.createElement("div");
+    nested.className = annotationParts.root;
+    nested.innerHTML = `<div class="${annotationParts.subject}"></div><svg class="${annotationParts.leaders}"></svg>`;
+    root.querySelector(`.${annotationParts.subject}`)!.prepend(nested);
+    layOut(root);
+    connectAnnotated(root);
+
+    const own = root.querySelector<SVGSVGElement>(`:scope > .${annotationParts.leaders}`)!;
+    const inner = nested.querySelector<SVGSVGElement>(`.${annotationParts.leaders}`)!;
+    expect(own.childElementCount).toBe(1);
+    expect(inner.childElementCount).toBe(0);
+  });
+
   it("draws one mark per label, each a leader and a ring, in the labels' own order", () => {
     const root = frame([{ for: ".part-a", text: "part a" }, { for: ".part-b", text: "part b" }]);
     layOut(root);

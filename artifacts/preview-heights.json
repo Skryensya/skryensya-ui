@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-24T20:12:33.889Z",
+  "generatedAt": "2026-09-26T13:49:28.762Z",
   "viewport": {
     "width": 1920,
     "height": 1000
@@ -218,8 +218,8 @@
     },
     "/components/form-field": {
       "formfield": 174,
-      "formfield-part-by-part": 290,
-      "formfield-select": 127
+      "formfield-part-by-part": 732,
+      "formfield-select": 360
     },
     "/components/grid": {
       "grid": 106,
@@ -742,8 +742,8 @@
     },
     "/es/componentes/form-field": {
       "formfield": 174,
-      "formfield-parte-por-parte": 290,
-      "formfield-select": 127
+      "formfield-parte-por-parte": 732,
+      "formfield-select": 360
     },
     "/es/componentes/grid": {
       "grid": 106,

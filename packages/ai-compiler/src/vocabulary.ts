@@ -23,6 +23,8 @@ export const vocabulary = {
   implies: "When the key holds, every listed name must hold too. Keys and names are an option, a slot, or `option=value` (the omitted option reads as its default).",
   excludes: "When the key holds, no listed name may hold. Same key forms as `implies`.",
   notInside: "The signature may not sit inside any listed signature, at any depth.",
+  descendants:
+    "Per group, at least `min` of the `of` signatures (counted together) sit anywhere below this node, through every slot and collection entry.",
   pairs: "The option on the child composed into slot `a` equals the option on the child in slot `b`; a side with no value or default takes the other side's default.",
   between: "A number bounded by other options of the same node, inclusive; an omitted bound reads as its default.",
   keyOf: "A string naming entries of the signature's own keyed collection (`many`: space- or comma-separated); recursive collections are searched at every depth.",
@@ -76,7 +78,7 @@ export const vocabulary = {
    * move the gate. See `packages/ai-compiler/src/surface.ts`.
    */
   contractSurface:
-    "Changelog `surface` hashes the public contract: css, parts, options (type/values/default/attr/prop/constraints/computedInput/…), events, eventDetails, a11y, hooks, hookSheets, outputHooks, authoredAttrs, systemOwned, and per signature host, option lists, requires/forbids/groups, parents, notInside, implies/excludes/pairs, slots, mount, portals, hitTesting, forward, compose, deprecated. Excludes template (also/attrs/attrsWhen/optionAttrs/…), wiring, because, intent, react, category, and option.machineInput.",
+    "Changelog `surface` hashes the public contract: css, parts, options (type/values/default/attr/prop/constraints/computedInput/…), events, eventDetails, a11y, hooks, hookSheets, outputHooks, authoredAttrs, systemOwned, and per signature host, option lists, requires/forbids/groups, parents, notInside, descendants, implies/excludes/pairs, slots, mount, portals, hitTesting, forward, compose, deprecated. Excludes template (also/attrs/attrsWhen/optionAttrs/…), wiring, because, intent, react, category, and option.machineInput.",
   severities: {
     error: "The tree is invalid.",
     advisory: "The rule cannot be settled from the tree alone, or the shape is legal but usually a mistake.",

@@ -119,6 +119,8 @@ function signatureSurface(signature: ContractSignature) {
      * changelog gate firing.
      */
     notInside: signature.notInside ? [...signature.notInside].sort() : undefined,
+    /* A tightened count rejects a tree that validated yesterday. `because` is prose, so it is out. */
+    descendants: signature.descendants?.map(({ of, min }) => ({ of: [...of].sort(), min })),
     implies: signature.implies,
     excludes: signature.excludes,
     pairs: signature.pairs,
@@ -152,7 +154,7 @@ function signatureSurface(signature: ContractSignature) {
  *
  * Included: css, parts, options (public fields), events, eventDetails, a11y, hooks, hookSheets,
  * outputHooks, authoredAttrs, systemOwned, and per signature host / option lists / requires·forbids·groups /
- * parents / notInside / implies / excludes / pairs / slots / mount / portals / hitTesting /
+ * parents / notInside / descendants / implies / excludes / pairs / slots / mount / portals / hitTesting /
  * forward / compose / deprecated.
  *
  * Excluded: template (also / attrs / attrsWhen / optionAttrs / …), wiring, because, intent, react,

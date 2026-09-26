@@ -3,6 +3,7 @@ import { validateUsageTree } from "./validate.js";
 import { bindingsOf, hookDetailsOf } from "./contract-details.js";
 import { checkCompose } from "./compose.js";
 import { vocabulary } from "./vocabulary.js";
+import { contractSurface } from "./surface.js";
 import { emitMarkup, emitReactSource } from "./emit.js";
 import { sheetsForTree } from "./sheets-for-tree.js";
 import { contractIds, getContract } from "@skryensya/core/registry";
@@ -2126,12 +2127,13 @@ describe("form-field: labelled control chrome", () => {
 });
 
 describe("hero: page opening band", () => {
+  const heading: UsageTree = { contract: "typography", signature: "Heading", children: "Hola" };
   const text: UsageTree = { contract: "typography", signature: "Text", children: "Hola" };
   const hero = (overrides: Partial<UsageTree> = {}): UsageTree =>
     ({
       contract: "hero",
       signature: "Hero",
-      children: text,
+      children: heading,
       ...overrides,
     }) as UsageTree;
 
@@ -2143,6 +2145,56 @@ describe("hero: page opening band", () => {
     expect(markup).toContain('data-padding="xl"');
     expect(markup).toContain('data-surface="surface"');
     expect(markup).toContain('data-align="start"');
+  });
+
+  describe("descendants: a real Heading at any depth", () => {
+    const stack = (...children: UsageTree[]): UsageTree => ({ contract: "layout", signature: "Stack", children });
+
+    it("refuses a hero of large text with no Heading, a tree that used to validate", () => {
+      const tree = hero({ children: stack(text, { contract: "button", signature: "Button.action", children: "Go" }) });
+      const problem = validateUsageTree(tree).problems.find((p) => p.rule === "missing-descendant")!;
+      expect(validateUsageTree(tree).valid).toBe(false);
+      expect(problem).toMatchObject({ path: "Hero", severity: "error" });
+      expect(problem.message).toBe(
+        "Hero must hold at least 1 Heading at any depth; it holds 0. " + getContract("hero")!.signatures.Hero.descendants![0]!.because,
+      );
+    });
+
+    it("counts a Heading nested several levels down", () => {
+      const deep = hero({ children: stack({ contract: "layout", signature: "Inline", children: [stack(heading)] }, text) });
+      expect(rules(deep)).not.toContain("missing-descendant");
+      expect(validateUsageTree(deep).valid).toBe(true);
+    });
+
+    it("counts a Heading inside a collection entry's slot", () => {
+      const tabs: UsageTree = {
+        contract: "tabs",
+        signature: "Tabs",
+        attrs: { "aria-label": "Audience" },
+        slots: { items: [{ options: { value: "a" }, slots: { label: "A", children: heading } }, { options: { value: "b" }, slots: { label: "B", children: "B" } }] },
+      };
+      expect(rules(hero({ children: tabs }))).not.toContain("missing-descendant");
+      const bare = { ...tabs, slots: { items: [{ options: { value: "a" }, slots: { label: "A", children: "x" } }] } } as UsageTree;
+      expect(rules(hero({ children: bare }))).toContain("missing-descendant");
+    });
+
+    it("does not count the heading of a sibling outside the hero", () => {
+      const page = stack(heading, hero({ children: text }));
+      expect(validateUsageTree(page).problems.find((p) => p.rule === "missing-descendant")?.path).toBe("Stack > Hero");
+    });
+
+    it("is part of the surface, so tightening it needs a changelog entry", () => {
+      expect(contractSurface(getContract("hero")!).signatures.Hero!.descendants).toEqual([{ of: ["Heading"], min: 1 }]);
+    });
+
+    it("names only signatures that exist", () => {
+      const known = new Set(contractIds().flatMap((id) => Object.keys(getContract(id)!.signatures)));
+      for (const id of contractIds()) {
+        for (const [name, sig] of Object.entries(getContract(id)!.signatures)) {
+          for (const rule of sig.descendants ?? []) for (const of of rule.of) expect(known.has(of), `${name} names ${of}`).toBe(true);
+        }
+      }
+    });
   });
 
   it("emits a Hero as a named section landmark when heroElement asks", () => {
@@ -5858,7 +5910,7 @@ describe("schema 2.3: what the manifest derives and publishes", () => {
   });
 
   it("documents every constraint operator the contracts use", () => {
-    for (const key of ["implies", "excludes", "pairs", "between", "keyOf", "refersTo", "valuesFrom", "pattern", "list", "element", "notInside"])
+    for (const key of ["implies", "excludes", "pairs", "between", "keyOf", "refersTo", "valuesFrom", "pattern", "list", "element", "notInside", "descendants"])
       expect(vocabulary, key).toHaveProperty(key);
     for (const key of ["groupCardinality", "minItems", "maxItems", "countWhere", "positions", "flatHierarchy", "restrictOptions"])
       expect(vocabulary.slotRules, key).toHaveProperty(key);

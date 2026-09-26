@@ -78,6 +78,7 @@ function walk(
 
   checkParent(signature, parent, path, problems);
   checkNotInside(signature, trail, path, problems);
+  checkDescendants(signature, tree, path, problems);
   checkOptions(contract, signature, tree, path, problems);
   checkShadowedAttrs(contract, signature, tree, path, problems);
   checkForwardAttrs(signature, tree, path, problems, parentChildAttrs);
@@ -598,6 +599,27 @@ function checkNotInside(
       rule: "invalid-ancestor",
       severity: "error",
       message: `This signature must not sit inside ${ancestor}, at any depth.`,
+    });
+  }
+}
+
+/**
+ * `descendants`: how many of a group of signatures sit anywhere below this node. Counted through
+ * `everyNode`, so a Heading three layout primitives down, or inside a tab's panel, counts; the node
+ * itself never does.
+ */
+function checkDescendants(signature: ContractSignature, tree: UsageTree, path: string, problems: Problem[]): void {
+  if (!signature.descendants) return;
+  const below = everyNode(tree).slice(1).map(({ node }) => node.signature);
+  for (const rule of signature.descendants) {
+    const count = below.filter((id) => rule.of.includes(id)).length;
+    const what = rule.of.join(" or ");
+    if (count >= rule.min) continue;
+    problems.push({
+      path,
+      rule: "missing-descendant",
+      severity: "error",
+      message: `${tree.signature} must hold at least ${rule.min} ${what} at any depth; it holds ${count}. ${rule.because}`,
     });
   }
 }

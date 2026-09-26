@@ -28,15 +28,21 @@ import type { BoxSurface, Space } from "./layout.js";
  *     in). Both are real, common shapes; this is a visual lever, not new anatomy, the same way
  *     `layout.Inline`'s own `align` option is a lever and not a slot.
  *
- * CONTENT RULES (enforced by convention and by example, not by the schema, since `children` has to
- * stay `accepts: "node"` for a hero to compose freely, see below):
+ * CONTENT RULES. `children` has to stay `accepts: "node"` for a hero to compose freely (see below),
+ * so a slot rule cannot state them. The first half of the first one is enforced anyway, by
+ * `descendants`: at least one `typography.Heading` at any depth. The rest stays convention and
+ * example, and the reason is named on each:
  *   - Exactly one REAL heading inside, always. Not styled-large text: an actual `typography.Heading`.
  *     If this hero opens the whole page, that heading IS the page's own `<h1>`; if it opens a section
  *     mid-page, it is that section's own heading, at whatever level nesting already puts it at.
+ *     ENFORCED: at least one. NOT ENFORCED: at most one, since a count cannot tell the hero's own
+ *     heading from a card title composed inside it, and the level, since the tree does not say
+ *     whether this hero opens the page or a section.
  *     `Heading`'s host stays `<h2>` regardless of visual `size` (`get_contract`'s own `host.element`),
  *     so a big `display-sm` hero heading never silently claims the page's h1 slot by accident.
  *   - At most ONE primary action, plus at most one quieter secondary action. A hero's whole job is to
- *     point at ONE next step; a row of equal-weight buttons undoes that.
+ *     point at ONE next step; a row of equal-weight buttons undoes that. NOT ENFORCED: "primary" is
+ *     an option VALUE (`tone: accent`, `variant: solid`), and `descendants` counts signatures.
  *   - Any image inside is either genuinely informative (a real `alt`, `ImageFrame`'s own a11y rule
  *     already requires one whenever `src` is given) or purely decorative (`alt=""`), never a stand-in
  *     for the headline's own text.
@@ -49,11 +55,8 @@ import type { BoxSurface, Space } from "./layout.js";
  *     React, or authoring `<section>` by hand in HTML). The moment it is one, WAI's own rule for
  *     an UNNAMED landmark applies: give it `aria-label` or `aria-labelledby` pointing at the heading
  *     inside, the same as any other named landmark region a page happens to have more than one of.
- *   - `Hero` cannot enforce "there is a real heading inside" or "the image has real alt text"
- *     structurally: `children` accepts free-form content, the same reason it has no fixed anatomy.
- *     What it CAN enforce, and does, are its own options (`padding`/`surface`/`align`) via the usual
- *     schema; the content rules above are enforced by every published snippet demonstrating them, not
- *     by a check this composition could silently dodge by shaping the tree differently.
+ *   - "There is a real heading inside" is checked at any depth, so no shape of tree dodges it. "The
+ *     image has real alt text" is `ImageFrame`'s own a11y rule, wherever the frame sits.
  *
  * Same `padding`/`surface` vocabulary as `Box` (same values, same attrs): a consumer who already
  * knows Box's options already knows Hero's; only the defaults differ, and differ because a hero's
@@ -93,6 +96,14 @@ export const heroContract = {
       host: { element: "div" },
       options: ["padding", "surface", "align", "heroElement"],
       slots: { children: { accepts: "node", required: true } },
+      descendants: [
+        {
+          of: ["Heading"],
+          min: 1,
+          because:
+            "A hero states what the page or section is: its headline is a real heading, not large text, or the outline has nothing to open with.",
+        },
+      ],
       template: { element: "div", part: "hero", host: true, slot: "children" },
       react: { from: "@skryensya/react/layout", name: "Hero" },
     },

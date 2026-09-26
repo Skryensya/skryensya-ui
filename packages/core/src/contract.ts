@@ -630,6 +630,26 @@ export type ContractSignature = {
    */
   readonly notInside?: readonly string[];
   /**
+   * The other side of `notInside`: what this signature must hold, counted at ANY depth below it
+   * (every slot, and the slots of collection entries). Each group counts its `of` signatures
+   * together and must reach `min`.
+   *
+   * For a signature whose content is free composition but not free of rules: a Hero's `children`
+   * accepts any node, because a hero's anatomy varies, and still must hold a real Heading somewhere
+   * in it. A slot's `of` cannot say that, since the heading may sit three layout primitives down.
+   * Counted in the tree, never read from prose, and only as strong as a count: which heading is the
+   * hero's own, or what level it renders at, is outside what this can prove.
+   *
+   * Only a minimum, because only a minimum has a contract that needs it. An upper bound (`max`, or
+   * `max: 0` to forbid) is the obvious next field, and belongs here when a contract can state one
+   * a count actually proves.
+   */
+  readonly descendants?: readonly {
+    readonly of: readonly string[];
+    readonly min: number;
+    readonly because: string;
+  }[];
+  /**
    * When the key option is given, the listed options must not be: one decision spelled once. A
    * Text `textRole` sets size, tone and weight together, so also setting `size` states the same
    * thing twice and the role silently wins.

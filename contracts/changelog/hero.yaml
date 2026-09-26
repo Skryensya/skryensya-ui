@@ -3,7 +3,7 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "b1c5679b95249463"
+surface: "8d1e11ea45848dbe"
 entries:
   - date: 2026-08-25
     kind: rework
@@ -258,3 +258,32 @@ entries:
       title: Hero chooses its element from the tree
       body: >-
         <code>heroElement</code> takes <code>div</code>, <code>section</code> or <code>header</code>, what React already allowed through <code>as</code>.
+  - date: 2026-09-26
+    kind: breaking
+    target: Hero
+    es:
+      title: Un Hero sin Heading ya no valida
+      body: >-
+        La regla de contenido "adentro siempre va un encabezado real, nunca sólo texto grande" deja
+        de ser una convención: <code>Hero</code> declara <code>descendants</code> y el validador exige
+        al menos un <code>typography.Heading</code> en cualquier profundidad de su contenido (dentro
+        de un <code>Stack</code>, de una columna, del panel de una pestaña). Un árbol con un hero de
+        puro <code>Text</code> que antes validaba ahora falla con <code>missing-descendant</code>; se
+        arregla cambiando el titular a <code>Heading</code>. Todos los patrones publicados ya lo
+        cumplían. Lo que NO se exige, y por qué: "como mucho uno", porque contar no distingue el
+        titular del hero del título de una card compuesta adentro; el nivel (h1 o h2), porque el árbol
+        no dice si el hero abre la página o una sección; y "como mucho una acción primaria", porque
+        "primaria" es un valor de opción y esta regla cuenta signatures.
+    en:
+      title: A Hero without a Heading no longer validates
+      body: >-
+        The content rule "a real heading always goes inside, never just large text" stops being a
+        convention: <code>Hero</code> declares <code>descendants</code>, and the validator requires at
+        least one <code>typography.Heading</code> at any depth of its content (inside a
+        <code>Stack</code>, a column, a tab's panel). A tree whose hero is all <code>Text</code>, which
+        used to validate, now fails with <code>missing-descendant</code>; the fix is to make the
+        headline a <code>Heading</code>. Every published pattern already did. What is NOT enforced,
+        and why: "at most one", since a count cannot tell the hero's own headline from a card title
+        composed inside it; the level (h1 or h2), since the tree does not say whether the hero opens
+        the page or a section; and "at most one primary action", since "primary" is an option value
+        and this rule counts signatures.

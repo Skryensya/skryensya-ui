@@ -29,6 +29,7 @@ COPY packages/icons-lucide/package.json ./packages/icons-lucide/package.json
 COPY packages/icons-material/package.json ./packages/icons-material/package.json
 COPY packages/icons-phosphor/package.json ./packages/icons-phosphor/package.json
 COPY packages/mcp/package.json ./packages/mcp/package.json
+COPY packages/phone/package.json ./packages/phone/package.json
 COPY packages/react/package.json ./packages/react/package.json
 COPY packages/vanilla/package.json ./packages/vanilla/package.json
 COPY contracts/snippets/package.json ./contracts/snippets/package.json
@@ -54,6 +55,7 @@ COPY packages/editor ./packages/editor
 COPY packages/icons-lucide ./packages/icons-lucide
 COPY packages/icons-material ./packages/icons-material
 COPY packages/icons-phosphor ./packages/icons-phosphor
+COPY packages/phone ./packages/phone
 COPY packages/react ./packages/react
 COPY packages/vanilla ./packages/vanilla
 COPY contracts ./contracts

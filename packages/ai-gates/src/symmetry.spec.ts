@@ -1,6 +1,7 @@
 import type { Locator } from "@playwright/test";
 import type { ContractSlot, ContractTemplate } from "@skryensya/core/contract";
 import { contracts } from "@skryensya/core/registry";
+import { floatingClasses } from "./floating.js";
 import { canonicalTrees } from "./trees.js";
 import { expect, test } from "./fixtures.js";
 
@@ -142,7 +143,7 @@ async function shapeOf(
   block: Locator,
   binding: "vanilla" | "react",
 ): Promise<unknown> {
-  return block.locator(`[data-binding="${binding}"]`).evaluate((live: HTMLElement, [skip, idRefs]: [string[], string[]]) => {
+  return block.locator(`[data-binding="${binding}"]`).evaluate((live: HTMLElement, [skip, idRefs, floatingNames]: [string[], string[], string[]]) => {
     /*
      * On a COPY, because hoisting below detaches nodes and the stage is shared by every other gate in
      * this worker (fixtures.ts). Reading the live tree would leave each portalling case stripped of
@@ -253,7 +254,8 @@ async function shapeOf(
      * nesting while agreeing about everything else, and comparing the raw trees says they differ
      * for a reason neither one is wrong about.
      *
-     * Lifting every `.sk-anchored` subtree out to one flat list, in document order, makes the two
+     * Lifting every `.sk-anchored` subtree (and every portalled positioner, see
+     * `floating.ts`) out to one flat list, in document order, makes the two
      * shapes comparable again without weakening anything: the region's own contents are still
      * compared in full, and a positioner appearing in one binding and not the other still fails.
      *
@@ -262,9 +264,10 @@ async function shapeOf(
      * component. The scoping machinery was there; the comparison was not.
      */
     const floating: Element[] = [];
+    const isFloating = (element: Element): boolean => floatingNames.some((name) => element.classList.contains(name));
     const hoist = (element: Element): void => {
       for (const child of [...element.children]) {
-        if (child.classList.contains("sk-anchored")) {
+        if (isFloating(child)) {
           floating.push(child);
           child.remove();
           hoist(child);
@@ -301,9 +304,9 @@ async function shapeOf(
      * Getting this backwards is what made `aria-labelledby` point at "#8" on one side and "#5" on
      * the other while both were pointing at the same element.
      */
-    const rooted = [...host.children].filter((child) => !child.classList.contains("sk-anchored"));
+    const rooted = [...host.children].filter((child) => !isFloating(child));
     const anchored = [...host.children]
-      .filter((child) => child.classList.contains("sk-anchored"))
+      .filter((child) => isFloating(child))
       .concat(floating);
 
     const skeleton = (element: Element): string =>
@@ -325,5 +328,5 @@ async function shapeOf(
       anchored: anchored.map(describe),
       rooted: rooted.map(describe),
     };
-  }, [enhancerAttributes, idReferences] as [string[], string[]]);
+  }, [enhancerAttributes, idReferences, [...floatingClasses]] as [string[], string[], string[]]);
 }

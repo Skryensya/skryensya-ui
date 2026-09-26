@@ -15,6 +15,7 @@ import {
   type ReactNode,
 } from "react";
 import { Icon } from "./icon.js";
+import { useModalTabWrap } from "./modal-tab-wrap.js";
 
 /* Derived, never restated: the default lives in the contract. */
 const { composerTriggerLabel: composerTriggerLabelOption, collapseLabel: collapseLabelOption, collapsible: collapsibleOption, deletable: deletableOption, deleteLabel: deleteLabelOption, reply: replyOption, replyLabel: replyLabelOption, voteDownLabel: voteDownLabelOption, voteUpLabel: voteUpLabelOption, voted: votedOption, cancelLabel: cancelLabelOption, cancellable: cancellableOption, submitLabel: submitLabelOption } = commentThreadContract.options;
@@ -70,6 +71,7 @@ function useDialogMode(
   ref: { current: HTMLDialogElement | null },
   { open, modal }: { open: boolean; modal: boolean },
 ): void {
+  useModalTabWrap();
   useEffect(() => {
     const box = ref.current;
     if (!box) return;

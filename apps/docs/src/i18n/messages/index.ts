@@ -33,7 +33,7 @@ export const indexMessages = {
     "landing.hero.title": "Construir interfaces hecho simple",
     "landing.hero.lede":
       "Componentes que ya traen consistencia y accesibilidad para que no reinventes lo mismo en cada pantalla. Aceleras la interfaz y el sistema sostiene la calidad.",
-    "landing.hero.ctaComponents": "Ver componentes",
+    "landing.hero.ctaComponents": "Explorar componentes",
     "landing.hero.ctaInstall": "Instalarlo",
     "landing.hero.specimenTitle": "Nueva versión",
     "landing.hero.specimenBody": "La versión 1.2 ya se puede instalar.",
@@ -312,7 +312,7 @@ export const indexMessages = {
     "landing.hero.title": "Building interfaces made simple",
     "landing.hero.lede":
       "Components that already carry consistency and accessibility so you do not reinvent the same pieces on every screen. You ship the interface faster and the system holds the quality.",
-    "landing.hero.ctaComponents": "See the components",
+    "landing.hero.ctaComponents": "Browse components",
     "landing.hero.ctaInstall": "Install it",
     "landing.hero.specimenTitle": "New version",
     "landing.hero.specimenBody": "Version 1.2 is ready to install.",

@@ -34,6 +34,18 @@ export const vanillaMounts = {
     mount: "mountTileCheckbox",
     selector: "[data-sk-tile-checkbox]",
   },
+  "/components/listbox": {
+    name: "Listbox",
+    entrypoint: "@skryensya/vanilla/listbox",
+    mount: "mountListbox",
+    selector: "[data-sk-listbox]",
+  },
+  "/components/clipboard": {
+    name: "Clipboard",
+    entrypoint: "@skryensya/vanilla/clipboard",
+    mount: "mountClipboard",
+    selector: "[data-sk-clipboard]",
+  },
   "/components/color-picker": {
     name: "ColorPicker",
     entrypoint: "@skryensya/vanilla/color-picker",
@@ -87,6 +99,30 @@ export const vanillaMounts = {
     entrypoint: "@skryensya/vanilla/select",
     mount: "mountSelect",
     selector: "[data-sk-select]",
+  },
+  "/components/fade-edge": {
+    name: "FadeEdge",
+    entrypoint: "@skryensya/vanilla/fade-edge",
+    mount: "mountFadeEdge",
+    selector: "[data-sk-fade-edge][data-scroll-aware]",
+  },
+  "/components/password-input": {
+    name: "PasswordInput",
+    entrypoint: "@skryensya/vanilla/password-input",
+    mount: "mountPasswordInput",
+    selector: "[data-sk-password-input]",
+  },
+  "/components/qr-code": {
+    name: "QRCode",
+    entrypoint: "@skryensya/vanilla/qr-code",
+    mount: "mountQrCode",
+    selector: "[data-sk-qr-code]",
+  },
+  "/components/tour": {
+    name: "Tour",
+    entrypoint: "@skryensya/vanilla/tour",
+    mount: "mountTour",
+    selector: "[data-sk-tour]",
   },
   "/components/sidebar": {
     name: "Sidebar",

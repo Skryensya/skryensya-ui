@@ -132,6 +132,18 @@ const componentDescriptions = {
     es: "Desvanece el contenido suavemente en un borde para ocultar overflow sin cortes duros.",
     en: "Smoothly fades content at an edge to hide overflow without hard clipping.",
   },
+  "/components/presence": {
+    es: "Muestra y oculta contenido con una salida animada, y en React espera a que termine antes de desmontarlo.",
+    en: "Shows and hides content with an animated exit, and in React waits for it to finish before unmounting.",
+  },
+  "/components/listbox": {
+    es: "Muestra todas las opciones a la vez para elegir una o varias en el lugar.",
+    en: "Shows every option at once to choose one or several in place.",
+  },
+  "/components/clipboard": {
+    es: "Copia un valor, o el texto de otro elemento, con un clic, y avisa si el navegador lo rechazó.",
+    en: "Copies a value, or another element's text, in one click, and says so when the browser refuses.",
+  },
   "/components/feed": {
     es: "Stream de publicaciones independientes, cada una con su posición anunciada.",
     en: "A stream of independent posts, each announced with its own position.",
@@ -228,6 +240,10 @@ const componentDescriptions = {
     es: "Reúne marca, navegación y acciones globales en la cabecera.",
     en: "Collects brand, global navigation, and actions in the header.",
   },
+  "/components/password-input": {
+    es: "Un campo de contraseña con un botón para mostrar lo que se escribió.",
+    en: "A password field with a button to show what was typed.",
+  },
   "/components/number-field": {
     es: "Captura cantidades con límites y controles incrementales.",
     en: "Captures quantities with limits and step controls.",
@@ -243,6 +259,10 @@ const componentDescriptions = {
   "/components/popover": {
     es: "Muestra contenido contextual rico sin bloquear la página, con o sin chrome (la superficie desnuda es Popup).",
     en: "Shows rich contextual content without blocking the page, with or without chrome (the bare surface is Popup).",
+  },
+  "/components/window": {
+    es: "Abre un panel no modal que se mueve, cambia de tamaño, se minimiza y se maximiza.",
+    en: "Opens a non-modal panel that moves, resizes, minimizes and maximizes.",
   },
   "/components/changelog": {
     es: "Cuenta qué cambió y cuándo, en un riel fechado.",
@@ -352,10 +372,6 @@ const componentDescriptions = {
     es: "Aplica jerarquía, tono y medida consistente a la prosa.",
     en: "Applies consistent hierarchy, tone, and measure to prose.",
   },
-  "/components/typography": {
-    es: "Combina texto, encabezados, enlaces, énfasis, código y resultados con semántica explícita.",
-    en: "Combines text, headings, links, emphasis, code, and output with explicit semantics.",
-  },
   "/components/time-field": {
     es: "Captura horas por segmentos según el formato local.",
     en: "Captures time in locale-aware editable segments.",
@@ -375,6 +391,10 @@ const componentDescriptions = {
   "/components/tooltip": {
     es: "Añade una explicación corta al hover o foco de un control.",
     en: "Adds a short explanation on hover or keyboard focus.",
+  },
+  "/components/tour": {
+    es: "Recorre la interfaz paso a paso, resaltando un elemento a la vez sin bloquear la página.",
+    en: "Walks through an interface step by step, highlighting one element at a time without blocking the page.",
   },
   "/components/tree-view": {
     es: "Explora jerarquías anidadas mediante ramas expandibles.",

@@ -362,6 +362,12 @@ const componentItems = [
     aliases: ["grilla de datos", "layout grid", "grilla de layout", "navegación 2d", "navegacion 2d"],
   },
   {
+    href: "/components/clipboard",
+    label: "Clipboard",
+    trailing: "Beta",
+    aliases: ["copy button", "copybutton", "copiar", "portapapeles", "copy to clipboard", "copy link"],
+  },
+  {
     href: "/components/dialog",
     label: "Dialog",
     aliases: ["diálogo", "dialogo", "modal", "confirm", "dialog vaul", "dialog enhanced"],
@@ -377,6 +383,12 @@ const componentItems = [
     label: "FadeEdge",
     trailing: "Beta",
     aliases: ["fade out", "fade-out", "mask", "gradient fade", "fade effect", "fade visual"],
+  },
+  {
+    href: "/components/presence",
+    label: "Presence",
+    trailing: "Beta",
+    aliases: ["animate presence", "exit animation", "animación de salida", "animacion de salida", "unmount", "transition"],
   },
   {
     href: "/components/feed",
@@ -475,6 +487,12 @@ const componentItems = [
     href: "/components/link",
     label: "Link",
     aliases: ["enlace", "vínculo", "vinculo", "tile link", "enlace de superficie", "tarjeta enlace"],
+  },
+  {
+    href: "/components/listbox",
+    label: "Listbox",
+    trailing: "Beta",
+    aliases: ["lista de opciones", "list box", "lista seleccionable", "selección múltiple", "multi select", "multiselect"],
   },
   {
     href: "/components/list",
@@ -707,13 +725,45 @@ const componentItems = [
   { href: "/components/tabs", label: "Tabs", aliases: ["pestañas", "pestanas"] },
   { href: "/components/tag", label: "Tag", aliases: ["etiqueta"] },
   { href: "/components/text", label: "Text", aliases: ["texto"] },
-  { href: "/components/typography", label: "Typography", aliases: ["tipografía", "tipografia"] },
   {
     href: "/components/toast",
     label: "Toast",
     aliases: ["notificación", "notificacion", "aviso transitorio"],
   },
   { href: "/components/tooltip", label: "Tooltip", aliases: ["globo", "ayuda contextual", "descripción", "descripcion", "hint"] },
+  {
+    href: "/components/window",
+    label: "Window",
+    aliases: [
+      "ventana",
+      "ventana flotante",
+      "panel flotante",
+      "floating panel",
+      "floating window",
+      "paleta de herramientas",
+      "inspector",
+      "arrastrable",
+      "draggable",
+      "redimensionable",
+      "resizable",
+    ],
+  },
+  {
+    href: "/components/tour",
+    label: "Tour",
+    trailing: "Beta",
+    aliases: [
+      "tour guiado",
+      "recorrido guiado",
+      "recorrido",
+      "guided tour",
+      "product tour",
+      "onboarding",
+      "walkthrough",
+      "coach marks",
+      "spotlight",
+    ],
+  },
   {
     href: "/components/toc",
     label: "Table of contents",
@@ -816,6 +866,12 @@ const componentItems = [
     aliases: ["campo numérico", "campo numerico", "stepper"],
   },
   {
+    href: "/components/password-input",
+    label: "PasswordInput",
+    trailing: "Beta",
+    aliases: ["contraseña", "contrasena", "password", "mostrar contraseña", "show password", "clave"],
+  },
+  {
     /*
      * POPUP'S SEARCH WORDS LIVE HERE. Popup was a second page for `Popover.bare`, and merging it
      * into this one would have made the word "popup" stop finding anything: the rail is also the
@@ -905,6 +961,7 @@ const allComponentNavigation = [
       "/components/toolbar",
       "/components/command-palette",
       "/components/state-button",
+      "/components/clipboard",
       "/hotkey",
     ),
   },
@@ -921,7 +978,9 @@ const allComponentNavigation = [
       "/components/file-upload",
       "/components/form-field",
       "/components/input",
+      "/components/listbox",
       "/components/number-field",
+      "/components/password-input",
       "/components/questionnaire",
       "/components/radio-group",
       "/components/segmented",
@@ -960,6 +1019,8 @@ const allComponentNavigation = [
       "/components/drawer",
       "/components/popover",
       "/components/tooltip",
+      "/components/tour",
+      "/components/window",
       "/vaul",
     ),
   },
@@ -996,7 +1057,6 @@ const allComponentNavigation = [
     items: componentGroupItems(
       "/components/heading",
       "/components/text",
-      "/components/typography",
       "/components/kbd",
       "/components/icon",
       "/components/badge",
@@ -1037,6 +1097,7 @@ const allComponentNavigation = [
       "/components/hero",
       "/components/footer",
       "/components/fade-edge",
+      "/components/presence",
       "/scrollbar",
     ),
   },

@@ -134,4 +134,26 @@
     block-size: auto;
     background: linear-gradient(to right, var(--sk-fade-edge-ramp));
   }
+
+  /*
+   * SCROLL-AWARE, retired at the edge. `data-at-edge` is written by the bindings (core's
+   * `watchFadeEdge`) when the scroll has reached the edge this fade points at, or the content fits
+   * without scrolling: there is nothing more that way, so the fade would be a false promise.
+   *
+   * The overlay fades out on the state-change intent. The mask cannot: a gradient does not
+   * interpolate between `mask-image` values, and registering `--sk-fade-edge-size` with `@property`
+   * to animate it would change how every consumer's own value of that hook inherits. So the mask
+   * mode lets go in one frame, which at the moment the reader hits the end reads as arriving.
+   */
+  .sk-fade-edge[data-at-edge] {
+    mask-image: none;
+  }
+
+  .sk-fade-edge[data-fade="color"]::after {
+    transition: opacity var(--motion-state-change-duration) var(--motion-state-change-easing);
+  }
+
+  .sk-fade-edge[data-fade="color"][data-at-edge]::after {
+    opacity: 0;
+  }
 }

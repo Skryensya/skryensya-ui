@@ -229,6 +229,21 @@ export const detailsAnatomyTree = (t: Translate): UsageTree => ({
  * has never had a Tile inside it, only Tile's PAINT (shared tokens, same look). The disclosure mark
  * is baked into `Details.Summary` itself now, not composed. See the contract.
  */
+/*
+ * THE TWO ANATOMIES ON THIS PAGE, ONE WIDTH. Both specimens are sections of a group with a question,
+ * a description and an answer, and drawn side by side in the same tab they should read as the same
+ * object twice. Left to their content they did not: the Accordion's tiles took their titles' width
+ * (358px) while an open Details stretched its paragraph across the frame (531px), and the native half
+ * looked like a bigger component. One explicit measure for both subjects, on this page only.
+ */
+export const accordionAnatomyCss = `.sk-annotated-figure {
+  --sk-annotation-font-family: var(--font-family-code);
+}
+
+.sk-annotated__subject > :is(.sk-accordion, .sk-details-group) {
+  inline-size: 24rem;
+}`;
+
 export const detailsGroupTree = (t: Translate): UsageTree => ({
   contract: "accordion",
   signature: "DetailsGroup",

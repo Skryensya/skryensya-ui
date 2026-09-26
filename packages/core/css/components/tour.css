@@ -1,0 +1,449 @@
+/* The box's controls are `sk-button`s; they bring their own sheet. The live region is visually hidden. */
+@import url("./button.css");
+@import url("../patterns/visually-hidden.css");
+
+/*
+ * TIER 3, TOUR
+ *
+ * A guided walk through a page: a ring around one element and a box that explains it. See
+ * `@skryensya/core/tour` for why it is not modal and never a tooltip; this sheet owns the ring, the
+ * box, its arrow and their motion.
+ *
+ * NOTHING COVERS THE PAGE. There is no backdrop and no scrim, not even a transparent one: every pixel
+ * outside the box stays the page's, clickable and scrollable. The ring is `pointer-events: none`, so
+ * the target under it still takes every click, and the root draws nothing at all.
+ *
+ * BOTH ARE `popover="manual"`, so both sit in the top layer: no z-index to win, no `overflow: hidden`
+ * or `transform` on the consumer's layout to clip them. The UA gives a `[popover]` an `inset: 0` and a
+ * `margin: auto` to centre it; here both are replaced by the controller's measured `top`/`left`, so
+ * this sheet resets them. Without the Popover API the same rules hold with `position: fixed` and the
+ * `--z-popover` layer.
+ *
+ * THE BOX IS A QUIET SURFACE DERIVED FROM THE ACCENT, pale in both modes: in light, the overlay
+ * surface with a touch of accent and an accent edge; in dark, the inverse surface tinted toward the
+ * accent, which lifts it off the dark page. It belongs with the accent ring without shouting like a
+ * full accent fill, and its dark text clears 4.5:1 in both modes. Everything inside is repainted for that surface,
+ * the focus ring included: the system's blue focus ring would be lost on a blue-tinted box.
+ *
+ * THE RING IS NOT THE FOCUS RING. Focus is 2px at 2px from a control; the ring is thicker, farther out
+ * (6px), and has a halo of the page's own canvas on both sides, so a focused target shows BOTH, one
+ * inside the other, and neither can be mistaken for the other. Its corners are the target's own radii
+ * plus the offset, written by the controller, so it follows a pill as a pill.
+ */
+@layer components {
+  .sk-tour {
+    /* A holder, never a box: its only children in flow are hidden. */
+    display: contents;
+  }
+
+  .sk-tour__steps {
+    display: none;
+  }
+
+  /* ── The ring ─────────────────────────────────────────────────────────────── */
+
+  .sk-tour__ring {
+    --sk-tour-ring-color: var(--color-border-accent);
+    /* The canvas colour, so the ring reads against a target of any colour AND against the page. */
+    --sk-tour-ring-halo: var(--color-bg-canvas);
+    --sk-tour-ring-width: 3px;
+    /* Read by the controller: how far out the ring sits. A plain length, so script can parse it. */
+    --sk-tour-ring-offset: 6px;
+
+    position: fixed;
+    inset: auto;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    border: var(--sk-tour-ring-width) solid var(--sk-tour-ring-color);
+    background: transparent;
+    box-shadow:
+      0 0 0 2px var(--sk-tour-ring-halo),
+      inset 0 0 0 2px var(--sk-tour-ring-halo),
+      0 0 0 6px color-mix(in oklch, var(--sk-tour-ring-color) 22%, transparent);
+    color: inherit;
+    /* Decorative and see-through to the pointer: the target under it keeps every click. */
+    pointer-events: none;
+    z-index: var(--z-popover);
+    /* ENTERING, it closes in on the target from a little farther out, once. Its position is the
+       controller's every frame, so nothing here transitions geometry except while it travels. */
+    opacity: 1;
+    scale: 1;
+    transition:
+      opacity var(--motion-expand-duration) var(--motion-expand-easing),
+      scale var(--motion-expand-duration) var(--motion-expand-easing);
+  }
+
+  @starting-style {
+    .sk-tour__ring {
+      opacity: 0;
+      scale: 1.03;
+    }
+  }
+
+  .sk-tour__ring[hidden],
+  .sk-tour__ring[data-sk-offscreen] {
+    display: none;
+  }
+
+  /* ── The box ──────────────────────────────────────────────────────────────── */
+
+  .sk-tour__popover {
+    /* OKLAB, NOT OKLCH. The inverse surface is almost grey, and a grey's hue is noise: mixing in oklch
+       interpolated that noise toward the accent's hue along the short arc and painted a blue accent's
+       box maroon in light mode and green in dark. Oklab mixes the colours, not their angles. */
+    --sk-tour-bg: light-dark(
+      color-mix(in oklab, var(--color-action-accent) 12%, var(--color-bg-surface-overlay)),
+      color-mix(in oklab, var(--color-action-accent) 24%, var(--color-bg-inverse))
+    );
+    /* Dark ink on both: primary text on the pale light-mode box, inverse text (which is dark in dark
+       mode) on the pale dark-mode one. */
+    --sk-tour-fg: light-dark(var(--color-text-primary), var(--color-text-inverse));
+    /* Secondary text is the SAME colour, set smaller: a dimmed ink is where contrast goes to die. */
+    --sk-tour-muted-fg: var(--sk-tour-fg);
+    /* A pale box on a pale page needs an edge; the dark-mode box stands out on its own. */
+    --sk-tour-border-color: light-dark(color-mix(in oklab, var(--color-action-accent) 30%, transparent), transparent);
+    --sk-tour-radius: var(--radius-surface);
+    --sk-tour-padding: var(--space-inset-sm) var(--space-inset-sm) var(--space-inset-sm) var(--space-inset-md);
+    --sk-tour-shadow: var(--elevation-overlay);
+    --sk-tour-max-inline-size: 20rem;
+    --sk-tour-arrow-size: 12px;
+    /* Where the arrow's centre is along its edge. Written by the controller; this is only its default. */
+    --sk-tour-arrow-offset: 50%;
+    --focus-ring-color: var(--sk-tour-fg);
+
+    position: fixed;
+    inset: auto;
+    box-sizing: border-box;
+    /* A FIXED width, not shrink-to-fit: the controller measures the box before it places it, and a
+       width that depended on where it was would measure differently at every position. */
+    inline-size: min(var(--sk-tour-max-inline-size), calc(100vw - 16px));
+    margin: 0;
+    padding: 0;
+    /* Visible, so the arrow can reach past the edge; the content scrolls inside instead. */
+    overflow: visible;
+    border: 1px solid var(--sk-tour-border-color);
+    border-radius: var(--sk-tour-radius);
+    /* SOLID. A tour box over a busy page is text on top of text; a translucent one would be unreadable. */
+    background: var(--sk-tour-bg);
+    color: var(--sk-tour-fg);
+    box-shadow: var(--sk-tour-shadow);
+    font-family: var(--font-family-body);
+    font-size: var(--font-size-body-sm);
+    line-height: var(--font-line-height-body-sm);
+    z-index: var(--z-popover);
+
+    /* ENTERING, it grows out of its own arrow (the origin is set per edge below), so it reads as coming
+       FROM the target rather than appearing next to it. The expand intent, not enter: longer and on
+       the standard curve, so it eases in rather than snapping, and it only has 4% to grow. */
+    opacity: 1;
+    scale: 1;
+    transform-origin: 50% 0;
+    transition:
+      opacity var(--motion-expand-duration) var(--motion-expand-easing),
+      scale var(--motion-expand-duration) var(--motion-expand-easing);
+  }
+
+  @starting-style {
+    .sk-tour__popover {
+      opacity: 0;
+      scale: 0.96;
+    }
+  }
+
+  .sk-tour__popover[hidden] {
+    display: none;
+  }
+
+  /*
+   * TRAVELLING, between two steps whose targets are both on screen: the box and the ring glide to the
+   * next target instead of jumping, on the expand intent: slow enough to follow with the eye. Only for that one trip (the controller
+   * sets and clears `data-sk-moving`): at any other time the geometry follows scroll frame by frame,
+   * and a transition there would make both lag behind the page.
+   */
+  .sk-tour__popover[data-sk-moving] {
+    transition:
+      top var(--motion-expand-duration) var(--motion-expand-easing),
+      left var(--motion-expand-duration) var(--motion-expand-easing);
+  }
+
+  .sk-tour__ring[data-sk-moving] {
+    transition:
+      top var(--motion-expand-duration) var(--motion-expand-easing),
+      left var(--motion-expand-duration) var(--motion-expand-easing),
+      width var(--motion-expand-duration) var(--motion-expand-easing),
+      height var(--motion-expand-duration) var(--motion-expand-easing),
+      border-radius var(--motion-expand-duration) var(--motion-expand-easing);
+  }
+
+  /* ── The arrow ────────────────────────────────────────────────────────────── */
+
+  /*
+   * A square turned 45°, half of it outside the box, on the edge facing the target and at the offset
+   * the controller measured, so it points at the target's middle even when the box was pushed along by
+   * the viewport. Physical edges, because the controller already resolved the logical placement.
+   * Painted under the content (it comes first) and in the box's own colour, so the seam disappears.
+   * Absent while docked: a box that could not sit beside its target does not pretend to point at it.
+   */
+  .sk-tour__arrow {
+    position: absolute;
+    display: none;
+    inline-size: var(--sk-tour-arrow-size);
+    block-size: var(--sk-tour-arrow-size);
+    box-sizing: border-box;
+    /* The box's own edge on its two OUTER sides (removed per edge below), so a bordered box does not
+       read as having a notch cut out of its outline. */
+    border: 1px solid var(--sk-tour-border-color);
+    background: var(--sk-tour-bg);
+    rotate: 45deg;
+    pointer-events: none;
+  }
+
+  .sk-tour__popover[data-sk-arrow] .sk-tour__arrow {
+    display: block;
+  }
+
+  .sk-tour__popover:is([data-sk-arrow="top"], [data-sk-arrow="bottom"]) .sk-tour__arrow {
+    left: calc(var(--sk-tour-arrow-offset) - var(--sk-tour-arrow-size) / 2);
+  }
+
+  .sk-tour__popover:is([data-sk-arrow="left"], [data-sk-arrow="right"]) .sk-tour__arrow {
+    top: calc(var(--sk-tour-arrow-offset) - var(--sk-tour-arrow-size) / 2);
+  }
+
+  .sk-tour__popover[data-sk-arrow="top"] {
+    transform-origin: var(--sk-tour-arrow-offset) 0;
+  }
+
+  .sk-tour__popover[data-sk-arrow="top"] .sk-tour__arrow {
+    top: calc(var(--sk-tour-arrow-size) / -2);
+  }
+
+  .sk-tour__popover[data-sk-arrow="bottom"] {
+    transform-origin: var(--sk-tour-arrow-offset) 100%;
+  }
+
+  .sk-tour__popover[data-sk-arrow="bottom"] .sk-tour__arrow {
+    bottom: calc(var(--sk-tour-arrow-size) / -2);
+  }
+
+  .sk-tour__popover[data-sk-arrow="left"] {
+    transform-origin: 0 var(--sk-tour-arrow-offset);
+  }
+
+  .sk-tour__popover[data-sk-arrow="left"] .sk-tour__arrow {
+    left: calc(var(--sk-tour-arrow-size) / -2);
+  }
+
+  .sk-tour__popover[data-sk-arrow="right"] {
+    transform-origin: 100% var(--sk-tour-arrow-offset);
+  }
+
+  .sk-tour__popover[data-sk-arrow="right"] .sk-tour__arrow {
+    right: calc(var(--sk-tour-arrow-size) / -2);
+  }
+
+  /* Physical sides of a square turned 45°: its top-left corner faces up, so the two sides that point
+     OUT of an edge are named by the corner opposite the box. */
+  .sk-tour__popover[data-sk-arrow="top"] .sk-tour__arrow {
+    border-bottom: 0;
+    border-right: 0;
+  }
+
+  .sk-tour__popover[data-sk-arrow="bottom"] .sk-tour__arrow {
+    border-top: 0;
+    border-left: 0;
+  }
+
+  .sk-tour__popover[data-sk-arrow="left"] .sk-tour__arrow {
+    border-top: 0;
+    border-right: 0;
+  }
+
+  .sk-tour__popover[data-sk-arrow="right"] .sk-tour__arrow {
+    border-bottom: 0;
+    border-left: 0;
+  }
+
+  /* ── The content ──────────────────────────────────────────────────────────── */
+
+  .sk-tour__content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-stack-xs);
+    padding: var(--sk-tour-padding);
+    /* NEVER A SCROLLPORT. A box this small that scrolls is a box whose text was too long, and the
+       buttons' 44px hit areas reach past their faces, so any `overflow` other than visible turned
+       that reach into a scrollbar. The fix for a step that does not fit is a shorter step. */
+    overflow: visible;
+  }
+
+  .sk-tour__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-inline-sm);
+  }
+
+  .sk-tour__progress {
+    margin: 0;
+    color: var(--sk-tour-muted-fg);
+    font-size: var(--font-size-caption);
+    font-weight: var(--font-weight-label);
+    line-height: var(--font-line-height-caption);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* No block margin of its own, above or below: the content's `gap` is the only space around it. */
+  .sk-tour__title {
+    margin: 0;
+    padding: 0;
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-heading);
+    line-height: var(--font-line-height-heading-sm);
+    overflow-wrap: anywhere;
+  }
+
+  .sk-tour__description {
+    margin: 0;
+    color: var(--sk-tour-muted-fg);
+    font-size: var(--font-size-body-sm);
+    line-height: var(--font-line-height-body-sm);
+    overflow-wrap: anywhere;
+  }
+
+  /*
+   * THE ACTIONS KEEP THEIR PLACES. Previous and Continue are one group at the inline end on every step;
+   * "Skip tour" is at the inline start on the first step only, and its absence moves nothing else. When
+   * text grows (200%) or the box narrows, the row wraps and the pair wraps whole.
+   */
+  .sk-tour__footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-inline-xs);
+    margin-block-start: var(--space-stack-xs);
+  }
+
+  .sk-tour__nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-inline-xs);
+    margin-inline-start: auto;
+  }
+
+  .sk-tour__control[hidden] {
+    display: none;
+  }
+
+  /*
+   * THE BUTTONS, REPAINTED FOR THE BOX. Button's own paint assumes a neutral surface; on a tinted box
+   * its neutral fills turn muddy. Emphasis carries the hierarchy, through Button's own hooks:
+   *   next      the one accent fill, the system's own pair (`on-accent` on `action-accent`, held at
+   *             4.5:1 by the palette lint), so it is the loudest thing in the box;
+   *   previous  soft becomes an outline in the on-accent colour;
+   *   ghost     (skip, close) is on-accent ink and nothing else.
+   * The state layer is `currentColor`, so hover and press tint correctly on every one of them.
+   */
+  .sk-tour__popover .sk-tour__control {
+    --sk-button-ink: var(--sk-tour-fg);
+    --sk-button-fg: var(--sk-tour-fg);
+    --sk-button-shadow: var(--elevation-flat);
+    --sk-button-wash: none;
+  }
+
+  .sk-tour__popover .sk-tour__control[data-tour-action="next"] {
+    --sk-button-bg: var(--color-action-accent);
+    --sk-button-fg: var(--color-text-on-accent);
+    --sk-button-border-color: transparent;
+  }
+
+  .sk-tour__popover .sk-tour__control[data-tour-action="previous"] {
+    --sk-button-bg: transparent;
+    --sk-button-border-color: color-mix(in oklch, var(--sk-tour-fg) 70%, transparent);
+  }
+
+  .sk-tour__popover .sk-tour__control:is([data-tour-action="skip"], [data-tour-action="close"]) {
+    --sk-button-bg: transparent;
+    --sk-button-border-color: transparent;
+  }
+
+  /* Continue on every step but the last, Finish on the last: one button, so it never moves. */
+  .sk-tour__finish-label,
+  .sk-tour__popover[data-sk-last] .sk-tour__next-label {
+    display: none;
+  }
+
+  .sk-tour__popover[data-sk-last] .sk-tour__finish-label {
+    display: inline;
+  }
+
+  /* ── The trigger: its second label, once the tour has ended ───────────────── */
+
+  .sk-tour__trigger-restart {
+    display: none;
+  }
+
+  .sk-tour__trigger:is([data-sk-tour-status="completed"], [data-sk-tour-status="skipped"], [data-sk-tour-status="dismissed"]):has(.sk-tour__trigger-restart)
+    .sk-tour__trigger-start {
+    display: none;
+  }
+
+  .sk-tour__trigger:is([data-sk-tour-status="completed"], [data-sk-tour-status="skipped"], [data-sk-tour-status="dismissed"])
+    .sk-tour__trigger-restart {
+    display: inline;
+  }
+
+  /*
+   * REDUCED MOTION: no growing, no closing in, no travelling (the controller also skips the content
+   * slide, the exit scale and smooth scrolling). What is left is a plain fade on entry.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    .sk-tour__ring,
+    .sk-tour__popover {
+      scale: none;
+      transition: opacity var(--motion-reduced-duration) var(--motion-reduced-easing);
+    }
+
+    .sk-tour__ring[data-sk-moving],
+    .sk-tour__popover[data-sk-moving] {
+      transition: none;
+    }
+
+    @starting-style {
+      .sk-tour__ring,
+      .sk-tour__popover {
+        scale: none;
+      }
+    }
+  }
+
+  /*
+   * FORCED COLORS strips box-shadows and replaces the accent, so the ring's halo and glow go and its
+   * border stays, painted in `Highlight`: the system's own colour for "this is the thing", distinct from
+   * the focus ring, which forced colours paints in its own. The box gets a real border in `CanvasText`,
+   * and the arrow's outer edges take the same colour.
+   */
+  @media (forced-colors: active) {
+    .sk-tour__ring {
+      --sk-tour-ring-color: Highlight;
+      border-style: double;
+      border-width: 6px;
+    }
+
+    .sk-tour__popover {
+      --sk-tour-bg: Canvas;
+      --sk-tour-fg: CanvasText;
+      --sk-tour-muted-fg: CanvasText;
+      --focus-ring-color: Highlight;
+      border-color: CanvasText;
+    }
+
+    .sk-tour__arrow {
+      border-color: CanvasText;
+    }
+  }
+}

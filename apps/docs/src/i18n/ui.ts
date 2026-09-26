@@ -22,6 +22,7 @@ import { codeMessages } from "./messages/_chrome/code";
 import { componentMessages } from "./messages/_chrome/component";
 import { contractMessages } from "./messages/_chrome/contract";
 import { copyMessages } from "./messages/_chrome/copy";
+import { docsTourMessages } from "./messages/_chrome/docs-tour";
 import { docsVersionMessages } from "./messages/_chrome/docs-version";
 import { groupMessages } from "./messages/_chrome/group";
 import { hookPlaygroundMessages } from "./messages/_chrome/hook-playground";
@@ -45,6 +46,7 @@ import { avatarMessages } from "./messages/components/avatar";
 import { annotationMessages } from "./messages/components/annotation";
 import { canvasMessages } from "./messages/components/canvas";
 import { lightboxMessages } from "./messages/components/lightbox";
+import { windowMessages } from "./messages/components/window";
 import { backToTopMessages } from "./messages/components/back-to-top";
 import { badgeMessages } from "./messages/components/badge";
 import { diagramMessages } from "./messages/components/diagram";
@@ -64,7 +66,6 @@ import { comboboxMessages } from "./messages/components/combobox";
 import { commandPaletteMessages } from "./messages/components/command-palette";
 import { commentThreadMessages } from "./messages/components/comment-thread";
 import { componentPreviewMessages } from "./messages/components/component-preview";
-import { copyButtonMessages } from "./messages/components/copy-button";
 import { dataGridMessages } from "./messages/components/data-grid";
 import { datePickerMessages } from "./messages/components/date-picker";
 import { dialogMessages } from "./messages/components/dialog";
@@ -72,6 +73,10 @@ import { drawerMessages } from "./messages/components/drawer";
 import { editorMessages } from "./messages/components/editor";
 import { emptyStateMessages } from "./messages/components/empty-state";
 import { fadeEdgeMessages } from "./messages/components/fade-edge";
+import { clipboardMessages } from "./messages/components/clipboard";
+import { listboxMessages } from "./messages/components/listbox";
+import { presenceMessages } from "./messages/components/presence";
+import { passwordInputMessages } from "./messages/components/password-input";
 import { qrCodeMessages } from "./messages/components/qr-code";
 import { feedMessages } from "./messages/components/feed";
 import { fileUploadMessages } from "./messages/components/file-upload";
@@ -132,6 +137,7 @@ import { toastMessages } from "./messages/components/toast";
 import { tocMessages } from "./messages/components/toc";
 import { toolbarMessages } from "./messages/components/toolbar";
 import { tooltipMessages } from "./messages/components/tooltip";
+import { tourMessages } from "./messages/components/tour";
 import { treeViewMessages } from "./messages/components/tree-view";
 import { treegridMessages } from "./messages/components/treegrid";
 import { wrapperMessages } from "./messages/components/wrapper";
@@ -167,6 +173,7 @@ export const ui = {
     ...navMessages.es,
     ...prefsMessages.es,
     ...docsVersionMessages.es,
+    ...docsTourMessages.es,
     ...previewMessages.es,
     ...searchMessages.es,
     ...sectionMessages.es,
@@ -185,6 +192,7 @@ export const ui = {
     ...diagramMessages.es,
     ...canvasMessages.es,
     ...lightboxMessages.es,
+    ...windowMessages.es,
     ...boxMessages.es,
     ...breadcrumbMessages.es,
     ...buttonMessages.es,
@@ -201,7 +209,6 @@ export const ui = {
     ...commandPaletteMessages.es,
     ...commentThreadMessages.es,
     ...componentPreviewMessages.es,
-    ...copyButtonMessages.es,
     ...dataGridMessages.es,
     ...datePickerMessages.es,
     ...dialogMessages.es,
@@ -209,6 +216,10 @@ export const ui = {
     ...editorMessages.es,
     ...emptyStateMessages.es,
     ...fadeEdgeMessages.es,
+    ...clipboardMessages.es,
+    ...listboxMessages.es,
+    ...presenceMessages.es,
+    ...passwordInputMessages.es,
     ...qrCodeMessages.es,
     ...feedMessages.es,
     ...fileUploadMessages.es,
@@ -271,6 +282,7 @@ export const ui = {
     ...tocMessages.es,
     ...toolbarMessages.es,
     ...tooltipMessages.es,
+    ...tourMessages.es,
     ...treeViewMessages.es,
     ...treegridMessages.es,
     ...wrapperMessages.es,
@@ -301,6 +313,7 @@ export const ui = {
     ...navMessages.en,
     ...prefsMessages.en,
     ...docsVersionMessages.en,
+    ...docsTourMessages.en,
     ...previewMessages.en,
     ...searchMessages.en,
     ...sectionMessages.en,
@@ -319,6 +332,7 @@ export const ui = {
     ...diagramMessages.en,
     ...canvasMessages.en,
     ...lightboxMessages.en,
+    ...windowMessages.en,
     ...boxMessages.en,
     ...breadcrumbMessages.en,
     ...buttonMessages.en,
@@ -335,7 +349,6 @@ export const ui = {
     ...commandPaletteMessages.en,
     ...commentThreadMessages.en,
     ...componentPreviewMessages.en,
-    ...copyButtonMessages.en,
     ...dataGridMessages.en,
     ...datePickerMessages.en,
     ...dialogMessages.en,
@@ -343,6 +356,10 @@ export const ui = {
     ...editorMessages.en,
     ...emptyStateMessages.en,
     ...fadeEdgeMessages.en,
+    ...clipboardMessages.en,
+    ...listboxMessages.en,
+    ...presenceMessages.en,
+    ...passwordInputMessages.en,
     ...qrCodeMessages.en,
     ...feedMessages.en,
     ...fileUploadMessages.en,
@@ -405,6 +422,7 @@ export const ui = {
     ...tocMessages.en,
     ...toolbarMessages.en,
     ...tooltipMessages.en,
+    ...tourMessages.en,
     ...treeViewMessages.en,
     ...treegridMessages.en,
     ...wrapperMessages.en,

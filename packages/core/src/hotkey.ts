@@ -1,120 +1,78 @@
+import {
+  createHotkeyStore,
+  formatHotkey as formatZagHotkey,
+  isHotKey,
+  parseHotkey as parseZagHotkey,
+  type HotkeyTarget,
+  type ParsedHotkey,
+} from "@zag-js/hotkeys";
+
 /*
- * HOTKEY, the contract, and the only part with no framework in it.
+ * HOTKEY, the one place the kit reads, matches, shows and binds a keyboard shortcut.
  *
  * A keyboard shortcut is behaviour with no platform equivalent, `accesskey` exists but browsers
  * bury it behind their own modifier chords and never surface a "⌘K"-style palette trigger. So the
- * system ships it, split the same way every behaviour is (decision 14): the pure matcher here, the
- * imperative binding in @skryensya/vanilla, the declarative hook in @skryensya/react. This file knows
- * how to READ a spec and TEST an event against it, and nothing about how the event got here.
+ * system ships it, and since decision 25 the parsing, matching, formatting and listening are
+ * `@zag-js/hotkeys`'s, the same family every other machine here comes from. This file is the kit's
+ * surface over it: the names both bindings and the docs already call, the `mac` override tests and
+ * the docs need, and the one rule Zag does not have (a chord with a modifier fires from inside a
+ * text field). `bindHotkey` lives here rather than in a binding so Vanilla and React run the same
+ * code, not two copies of it (decision 14).
  *
  * `mod` is the whole reason this is worth a primitive rather than an inline `event.metaKey` check: it
  * is ⌘ on a Mac and Ctrl everywhere else, so one spec, "mod+k", is the right chord on both without
- * the caller ever branching on the platform. That resolution is the one fact this file needs from the
- * outside, and it takes it as a boolean rather than sniffing navigator, so it stays testable and pure.
+ * the caller ever branching on the platform.
+ *
+ * SPEC SYNTAX is Zag's: modifiers first, then the key ("mod+shift+k", not "k+mod+shift"), and
+ * `>` between the steps of a sequence ("g > i"), which `bindHotkey` supports and `matchesHotkey`,
+ * being about one event, does not.
  */
+
+export type { ParsedHotkey };
 
 /**
  * The shape a keyboard event has to have to be matched, a structural subset of the DOM's
- * `KeyboardEvent`, so this file never imports the DOM and a plain object works in a test.
+ * `KeyboardEvent`, so a plain object works in a test.
  */
 export interface KeyChord {
   key: string;
+  code?: string;
   metaKey?: boolean;
   ctrlKey?: boolean;
   shiftKey?: boolean;
   altKey?: boolean;
 }
 
-/** A parsed spec: the modifiers it requires, and the single non-modifier key it ends on. */
-export interface ParsedHotkey {
-  /** ⌘ on Mac / Ctrl elsewhere. */
-  mod: boolean;
-  /** The literal Meta key, regardless of platform, for the rare shortcut that means ⌘ specifically. */
-  meta: boolean;
-  /** The literal Control key, regardless of platform. */
-  ctrl: boolean;
-  shift: boolean;
-  alt: boolean;
-  /** The non-modifier key, lower-cased. `KeyboardEvent.key`'s value, e.g. "k", "enter", "escape". */
-  key: string;
-}
+const platformOf = (isMac: boolean) => (isMac ? "mac" : "windows");
 
-/** Modifier tokens and the parsed field each one sets. Everything else in a spec is the key. */
-const MODIFIER_TOKENS: Record<string, keyof Omit<ParsedHotkey, "key">> = {
-  mod: "mod",
-  meta: "meta",
-  cmd: "meta",
-  command: "meta",
-  ctrl: "ctrl",
-  control: "ctrl",
-  shift: "shift",
-  alt: "alt",
-  option: "alt",
-  opt: "alt",
-};
-
-/** A few key aliases so a spec can read the way people say it. */
-const KEY_ALIASES: Record<string, string> = {
-  esc: "escape",
-  space: " ",
-  spacebar: " ",
-  return: "enter",
-};
-
-/**
- * Read a spec like "mod+k", "shift+/", or "escape" into its parts. Tokens are split on "+", trimmed
- * and lower-cased; the last non-modifier token is the key. Order does not matter, and whitespace is
- * forgiven, because a spec is authored by hand and should not be finicky.
- */
-export function parseHotkey(spec: string): ParsedHotkey {
-  const parsed: ParsedHotkey = { mod: false, meta: false, ctrl: false, shift: false, alt: false, key: "" };
-  for (const raw of spec.split("+")) {
-    const token = raw.trim().toLowerCase();
-    if (token === "") continue;
-    const modifier = MODIFIER_TOKENS[token];
-    if (modifier) {
-      parsed[modifier] = true;
-    } else {
-      // the last plain token wins, so "k" in "mod+k" is the key even though "mod" came first
-      parsed.key = KEY_ALIASES[token] ?? token;
-    }
-  }
-  return parsed;
+/** Read a spec into Zag's parsed form, `mod` resolved for the given platform. */
+export function parseHotkey(spec: string, isMac: boolean = detectMac()): ParsedHotkey {
+  return parseZagHotkey(spec, platformOf(isMac));
 }
 
 /**
  * Does this event satisfy this spec? Exact match on every modifier, a spec is a precise chord, so
- * "mod+k" must NOT fire on "mod+shift+k", or a shortcut silently swallows a superset the app meant for
- * something else. `mod` resolves against `isMac`: ⌘ there, Ctrl elsewhere, and the OTHER of the two is
- * required to be UP, so a Ctrl+K on a Mac never triggers a ⌘K binding.
+ * "mod+k" must NOT fire on "mod+shift+k", and a Ctrl+K on a Mac never triggers a ⌘K binding. Where
+ * focus is plays no part here: that is a binding's question, not a chord's.
  */
-export function matchesHotkey(event: KeyChord, spec: string | ParsedHotkey, isMac: boolean): boolean {
-  const want = typeof spec === "string" ? parseHotkey(spec) : spec;
-  if (want.key === "") return false;
-
-  const meta = event.metaKey ?? false;
-  const ctrl = event.ctrlKey ?? false;
-
-  // What "mod" demands, plus any literal meta/ctrl the spec also named.
-  const wantMeta = want.meta || (want.mod && isMac);
-  const wantCtrl = want.ctrl || (want.mod && !isMac);
-  if (meta !== wantMeta) return false;
-  if (ctrl !== wantCtrl) return false;
-  if ((event.shiftKey ?? false) !== want.shift) return false;
-  if ((event.altKey ?? false) !== want.alt) return false;
-
-  return event.key.toLowerCase() === want.key;
+export function matchesHotkey(event: KeyChord, spec: string, isMac: boolean): boolean {
+  /* Zag compares every modifier with `!==`, so an absent one has to read as `false`, not `undefined`. */
+  const chord = {
+    key: event.key,
+    code: event.code ?? "",
+    metaKey: event.metaKey ?? false,
+    ctrlKey: event.ctrlKey ?? false,
+    shiftKey: event.shiftKey ?? false,
+    altKey: event.altKey ?? false,
+    target: (event as { target?: EventTarget | null }).target ?? null,
+  };
+  return isHotKey(
+    spec,
+    chord as unknown as KeyboardEvent,
+    { enableOnFormTags: true, enableOnContentEditable: true },
+    platformOf(isMac),
+  );
 }
-
-/*
- * The two platform reads every binding needs, shared here beside the matcher.
- *
- * They are not "how the event got here", they are facts about the environment the chord resolves in,
- * and both bindings (vanilla `bindHotkey`, React `useHotkey`) plus the docs' own palette need the
- * identical logic. Copy-pasting them into each was the duplication; they belong next to `matchesHotkey`,
- * which already takes `isMac` as a parameter precisely so it stays pure while these do the sniffing.
- * Both are environment-guarded so importing this module in Node never touches a DOM global.
- */
 
 /** ⌘ vs Ctrl comes down to this. Read once at call time; a session never changes OS mid-keystroke. */
 export function detectMac(): boolean {
@@ -136,34 +94,73 @@ export function isTypingContext(target: EventTarget | null): boolean {
   return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
 }
 
-/** How each key renders for a person to read. Symbols on Mac, words elsewhere. */
-const KEY_LABELS: Record<string, string> = {
-  escape: "Esc",
-  enter: "Enter",
-  arrowup: "↑",
-  arrowdown: "↓",
-  arrowleft: "←",
-  arrowright: "→",
-  " ": "Space",
-};
-
 /**
  * A spec as a person should read it: "⌘K" on a Mac, "Ctrl+K" elsewhere. For the badge next to a
  * search box or in a menu, the shortcut is only discoverable if it is shown the way the OS shows it.
+ * Zag's glyphs throughout (↵, ␣, ↑); the separators are the kit's, stacked on a Mac as the OS does.
  */
-export function formatHotkey(spec: string | ParsedHotkey, isMac: boolean): string {
-  const parsed = typeof spec === "string" ? parseHotkey(spec) : spec;
-  const parts: string[] = [];
+export function formatHotkey(spec: string, isMac: boolean): string {
+  return formatZagHotkey(spec, { platform: platformOf(isMac), style: "symbols", separator: isMac ? "" : "+" });
+}
 
-  // Order matches the platform's own convention: Ctrl/Alt/Shift/Cmd on Mac reads ⌃⌥⇧⌘.
-  if (parsed.ctrl || (parsed.mod && !isMac)) parts.push(isMac ? "⌃" : "Ctrl");
-  if (parsed.alt) parts.push(isMac ? "⌥" : "Alt");
-  if (parsed.shift) parts.push(isMac ? "⇧" : "Shift");
-  if (parsed.meta || (parsed.mod && isMac)) parts.push(isMac ? "⌘" : "Win");
+export interface BindHotkeyOptions {
+  /** Where to listen. Defaults to `window`, so a shortcut is global unless scoped to an element. */
+  target?: Window | HTMLElement | Document;
+  /** Call `preventDefault()` on a match. Default true, a shortcut that also does the browser's thing
+   *  (⌘S saving the page) is a bug, so the binding stops the platform by default. */
+  preventDefault?: boolean;
+  /**
+   * Fire even while the user is typing in an input/textarea/contenteditable. Default false, but it
+   * only ever suppresses BARE keys: a chord with a modifier (⌘K, Ctrl+/) always fires, because that is
+   * the whole point of a command shortcut, it has to reach you from inside the search box it opens.
+   */
+  enableWhileTyping?: boolean;
+  /** Override platform detection, mostly for tests. */
+  mac?: boolean;
+}
 
-  const key = KEY_LABELS[parsed.key] ?? (parsed.key.length === 1 ? parsed.key.toUpperCase() : parsed.key);
-  parts.push(key);
+/**
+ * Bind a keyboard shortcut. Returns a cleanup that removes the listener, call it on unmount, exactly
+ * like an enhancer's teardown.
+ *
+ *   const off = bindHotkey("mod+k", () => palette.showModal());
+ *   const offGo = bindHotkey("g > i", () => go("/inbox"));   // a sequence
+ *   // …later
+ *   off();
+ *
+ * One Zag store per binding. `mod` is resolved here, before Zag sees it, because the store reads the
+ * platform itself and has no override; that is what keeps the `mac` option honest. Bubble phase,
+ * as before Zag: a widget with focus hears its own keys before a page-wide shortcut does.
+ */
+export function bindHotkey(
+  spec: string,
+  handler: (event: KeyboardEvent) => void,
+  options: BindHotkeyOptions = {},
+): () => void {
+  const target = options.target ?? (typeof window !== "undefined" ? window : undefined);
+  if (!target) return () => {};
 
-  // Mac stacks the glyphs with no separator (⌘K); word-labels read better joined by "+".
-  return isMac ? parts.join("") : parts.join("+");
+  const hotkey = spec.replace(/\bmod\b/gi, (options.mac ?? detectMac()) ? "meta" : "ctrl");
+  const parsed = parseZagHotkey(hotkey, "windows");
+  const hasModifier = !parsed.isSequence && Boolean(parsed.meta || parsed.ctrl || parsed.alt);
+  const whileTyping = (options.enableWhileTyping ?? false) || hasModifier;
+
+  const store = createHotkeyStore({
+    /* A `Window` is not in Zag's type, but the store only calls `addEventListener` on its target and
+       `getWindow` answers `window` for it, so the kit's long-standing default keeps working. */
+    target: target as HotkeyTarget,
+    conflictBehavior: "allow",
+  });
+  store.register({
+    id: "hotkey",
+    hotkey,
+    action: handler,
+    options: {
+      capture: false,
+      preventDefault: options.preventDefault ?? true,
+      enableOnFormTags: whileTyping,
+      enableOnContentEditable: whileTyping,
+    },
+  });
+  return () => store.destroy();
 }

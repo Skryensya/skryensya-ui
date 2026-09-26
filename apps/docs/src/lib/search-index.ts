@@ -1,5 +1,6 @@
 import type { CommandPaletteEntry } from "@skryensya/core/command-palette";
 import { localizePath, useTranslations, type Locale } from "../i18n";
+import { DOCS_TOUR_COMMAND } from "./docs-tour";
 import { getNavigation } from "./navigation";
 
 /*
@@ -38,6 +39,13 @@ export function buildSearchIndex(locale: Locale): CommandPaletteEntry[] {
       href: localizePath("/components/primitives", locale),
       section: t("section.components"),
       group: t("group.layout"),
+    },
+    /* Only listed once the query starts with "/" (core's filter); `scripts/docs-tour.ts` answers it. */
+    {
+      command: DOCS_TOUR_COMMAND,
+      label: t("docsTour.command"),
+      aliases: ["guide", "guía", "recorrido"],
+      context: t("docsTour.commandHint"),
     },
     /* Presets is dev-only (its page 404s in a production build), so search only offers it there. */
     ...(import.meta.env.DEV

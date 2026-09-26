@@ -27,3 +27,23 @@ describe("FadeEdge React contracts", () => {
     expect(root.style.getPropertyValue("--sk-fade-edge-color")).toBe("rgb(15 23 42 / 85%)");
   });
 });
+
+describe("FadeEdge scrollAware", () => {
+  it("writes nothing extra unless opted in", () => {
+    const ui = render(<FadeEdge>x</FadeEdge>);
+    const root = ui.container.querySelector(".sk-fade-edge")!;
+    expect(root.hasAttribute("data-scroll-aware")).toBe(false);
+    expect(root.hasAttribute("data-at-edge")).toBe(false);
+  });
+
+  /* jsdom lays nothing out: scrollHeight and clientHeight are both 0, which is content that fits. */
+  it("marks content that fits as at its edge, and lets go of the attribute on unmount of the option", () => {
+    const ui = render(<FadeEdge scrollAware>x</FadeEdge>);
+    const root = ui.container.querySelector(".sk-fade-edge")!;
+    expect(root.getAttribute("data-scroll-aware")).toBe("");
+    expect(root.hasAttribute("data-at-edge")).toBe(true);
+
+    ui.rerender(<FadeEdge>x</FadeEdge>);
+    expect(root.hasAttribute("data-at-edge")).toBe(false);
+  });
+});

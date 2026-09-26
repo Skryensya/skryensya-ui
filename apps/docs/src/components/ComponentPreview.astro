@@ -170,7 +170,7 @@ interface Props {
 }
 
 const {
-  tree,
+  tree: authoredTree,
   html,
   js,
   css,
@@ -205,7 +205,21 @@ const t = useTranslations(locale);
  * the page's shared preset, which seeds as Mobile. Every anatomy in the docs rendered at 390px.
  */
 const isAnatomy =
-  tree?.contract === "annotation" || (html?.includes("sk-annotated-figure") ?? false);
+  authoredTree?.contract === "annotation" || (html?.includes("sk-annotated-figure") ?? false);
+
+/*
+ * AN ANATOMY DIAGRAM IS LOOKED AT, NOT EXPLORED: no zoom bar, no gestures, no tab stop on the canvas,
+ * and the drawing always fitted and centred in its 4:3 frame (site.css). That is Annotated's own
+ * `fitOnly`, set here once for every anatomy rather than in each of the eighty trees that draw one.
+ * A diagram is an annotation with no preview chrome; the Annotation page's own demos keep their
+ * chrome, and their zoom, because zooming is what they document. Hand-written anatomies get the
+ * same from `anatomyFigureHtml`, which is only ever used for them.
+ */
+const anatomyDiagram = isAnatomy && !chrome;
+const tree =
+  anatomyDiagram && authoredTree?.contract === "annotation" && authoredTree.signature === "Annotated"
+    ? { ...authoredTree, options: { ...authoredTree.options, fitOnly: true } }
+    : authoredTree;
 const screenScope = isAnatomy ? "local" : authoredScreenScope;
 const defaultScreen = isAnatomy ? "free" : authoredDefaultScreen;
 const stageFlush = flush || isAnatomy;
@@ -348,9 +362,11 @@ const previewId = ((): string => {
  * because a page may render the same tree twice and the first one is the one worth landing on.
  */
 const treeAnchor = ((): string | undefined => {
-  if (!tree) return undefined;
+  if (!authoredTree) return undefined;
   const used = ((locals as { componentPreviewTreeAnchors?: Set<string> }).componentPreviewTreeAnchors ??= new Set());
-  const id = treeAnchorId(tree);
+  /* The AUTHORED tree: the Playground hashes the tree it was handed, which never carries the
+     `fitOnly` an anatomy gets above. */
+  const id = treeAnchorId(authoredTree);
   if (used.has(id)) return undefined;
   used.add(id);
   return id;

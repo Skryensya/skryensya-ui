@@ -3,8 +3,20 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "98d68bc03ff968e6"
+surface: "ba191baa8a0c94f8"
 entries:
+  - date: 2026-09-25
+    kind: feature
+    es:
+      title: Las faces aceptan minimize, maximize y restore
+      body: >-
+        <code>stableIconNames</code> sumó <code>minimize</code>, <code>maximize</code> y <code>restore</code>, y las faces de IconStateButton se
+        nombran con ese vocabulario, así que el enum se ensancha solo. Nada que ya compilaba deja de compilar.
+    en:
+      title: Faces accept minimize, maximize and restore
+      body: >-
+        <code>stableIconNames</code> gained <code>minimize</code>, <code>maximize</code> and <code>restore</code>, and an IconStateButton's faces
+        are named from that vocabulary, so the enum widens on its own. Nothing that compiled before stops compiling.
   - date: 2026-09-23
     kind: feature
     es:

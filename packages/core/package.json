@@ -56,6 +56,14 @@
       "types": "./src/badge.ts",
       "default": "./src/badge.ts"
     },
+    "./password-input": {
+      "types": "./src/password-input.ts",
+      "default": "./src/password-input.ts"
+    },
+    "./presence": {
+      "types": "./src/presence.ts",
+      "default": "./src/presence.ts"
+    },
     "./callout": {
       "types": "./src/callout.ts",
       "default": "./src/callout.ts"
@@ -158,6 +166,16 @@
       "types": "./src/component-preview.ts",
       "import": "./src/component-preview.ts",
       "default": "./src/component-preview.ts"
+    },
+    "./listbox": {
+      "types": "./src/listbox.ts",
+      "import": "./src/listbox.ts",
+      "default": "./src/listbox.ts"
+    },
+    "./clipboard": {
+      "types": "./src/clipboard.ts",
+      "import": "./src/clipboard.ts",
+      "default": "./src/clipboard.ts"
     },
     "./copy-button": {
       "types": "./src/copy-button.ts",
@@ -292,6 +310,18 @@
     "./lightbox-controller": {
       "types": "./src/lightbox-controller.ts",
       "default": "./src/lightbox-controller.ts"
+    },
+    "./qr-code-export": {
+      "types": "./src/qr-code-export.ts",
+      "default": "./src/qr-code-export.ts"
+    },
+    "./tour": {
+      "types": "./src/tour.ts",
+      "default": "./src/tour.ts"
+    },
+    "./tour-controller": {
+      "types": "./src/tour-controller.ts",
+      "default": "./src/tour-controller.ts"
     },
     "./back-to-top": {
       "types": "./src/back-to-top.ts",
@@ -433,6 +463,10 @@
       "types": "./src/fade-edge.ts",
       "default": "./src/fade-edge.ts"
     },
+    "./fade-edge-dom": {
+      "types": "./src/fade-edge-dom.ts",
+      "default": "./src/fade-edge-dom.ts"
+    },
     "./qr-code": {
       "types": "./src/qr-code.ts",
       "default": "./src/qr-code.ts"
@@ -477,6 +511,10 @@
       "types": "./src/feed-dom.ts",
       "default": "./src/feed-dom.ts"
     },
+    "./focus-trap": {
+      "types": "./src/focus-trap.ts",
+      "default": "./src/focus-trap.ts"
+    },
     "./number-field": {
       "types": "./src/number-field.ts",
       "default": "./src/number-field.ts"
@@ -484,6 +522,10 @@
     "./otp-input": {
       "types": "./src/otp-input.ts",
       "default": "./src/otp-input.ts"
+    },
+    "./window": {
+      "types": "./src/window.ts",
+      "default": "./src/window.ts"
     },
     "./popover": {
       "types": "./src/popover.ts",
@@ -579,13 +621,18 @@
     "@internationalized/date": "^3.12.2",
     "@zag-js/carousel": "1.43.3",
     "@zag-js/checkbox": "^1.43.3",
+    "@zag-js/clipboard": "^1.43.3",
     "@zag-js/collapsible": "^1.43.3",
     "@zag-js/color-picker": "^1.43.3",
     "@zag-js/combobox": "^1.43.3",
     "@zag-js/date-picker": "^1.43.3",
     "@zag-js/file-upload": "^1.43.3",
+    "@zag-js/hotkeys": "^1.43.3",
+    "@zag-js/floating-panel": "^1.43.3",
+    "@zag-js/listbox": "^1.43.3",
     "@zag-js/menu": "^1.43.3",
     "@zag-js/number-input": "^1.43.3",
+    "@zag-js/password-input": "1.43.3",
     "@zag-js/pin-input": "^1.43.3",
     "@zag-js/radio-group": "^1.43.3",
     "@zag-js/rating-group": "^1.43.3",

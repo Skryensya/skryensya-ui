@@ -137,6 +137,21 @@ export type {
   LightboxState,
   LightboxTriggerProps,
 } from "./components/lightbox.js";
+export { Clipboard, CopyButton } from "./components/clipboard.js";
+export { Listbox } from "./components/listbox.js";
+export type { ListboxItem, ListboxProps, ListboxValueChangeDetails } from "./components/listbox.js";
+export type { ClipboardProps, ClipboardStatus, CopyButtonProps } from "./components/clipboard.js";
+export { Tour, useTourState, useTourStatus } from "./components/tour.js";
+export type {
+  TourHandle,
+  TourPlacement,
+  TourProps,
+  TourStartOptions,
+  TourState,
+  TourStatus,
+  TourStep,
+  TourTriggerProps,
+} from "./components/tour.js";
 export { MediaCaption, MediaGradient } from "./components/media-gradient.js";
 export type {
   MediaCaptionProps,
@@ -144,6 +159,10 @@ export type {
 } from "./components/media-gradient.js";
 export { FadeEdge } from "./components/fade-edge.js";
 export type { FadeEdgeProps } from "./components/fade-edge.js";
+export { Presence } from "./components/presence.js";
+export { PasswordInput } from "./components/password-input.js";
+export type { PasswordInputProps } from "./components/password-input.js";
+export type { PresenceProps } from "./components/presence.js";
 export { NavList, NavListGroup, NavListLink } from "./components/nav-list.js";
 export type {
   NavListGroupProps,
@@ -162,6 +181,8 @@ export { Tooltip } from "./components/tooltip.js";
 export type { TooltipProps } from "./components/tooltip.js";
 export { Popover } from "./components/popover.js";
 export type { PopoverProps } from "./components/popover.js";
+export { Window } from "./components/window.js";
+export type { WindowOpenChangeDetails, WindowProps, WindowStage, WindowStageChangeDetails } from "./components/window.js";
 export { NativeSelect } from "./components/select-native.js";
 export type { NativeSelectProps } from "./components/select-native.js";
 export { Checkbox, RadioGroup, Switch } from "./components/selection.js";

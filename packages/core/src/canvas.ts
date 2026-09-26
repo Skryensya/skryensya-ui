@@ -324,8 +324,15 @@ export function connectCanvasView(root: HTMLElement, options: CanvasViewOptions 
     const size = contentSize();
     const width = viewport.clientWidth;
     if (size.width === 0 || width === 0) return;
-    const cap = Number.parseFloat(getComputedStyle(viewport).maxHeight);
-    const scale = clampZoom(canvasFitScale(size, width, Number.isFinite(cap) ? cap : undefined), min, max);
+    const style = getComputedStyle(viewport);
+    const cap = Number.parseFloat(style.maxHeight);
+    /* A viewport whose HEIGHT the stylesheet decides (an `aspect-ratio`, a docs anatomy's 4:3) does
+       not grow to the drawing, so that height is a cap like any other: the drawing is fitted inside
+       it, centred on both axes, instead of being cut off at its foot. Only when the ratio is set,
+       because otherwise the height IS the fitted drawing and reading it back would be a loop. */
+    const fixed = style.aspectRatio && style.aspectRatio !== "auto" ? viewport.clientHeight : Number.NaN;
+    const limit = Math.min(Number.isFinite(cap) ? cap : Infinity, Number.isFinite(fixed) && fixed > 0 ? fixed : Infinity);
+    const scale = clampZoom(canvasFitScale(size, width, Number.isFinite(limit) ? limit : undefined), min, max);
     root.style.setProperty("--sk-canvas-fit-block-size", `${Math.ceil(size.height * scale)}px`);
     const window = { width, height: viewport.clientHeight };
     view = fitted ? canvasFitView(size, window, scale) : canvasClampView(view, size, window);

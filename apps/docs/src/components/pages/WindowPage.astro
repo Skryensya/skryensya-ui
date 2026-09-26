@@ -1,0 +1,75 @@
+---
+/*
+ * THE Window page. The demos are usage trees, so each renders in both bindings from one source. The
+ * Vanilla stage is its own iframe, which is exactly the viewport a `position: fixed` window needs;
+ * the React stage portals to the page, where the window centres on the reader's own screen.
+ */
+import "@skryensya/core/components/window.css";
+import "@skryensya/core/components/table.css";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { windowFixedTree, windowTree } from "../../demos/window";
+import { getLocale, useTranslations } from "../../i18n";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const styles = `@import "@skryensya/core/components/button.css";
+@import "@skryensya/core/components/window.css";`;
+const js = `import { mountIcons } from "@skryensya/vanilla/icon";
+import { lucideIcons } from "@skryensya/icons-lucide";
+
+mountIcons(document, lucideIcons);`;
+
+const keys = [
+  ["← → ↑ ↓", "window.key.arrows"],
+  ["Esc", "window.key.escape"],
+  ["2 × click", "window.key.dblclick"],
+] as const;
+---
+
+<ComponentPageShell
+  title="Window"
+  description={t("windowPage.description")}
+  contractId="window"
+  styleGroups={[{ file: "components/window.css", probe: "sk-window", title: "Window" }]}
+  testFiles={[
+    "packages/vanilla/src/components/window.svelte.test.ts",
+    "packages/react/src/components/window.test.tsx",
+  ]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("windowPage.lede")} />
+    <ComponentPreview tree={windowTree(t)} js={js} label="Window" viewport="overlay" />
+
+    <h3>{t("windowPage.fixedTitle")}</h3>
+    <p set:html={t("windowPage.fixedBody")} />
+    <ComponentPreview tree={windowFixedTree(t)} js={js} label={t("windowPage.fixedLabel")} viewport="overlay" />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <p set:html={t("windowPage.contractBody")} />
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={styles} label="CSS" lang="css" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("windowPage.a11yBody")} />
+    <h3>{t("windowPage.keyboardTitle")}</h3>
+    <div class="sk-table-scroll">
+      <table class="sk-table">
+        <tbody class="sk-table__body">
+          {
+            keys.map(([combo, key]) => (
+              <tr class="sk-table__row">
+                <th class="sk-table__header" scope="row"><kbd>{combo}</kbd></th>
+                <td class="sk-table__cell" set:html={t(key)} />
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </Fragment>
+</ComponentPageShell>

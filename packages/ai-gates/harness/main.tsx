@@ -6,7 +6,7 @@ import { mountCodePreview } from "@skryensya/vanilla/code-preview";
 import { mountEditor } from "@skryensya/vanilla/editor";
 import { lucideIcons } from "@skryensya/icons-lucide";
 import { canonicalTrees } from "../src/trees.js";
-import { renderTree, setPortalContainer } from "./react-render.js";
+import { loadTree, renderTree, setPortalContainer } from "./react-render.js";
 
 import "@skryensya/core/tokens.scss";
 
@@ -115,6 +115,9 @@ async function stage(): Promise<void> {
     // the gate measures rather than escaping to document.body.
     setPortalContainer({ current: react });
 
+    // The React modules are imported on demand since render-tree went lazy: without this every case
+    // failed with "is not loaded", and so did the whole stage, in global setup.
+    await loadTree(tree);
     // Synchronous commit, so the DOM is final by the time the loop moves on.
     flushSync(() => createRoot(react).render(renderTree(tree)));
   }

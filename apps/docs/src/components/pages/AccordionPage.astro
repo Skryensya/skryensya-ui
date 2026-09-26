@@ -34,6 +34,7 @@ import ComponentPreview from "../ComponentPreview.astro";
 import VanillaMount from "../VanillaMount.astro";
 import { vanillaMounts } from "../../lib/vanilla-mounts";
 import {
+  accordionAnatomyCss,
   accordionChoiceCss,
   accordionChoiceTree,
   accordionExclusiveTree,
@@ -42,7 +43,7 @@ import {
   detailsAnatomyTree,
   detailsGroupTree,
 } from "../../demos/accordion";
-import { annotationAnatomyTree, annotationDemoCss } from "../../demos/annotation";
+import { annotationAnatomyTree } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
 
 const t = useTranslations(getLocale(Astro.url));
@@ -94,7 +95,7 @@ const detailsLink = `<a href="#details-nativo">${t("accordion.detailsNativoLabel
   <Fragment slot="anatomy">
     <ComponentPreview
       tree={annotationAnatomyTree(t)}
-      css={annotationDemoCss}
+      css={accordionAnatomyCss}
       label={t("annotation.anatomyPreviewLabel")}
       screens={false}
       hideSource
@@ -105,7 +106,7 @@ const detailsLink = `<a href="#details-nativo">${t("accordion.detailsNativoLabel
     <p set:html={t("accordion.nativeAnatomyBody")} />
     <ComponentPreview
       tree={detailsAnatomyTree(t)}
-      css={annotationDemoCss}
+      css={accordionAnatomyCss}
       label={t("accordion.nativeAnatomyPreviewLabel")}
       screens={false}
       hideSource

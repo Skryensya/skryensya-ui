@@ -247,6 +247,13 @@ export type ContractSlot = {
     readonly key?: string;
     /** Entry options or slots every entry must give: a chart point with no value is not a point. */
     readonly requires?: readonly string[];
+    /**
+     * React takes each entry as THIS ONE FIELD's value rather than as an object: a tags input's
+     * `defaultValue` is `string[]`, and every entry is nothing but its `label`. Without it both the
+     * live render and the printed snippet handed React `[{ label: "react" }]`, which throws on
+     * render and does not typecheck. The markup side is unaffected: it expands entries either way.
+     */
+    readonly unwrap?: string;
   };
 };
 

@@ -1,8 +1,9 @@
 import { fireEvent } from "@testing-library/dom";
+import type { CommandPaletteEntry } from "@skryensya/core/command-palette";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { connectCommandPalette, mountCommandPalette } from "./command-palette.js";
 
-const entries = [
+const entries: CommandPaletteEntry[] = [
   { href: "/componentes/boton", label: "Botón", section: "Componentes", group: "Acciones" },
   { href: "/componentes/dialogo", label: "Diálogo", section: "Componentes" },
   { href: "/tokens", label: "Tokens", context: "Fundamentos" },
@@ -147,6 +148,32 @@ describe("CommandPalette Vanilla contracts", () => {
     // A click anywhere inside the option counts, not only on the row itself.
     fireEvent.click(options()[2].querySelector(".sk-command-palette__option-label")!);
     expect(assign).toHaveBeenLastCalledWith("/tokens");
+  });
+
+  it("runs a command instead of navigating: closes, then fires the event", () => {
+    const dialog = markup({ index: [...entries, { command: "tour", label: "/tour" }] });
+    mountCommandPalette(document);
+    const fired: unknown[] = [];
+    document.addEventListener("sk:commandpalettecommand", (event) => {
+      // Closed BEFORE the event, so a host that moves focus is not undone by the dialog's close.
+      expect(dialog.open).toBe(false);
+      fired.push((event as CustomEvent).detail.command);
+    });
+
+    fireEvent.click(trigger());
+    input().value = "tour";
+    fireEvent.input(input());
+    expect(options()).toHaveLength(0);
+
+    input().value = "/";
+    fireEvent.input(input());
+    expect(options()).toHaveLength(1);
+    expect(options()[0].dataset.command).toBe("tour");
+    expect(options()[0].hasAttribute("data-href")).toBe(false);
+
+    fireEvent.keyDown(input(), { key: "Enter" });
+    expect(fired).toEqual(["tour"]);
+    expect(assign).not.toHaveBeenCalled();
   });
 
   it("dismisses on the backdrop and drops the trigger's claim", () => {

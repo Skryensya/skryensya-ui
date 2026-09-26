@@ -5,6 +5,19 @@
 # hash.
 surface: "ea6bdc9c9a9c24ea"
 entries:
+  - date: 2026-09-25
+    kind: bugfix
+    target: arrow
+    es:
+      title: React escribe data-arrow en la raíz
+      body: >-
+        La opción <code>arrow</code> se escribe como <code>data-arrow</code> en la raíz, y el markup lo hacía pero React no: dibujaba la
+        flecha sin decirlo. Ahora las dos raíces son iguales.
+    en:
+      title: React writes data-arrow on the root
+      body: >-
+        The <code>arrow</code> option is written as <code>data-arrow</code> on the root, and markup did so while React did not: it drew the
+        arrow without saying it. Both roots now match.
   - date: 2026-09-17
     kind: feature
     es:

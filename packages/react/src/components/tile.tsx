@@ -284,10 +284,16 @@ export const TileRadioGroup = forwardRef<HTMLDivElement, TileRadioGroupProps>(fu
             key={item.value}
           >
             <input {...api.getItemHiddenInputProps(itemProps)} data-part="input" />
-            <span {...api.getItemTextProps(itemProps)} className={tileParts.content} data-part="content">
+            <span {...api.getItemTextProps(itemProps)} className={tileParts.content} data-part="content" data-scope="tile">
               {item.children}
             </span>
-            <span {...api.getItemControlProps(itemProps)} aria-hidden="true" className={tileParts.selectionIndicator} data-part="indicator" />
+            <span
+              {...api.getItemControlProps(itemProps)}
+              aria-hidden="true"
+              className={tileParts.selectionIndicator}
+              data-part="indicator"
+              data-scope="tile"
+            />
           </label>
         );
       })}

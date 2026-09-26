@@ -277,3 +277,16 @@ export const fadeIntensityTree: UsageTree = {
     },
   ],
 };
+
+/*
+ * 7. The same feed as the first demo, scroll-aware: the fade retires once the last row is in view,
+ * and comes back the moment the reader scrolls up. Nothing about the feed changes; the option is
+ * the whole difference, which is why it reuses the first demo's list verbatim.
+ */
+export const fadeScrollAwareTree: UsageTree = card({
+  contract: "fade-edge",
+  signature: "FadeEdge",
+  options: { scrollAware: true },
+  attrs: { class: "sk-scrollbar", style: VERTICAL_SCROLL },
+  children: [activityList("Actividad reciente, con el fundido atento al scroll")],
+});

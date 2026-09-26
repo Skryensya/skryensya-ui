@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { qrGeometry, qrLogoAdvice, qrViewBox, QrError } from "./qr-code.js";
+import { qrGeometry, qrLogoAdvice, qrSvgDocument, qrSymbolFromAttributes, qrViewBox, QrError } from "./qr-code.js";
 import { decodeQrPath } from "./qr-code-test-decoder.js";
 
 /*
@@ -116,6 +116,42 @@ describe("qrGeometry", () => {
     }
   });
 
+  it("keeps the three finder patterns solid whatever shape the data modules are", () => {
+    /* A reader locates the symbol by the 1:1:3:1:1 runs across its finder patterns before it decodes
+       anything, and dots break those runs into beads. Decoding modules cannot see that, so this reads
+       the drawing itself: inside a finder every subpath is a straight run, never an arc. */
+    const value = "https://example.com/finder";
+    const quietZone = 4;
+    for (const moduleShape of ["dot", "rounded"] as const) {
+      const geometry = qrGeometry(value, { moduleShape, quietZone });
+      const size = geometry.extent - quietZone * 2;
+      const inFinder = (x: number, y: number) =>
+        (y < 7 && (x < 7 || x >= size - 7)) || (x < 7 && y >= size - 7);
+      const subpaths = geometry.path.split("M").slice(1);
+      let finderRuns = 0;
+      let shapedOutside = 0;
+      for (const subpath of subpaths) {
+        const [sx, sy] = subpath.split(/[ hva]/).slice(0, 2).map(Number) as [number, number];
+        const x = Math.floor(sx - quietZone);
+        const y = Math.floor(sy - quietZone);
+        if (inFinder(x, y)) {
+          expect(subpath, `${moduleShape} finder at ${x},${y}`).not.toContain("a");
+          finderRuns++;
+        } else if (subpath.includes("a")) {
+          shapedOutside++;
+        }
+      }
+      /* Each finder's top row alone is one 7-module run, so all three are drawn as runs. */
+      expect(geometry.path).toContain(`M${quietZone} ${quietZone}h7v1h-7z`);
+      expect(geometry.path).toContain(`M${quietZone + size - 7} ${quietZone}h7v1h-7z`);
+      expect(geometry.path).toContain(`M${quietZone} ${quietZone + size - 7}h7v1h-7z`);
+      expect(finderRuns, moduleShape).toBeGreaterThan(0);
+      /* And the shape is still the shape everywhere else. */
+      expect(shapedOutside, moduleShape).toBeGreaterThan(0);
+      expect(decode(value, { moduleShape, quietZone }), moduleShape).toBe(value);
+    }
+  });
+
   it("merges the dark modules into runs instead of drawing one subpath each", () => {
     /* The measurement the whole design rests on. `lastModuleCount` is only meaningful right after a
        decode, so the decode comes first: reading it off a previous test's call is how this assertion
@@ -206,5 +242,76 @@ describe("qrLogoAdvice", () => {
     expect(qrLogoAdvice(0.45, "H")).toMatch(/past what level H recovers/);
     expect(qrLogoAdvice(0.25, "Q")).toBeUndefined();
     expect(qrLogoAdvice(0.35, "H")).toBeUndefined();
+  });
+});
+
+describe("qrSymbolFromAttributes", () => {
+  const reader = (attrs: Record<string, string>) => (name: string) => attrs[name] ?? null;
+
+  it("leaves a build-time symbol alone: no value, nothing to draw", () => {
+    expect(qrSymbolFromAttributes(reader({ "data-level": "H" }))).toBeNull();
+    expect(qrSymbolFromAttributes(reader({ "data-value": "" }))).toBeNull();
+  });
+
+  it("reads what the markup states", () => {
+    const symbol = qrSymbolFromAttributes(
+      reader({ "data-value": "https://example.com", "data-level": "H", "data-mask": "3", "data-module-shape": "dot", "data-quiet-zone": "2" }),
+      "0.2",
+    );
+    expect(symbol).toEqual({
+      value: "https://example.com",
+      options: { level: "H", mask: "3", moduleShape: "dot", quietZone: 2, logoRatio: 0.2 },
+    });
+  });
+
+  it("treats the attributes as untrusted: anything unknown falls back to the default", () => {
+    const symbol = qrSymbolFromAttributes(
+      reader({ "data-value": "x", "data-level": "Z", "data-mask": "9", "data-module-shape": "star", "data-quiet-zone": "-3" }),
+      "7",
+    );
+    expect(symbol?.options).toEqual({ level: undefined, mask: undefined, moduleShape: undefined, quietZone: undefined, logoRatio: 0.5 });
+    /* And what falls back still draws the same symbol the defaults would. */
+    expect(qrGeometry("x", symbol!.options).path).toBe(qrGeometry("x", { logoRatio: 0.5 }).path);
+  });
+});
+
+describe("qrSvgDocument", () => {
+  const geometry = qrGeometry("https://example.com/export", { level: "H", logoRatio: 0.2 });
+
+  it("carries the same symbol, with its colours written in rather than left to CSS", () => {
+    const svg = qrSvgDocument(geometry, { modules: "#111", paper: "#fff", size: 512 });
+    expect(svg.startsWith('<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512"')).toBe(true);
+    expect(svg).toContain(`viewBox="0 0 ${geometry.extent} ${geometry.extent}"`);
+    expect(svg).toContain(`<path d="${geometry.path}" fill="#111"/>`);
+    expect(svg).not.toContain("var(");
+    /* And it still decodes: the export is the same payload, not a lookalike. */
+    const d = svg.match(/<path d="([^"]+)"/)![1]!;
+    expect(decodeQrPath({ ...geometry, path: d }, 4)).toBe("https://example.com/export");
+  });
+
+  it("paints a real paper under the modules, quiet zone included, so it survives any background", () => {
+    const svg = qrSvgDocument(geometry, { modules: "black", paper: "white" });
+    expect(svg).toMatch(new RegExp(`<rect width="${geometry.extent}" height="${geometry.extent}" rx="0" fill="white"/>`));
+    expect(svg.indexOf("<rect")).toBeLessThan(svg.indexOf("<path"));
+  });
+
+  it("nests an SVG logo over the cleared hole, replacing whatever size it had on the page", () => {
+    const logo = '<svg width="24" height="24" viewBox="0 0 24 24" class="x"><circle cx="12" cy="12" r="10"/></svg>';
+    const svg = qrSvgDocument(geometry, { modules: "#000", paper: "#fff", logo: { svg: logo }, logoRatio: 0.2 });
+    const box = Math.round(geometry.extent * 0.2 * 100) / 100;
+    expect(svg).toContain(`width="${box}" height="${box}"`);
+    expect(svg).not.toContain('width="24"');
+    expect(svg).toContain('viewBox="0 0 24 24"');
+    expect(svg).toContain("<circle");
+  });
+
+  it("places an image logo by URL, and escapes it", () => {
+    const svg = qrSvgDocument(geometry, { modules: "#000", paper: "#fff", logo: { href: 'https://cdn.example/logo.png?a=1&b="2"' }, logoRatio: 0.2 });
+    expect(svg).toContain('href="https://cdn.example/logo.png?a=1&amp;b=&quot;2&quot;"');
+  });
+
+  it("draws no logo without a ratio: there is no hole to put it in", () => {
+    const svg = qrSvgDocument(geometry, { modules: "#000", paper: "#fff", logo: { href: "/logo.png" } });
+    expect(svg).not.toContain("<image");
   });
 });

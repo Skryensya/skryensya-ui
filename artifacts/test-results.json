@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-24T00:11:58.733Z",
+  "generatedAt": "2026-09-26T02:48:57.983Z",
   "results": {
     "apps/docs/src/components/pages/CardPage.test.ts": {
       "imports tile.css, which Base.astro never loads globally": "passed",
@@ -346,6 +346,7 @@
       "grows to fit rather than truncating, and refuses what cannot fit at all": "passed",
       "reserves the quiet zone in the viewBox without moving the modules": "passed",
       "draws the same symbol whatever shape the modules are": "passed",
+      "keeps the three finder patterns solid whatever shape the data modules are": "passed",
       "merges the dark modules into runs instead of drawing one subpath each": "passed",
       "carries the identical payload under all eight": "passed",
       "defaults to the scored choice rather than to a fixed pattern": "passed",
@@ -354,7 +355,15 @@
       "leaves room a logo can actually be punched out of": "passed",
       "says nothing when there is no logo": "passed",
       "warns that a logo needs real error correction behind it": "passed",
-      "warns when the logo is larger than the level can recover": "passed"
+      "warns when the logo is larger than the level can recover": "passed",
+      "leaves a build-time symbol alone: no value, nothing to draw": "passed",
+      "reads what the markup states": "passed",
+      "treats the attributes as untrusted: anything unknown falls back to the default": "passed",
+      "carries the same symbol, with its colours written in rather than left to CSS": "passed",
+      "paints a real paper under the modules, quiet zone included, so it survives any background": "passed",
+      "nests an SVG logo over the cleared hole, replacing whatever size it had on the page": "passed",
+      "places an image logo by URL, and escapes it": "passed",
+      "draws no logo without a ratio: there is no hole to put it in": "passed"
     },
     "packages/core/src/questionnaire.test.ts": {
       "starts on the first enabled question with nothing answered": "passed",
@@ -964,7 +973,8 @@
       "renders a logo only when one is given": "passed",
       "clears the modules behind a logo rather than covering them": "passed",
       "serializes size onto the attribute the stylesheet reads": "passed",
-      "serializes module shape for the stylesheet's shape-rendering switch": "passed"
+      "serializes module shape for the stylesheet's shape-rendering switch": "passed",
+      "hands its rendered root to a ref, which is what the export functions take": "passed"
     },
     "packages/react/src/components/questionnaire.test.tsx": {
       "shows one question at a time, with its position and only the buttons that apply": "passed",
@@ -1818,6 +1828,128 @@
       "Home/End jump to the resized pair's min/max extent": "passed",
       "Enter (and double-click) resets the pair to an even split": "passed",
       "reports its position as a percentage of the pair's REACHABLE travel, not a flat 0-100": "passed"
+    },
+    "packages/core/src/tour.test.ts": {
+      "steps forward and back one at a time": "passed",
+      "has nowhere to go past either end": "passed",
+      "skips a step whose target is missing, in both directions": "passed",
+      "starts on the first step that has a target, and on none when no step does": "passed",
+      "never returns the step it started from, so a missing current step can ask what is next": "passed",
+      "counts only the steps that can be shown": "passed",
+      "fills the label in both languages": "passed",
+      "puts the box on the side asked for, centred on the target": "passed",
+      "points the arrow at the target's middle, even when the box is pushed along by an edge": "passed",
+      "keeps the arrow clear of the box's corners": "passed",
+      "puts the arrow on the edge facing the target, on every side": "passed",
+      "flips to the opposite side of the same axis first": "passed",
+      "maps inline sides to physical ones by direction": "passed",
+      "keeps the box inside the viewport when the target hugs an edge": "passed",
+      "never covers the target when some side fits": "passed",
+      "docks to the half of the screen the target is not in when no side fits": "passed",
+      "tries the same axis, then the other, block-end first": "passed",
+      "reads an unknown placement as the default": "passed",
+      "knows a target that is partly on screen from one that is gone": "passed",
+      "scrolls only for a target not already in full view": "passed",
+      "grows the target's radius by the offset, so the ring stays parallel to its edge": "passed",
+      "keeps a percentage as one, so a circle stays a circle": "passed",
+      "reads an elliptical corner by its first radius": "passed",
+      "keeps one slot per tour id": "passed",
+      "accepts only an ending, and never a running tour": "passed",
+      "is a non-modal dialog, never a tooltip, and hides the ring from assistive tech": "passed",
+      "uses manual popovers, so nothing outside the box dismisses it": "passed"
+    },
+    "packages/react/src/components/tour.test.tsx": {
+      "renders the steps as the hidden list and starts nothing on mount": "passed",
+      "starts from its trigger, walks with Continue and Previous, and finishes": "passed",
+      "says Repeat tour once the tour has ended, and restarts from step one": "passed",
+      "exposes start, close and restart on its ref": "passed",
+      "skips a step whose target is not rendered": "passed",
+      "closes with Escape and survives StrictMode's double effects": "passed"
+    },
+    "packages/vanilla/src/components/tour.test.ts": {
+      "does nothing until the reader asks: nothing is shown on mount, even on a first visit": "passed",
+      "starts from a trigger on step one, with Continue focused and the progress in words": "passed",
+      "is a non-modal dialog named by its title and described by its progress and body": "passed",
+      "leaves the page alone: no inert, no aria-hidden, no modal attributes outside its own parts": "passed",
+      "says nothing extra on the first step: entering the dialog already says its name and description": "passed",
+      "says each later step once, in full, because focus stays on Continue and says nothing new": "passed",
+      "goes quiet when the tour ends": "passed",
+      "Continue walks forward, and Previous appears from the second step": "passed",
+      "offers Skip tour on the first step only": "passed",
+      "marks the last step, so its one button reads Finish, and Finish completes the tour": "passed",
+      "works from the keyboard alone: Enter and Space on a button are the button's own click": "passed",
+      "never advances on its own": "passed",
+      "reports each step and each status change, as callbacks and as events on the root": "passed",
+      "Close ends it as dismissed and returns focus to the trigger": "passed",
+      "Escape closes it from inside the box, and from the highlighted target": "passed",
+      "yields Escape to a widget that already handled it, and to an expanded popup": "passed",
+      "yields Escape to a text field that has something to clear": "passed",
+      "does not pull focus back from someone working elsewhere on the page": "passed",
+      "a click outside neither advances nor closes it": "passed",
+      "returns focus to a logical place when the trigger is gone": "passed",
+      "uses the consumer's fallback before any other trigger": "passed",
+      "Skip tour ends it as skipped and remembers that": "passed",
+      "repeats from step one after it was skipped, and after it was completed": "passed",
+      "restart() goes back to step one while running; start() while running changes nothing": "passed",
+      "switches its triggers to their restart label once it has ended, and keeps it on a second run": "passed",
+      "remembers across visits without ever starting itself": "passed",
+      "with remember off, writes nothing": "passed",
+      "skips a step whose target is not on the page, and counts without it": "passed",
+      "skips a step whose target is hidden, or whose selector is not a selector": "passed",
+      "does not open at all when no step has a target: never a box pointing at nothing": "passed",
+      "moves on when the current target disappears, keeping focus in the box if it was there": "passed",
+      "ends quietly when the last remaining target disappears": "passed",
+      "Tab past the box's last control lands on the target the step is about": "passed",
+      "Shift+Tab and Tab from anywhere else are the page's own": "passed",
+      "a step change caused by the page does not steal focus from it": "passed",
+      "draws the ring around the target with the offset, and copies its corner radius": "passed",
+      "places the box and says which side it landed on": "passed",
+      "points its arrow at the target from the edge facing it": "passed",
+      "stops listening and restores its parts on destroy": "passed"
+    },
+    "packages/vanilla/src/components/qr-code.test.ts": {
+      "draws the value with the same geometry every other binding uses": "passed",
+      "reads shape, mask, quiet zone and the logo ratio the way the contract names them": "passed",
+      "draws again when the value changes, without re-mounting": "passed",
+      "follows a change of level or shape too": "passed",
+      "does not encode a symbol drawn at build time a second time, but redraws it when it changes": "passed",
+      "does nothing on markup with no value to draw": "passed",
+      "empties the drawing and marks the root when the value cannot be encoded, never keeping the old code": "passed",
+      "stops following changes once disconnected": "passed",
+      "does nothing on markup without the frame, rather than inventing it": "passed",
+      "exports the symbol as it is drawn, as a self-contained SVG": "passed",
+      "carries an SVG logo along, sized to the cleared hole": "passed",
+      "reads the standard polarity for a file, and leaves the component's own attribute as it was": "passed",
+      "refuses to export a symbol that has nothing drawn": "passed",
+      "downloads an SVG with the type's own extension": "passed",
+      "says so, rather than failing silently, where no canvas exists for a raster": "passed"
+    },
+    "packages/react/src/components/clipboard.test.tsx": {
+      "copies its value and reports it, on the prop and the DOM alike": "passed",
+      "reads a target's text at the moment of the click": "passed",
+      "says the write failed instead of claiming it copied": "passed",
+      "names the field with its label and copies what it shows": "passed"
+    },
+    "packages/vanilla/src/components/clipboard.svelte.test.ts": {
+      "copies its value, then shows, says and flags that it did": "passed",
+      "reads a target's text at the moment of the click, not at mount": "passed",
+      "says the write failed instead of claiming it copied": "passed",
+      "wires the field: its label names it, and the button copies what it shows": "passed"
+    },
+    "packages/react/src/components/password-input.test.tsx": {
+      "starts hidden, names the toggle for what it will do, and asks for a saved password": "passed",
+      "reveals and hides again from a pointer, renaming the toggle each time": "passed",
+      "is a tab stop and toggles from the keyboard": "passed",
+      "does not count a pointer click twice: pointerdown toggles, the click after it does not": "passed",
+      "offers to generate a password for a new one, and can opt out of password managers": "passed",
+      "dispatches sk:passwordinputvisibilitychange on the root for DOM parity with vanilla": "passed",
+      "stamps data-invalid, describes the hint, and will not reveal a disabled field": "passed"
+    },
+    "packages/vanilla/src/components/password-input.svelte.test.ts": {
+      "wires the label, keeps the authored autocomplete and names the toggle from the markup": "passed",
+      "reveals from a pointer and swaps to the authored hide label": "passed",
+      "is a tab stop and toggles from the keyboard, like React": "passed",
+      "starts shown with data-default-visible, and dispatches the visibility event": "passed"
     }
   }
 }

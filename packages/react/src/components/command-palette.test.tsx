@@ -115,7 +115,7 @@ describe("CommandPalette", () => {
         id="cmd"
         items={items}
         label="Buscar"
-        onSelect={(entry) => chosen.push(entry.href)}
+        onSelect={(entry) => chosen.push(entry.href ?? "")}
         open
       />,
     );
@@ -130,10 +130,40 @@ describe("CommandPalette", () => {
     expect(chosen).toEqual(["/componentes/dialogo", "/tokens"]);
   });
 
+  it("hands a command to onCommand and the DOM event, never to onSelect", () => {
+    const selected: string[] = [];
+    const commands: string[] = [];
+    const events: string[] = [];
+    const ui = render(
+      <CommandPalette
+        id="cmd"
+        items={[...items, { command: "tour", label: "/tour" }]}
+        label="Buscar"
+        onCommand={(command) => commands.push(command)}
+        onSelect={(entry) => selected.push(entry.href ?? "")}
+        open
+      />,
+    );
+    ui.container
+      .querySelector("dialog")!
+      .addEventListener("sk:commandpalettecommand", (event) => events.push((event as CustomEvent).detail.command));
+    const input = open(ui);
+
+    fireEvent.change(input, { target: { value: "tour" } });
+    expect(ui.container.querySelectorAll("[role='option']")).toHaveLength(0);
+
+    fireEvent.change(input, { target: { value: "/tou" } });
+    fireEvent.keyDown(input, { key: "Enter" });
+
+    expect(commands).toEqual(["tour"]);
+    expect(events).toEqual(["tour"]);
+    expect(selected).toEqual([]);
+  });
+
   it("activates nothing when a query matched nothing", () => {
     const chosen: string[] = [];
     const ui = render(
-      <CommandPalette id="cmd" items={items} label="Buscar" onSelect={(entry) => chosen.push(entry.href)} open />,
+      <CommandPalette id="cmd" items={items} label="Buscar" onSelect={(entry) => chosen.push(entry.href ?? "")} open />,
     );
     const input = open(ui);
 

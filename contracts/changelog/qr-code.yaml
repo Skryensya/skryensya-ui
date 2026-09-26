@@ -3,7 +3,7 @@
 # `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
 # que no coincide, algo de lo que un consumidor depende se movió: escribe la entrada y pega el
 # hash nuevo.
-surface: "401722902f36d6cc"
+surface: "f3af0447f5ed5964"
 entries:
   - date: 2026-09-09
     kind: feature
@@ -148,3 +148,64 @@ entries:
       title: A logo needs logoRatio
       body: >-
         A logo without <code>logoRatio</code> painted a zero-size cover.
+
+  - date: 2026-09-25
+    kind: bugfix
+    es:
+      title: Con dot y rounded, los tres patrones de posición siguen siendo cuadrados
+      body: >-
+        <code>moduleShape="dot"</code> y <code>"rounded"</code> también redondeaban los tres cuadrados de las esquinas, que son
+        lo que una cámara busca para encontrar el código antes de leer un solo bit. El contenido seguía intacto, pero un
+        lector podía no localizar el símbolo. Ahora esos tres patrones se dibujan siempre sólidos y la forma elegida se aplica
+        al resto de los módulos. Lo que codifica el símbolo no cambia.
+    en:
+      title: With dot and rounded, the three finder patterns stay square
+      body: >-
+        <code>moduleShape="dot"</code> and <code>"rounded"</code> also rounded the three corner squares, which are what a
+        camera looks for to find the code before reading a single bit. The payload was intact, but a reader could fail to
+        locate the symbol. Those three patterns are now always drawn solid and the chosen shape applies to every other module.
+        What the symbol encodes does not change.
+
+  - date: 2026-09-25
+    kind: feature
+    es:
+      title: Un QR se puede dibujar y cambiar en el navegador, sin framework
+      body: >-
+        Nuevo enhancer Vanilla <code>data-sk-qr-code</code> (<code>@skryensya/vanilla/qr-code</code>): dibuja un QR cuyo valor sólo
+        se conoce en el navegador y lo redibuja cuando cambia <code>data-value</code>, <code>data-level</code>,
+        <code>data-mask</code>, <code>data-module-shape</code> o <code>data-quiet-zone</code>, con el mismo codificador que React y
+        el markup emitido. Por eso <code>value</code>, <code>level</code>, <code>mask</code> y <code>quietZone</code> ahora se
+        escriben como atributos en ambos bindings. Un QR ya dibujado no se codifica de nuevo al cargar. Si el valor no cabe, el
+        dibujo queda vacío y la raíz lleva <code>data-sk-qr-error</code>: nunca sigue mostrando el código anterior.
+    en:
+      title: A QR can be drawn and changed in the browser, with no framework
+      body: >-
+        New Vanilla enhancer <code>data-sk-qr-code</code> (<code>@skryensya/vanilla/qr-code</code>): it draws a QR whose value is
+        only known in the browser and redraws it when <code>data-value</code>, <code>data-level</code>, <code>data-mask</code>,
+        <code>data-module-shape</code> or <code>data-quiet-zone</code> change, with the same encoder as React and the emitted
+        markup. That is why <code>value</code>, <code>level</code>, <code>mask</code> and <code>quietZone</code> are now written
+        as attributes by both bindings. A QR that is already drawn is not encoded again on load. When the value does not fit,
+        the drawing is left empty and the root carries <code>data-sk-qr-error</code>: it never keeps showing the previous code.
+
+  - date: 2026-09-25
+    kind: feature
+    es:
+      title: Exportar un QR como PNG, JPEG, WebP o SVG
+      body: >-
+        <code>downloadQrCode</code>, <code>qrCodeToBlob</code>, <code>qrCodeToDataUrl</code> y <code>qrCodeToSvg</code>
+        (<code>@skryensya/core/qr-code-export</code>, reexportados desde <code>@skryensya/react/qr-code</code> y
+        <code>@skryensya/vanilla/qr-code</code>) exportan el QR tal como está dibujado, con el tono en colores literales, el
+        papel pintado y el logo cuando es un <code>&lt;svg&gt;</code> o una <code>&lt;img&gt;</code> con CORS. Por defecto sale
+        oscuro sobre claro aunque la página esté en modo oscuro; <code>polarity: "as-drawn"</code> exporta lo que se ve.
+        <code>QRCode</code> en React acepta <code>ref</code>. El contrato sigue sin botón de descarga: es una función que llama
+        el tuyo.
+    en:
+      title: Export a QR as PNG, JPEG, WebP or SVG
+      body: >-
+        <code>downloadQrCode</code>, <code>qrCodeToBlob</code>, <code>qrCodeToDataUrl</code> and <code>qrCodeToSvg</code>
+        (<code>@skryensya/core/qr-code-export</code>, re-exported from <code>@skryensya/react/qr-code</code> and
+        <code>@skryensya/vanilla/qr-code</code>) export the QR as it is drawn, with the tone as literal colours, the paper
+        painted and the logo when it is an <code>&lt;svg&gt;</code> or an <code>&lt;img&gt;</code> served with CORS. By default
+        it comes out dark on light even when the page is in dark mode; <code>polarity: "as-drawn"</code> exports what is on
+        screen. React's <code>QRCode</code> accepts a <code>ref</code>. The contract still has no download button: this is a
+        function your own button calls.

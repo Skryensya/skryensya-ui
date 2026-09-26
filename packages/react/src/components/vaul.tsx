@@ -17,6 +17,7 @@ import {
   type ReactNode,
   type Ref,
 } from "react";
+import { useModalTabWrap } from "./modal-tab-wrap.js";
 import { useVaulDrag } from "./vaul-drag.js";
 
 /* Derived, never restated: the defaults live in the contract. */
@@ -78,6 +79,7 @@ function VaulRoot({
 }: VaulProps) {
   const dialog = useRef<HTMLDialogElement | null>(null);
   useVaulDrag(dialog, { enabled: draggable, edge, threshold: dismissThreshold });
+  useModalTabWrap();
 
   const onOpenChangeRef = useRef(onOpenChange);
   onOpenChangeRef.current = onOpenChange;

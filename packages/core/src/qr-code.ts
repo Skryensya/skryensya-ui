@@ -65,6 +65,51 @@ export const qrCodeParts = {
 } as const;
 export type QrCodePart = keyof typeof qrCodeParts;
 
+export const qrCodeAttrs = {
+  /** The Vanilla enhancer's attachment point. */
+  root: "data-sk-qr-code",
+  /** The payload. Always in the markup; the enhancer draws from it. */
+  value: "data-value",
+  level: "data-level",
+  mask: "data-mask",
+  moduleShape: "data-module-shape",
+  quietZone: "data-quiet-zone",
+  /** Written by the enhancer when the value cannot be encoded at all (too long for version 40). */
+  error: "data-sk-qr-error",
+} as const;
+
+/** What the enhancer needs to draw a symbol, read off authored attributes. */
+export type QrAuthoredSymbol = { readonly value: string; readonly options: QrGeometryOptions };
+
+/**
+ * A symbol's value and options as the markup states them, or `null` when there is no value to draw.
+ *
+ * Read as UNTRUSTED input, like a stored preference: an unknown level, mask or shape falls back to the
+ * contract's default rather than reaching the encoder, and the quiet zone and logo ratio are clamped
+ * to what `qrGeometry` accepts anyway. `read` is an attribute getter, so this stays DOM-free.
+ */
+export function qrSymbolFromAttributes(
+  read: (name: string) => string | null,
+  logoRatio?: string | null,
+): QrAuthoredSymbol | null {
+  const value = read(qrCodeAttrs.value);
+  if (value === null || value === "") return null;
+  const oneOf = <T extends string>(list: readonly T[], raw: string | null): T | undefined =>
+    raw !== null && (list as readonly string[]).includes(raw) ? (raw as T) : undefined;
+  const quiet = Number.parseInt(read(qrCodeAttrs.quietZone) ?? "", 10);
+  const ratio = Number.parseFloat(logoRatio ?? "");
+  return {
+    value,
+    options: {
+      level: oneOf(qrLevels, read(qrCodeAttrs.level)),
+      mask: oneOf(qrMasks, read(qrCodeAttrs.mask)),
+      moduleShape: oneOf(qrModuleShapes, read(qrCodeAttrs.moduleShape)),
+      quietZone: Number.isFinite(quiet) && quiet >= 0 ? quiet : undefined,
+      logoRatio: Number.isFinite(ratio) ? Math.min(0.5, Math.max(0, ratio)) : undefined,
+    },
+  };
+}
+
 /** How each dark module is drawn. Geometry only; colour is a styling hook, never an option. */
 export const qrModuleShapes = ["square", "dot", "rounded"] as const;
 export type QrModuleShape = (typeof qrModuleShapes)[number];
@@ -238,39 +283,57 @@ export function qrGeometry(value: string, options: QrGeometryOptions = {}): QrGe
   const parts: string[] = [];
   const offset = quietZone;
 
-  if (shape === "square") {
-    /* Horizontal runs merged into one subpath each: the same picture, a third of the bytes, and it
-       also removes the hairline seams that adjacent rects show at fractional zoom levels. */
+  /*
+   * THE THREE FINDER PATTERNS ARE NEVER RESHAPED. They are the 7x7 squares in three corners, and they
+   * are how a camera FINDS the symbol at all: a reader scans for the 1:1:3:1:1 run of dark, light,
+   * dark, light, dark across them before it decodes a single bit. Drawn as dots, those runs break into
+   * beads with gaps between them, and the payload being intact is no help to a reader that never
+   * located the code. A decoding test cannot see this (it reads modules, not pixels), which is exactly
+   * why it went unnoticed. So `dot` and `rounded` restyle the data and leave the locators solid, which
+   * is what every styled-QR generator settled on.
+   */
+  const finder = (x: number, y: number): boolean =>
+    (y < 7 && (x < 7 || x >= size - 7)) || (x < 7 && y >= size - 7);
+
+  /* Horizontal runs merged into one subpath each: the same picture, a third of the bytes, and it also
+     removes the hairline seams that adjacent rects show at fractional zoom levels. */
+  const runs = (include: (x: number, y: number) => boolean): void => {
     for (let y = 0; y < size; y++) {
       let x = 0;
       while (x < size) {
-        if (!on(x, y)) {
+        if (!include(x, y)) {
           x++;
           continue;
         }
         let run = 0;
-        while (x + run < size && on(x + run, y)) run++;
+        while (x + run < size && include(x + run, y)) run++;
         parts.push(`M${x + offset} ${y + offset}h${run}v1h-${run}z`);
         x += run;
       }
     }
+  };
+
+  if (shape === "square") {
+    runs(on);
   } else if (shape === "dot") {
+    runs((x, y) => on(x, y) && finder(x, y));
     /* Two arcs per module. `r` a touch under a half so neighbours read as separate dots, which is
        the whole point of asking for this shape. */
     const r = 0.42;
     for (let y = 0; y < size; y++) {
       for (let x = 0; x < size; x++) {
-        if (!on(x, y)) continue;
+        if (!on(x, y) || finder(x, y)) continue;
         const cx = x + offset + 0.5;
         const cy = y + offset + 0.5;
         parts.push(`M${cx - r} ${cy}a${r} ${r} 0 1 0 ${r * 2} 0a${r} ${r} 0 1 0 ${-r * 2} 0z`);
       }
     }
   } else {
+    runs((x, y) => on(x, y) && finder(x, y));
     const r = 0.25;
     for (let y = 0; y < size; y++) {
       for (let x = 0; x < size; x++) {
-        if (!on(x, y)) continue;
+        if (!on(x, y) || finder(x, y)) continue;
         const px = x + offset;
         const py = y + offset;
         parts.push(
@@ -298,6 +361,70 @@ export function qrGeometry(value: string, options: QrGeometryOptions = {}): QrGe
 export function qrViewBox(value: string, options: QrGeometryOptions = {}): string {
   const { extent } = qrGeometry(value, options);
   return `0 0 ${extent} ${extent}`;
+}
+
+/** What a standalone symbol needs that the page supplies through CSS: its two colours, and a logo. */
+export type QrStandaloneOptions = {
+  /** Colour of the dark modules, as any CSS colour string. */
+  readonly modules: string;
+  /** Colour of the paper, including the quiet zone. */
+  readonly paper: string;
+  /** Rendered width and height of the document, in px. The symbol scales; this is only the box. */
+  readonly size?: number;
+  /** Corner radius of the paper, in the same px as `size`. Zero is square, which is what prints. */
+  readonly radius?: number;
+  /**
+   * A logo for the cleared middle, as SVG markup to nest (an `<svg>` element) or an image URL. Placed
+   * over the hole `logoRatio` cleared, at that ratio of the full extent, centred.
+   */
+  readonly logo?: { readonly svg: string } | { readonly href: string };
+  readonly logoRatio?: number;
+};
+
+const escapeAttr = (value: string): string =>
+  value.replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll("<", "&lt;");
+
+/**
+ * The symbol as a SELF-CONTAINED SVG document: what leaves the page when a code is saved or shared.
+ *
+ * On the page the colours come from styling hooks and `light-dark()`, none of which exist in a file
+ * opened somewhere else, so they are written in as literal fills here. The paper is a real rectangle
+ * under the modules, never a transparent background: a code saved from dark mode and dropped onto a
+ * white document would otherwise lose its quiet zone, and with it the contrast a reader needs.
+ */
+export function qrSvgDocument(geometry: Pick<QrGeometry, "path" | "extent">, options: QrStandaloneOptions): string {
+  const { extent, path } = geometry;
+  const size = options.size ?? extent * 8;
+  const radius = Math.max(0, options.radius ?? 0) * (extent / size);
+  const parts = [
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${extent} ${extent}" shape-rendering="crispEdges">`,
+    `<rect width="${extent}" height="${extent}" rx="${round(radius)}" fill="${escapeAttr(options.paper)}"/>`,
+    `<path d="${path}" fill="${escapeAttr(options.modules)}"/>`,
+  ];
+  const ratio = Math.min(0.5, Math.max(0, options.logoRatio ?? 0));
+  if (options.logo && ratio > 0) {
+    const box = extent * ratio;
+    const at = (extent - box) / 2;
+    if ("svg" in options.logo) {
+      /* Nested as its own viewport, so the logo keeps its viewBox and aspect whatever it was drawn in. */
+      const markup = options.logo.svg.trim();
+      const open = markup.match(/^<svg\b[^>]*>/)?.[0];
+      if (open) {
+        /* Its own size and position go, or the nested viewport would carry two of each (invalid XML)
+           or keep the size it had on the page instead of the hole it is being put in. */
+        const placed = open
+          .replace(/\s(?:x|y|width|height)="[^"]*"/g, "")
+          .replace(/^<svg\b/, `<svg x="${round(at)}" y="${round(at)}" width="${round(box)}" height="${round(box)}"`);
+        parts.push(placed + markup.slice(open.length));
+      }
+    } else {
+      parts.push(
+        `<image href="${escapeAttr(options.logo.href)}" x="${round(at)}" y="${round(at)}" width="${round(box)}" height="${round(box)}" preserveAspectRatio="xMidYMid meet"/>`,
+      );
+    }
+  }
+  parts.push("</svg>");
+  return parts.join("");
 }
 
 /**
@@ -342,11 +469,13 @@ export const qrCodeContract = {
 
   options: {
     /*
-     * The string the symbol carries. `computedInput`, like pagination's page and total: once the
-     * matrix exists there is nothing left for the value to be an attribute of, and writing it into
-     * the DOM would put a URL in the markup that nothing reads and React has no reason to mirror.
+     * The string the symbol carries, and an attribute in both bindings. It used to be
+     * `computedInput`, on the grounds that once the path exists nothing reads the value back. The
+     * Vanilla enhancer does now: it is how a page re-points a code (change `data-value`, the symbol
+     * redraws) and how a hand-written shell with an empty path gets drawn at all. The four encoder
+     * inputs below are attributes for the same reason; the markup states what it encodes.
      */
-    value: { type: "string", attr: "data-value", computedInput: true },
+    value: { type: "string", attr: qrCodeAttrs.value },
     /*
      * `Q` (about 25% recovery) AND NOT THE CONVENTIONAL `M`, which is a deliberate departure.
      *
@@ -364,8 +493,7 @@ export const qrCodeContract = {
       type: "enum",
       values: [...qrLevels],
       default: "Q",
-      attr: "data-level",
-      computedInput: true,
+      attr: qrCodeAttrs.level,
     },
     /*
      * NOT `computedInput`, even though it feeds the encoder: the stylesheet reads
@@ -380,16 +508,14 @@ export const qrCodeContract = {
       attr: "data-module-shape",
       prop: "shape",
     },
-    /* An encoder input like `level`: once the symbol exists there is nothing left for it to be an
-       attribute of, so it is `computedInput` and never reaches the DOM. */
+    /* An encoder input like `level`, and an attribute for the same reason `value` is one. */
     mask: {
       type: "enum",
       values: [...qrMasks],
       default: "auto",
-      attr: "data-mask",
-      computedInput: true,
+      attr: qrCodeAttrs.mask,
     },
-    quietZone: { type: "number", default: 4, min: 0, integer: true, attr: "data-quiet-zone", computedInput: true },
+    quietZone: { type: "number", default: 4, min: 0, integer: true, attr: qrCodeAttrs.quietZone },
     /*
      * `styleProperty` rather than `computedInput`, unlike every other encoder input here, and the
      * difference is that this one has a SECOND job. It feeds the geometry (which modules to clear)
@@ -446,6 +572,13 @@ export const qrCodeContract = {
         "link-to-a-phone",
       ],
       host: { element: "div" },
+      /*
+       * FOR A SYMBOL DRAWN OR CHANGED AT RUNTIME. A page whose value is only known in the browser
+       * (the signed-in reader's own link) authors this shell with an empty path, and the enhancer
+       * draws it with the same `qrGeometry`; any symbol re-points when its `data-value` changes. On
+       * emitted markup the path is already drawn, and the enhancer does not encode it a second time.
+       */
+      mount: qrCodeAttrs.root,
       options: [
         "value",
         "level",
@@ -504,3 +637,8 @@ export const qrCodeContract = {
     },
   },
 } as const satisfies ComponentContract;
+
+/* Two decimals, and never `-0`. */
+function round(value: number): number {
+  return Math.round(value * 100) / 100 || 0;
+}

@@ -1,8 +1,9 @@
 import { fadeEdgeParts, type FadeEdgeDirection, type FadeEdgeMode, fadeEdgeContract } from "@skryensya/core/fade-edge";
-import type { CSSProperties, HTMLAttributes, ReactNode } from "react";
+import { watchFadeEdge } from "@skryensya/core/fade-edge-dom";
+import { type CSSProperties, type HTMLAttributes, type ReactNode, useEffect, useRef } from "react";
 
 /* Derived, never restated: the default lives in the contract. */
-const { direction: directionOption, mode: modeOption } = fadeEdgeContract.options;
+const { direction: directionOption, mode: modeOption, scrollAware: scrollAwareOption } = fadeEdgeContract.options;
 
 type FadeEdgeStyle = CSSProperties & {
   "--sk-fade-edge-size"?: string;
@@ -13,6 +14,8 @@ export type FadeEdgeProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   children: ReactNode;
   mode?: FadeEdgeMode;
   direction?: FadeEdgeDirection;
+  /** Retire the fade once the scroll reaches its edge. The FadeEdge must be the scroll container. */
+  scrollAware?: boolean;
   size?: string;
   color?: string;
 };
@@ -24,10 +27,20 @@ export function FadeEdge({
   color,
   direction = directionOption.default,
   mode = modeOption.default,
+  scrollAware = scrollAwareOption.default,
   size,
   style,
   ...props
 }: FadeEdgeProps) {
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  /* The same watcher the vanilla enhancer mounts; it owns `data-at-edge`, which React never renders. */
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!scrollAware || !root) return;
+    return watchFadeEdge(root);
+  }, [scrollAware]);
+
   const fadeStyle: FadeEdgeStyle | undefined =
     size || color
       ? {
@@ -43,6 +56,8 @@ export function FadeEdge({
       className={className ? `${fadeEdgeParts.root} ${className}` : fadeEdgeParts.root}
       data-direction={direction}
       data-fade={mode}
+      data-scroll-aware={scrollAware ? scrollAwareOption.trueValue : undefined}
+      ref={rootRef}
       style={fadeStyle}
     >
       {children}

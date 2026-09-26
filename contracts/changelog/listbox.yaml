@@ -1,0 +1,27 @@
+# Qué cambió en listbox, en las palabras que lee quien lo usa. Sólo se agrega, nunca se reescribe.
+#
+# `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
+# que no coincide, algo de lo que un consumidor depende se movió: escribe la entrada y pega el
+# hash nuevo.
+surface: "11ff27dab511350e"
+entries:
+  - date: 2026-09-25
+    kind: feature
+    es:
+      title: Una lista para elegir en el lugar
+      body: >-
+        Nuevo contrato <code>Listbox</code> sobre <code>@zag-js/listbox</code>, la misma máquina en las dos
+        capas: una lista siempre abierta con <code>selectionMode</code> <code>single</code>,
+        <code>multiple</code> o <code>extended</code>, orientación vertical u horizontal, búsqueda al tipear
+        y el foco en la lista con <code>aria-activedescendant</code>. La selección inicial se marca por opción
+        con <code>defaultSelected</code>. Cada cambio dispara <code>sk:listboxvaluechange</code> con
+        <code>{ value }</code>. No es un control de formulario.
+    en:
+      title: A list you choose from in place
+      body: >-
+        New <code>Listbox</code> contract on <code>@zag-js/listbox</code>, the same machine in both bindings:
+        an always-open list with <code>selectionMode</code> <code>single</code>, <code>multiple</code> or
+        <code>extended</code>, vertical or horizontal, typeahead, and focus kept on the list through
+        <code>aria-activedescendant</code>. The initial selection is marked per option with
+        <code>defaultSelected</code>. Every change fires <code>sk:listboxvaluechange</code> with
+        <code>{ value }</code>. It is not a form control.

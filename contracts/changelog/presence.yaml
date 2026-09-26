@@ -1,0 +1,29 @@
+# What changed in presence, in the words its users read. Only appended to, never rewritten.
+#
+# `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
+# does not match, something a consumer depends on has moved: write the entry and paste in the new
+# hash.
+surface: "0402804d82be828a"
+entries:
+  - date: 2026-09-25
+    kind: feature
+    es:
+      title: Presence se publica como contrato, con una signature
+      body: >-
+        Entra al catálogo con <code>Presence</code>: contenido que anima su salida antes de irse.
+        El estado es <code>hidden</code>, y la hoja <code>components/presence.css</code> lo mantiene
+        en pantalla durante la salida con <code>allow-discrete</code>, así que en markup escrito a
+        mano alternar <code>hidden</code> es toda la API. <code>setPresent</code>, en
+        <code>@skryensya/vanilla/presence</code>, además avisa cuándo terminó la salida. En React,
+        <code>present</code>, <code>unmountOnExit</code> y <code>lazyMount</code> resuelven el caso
+        que el CSS no puede: un contenido condicional que se desmontaría antes de animar.
+    en:
+      title: Presence is published as a contract, with one signature
+      body: >-
+        It joins the catalogue with <code>Presence</code>: content that animates its exit before it
+        leaves. Its state is <code>hidden</code>, and <code>components/presence.css</code> holds it on
+        screen for the exit with <code>allow-discrete</code>, so in authored markup toggling
+        <code>hidden</code> is the whole API. <code>setPresent</code>, from
+        <code>@skryensya/vanilla/presence</code>, also tells you when the exit has finished. In React,
+        <code>present</code>, <code>unmountOnExit</code> and <code>lazyMount</code> cover the case CSS
+        cannot: conditional content that would unmount before it could animate.

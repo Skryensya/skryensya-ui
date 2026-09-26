@@ -3,6 +3,8 @@ import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import {
+  codeTree,
+  outputTree,
   textFeedbackTree,
   textReadingTree,
   textTitleTree,
@@ -45,6 +47,14 @@ const t = useTranslations(getLocale(Astro.url));
     <h3>{t("textPage.feedbackTitle")}</h3>
     <p set:html={t("textPage.feedbackBody")} />
     <ComponentPreview tree={textFeedbackTree(t)} label={t("textPage.feedbackLabel")} />
+
+    <h3>{t("textPage.codeTitle")}</h3>
+    <p set:html={t("textPage.codeBody")} />
+    <ComponentPreview tree={codeTree(t)} label={t("textPage.codeLabel")} />
+
+    <h3>{t("textPage.outputTitle")}</h3>
+    <p set:html={t("textPage.outputBody")} />
+    <ComponentPreview tree={outputTree(t)} label={t("textPage.outputLabel")} />
 
     <p set:html={t("component.reactNote")} />
 

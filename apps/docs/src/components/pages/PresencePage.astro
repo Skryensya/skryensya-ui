@@ -1,0 +1,127 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { presenceFieldsTree, presenceNoticeTree, presenceTuningTree } from "../../demos/presence";
+import { getLocale, useTranslations } from "../../i18n";
+import "@skryensya/core/components/presence.css";
+import "@skryensya/core/components/callout.css";
+import "@skryensya/core/components/button.css";
+import "@skryensya/core/components/form-field.css";
+import "@skryensya/core/components/input.css";
+import "@skryensya/core/components/switch.css";
+import "@skryensya/core/components/typography.css";
+import "@skryensya/core/patterns/box.css";
+import "@skryensya/core/patterns/layout.css";
+
+const t = useTranslations(getLocale(Astro.url));
+
+/*
+ * Page-level app code, not part of the component. Each script drives its demo through the DOM,
+ * which is exactly the authored-markup API (`hidden` + `data-state`), so the same script runs in
+ * both stages. `show` is the two writes `setPresent` makes; the demos inline it rather than import
+ * it because a preview script runs as plain page code.
+ */
+const show = `
+function show(element, present) {
+  element.hidden = !present;
+  element.setAttribute("data-state", present ? "open" : "closed");
+}
+`;
+
+/* Every click restarts the countdown, so saving twice keeps the notice up instead of racing it. */
+const noticeScript = `${show}
+const save = document.getElementById("presence-notice-save");
+const notice = document.getElementById("presence-notice");
+let timer;
+save.addEventListener("click", () => {
+  show(notice, true);
+  clearTimeout(timer);
+  timer = setTimeout(() => show(notice, false), 2500);
+});
+`;
+
+const fieldsScript = `${show}
+const toggle = document.getElementById("presence-fields-switch");
+const fields = document.getElementById("presence-fields");
+toggle.addEventListener("change", () => show(fields, toggle.checked));
+`;
+
+const tuningScript = `${show}
+const button = document.getElementById("presence-tuning-toggle");
+const panels = document.querySelectorAll("[data-presence-tuning]");
+button.addEventListener("click", () => {
+  for (const panel of panels) show(panel, panel.hidden);
+});
+`;
+
+const react = `import { Callout } from "@skryensya/react/callout";
+import { Presence } from "@skryensya/react/presence";
+import "@skryensya/core/components/presence.css";
+
+<Presence present={open} unmountOnExit>
+  <Callout tone="success" title="Saved">…</Callout>
+</Presence>`;
+
+const html = `<div class="sk-presence" data-state="closed" hidden id="notice">…</div>`;
+
+const vanilla = `import { setPresent } from "@skryensya/vanilla/presence";
+
+const notice = document.getElementById("notice");
+await setPresent(notice, true);   // enters
+await setPresent(notice, false);  // resolves once the exit has painted
+notice.remove();`;
+---
+
+<ComponentPageShell
+  title="Presence"
+  description={t("presence.description")}
+  badge={t("presence.betaBadge")}
+  contractId="presence"
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("presence.lede")} />
+
+    <h3>{t("presence.whenTitle")}</h3>
+    <ul>
+      <li set:html={t("presence.whenItem1")} />
+      <li set:html={t("presence.whenItem2")} />
+      <li set:html={t("presence.whenItem3")} />
+    </ul>
+
+    <h3>{t("presence.noticeHeading")}</h3>
+    <p set:html={t("presence.noticeIntro")} />
+    <ComponentPreview tree={presenceNoticeTree(t)} previewScript={noticeScript} label={t("presence.noticeLabel")} />
+
+    <h3>{t("presence.fieldsHeading")}</h3>
+    <p set:html={t("presence.fieldsIntro")} />
+    <ComponentPreview tree={presenceFieldsTree(t)} previewScript={fieldsScript} label={t("presence.fieldsLabel")} />
+
+    <h3>{t("presence.tuningHeading")}</h3>
+    <p set:html={t("presence.tuningIntro")} />
+    <ComponentPreview tree={presenceTuningTree(t)} previewScript={tuningScript} label={t("presence.tuningLabel")} />
+
+    <h3>{t("presence.reactTitle")}</h3>
+    <p set:html={t("presence.reactBody")} />
+    <CodeBlock code={react} label="React" lang="tsx" />
+    <ul>
+      <li set:html={t("presence.reactItem1")} />
+      <li set:html={t("presence.reactItem2")} />
+      <li set:html={t("presence.reactItem3")} />
+      <li set:html={t("presence.reactItem4")} />
+    </ul>
+
+    <h3>{t("presence.vanillaTitle")}</h3>
+    <p set:html={t("presence.vanillaBody")} />
+    <CodeBlock code={html} label="HTML" lang="html" />
+    <CodeBlock code={vanilla} label="JavaScript" lang="ts" />
+
+    <h3>{t("presence.notesTitle")}</h3>
+    <ul>
+      <li set:html={t("presence.notesItem1")} />
+      <li set:html={t("presence.notesItem2")} />
+      <li set:html={t("presence.notesItem3")} />
+      <li set:html={t("presence.notesItem4")} />
+    </ul>
+  </Fragment>
+</ComponentPageShell>

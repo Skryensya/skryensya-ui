@@ -7,11 +7,10 @@ const press = (init: KeyboardEventInit, target: EventTarget = window) => {
 };
 
 describe("core matcher", () => {
-  it("parses modifiers in any order and keeps the last plain token as the key", () => {
-    expect(parseHotkey("mod+k")).toMatchObject({ mod: true, key: "k" });
-    expect(parseHotkey("k+mod")).toMatchObject({ mod: true, key: "k" });
-    expect(parseHotkey(" Shift + / ")).toMatchObject({ shift: true, key: "/" });
-    expect(parseHotkey("esc").key).toBe("escape");
+  it("parses modifiers and the key, forgiving case and whitespace", () => {
+    expect(parseHotkey("mod+k", true)).toMatchObject({ meta: true, keys: ["K"] });
+    expect(parseHotkey(" Shift + / ", true)).toMatchObject({ shift: true, keys: ["/"] });
+    expect(parseHotkey("esc", true).keys).toEqual(["Escape"]);
   });
 
   it("resolves mod to ⌘ on mac and Ctrl elsewhere", () => {
@@ -88,6 +87,15 @@ describe("bindHotkey", () => {
     document.body.append(input);
     input.focus();
     press({ key: "/" }, input);
+    expect(handler).toHaveBeenCalledOnce();
+  });
+
+  it("fires a sequence once every step has been pressed in order", () => {
+    const handler = vi.fn();
+    bind("g > i", handler, { mac: true });
+    press({ key: "g" });
+    expect(handler).not.toHaveBeenCalled();
+    press({ key: "i" });
     expect(handler).toHaveBeenCalledOnce();
   });
 });

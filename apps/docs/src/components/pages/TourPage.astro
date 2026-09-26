@@ -1,0 +1,201 @@
+---
+/*
+ * THE Tour page. The demos are usage trees, so each renders in both bindings from one source; the
+ * programmatic API is shown as code, because a handle is a call, and a call is never markup.
+ *
+ * A preview only gets the CSS this page imports (and whatever its slotted children need): the tour's
+ * sheet brings button, the toolbar needs input and segmented, and the keyboard table is an `sk-table`.
+ */
+import "@skryensya/core/components/tour.css";
+import "@skryensya/core/components/input.css";
+import "@skryensya/core/components/segmented.css";
+import "@skryensya/core/components/table.css";
+/* The anatomy diagram is drawn by Annotation's own sheet. */
+import "@skryensya/core/components/annotation.css";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPageShell from "./ComponentPageShell.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { tourAnatomyCss, tourAnatomyHtml, tourBasicTree, tourDemoCss, tourMissingTree } from "../../demos/tour";
+import { getLocale, useTranslations } from "../../i18n";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const install = `pnpm add @skryensya/core @skryensya/react
+# or, for authored HTML
+pnpm add @skryensya/core @skryensya/vanilla`;
+
+const styles = `@import "@skryensya/core/components/tour.css";`;
+
+const reactSteps = `import { useRef } from "react";
+import { Tour, type TourHandle, type TourStep } from "@skryensya/react/tour";
+
+const steps: TourStep[] = [
+  { target: "#search", title: "Search", description: "Find any project by typing part of its name." },
+  { target: "#filters", title: "Status filter", description: "Switch between active and archived projects." },
+  { target: "#new-project", title: "New project", description: "Create a project from scratch.", placement: "block-end" },
+  { target: "#help", title: "Repeat the tour", description: "Open this tour again whenever you like." },
+];
+
+export function Projects() {
+  const tour = useRef<TourHandle>(null);
+  return (
+    <>
+      {/* … the page, with #search, #filters, #new-project … */}
+      <Tour.Trigger id="help" opens="projects" label="Take the tour" restartLabel="Repeat tour" />
+      <Tour
+        id="projects"
+        ref={tour}
+        steps={steps}
+        onStatusChange={(status) => analytics.track("tour", status)}
+      />
+    </>
+  );
+}
+
+// The handle:
+tour.current?.start();    // first available step; does nothing while running
+tour.current?.restart();  // always back to step one
+tour.current?.close();    // ends as dismissed, focus goes home
+tour.current?.forget();   // clears the remembered ending`;
+
+const vanillaHtml = `<button type="button" class="sk-tour__trigger sk-button sk-interactive" data-variant="soft" data-size="md"
+        data-sk-tour-open="projects">
+  <span class="sk-tour__trigger-start">Take the tour</span>
+  <span class="sk-tour__trigger-restart">Repeat tour</span>
+</button>
+
+<!-- The tour: the markup the contract emits (see the HTML tab of any preview). -->
+<div class="sk-tour" id="projects" data-sk-tour data-progress-label="Step {index} of {count}">
+  <ol class="sk-tour__steps" hidden>
+    <li class="sk-tour__step" data-tour-target="#search" data-placement="block-end">
+      <p class="sk-tour__step-title">Search</p>
+      <p class="sk-tour__step-description">Find any project by typing part of its name.</p>
+    </li>
+    …
+  </ol>
+  …
+</div>`;
+
+const vanillaJs = `import { initComponents } from "@skryensya/vanilla/auto";
+import { getTour, tourEvents } from "@skryensya/vanilla/tour";
+
+await initComponents();
+
+const tour = getTour("projects");
+tour?.start();
+tour?.restart();
+tour?.close();
+
+document.getElementById("projects")?.addEventListener(tourEvents.statusChange, (event) => {
+  console.log(event.detail.status); // "running", "completed", "skipped", "dismissed"
+});`;
+
+const keys = [
+  ["Tab / Shift + Tab", "tour.key.tab"],
+  ["Enter / Space", "tour.key.enter"],
+  ["Esc", "tour.key.escape"],
+] as const;
+---
+
+<ComponentPageShell
+  title="Tour"
+  description={t("tour.description")}
+  contractId="tour"
+  testFiles={[
+    "packages/core/src/tour.test.ts",
+    "packages/vanilla/src/components/tour.test.ts",
+    "packages/react/src/components/tour.test.tsx",
+  ]}
+>
+  <Fragment slot="anatomy">
+    <p set:html={t("tour.anatomyBody")} />
+    <ComponentPreview
+      html={tourAnatomyHtml(t)}
+      css={tourAnatomyCss}
+      label={t("tour.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+  </Fragment>
+
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("tour.lede")} />
+
+    <h3>{t("tour.basicTitle")}</h3>
+    <p set:html={t("tour.basicBody")} />
+    <p set:html={t("tour.tryBody")} />
+    <ComponentPreview
+      tree={tourBasicTree(t)}
+      css={tourDemoCss}
+      label={t("tour.demo.label")}
+      minHeight="30rem"
+      defaultScreen="free"
+    />
+
+    <h3>{t("tour.missingTitle")}</h3>
+    <p set:html={t("tour.missingBody")} />
+    <ComponentPreview
+      tree={tourMissingTree(t)}
+      css={tourDemoCss}
+      label={t("tour.demo.missingLabel")}
+      minHeight="30rem"
+      defaultScreen="free"
+    />
+
+    <h3>{t("tour.writingTitle")}</h3>
+    <p set:html={t("tour.writingBody")} />
+
+    <h3>{t("tour.programmaticTitle")}</h3>
+    <p set:html={t("tour.programmaticBody")} />
+    <CodeBlock code={reactSteps} label="React" lang="tsx" />
+
+    <h4>{t("tour.vanillaTitle")}</h4>
+    <p set:html={t("tour.vanillaBody")} />
+    <CodeBlock code={vanillaHtml} label="HTML" lang="html" />
+    <CodeBlock code={vanillaJs} label="JavaScript" />
+
+    <h3>{t("tour.memoryTitle")}</h3>
+    <p set:html={t("tour.memoryBody")} />
+
+    <h3>{t("component.contractNotesTitle")}</h3>
+    <ul>
+      <li set:html={t("tour.contractItem1")} />
+      <li set:html={t("tour.contractItem2")} />
+      <li set:html={t("tour.contractItem3")} />
+    </ul>
+  </Fragment>
+
+  <Fragment slot="install">
+    <CodeBlock code={install} label="terminal" />
+    <CodeBlock code={styles} label="CSS" lang="css" />
+  </Fragment>
+
+  <Fragment slot="a11y">
+    <p set:html={t("tour.a11yP1")} />
+    <ul>
+      <li set:html={t("tour.a11yItem1")} />
+      <li set:html={t("tour.a11yItem2")} />
+      <li set:html={t("tour.a11yItem3")} />
+      <li set:html={t("tour.a11yItem4")} />
+      <li set:html={t("tour.a11yItem5")} />
+    </ul>
+    <h3>{t("tour.keyboardTitle")}</h3>
+    <div class="sk-table-scroll">
+      <table class="sk-table">
+        <tbody class="sk-table__body">
+          {
+            keys.map(([combo, key]) => (
+              <tr class="sk-table__row">
+                <th class="sk-table__header" scope="row"><kbd>{combo}</kbd></th>
+                <td class="sk-table__cell" set:html={t(key)} />
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+    <h3>{t("tour.verifiedTitle")}</h3>
+    <p set:html={t("tour.verifiedBody")} />
+  </Fragment>
+</ComponentPageShell>

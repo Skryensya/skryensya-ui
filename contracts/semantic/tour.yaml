@@ -1,0 +1,25 @@
+# The structure lives in packages/core/src/tour.ts. Here, only why it is chosen.
+
+Tour:
+  useWhen:
+    - "una interfaz nueva o rediseñada tiene pocas piezas que conviene señalar en orden (tres a cinco), y quien la usa puede pedir el recorrido cuando quiera"
+    - "cada paso cabe en una idea: qué es este elemento y para qué sirve, en una o dos frases"
+    - "la página tiene que seguir usable durante el recorrido: sin fondo que la tape, sin bloquear clics y sin atrapar el foco"
+  avoidWhen:
+    - "la explicación es de un solo control y se necesita al pasar o enfocar: eso es Tooltip"
+    - "hay que completar pasos que cambian datos (un alta, una configuración): eso es un formulario por pasos con Steps, no un recorrido que señala"
+    - "el contenido es largo o necesita imágenes y ejemplos: eso es una página de ayuda o un Dialog, no una caja junto a un elemento"
+    - "la función sólo se entiende con el recorrido: si una pieza necesita un tour para usarse, el problema es la pieza"
+  alternatives:
+    - Tooltip
+    - Popover
+    - Steps
+    - Dialog
+
+Tour.Trigger:
+  useWhen:
+    - "el recorrido tiene que poder iniciarse, y repetirse después de omitirlo o terminarlo, desde un lugar visible y estable (la ayuda, el encabezado)"
+  avoidWhen:
+    - "se quiere iniciar el recorrido solo al cargar la página: un tour nunca empieza sin que alguien lo pida"
+  alternatives:
+    - Button.action

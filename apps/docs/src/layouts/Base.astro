@@ -125,6 +125,8 @@ import LanguageMenu from "../components/LanguageMenu.astro";
 import VersionMenu from "../components/VersionMenu.astro";
 import PrefTooltip from "../components/PrefTooltip.astro";
 import CommandPalette from "../components/CommandPalette.astro";
+import { emitMarkup } from "@skryensya/ai-compiler/emit";
+import { DOCS_TOUR_TEMPLATE_ID, docsTourTree } from "../lib/docs-tour";
 import ContrastToggle from "../components/ContrastToggle.astro";
 import SidebarNav from "../components/SidebarNav.astro";
 import SiteFooter from "../components/SiteFooter.astro";
@@ -995,6 +997,11 @@ const PALETTE_PRESETS = palettePresets(locale);
       the toc rail's row span, and a closed dialog is not a row.
     */}
     <slot name="palette" />
+    {/*
+      `/tour` from the palette above (`scripts/docs-tour.ts`). Inert inside a `<template>`: the
+      registry never sees `[data-sk-tour]`, so Tour costs nothing until someone runs the command.
+    */}
+    <template id={DOCS_TOUR_TEMPLATE_ID} set:html={emitMarkup(docsTourTree(t), { fillDefaults: false })} />
 
     {/*
       READER PREFERENCES. The SAME composition as the Command Palette's mobile form (ADR-19): a
@@ -1774,6 +1781,15 @@ const PALETTE_PRESETS = palettePresets(locale);
       initUsedValues();
     </script>
 
+    {/*
+      The site's own modals (search, the preferences sheet) are plain `showModal()` dialogs with no
+      binding behind them, so the kit's Tab wrap (decision 24) is installed here, once, for the page.
+    */}
+    <script>
+      import { trapModalDialogs } from "@skryensya/core/focus-trap";
+      trapModalDialogs(document);
+    </script>
+
 
     <script>
       import { getPreference, setPreference, subscribePreference } from "@skryensya/vanilla/storage";
@@ -1977,10 +1993,20 @@ const PALETTE_PRESETS = palettePresets(locale);
         var sharedScreen = d.getAttribute("data-sk-component-preview-screen-pref");
 
         document.querySelectorAll("[data-sk-preview-boot]").forEach(function (root) {
-          root.querySelectorAll("[data-sk-component-preview-binding]").forEach(function (panel) {
-            var name = panel.getAttribute("data-sk-component-preview-binding");
-            if (name === "vanilla" || name === "react") panel.hidden = name !== pref;
+          /* A preview with only ONE binding (every anatomy diagram is Vanilla-only) has nothing to
+             switch and must not be switched away from: hiding its one stage left a spinner forever,
+             because the enhancer's `showBinding` then finds no panel for the preference and bails
+             without showing anything back. Same rule as `showBinding`, applied before first paint. */
+          var panels = root.querySelectorAll("[data-sk-component-preview-binding]");
+          var offers = Array.prototype.some.call(panels, function (panel) {
+            return panel.getAttribute("data-sk-component-preview-binding") === pref;
           });
+          if (offers) {
+            panels.forEach(function (panel) {
+              var name = panel.getAttribute("data-sk-component-preview-binding");
+              if (name === "vanilla" || name === "react") panel.hidden = name !== pref;
+            });
+          }
 
           var screenTabs = root.querySelector("[data-sk-component-preview-screen-tabs]");
           if (!screenTabs) return;

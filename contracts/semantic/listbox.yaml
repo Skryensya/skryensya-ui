@@ -1,0 +1,16 @@
+# The structure lives in packages/core/src/listbox.ts. Here, only why it is chosen.
+
+Listbox:
+  useWhen:
+    - "quien usa la pantalla tiene que ver todas las opciones mientras elige: una vista, unos pocos filtros, los elementos sobre los que va a actuar"
+    - "se puede elegir más de una, y marcar y desmarcar sin abrir nada es más rápido que un desplegable"
+    - "la lista se recorre con el teclado (flechas, búsqueda al tipear) y el foco tiene que quedarse en un solo lugar"
+  avoidWhen:
+    - "es un campo de un formulario que se envía: Listbox no tiene input ni name; eso es Select, RadioGroup o un grupo de Checkbox"
+    - "las opciones son muchas o el espacio es poco: un listbox siempre abierto ocupa lo que ocupan sus opciones; eso es Select o Combobox"
+    - "cada fila navega a otra página o ejecuta una acción: eso es NavList o Menu, no una elección"
+  alternatives:
+    - Select
+    - Combobox
+    - RadioGroup
+    - Menu

@@ -27,7 +27,7 @@ export const qrCodeMessages = {
 
     "qrCodePage.shapesTitle": "Forma de los módulos",
     "qrCodePage.shapesBody":
-      "<code>moduleShape</code> cambia cómo se dibuja cada módulo, nunca qué codifica: los tres símbolos de abajo llevan el mismo texto y escanean igual. <code>square</code> es el de siempre y el que pinta más nítido en tamaños chicos; <code>dot</code> y <code>rounded</code> son decisiones de marca y piden un poco más de tamaño para leerse bien.",
+      "<code>moduleShape</code> cambia cómo se dibuja cada módulo, nunca qué codifica: los tres símbolos de abajo llevan el mismo texto y escanean igual. <code>square</code> es el de siempre y el que pinta más nítido en tamaños chicos; <code>dot</code> y <code>rounded</code> son decisiones de marca y piden un poco más de tamaño para leerse bien. Con cualquiera de los dos, los tres cuadrados de las esquinas siguen sólidos: son los que una cámara busca para encontrar el código.",
     "qrCodePage.shapesLabel": "Formas de módulo",
     "qrCodePage.shapesNote": "mismo payload, tres dibujos",
 
@@ -79,13 +79,19 @@ export const qrCodeMessages = {
     "qrCodePage.ticketLabel": "Entrada",
     "qrCodePage.ticketNote": "nivel H, tone accent, logo",
 
+    "qrCodePage.exportTitle": "Guardarlo como imagen",
+    "qrCodePage.exportBody":
+      "<code>downloadQrCode</code>, <code>qrCodeToBlob</code>, <code>qrCodeToDataUrl</code> y <code>qrCodeToSvg</code> exportan el QR tal como está dibujado, desde cualquiera de los dos bindings: PNG (por defecto, 1024 px), JPEG, WebP o SVG. Los colores del tono se escriben literales, porque fuera de la página no hay tokens, y el papel se pinta siempre, así que el archivo funciona sobre cualquier fondo. El logo viaja si es un <code>&lt;svg&gt;</code> o una <code>&lt;img&gt;</code> con CORS; si la imagen no lo permite, la exportación falla con un error claro en vez de dejar un hueco sin explicación. <strong>Por defecto el archivo sale oscuro sobre claro aunque la página esté en modo oscuro</strong>: un archivo se imprime o se comparte, y la norma sólo garantiza esa polaridad. <code>polarity: \"as-drawn\"</code> exporta exactamente lo que se ve.",
+    "qrCodePage.runtimeTitle": "Dibujarlo en el navegador",
+    "qrCodePage.runtimeBody":
+      "Cuando el valor sólo se conoce en el navegador (el enlace propio de quien inició sesión), escribe el mismo markup con el <code>path</code> vacío y <code>data-value</code>: el enhancer <code>data-sk-qr-code</code> lo dibuja con el mismo codificador que React y el HTML generado. Si después cambias <code>data-value</code> (o el nivel, la máscara, la forma o la zona de silencio), se vuelve a dibujar solo. Un QR ya dibujado no se codifica de nuevo al cargar. Si el valor no cabe en ningún QR, el dibujo queda vacío y la raíz lleva <code>data-sk-qr-error</code>: nunca sigue mostrando el código anterior, porque ese todavía se escanea. Cambia también el <code>aria-label</code> si el código pasa a hacer otra cosa.",
     "qrCodePage.limitsTitle": "Qué no hace",
     "qrCodePage.limitsItem1":
       "<strong>No hay modo kanji.</strong> El modo byte lleva UTF-8, así que el japonés se codifica y se lee perfecto; el modo kanji sólo lo haría más compacto (13 bits por carácter contra 24). Soportarlo significa mantener una tabla Shift-JIS de 7.000 entradas a cambio de una optimización de tamaño que nadie pidió.",
     "qrCodePage.limitsItem2":
       "<strong>No decodifica.</strong> Leer un QR con la cámara es otro problema  -  binarización, detección de perspectiva  -  y no es lo que hace un design system.",
     "qrCodePage.limitsItem3":
-      "<strong>No hay descarga como imagen.</strong> El símbolo ya es un SVG en el DOM: guardarlo o convertirlo a PNG es del consumidor, y meterlo aquí sería agregarle un botón a un contrato que deliberadamente no tiene ninguno.",
+      "<strong>No trae un botón de descarga.</strong> Guardarlo es una función (<code>downloadQrCode</code>, arriba) que llama el botón de tu página: el contrato sigue sin tener ninguno.",
 
     "qrCodePage.a11yP1":
       "La raíz es <code>role=\"img\"</code> con el <code>label</code> como nombre accesible, y el <code>&lt;svg&gt;</code> de adentro va <code>aria-hidden</code>: es un dibujo del payload, y exponerlo anunciaría una segunda imagen sin nombre.",
@@ -133,7 +139,7 @@ export const qrCodeMessages = {
 
     "qrCodePage.shapesTitle": "Module shape",
     "qrCodePage.shapesBody":
-      "<code>moduleShape</code> changes how each module is drawn, never what it encodes: the three symbols below carry the same string and scan alike. <code>square</code> is the conventional one and the crispest at small sizes; <code>dot</code> and <code>rounded</code> are brand decisions and want a little more room to read well.",
+      "<code>moduleShape</code> changes how each module is drawn, never what it encodes: the three symbols below carry the same string and scan alike. <code>square</code> is the conventional one and the crispest at small sizes; <code>dot</code> and <code>rounded</code> are brand decisions and want a little more room to read well. With either, the three corner squares stay solid: they are what a camera looks for to find the code.",
     "qrCodePage.shapesLabel": "Module shapes",
     "qrCodePage.shapesNote": "same payload, three drawings",
 
@@ -185,13 +191,19 @@ export const qrCodeMessages = {
     "qrCodePage.ticketLabel": "Ticket",
     "qrCodePage.ticketNote": "level H, accent tone, logo",
 
+    "qrCodePage.exportTitle": "Saving it as an image",
+    "qrCodePage.exportBody":
+      "<code>downloadQrCode</code>, <code>qrCodeToBlob</code>, <code>qrCodeToDataUrl</code> and <code>qrCodeToSvg</code> export the QR as it is drawn, from either binding: PNG (the default, 1024 px), JPEG, WebP or SVG. The tone's colours are written in as literals, because there are no tokens outside the page, and the paper is always painted, so the file works on any background. The logo travels when it is an <code>&lt;svg&gt;</code> or an <code>&lt;img&gt;</code> served with CORS; when the image does not allow it, the export fails with a clear error instead of leaving an unexplained hole. <strong>By default the file comes out dark on light even when the page is in dark mode</strong>: a file gets printed or shared, and the standard only guarantees that polarity. <code>polarity: \"as-drawn\"</code> exports exactly what is on screen.",
+    "qrCodePage.runtimeTitle": "Drawing it in the browser",
+    "qrCodePage.runtimeBody":
+      "When the value is only known in the browser (the signed-in reader's own link), write the same markup with an empty <code>path</code> and a <code>data-value</code>: the <code>data-sk-qr-code</code> enhancer draws it with the same encoder as React and the generated HTML. Change <code>data-value</code> later (or the level, mask, shape or quiet zone) and it redraws itself. A QR that is already drawn is not encoded again on load. When the value fits in no QR at all, the drawing is left empty and the root carries <code>data-sk-qr-error</code>: it never keeps showing the previous code, because that one still scans. Change the <code>aria-label</code> too when the code starts doing something else.",
     "qrCodePage.limitsTitle": "What it does not do",
     "qrCodePage.limitsItem1":
       "<strong>No kanji mode.</strong> Byte mode carries UTF-8, so Japanese encodes and reads back perfectly; kanji mode would only make it denser (13 bits per character against 24). Supporting it means owning a 7,000 entry Shift-JIS table in exchange for a size optimisation nobody asked for.",
     "qrCodePage.limitsItem2":
       "<strong>No decoding.</strong> Reading a QR through a camera is a different problem  -  binarisation, perspective detection  -  and not one a design system solves.",
     "qrCodePage.limitsItem3":
-      "<strong>No image download.</strong> The symbol is already an SVG in the DOM: saving it or converting it to PNG is the consumer's, and putting it here would add a button to a contract that deliberately has none.",
+      "<strong>No download button.</strong> Saving it is a function (<code>downloadQrCode</code>, above) that your page's own button calls: the contract still has none.",
 
     "qrCodePage.a11yP1":
       "The root is <code>role=\"img\"</code> named by <code>label</code>, and the inner <code>&lt;svg&gt;</code> is <code>aria-hidden</code>: it is a picture of the payload, and exposing it would announce a second, nameless image.",

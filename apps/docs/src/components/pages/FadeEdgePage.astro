@@ -7,6 +7,7 @@ import {
   fadeIntensityTree,
   fadeLeftTree,
   fadeRightTree,
+  fadeScrollAwareTree,
   fadeTopTree,
 } from "../../demos/fade-edge";
 import { getLocale, useTranslations } from "../../i18n";
@@ -105,6 +106,10 @@ sync();
       previewScript={fadeIntensityScript}
       label={t("fadeEdge.intensityLabel")}
     />
+
+    <h3>{t("fadeEdge.scrollAwareTitle")}</h3>
+    <p set:html={t("fadeEdge.scrollAwareBody")} />
+    <ComponentPreview tree={fadeScrollAwareTree} label={t("fadeEdge.scrollAwareLabel")} />
 
     <h3>{t("fadeEdge.apiTitle")}</h3>
     <ul>

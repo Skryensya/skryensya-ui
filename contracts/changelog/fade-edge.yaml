@@ -1,5 +1,5 @@
 # What changed in fade-edge, in the words its users read. Only appended to, never rewritten.
-surface: "618182a92df28dba"
+surface: "62550a1cc5f7ae27"
 entries:
   - date: 2026-09-07
     kind: feature
@@ -47,3 +47,19 @@ entries:
       title: color only goes with mode color
       body: >-
         With the default transparent mode, <code>color</code> was written and painted nothing. That combination stops validating.
+  - date: 2026-09-25
+    kind: feature
+    es:
+      title: FadeEdge puede retirar el fundido al llegar al borde
+      body: >-
+        Nueva opción <code>scrollAware</code> (<code>data-scroll-aware</code>): cuando el scroll llega
+        al borde al que apunta el fundido, o el contenido entra sin scrollear, se escribe
+        <code>data-at-edge</code> y el fundido se retira. Sin la opción no cambia nada. En markup
+        escrito a mano hace falta <code>data-sk-fade-edge</code> para que el enhancer lo encuentre.
+    en:
+      title: FadeEdge can retire its fade at the edge
+      body: >-
+        New <code>scrollAware</code> option (<code>data-scroll-aware</code>): once the scroll reaches
+        the edge the fade points at, or the content fits without scrolling, <code>data-at-edge</code>
+        is written and the fade retires. Without the option nothing changes. Authored markup needs
+        <code>data-sk-fade-edge</code> for the enhancer to find it.

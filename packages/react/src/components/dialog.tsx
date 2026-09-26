@@ -2,6 +2,7 @@ import { dialogParts, dialogContract } from "@skryensya/core/dialog";
 import type { SignatureOptionsOf } from "@skryensya/core/contract";
 import { useId, type DialogHTMLAttributes, type ReactNode } from "react";
 import { Icon } from "./icon.js";
+import { useModalTabWrap } from "./modal-tab-wrap.js";
 
 /* Derived, never restated: the default lives in the contract. */
 const {
@@ -11,12 +12,14 @@ const {
 } = dialogContract.options;
 
 /*
- * DIALOG: the centred modal box, and a binding that is markup and nothing else.
+ * DIALOG: the centred modal box, and a binding that is markup and one hook.
  *
  * No state and no machine, on purpose: the behaviour is the platform's. The consumer calls
- * `showModal()` and the browser owns the top layer, the backdrop, focus trapping and Escape. What
- * the system contributes is the anatomy, which is what makes this a contract both bindings derive
- * from rather than a component one of them implements, the same reason `Select.native` is one.
+ * `showModal()` and the browser owns the top layer, the backdrop, the inert page and Escape. The
+ * one gap it leaves, Tab leaving for the browser's toolbar at either end, is closed by
+ * `useModalTabWrap` (decision 24), which holds no state of its own. What the system otherwise
+ * contributes is the anatomy, which is what makes this a contract both bindings derive from rather
+ * than a component one of them implements, the same reason `Select.native` is one.
  *
  * The close control is a `<form method="dialog">` rather than an onClick: that is the platform's own
  * way to close a dialog, it works before any script runs, and its `value` lets the opener tell a
@@ -59,6 +62,7 @@ export function Dialog({
 }: DialogProps) {
   const titleId = useId();
   const bodyId = useId();
+  useModalTabWrap();
 
   return (
     <dialog

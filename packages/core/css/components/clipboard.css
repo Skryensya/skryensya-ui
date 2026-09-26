@@ -1,0 +1,46 @@
+/* TIER 3, CLIPBOARD: a value to copy, shown in a read-only field with the copy button beside it.
+ *
+ * The button is `copy-button.css` (imported below, so this one sheet is all `Clipboard` needs); the
+ * field is `.sk-input` in its read-only state. This file only lays the three out: the label above,
+ * then the field and the button as one row, the button at the field's own height.
+ */
+
+@import url("./copy-button.css");
+
+@layer components {
+  .sk-clipboard {
+    --sk-clipboard-gap: var(--space-stack-xs);
+    --sk-clipboard-label-fg: var(--color-text-primary);
+    --sk-clipboard-label-font-size: var(--font-size-body-sm);
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--sk-clipboard-gap);
+    min-inline-size: 0;
+  }
+
+  .sk-clipboard__label {
+    color: var(--sk-clipboard-label-fg);
+    font-size: var(--sk-clipboard-label-font-size);
+    font-weight: var(--font-weight-label);
+    line-height: var(--font-line-height-body);
+  }
+
+  .sk-clipboard__control {
+    display: flex;
+    align-items: center;
+    gap: var(--sk-clipboard-gap);
+    min-inline-size: 0;
+  }
+
+  /* The field gives way, the button never does: a long link truncates inside its own box. */
+  .sk-clipboard__input {
+    flex: 1 1 auto;
+    min-inline-size: 0;
+    text-overflow: ellipsis;
+  }
+
+  .sk-clipboard__control > .sk-copy-button {
+    flex: none;
+  }
+}

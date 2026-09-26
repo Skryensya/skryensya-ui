@@ -119,3 +119,17 @@ export function flattenCollectionEntry(
 
   return flat;
 }
+
+/**
+ * One collection entry as the value a REACT binding takes: the flat object, or, when the entry
+ * shape declares `unwrap`, that one field of it. Shared by the live render and the printed snippet
+ * so the two cannot hand React different shapes for the same entry.
+ */
+export function reactCollectionEntry(
+  entry: ItemInput,
+  shape: ContractSlot["item"] | undefined,
+  resolveLeaf: (values: readonly (string | UsageTree)[]) => unknown,
+): unknown {
+  const flat = flattenCollectionEntry(entry, shape, resolveLeaf);
+  return shape?.unwrap ? flat[shape.slots[shape.unwrap]?.prop ?? shape.unwrap] : flat;
+}

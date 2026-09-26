@@ -5,6 +5,20 @@
 # hash.
 surface: "8a32c9bc37aff078"
 entries:
+  - date: 2026-09-25
+    kind: bugfix
+    es:
+      title: React recibe los tags como texto, no como objetos
+      body: >-
+        Un árbol con tags iniciales le pasaba a React <code>defaultValue=[{ label: "react" }]</code>, que no compila contra
+        <code>string[]</code> y revienta al renderizar. La colección declara <code>unwrap: "label"</code>, así que el render y el snippet
+        publicado pasan <code>["react"]</code>. El markup no cambia.
+    en:
+      title: React receives tags as text, not objects
+      body: >-
+        A tree with initial tags handed React <code>defaultValue=[{ label: "react" }]</code>, which does not typecheck against
+        <code>string[]</code> and throws on render. The collection declares <code>unwrap: "label"</code>, so the render and the published
+        snippet pass <code>["react"]</code>. The markup does not change.
   - date: 2026-09-20
     kind: feature
     es:

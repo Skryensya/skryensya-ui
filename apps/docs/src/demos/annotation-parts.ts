@@ -79,8 +79,21 @@ const canvasControl = (action: string, label: string): string => `<button
  */
 export const anatomyFigureHtml = (
   t: Translate,
-  opts: { label: string; specimen: string; parts: readonly AnatomyHtmlPart[]; key?: string },
+  opts: {
+    label: string;
+    specimen: string;
+    parts: readonly AnatomyHtmlPart[];
+    key?: string;
+    /**
+     * A drawing read at rest and never explored: no zoom bar, no hints, and the viewport is not a tab
+     * stop. The canvas still refits on resize. Written exactly as `emit` writes Annotated's `fitOnly`.
+     * ON by default: this helper only ever draws anatomies, and an anatomy is never zoomed (see
+     * `anatomyDiagram` in ComponentPreview.astro, which does the same for tree-drawn ones).
+     */
+    fitOnly?: boolean;
+  },
 ): string => {
+  opts = { ...opts, fitOnly: opts.fitOnly ?? true };
   const canvas = anatomyCanvas(t);
   const hints = anatomyHints(t);
   const bubbles = opts.parts
@@ -101,8 +114,8 @@ export const anatomyFigureHtml = (
   aria-label="${opts.label}"
   role="group"
 >
-  <div class="sk-canvas" data-sk-canvas>
-    <div class="sk-canvas__viewport" tabindex="0">
+  <div class="sk-canvas" data-sk-canvas${opts.fitOnly ? " data-fit-only" : ""}>
+    <div class="sk-canvas__viewport"${opts.fitOnly ? "" : ' tabindex="0"'}>
       <div class="sk-canvas__content">
         <div class="sk-annotated">
           <div class="sk-annotated__subject" inert>
@@ -112,14 +125,18 @@ export const anatomyFigureHtml = (
           <svg class="sk-annotated__leaders" aria-hidden="true" focusable="false"></svg>
         </div>
       </div>
-    </div>
+    </div>${
+      opts.fitOnly
+        ? ""
+        : `
     <div class="sk-canvas__controls">
       ${canvasControl("zoom-in", canvas.zoomInLabel)}
       ${canvasControl("zoom-out", canvas.zoomOutLabel)}
       ${canvasControl("fit", canvas.fitLabel)}
     </div>
     <p class="sk-canvas__hint" data-canvas-hint="touch" aria-hidden="true"><span>${hints.touchHint}</span></p>
-    <p class="sk-canvas__hint" data-canvas-hint="wheel" aria-hidden="true"><span>${hints.wheelHint}</span></p>
+    <p class="sk-canvas__hint" data-canvas-hint="wheel" aria-hidden="true"><span>${hints.wheelHint}</span></p>`
+    }
   </div>
   <ol class="sk-annotated__legend">
     ${legend}

@@ -1,0 +1,23 @@
+# The structure lives in packages/core/src/clipboard.ts. Here, only why it is chosen.
+
+CopyButton:
+  useWhen:
+    - "un bloque de código, un comando o un token se va a pegar en otro lado y seleccionarlo a mano es lento o impreciso"
+    - "el valor ya está a la vista (un bloque de código) o no hace falta verlo para copiarlo"
+  avoidWhen:
+    - "quien copia tiene que ver o revisar el valor antes (un enlace para compartir, una clave): eso es Clipboard"
+    - "la acción hace algo más que copiar (compartir, exportar, descargar): eso es un Button con su propio nombre"
+  alternatives:
+    - Clipboard
+    - Button.action
+
+Clipboard:
+  useWhen:
+    - "el valor tiene que verse antes de copiarlo: un enlace para compartir, una clave de API, un identificador"
+    - "además del botón, quien usa la página puede querer seleccionar el valor o copiarlo con el teclado"
+  avoidWhen:
+    - "el valor es largo o de varias líneas (código, configuración): eso es un bloque de código con CopyButton"
+    - "el valor se puede editar: eso es un Input en un FormField"
+  alternatives:
+    - CopyButton
+    - Input

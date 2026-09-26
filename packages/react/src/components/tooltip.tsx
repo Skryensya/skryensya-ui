@@ -117,7 +117,15 @@ export function Tooltip({
      * it from the trigger, so without it that attribute referenced an element this binding never
      * rendered. A dangling reference, identical in shape to a mistyped `aria-describedby`.
      */
-    <span className={tooltipParts.root} data-sk-anchor="" id={id ?? generatedId} ref={rootRef}>
+    <span
+      className={tooltipParts.root}
+      // The contract's `arrow` option lands on the root, as authored markup writes it: without this
+      // React drew the arrow but never said so, and the two roots differed by one attribute.
+      data-arrow={arrow ? "" : undefined}
+      data-sk-anchor=""
+      id={id ?? generatedId}
+      ref={rootRef}
+    >
       {/*
        * `getTriggerProps` returns button props, so the trigger is a real span-wrapper around whatever
        * the consumer passed rather than a nested <button>: wrapping their control in our own button

@@ -19,16 +19,18 @@ describe("qr-code emission", () => {
     expect(problems.map((p) => `${p.path}: ${p.message}`)).toEqual([]);
   });
 
-  it("computes the path and viewBox into the markup, and puts neither in the tree", () => {
+  it("computes the path and viewBox into the markup, and states what it encodes", () => {
     const markup = emitMarkup(tree, { fillDefaults: false });
 
     expect(markup).toContain('role="img"');
     expect(markup).toContain('aria-label="Open the site"');
     expect(markup).toMatch(/viewBox="0 0 \d+ \d+"/);
     expect(markup).toMatch(/<path[^>]*d="M/);
-    /* `computedInput`: once the symbol exists there is nothing left for the value to be an
-       attribute of, so it must not be written into the DOM. */
-    expect(markup).not.toContain("https://ui.skryensya.dev");
+    /* The value and the level are attributes: the Vanilla enhancer reads them to redraw the symbol
+       when they change, and mounts on `data-sk-qr-code`. */
+    expect(markup).toContain('data-value="https://ui.skryensya.dev"');
+    expect(markup).toContain('data-level="Q"');
+    expect(markup).toContain("data-sk-qr-code");
   });
 
   it("emits a React component that computes the same symbol at render", () => {

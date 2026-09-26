@@ -1,0 +1,29 @@
+# What changed in window, in the words its users read. Only appended to, never rewritten.
+#
+# `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
+# does not match, something a consumer depends on has moved: write the entry and paste in the new
+# hash.
+surface: "60c685f265b0a3db"
+entries:
+  - date: 2026-09-25
+    kind: feature
+    target: Window
+    es:
+      title: Una ventana que se mueve, cambia de tamaño y se minimiza
+      body: >-
+        Nuevo contrato <code>Window</code> sobre la máquina <code>@zag-js/floating-panel</code>, la misma en los dos bindings. Es un panel no
+        modal: la barra de título lo arrastra, los bordes y esquinas lo redimensionan, y sus controles lo minimizan, lo maximizan, lo restauran y
+        lo cierran. Con el foco adentro, las flechas lo mueven y Escape lo cierra (o cancela el arrastre en curso). Varias ventanas abiertas se
+        apilan y la última enfocada queda arriba. El contenido es un <code>role="dialog"</code> sin <code>aria-modal</code>, nombrado por su
+        título. Los nombres de los controles son opciones (<code>closeLabel</code>, <code>minimizeLabel</code>, <code>maximizeLabel</code>,
+        <code>restoreLabel</code>). Eventos: <code>sk:windowopenchange</code> y <code>sk:windowstagechange</code>. La hoja es
+        <code>components/window.css</code>.
+    en:
+      title: A window that moves, resizes and minimizes
+      body: >-
+        New <code>Window</code> contract on the <code>@zag-js/floating-panel</code> machine, the same one in both bindings. It is a non-modal
+        panel: the title bar drags it, the edges and corners resize it, and its controls minimize, maximize, restore and close it. With focus
+        inside, the arrow keys move it and Escape closes it (or cancels the drag in progress). Several open windows stack, and the last one
+        focused sits on top. The content is a <code>role="dialog"</code> with no <code>aria-modal</code>, named by its title. The controls'
+        names are options (<code>closeLabel</code>, <code>minimizeLabel</code>, <code>maximizeLabel</code>, <code>restoreLabel</code>).
+        Events: <code>sk:windowopenchange</code> and <code>sk:windowstagechange</code>. Its stylesheet is <code>components/window.css</code>.

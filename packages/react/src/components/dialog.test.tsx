@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { fireEvent, render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { Dialog } from "./dialog.js";
 
@@ -146,5 +146,26 @@ describe("Dialog", () => {
 
     expect(ui.container.querySelector("dialog")?.open).toBe(true);
     expect(ui.getByRole("button", { name: "Descartar" })).toBeTruthy();
+  });
+
+  it("wraps Tab at the ends once it is open modally", () => {
+    const ui = render(
+      <Dialog footer={<button value="ok">Aceptar</button>} title="Confirmar">
+        Contenido
+      </Dialog>,
+    );
+    const dialog = ui.container.querySelector("dialog")!;
+    dialog.showModal();
+    const first = ui.getByRole("button", { name: "Close" });
+    const last = ui.getByRole("button", { name: "Aceptar" });
+
+    last.focus();
+    fireEvent.keyDown(last, { key: "Tab" });
+    expect(document.activeElement).toBe(first);
+    fireEvent.keyDown(first, { key: "Tab", shiftKey: true });
+    expect(document.activeElement).toBe(last);
+
+    dialog.close();
+    ui.unmount();
   });
 });

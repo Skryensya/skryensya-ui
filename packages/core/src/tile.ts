@@ -444,11 +444,18 @@ export const tileContract = {
                 attrs: { type: "radio", "data-part": "input" },
                 itemOptions: ["value", "disabled"],
               },
-              { element: "span", part: "content", attrs: { "data-part": "content" }, itemSlot: "label" },
+              /* Renamed into the tile's vocabulary AND re-scoped with it, like the label above: under
+                 `radio-group` these would name parts that machine does not have. */
+              {
+                element: "span",
+                part: "content",
+                attrs: { "data-scope": "tile", "data-part": "content" },
+                itemSlot: "label",
+              },
               {
                 element: "span",
                 part: "selectionIndicator",
-                attrs: { "aria-hidden": "true", "data-part": "indicator" },
+                attrs: { "aria-hidden": "true", "data-scope": "tile", "data-part": "indicator" },
               },
             ],
           },

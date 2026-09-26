@@ -18,10 +18,11 @@ export type DialogPartClass = (typeof dialogParts)[DialogPart];
 /*
  * DIALOG: the contract; behaviour that belongs entirely to the browser.
  *
- * No enhancer and no machine, and here that costs nothing: a modal dialog is centred by the platform,
- * so there is no anchor to name and no positioning for the two bindings to disagree about. The
- * consumer calls `showModal()`; the browser owns the top layer, the backdrop, focus trapping and
- * Escape. The system contributes the anatomy, so both bindings are the same markup twice; exactly
+ * No machine, and here that costs nothing: a modal dialog is centred by the platform, so there is no
+ * anchor to name and no positioning for the two bindings to disagree about. The consumer calls
+ * `showModal()`; the browser owns the top layer, the backdrop, the inert page and Escape. The only
+ * behaviour the kit adds is the Tab wrap at the ends (`focus-trap.ts`, decision 24), document-wide
+ * and stateless, which both bindings install. The system contributes the anatomy, so both bindings are the same markup twice; exactly
  * the reason `Select.native` can be a contract with no enhancer behind it.
  */
 export const dialogContract = {

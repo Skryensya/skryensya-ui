@@ -59,6 +59,10 @@
 
     { "fg": "--color-border-default", "bg": "--color-bg-canvas",         "min": 3, "modes": ["light", "dark"] },
     { "fg": "--color-border-default", "bg": "--color-bg-surface",        "min": 3, "modes": ["light", "dark"] },
-    { "fg": "--color-border-focus",   "bg": "--color-bg-canvas",         "min": 3, "modes": ["light", "dark", "hc-light", "hc-dark"] }
+    { "fg": "--color-border-focus",   "bg": "--color-bg-canvas",         "min": 3, "modes": ["light", "dark", "hc-light", "hc-dark"] },
+
+    { "fg": "--color-border-accent",  "bg": "--color-bg-canvas",         "min": 3, "modes": ["light", "dark", "hc-light", "hc-dark"] },
+    { "fg": "--color-border-accent",  "bg": "--color-bg-surface",        "min": 3, "modes": ["light", "dark"] },
+    { "fg": "--color-border-accent",  "bg": "--color-bg-surface-raised", "min": 3, "modes": ["light", "dark"] }
   ]
 }

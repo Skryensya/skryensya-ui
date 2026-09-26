@@ -41,17 +41,38 @@ export const toastAnatomyTree = (t: Translate): UsageTree => ({
       },
     },
     items: [
+      /* Unlike Callout's, a toast's actions and dismiss sit BESIDE the text, on its inline-end edge.
+         Naming the text parts from that side (as Callout does) drew every leader across the buttons,
+         so the text parts are named from above and below and the inline-end is left to dismiss. */
       namePart(".sk-toast-region", "block-start", { mark: "bracket" }),
       namePart(".sk-callout", "inline-start"),
       namePart(".sk-callout__icon", "inline-start"),
-      namePart(".sk-callout__content", "inline-end", { ringPlacement: "offset", ringDistance: 6 }),
-      namePart(".sk-callout__title", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
-      namePart(".sk-callout__description", "inline-end", { ringPlacement: "offset", ringDistance: 2 }),
-      namePart(".sk-callout__actions", "block-end"),
+      namePart(".sk-callout__title", "block-start", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-callout__content", "block-end", { ringPlacement: "offset", ringDistance: 6 }),
+      namePart(".sk-callout__description", "block-end", { ringPlacement: "offset", ringDistance: 2 }),
+      namePart(".sk-callout__actions", "block-end", { ringPlacement: "offset", ringDistance: 3 }),
       namePart(".sk-toast__dismiss", "inline-end"),
     ],
   },
 });
+
+/*
+ * Fixed region -> static box, the same move `vaulAnatomyCss` makes for its edge panel. The region is
+ * `position: fixed` to a screen corner, and inside Annotated's zoomable canvas that corner is the
+ * canvas's own: the toast landed half outside the drawing and every marker was measured against a
+ * box that was not where it was painted. In flow, at the width a real region gives it.
+ */
+export const toastAnatomyCss = `.sk-annotated-figure {
+  --sk-annotation-font-family: var(--font-family-code);
+}
+
+.sk-annotated__subject > .sk-toast-region {
+  position: static;
+  inset: auto;
+  translate: none;
+  inline-size: min(100%, 24rem);
+}
+`;
 
 /* Static and runtime Toast compositions share the same emitted anatomy. */
 export const toastSimpleTree = (t: Translate): UsageTree => ({

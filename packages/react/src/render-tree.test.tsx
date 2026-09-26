@@ -4,6 +4,21 @@ import { describe, expect, it } from "vitest";
 import { loadTree, renderTree } from "./render-tree.js";
 
 describe("renderTree", () => {
+  it("hands an unwrapped collection to React as bare values, not entry objects", async () => {
+    // Tags input declares `unwrap: "label"`: its `defaultValue` is `string[]`, and an entry object
+    // there threw "Objects are not valid as a React child" and took every browser gate down with it.
+    const tree: UsageTree = {
+      contract: "tags-input",
+      signature: "TagsInput",
+      options: { label: "Temas" },
+      slots: { items: [{ slots: { label: "react" } }, { slots: { label: "svelte" } }] },
+    };
+    await loadTree(tree);
+    const ui = render(<>{renderTree(tree)}</>);
+    expect(ui.getByText("react")).toBeTruthy();
+    expect(ui.getByText("svelte")).toBeTruthy();
+  });
+
   it("refuses to render a family loadTree has not loaded, and says what to do", () => {
     const tree: UsageTree = { contract: "kbd", signature: "Kbd", children: "K" };
     expect(() => renderTree(tree)).toThrow(/await loadTree\(tree\)/);

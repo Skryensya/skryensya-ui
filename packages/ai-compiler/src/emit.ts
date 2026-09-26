@@ -23,7 +23,7 @@ import { getContract, getSignature } from "@skryensya/core/registry";
 import { signatureOptions } from "@skryensya/core/contract";
 import {
   collectionItems,
-  flattenCollectionEntry,
+  reactCollectionEntry,
   isUsageTree,
   slotItems,
   slotsOf,
@@ -1696,8 +1696,8 @@ function renderJsx(
  * which is a second emitter this function has no business becoming. `renderJsx`'s own walk is what
  * emits that content, one level up, as children rather than as a prop value.
  */
-function flattenItem(item: ItemInput, shape?: ContractSlot["item"]): Record<string, unknown> {
-  return flattenCollectionEntry(item, shape, (values) => {
+function flattenItem(item: ItemInput, shape?: ContractSlot["item"]): unknown {
+  return reactCollectionEntry(item, shape, (values) => {
     const text = values.find((value) => !isUsageTree(value));
     return typeof text === "string" ? text : undefined;
   });

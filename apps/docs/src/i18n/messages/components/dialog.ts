@@ -45,7 +45,7 @@ export const dialogMessages = {
     "dialog.contractItem4":
       'Cierre y acciones usan <code>&lt;form method="dialog"&gt;</code>; <code>value</code> en cada botón si necesitas saber cuál se eligió.',
     "dialog.contractItem5":
-      'No añadas un focus trap propio: <code>showModal()</code> ya contiene el foco y restaura al cerrar.',
+      'No añadas un focus trap propio: <code>showModal()</code> ya contiene el foco y lo restaura al cerrar, y el kit hace que <kbd>Tab</kbd> dé la vuelta en los extremos en vez de salir a la barra del navegador.',
     "dialog.contractItem6":
       'Importa <a class="sk-link sk-interactive" href="/es/scroll-lock">scroll lock</a> si quieres congelar la página detrás sin CLS al desaparecer la scrollbar.',
     "dialog.contractItem7":
@@ -64,7 +64,7 @@ export const dialogMessages = {
       '<code>data-sk-dialog-vaul</code> opta en la mejora; <code>data-edge="block-end"</code> nombra el borde. El handle es opcional.',
     "dialog.vaulInstallTitle": "Instalar Dialog Vaul",
     "dialog.a11yIntro":
-      "Con <code>showModal()</code> la plataforma ya hace el trabajo. No reimplementes un focus trap en JavaScript (decisión 11 / técnica WCAG H102).",
+      "Con <code>showModal()</code> la plataforma ya hace casi todo el trabajo (técnica WCAG H102). Lo único que añade el kit es que <kbd>Tab</kbd> dé la vuelta del último control al primero, y <kbd>Shift + Tab</kbd> del primero al último (decisión 24). No reimplementes el resto en JavaScript.",
     "dialog.a11yItem1":
       '<strong>Al abrir</strong> el foco entra al dialog. Sin <code>autofocus</code>, aterriza en el primer control enfocable. En un confirm destructivo pon <code>autofocus</code> en <strong>Cancelar</strong> (la opción segura), no en Borrar ni en el cierre.',
     "dialog.a11yItem2":
@@ -126,7 +126,7 @@ export const dialogMessages = {
     "dialog.contractItem4":
       'Close and action controls use <code>&lt;form method="dialog"&gt;</code>; give each button a <code>value</code> if you need to know which one was chosen.',
     "dialog.contractItem5":
-      "Don't add a focus trap of your own: <code>showModal()</code> already contains focus and restores it on close.",
+      "Don't add a focus trap of your own: <code>showModal()</code> already contains focus and restores it on close, and the kit makes <kbd>Tab</kbd> wrap at either end instead of leaving for the browser's toolbar.",
     "dialog.contractItem6":
       'Import <a class="sk-link sk-interactive" href="/scroll-lock">scroll lock</a> if you want to freeze the page behind it with no CLS when the scrollbar disappears.',
     "dialog.contractItem7":
@@ -145,7 +145,7 @@ export const dialogMessages = {
       '<code>data-sk-dialog-vaul</code> opts into the enhancement; <code>data-edge="block-end"</code> names the edge. The handle is optional.',
     "dialog.vaulInstallTitle": "Installing Dialog Vaul",
     "dialog.a11yIntro":
-      "With <code>showModal()</code>, the platform already does the work. Do not reimplement a focus trap in JavaScript (decision 11 / WCAG technique H102).",
+      "With <code>showModal()</code>, the platform already does almost all of the work (WCAG technique H102). The one thing the kit adds is that <kbd>Tab</kbd> wraps from the last control to the first, and <kbd>Shift + Tab</kbd> from the first to the last (decision 24). Do not reimplement the rest in JavaScript.",
     "dialog.a11yItem1":
       '<strong>On open</strong>, focus enters the dialog. With no <code>autofocus</code>, it lands on the first focusable control. In a destructive confirm, put <code>autofocus</code> on <strong>Cancel</strong> (the safe option), not on Delete or the close button.',
     "dialog.a11yItem2":

@@ -3,7 +3,12 @@ export { connectAnnotated, mountAnnotated } from "./components/annotation.js";
 export { connectDiagram, mountDiagram } from "./components/diagram.js";
 export { connectBackToTop, mountBackToTop } from "./components/back-to-top.js";
 export { connectCanvas, mountCanvas } from "./components/canvas.js";
+export { mountDialog } from "./components/dialog.js";
 export { connectLightboxRoot, getLightbox, mountLightbox, readLightboxConfig } from "./components/lightbox.js";
+export { connectTourRoot, getTour, mountTour, readTourConfig } from "./components/tour.js";
+export { mountClipboard } from "./components/clipboard.js";
+export { mountListbox } from "./components/listbox.js";
+export { connectQrCode, mountQrCode } from "./components/qr-code.js";
 export { mountButton } from "./components/button.js";
 export { connectLoader, mountLoader } from "./components/loader.js";
 export { connectMarquee, mountMarquee } from "./components/marquee.js";
@@ -11,6 +16,8 @@ export { mountExpandableTile } from "./components/expandable-tile.js";
 export { mountSelect } from "./components/select.js";
 export { mountSegmented } from "./components/segmented.js";
 export { mountStat } from "./components/stat.js";
+export { mountFadeEdge } from "./components/fade-edge.js";
+export { mountPasswordInput } from "./components/password-input.js";
 export { connectSidebar, mountSidebar } from "./components/sidebar.js";
 export { mountSlider } from "./components/slider.js";
 export {
@@ -28,6 +35,7 @@ export { mountDatePicker } from "./components/date-picker.js";
 export { mountColorPicker } from "./components/color-picker.js";
 export { mountCalendar } from "./components/calendar.js";
 export { mountTooltip } from "./components/tooltip.js";
+export { mountWindow } from "./components/window.js";
 export {
   interactiveTileClass,
   expandableTileClass,
@@ -72,4 +80,5 @@ export { applyAttrs, bindEvents } from "./runtime/apply.js";
 export { connectVaul, mountVaul } from "./components/vaul.js";
 export { bindHotkey } from "./hotkey.js";
 export type { BindHotkeyOptions } from "./hotkey.js";
+export { setPresent } from "./presence.js";
 export { mountIcons, remountIcons } from "./icon.js";

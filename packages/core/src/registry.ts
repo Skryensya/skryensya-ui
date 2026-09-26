@@ -22,6 +22,8 @@ import { timeFieldContract } from "./time-field.js";
 import { fileUploadContract } from "./file-upload.js";
 import { carouselContract } from "./carousel.js";
 import { fadeEdgeContract } from "./fade-edge.js";
+import { presenceContract } from "./presence.js";
+import { passwordInputContract } from "./password-input.js";
 import { qrCodeContract } from "./qr-code.js";
 import { marqueeContract } from "./marquee.js";
 import { treeViewContract } from "./tree-view.js";
@@ -32,6 +34,9 @@ import { diagramContract } from "./diagram.js";
 import { backToTopContract } from "./back-to-top.js";
 import { canvasContract } from "./canvas.js";
 import { lightboxContract } from "./lightbox.js";
+import { tourContract } from "./tour.js";
+import { clipboardContract } from "./clipboard.js";
+import { listboxContract } from "./listbox.js";
 import { accordionContract } from "./accordion.js";
 import { tileContract } from "./tile.js";
 import { paginationContract, tablePagerContract } from "./pagination.js";
@@ -60,6 +65,7 @@ import { colorPickerContract } from "./color-picker.js";
 import { dialogContract } from "./dialog.js";
 import { splitButtonContract } from "./split-button.js";
 import { popoverContract } from "./popover.js";
+import { windowContract } from "./window.js";
 import { commandPaletteContract } from "./command-palette.js";
 import { codePreviewContract } from "./code-preview.js";
 import { segmentedContract } from "./segmented.js";
@@ -120,6 +126,9 @@ export const contracts = fromContracts(
   buttonContract,
   canvasContract,
   lightboxContract,
+  tourContract,
+  clipboardContract,
+  listboxContract,
   calloutContract,
   chartContract,
   checkboxContract,
@@ -131,6 +140,8 @@ export const contracts = fromContracts(
   iconContract,
   imageFrameContract,
   fadeEdgeContract,
+  presenceContract,
+  passwordInputContract,
   qrCodeContract,
   kbdContract,
   layoutContract,
@@ -193,6 +204,7 @@ export const contracts = fromContracts(
   dialogContract,
   splitButtonContract,
   popoverContract,
+  windowContract,
   commandPaletteContract,
   codePreviewContract,
   typographyContract,

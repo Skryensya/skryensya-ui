@@ -25,6 +25,10 @@
       "types": "./src/hotkey.ts",
       "default": "./src/hotkey.ts"
     },
+    "./presence": {
+      "types": "./src/presence.ts",
+      "default": "./src/presence.ts"
+    },
     "./storage": {
       "types": "./src/storage.ts",
       "default": "./src/storage.ts"
@@ -49,9 +53,33 @@
       "types": "./src/components/canvas.ts",
       "default": "./src/components/canvas.ts"
     },
+    "./window": {
+      "types": "./src/components/window.ts",
+      "default": "./src/components/window.ts"
+    },
+    "./dialog": {
+      "types": "./src/components/dialog.ts",
+      "default": "./src/components/dialog.ts"
+    },
     "./lightbox": {
       "types": "./src/components/lightbox.ts",
       "default": "./src/components/lightbox.ts"
+    },
+    "./qr-code": {
+      "types": "./src/components/qr-code.ts",
+      "default": "./src/components/qr-code.ts"
+    },
+    "./tour": {
+      "types": "./src/components/tour.ts",
+      "default": "./src/components/tour.ts"
+    },
+    "./clipboard": {
+      "types": "./src/components/clipboard.ts",
+      "default": "./src/components/clipboard.ts"
+    },
+    "./listbox": {
+      "types": "./src/components/listbox.ts",
+      "default": "./src/components/listbox.ts"
     },
     "./back-to-top": {
       "types": "./src/components/back-to-top.ts",
@@ -88,6 +116,14 @@
     "./segmented": {
       "types": "./src/components/segmented.ts",
       "default": "./src/components/segmented.ts"
+    },
+    "./password-input": {
+      "types": "./src/components/password-input.ts",
+      "default": "./src/components/password-input.ts"
+    },
+    "./fade-edge": {
+      "types": "./src/components/fade-edge.ts",
+      "default": "./src/components/fade-edge.ts"
     },
     "./stat": {
       "types": "./src/components/stat.ts",

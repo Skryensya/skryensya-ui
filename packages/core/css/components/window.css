@@ -1,0 +1,186 @@
+/*
+ * TIER 3, WINDOW: a non-modal panel over `@zag-js/floating-panel`.
+ *
+ * The machine owns geometry. It writes `--x`, `--y`, `--width` and `--height` on the positioner
+ * (`position: fixed`, `top: var(--y)`, `left: var(--x)` inline) and sizes the content from them; this
+ * sheet only reads those four and never sets a position of its own. They are Zag's names, not hooks:
+ * the next pointer move writes over any override.
+ *
+ * THE LAYER is this sheet's, not the machine's. Zag's inline `z-index` is stripped by both bindings
+ * (`withoutStackZIndex`) and only `--z-index`, the window's place in the stack, is kept: added to
+ * the sticky layer it puts every window over pinned chrome, the most recently focused one on top,
+ * and still under `--z-popover`, so a menu opened INSIDE a window lands above it.
+ *
+ * Paint follows Dialog: the same overlay surface, border and wash. The difference is the title bar,
+ * which is a grab handle and says so with its own surface.
+ */
+@layer components {
+  .sk-window__positioner {
+    z-index: calc(var(--z-sticky) + var(--z-index, 1));
+  }
+
+  /* The window is hidden until the machine opens it, including before the enhancer has run: no
+   * JavaScript means no window (see the contract). `:has()` rather than an authored `hidden` on the
+   * positioner because the machine only ever states it on the content. */
+  .sk-window__positioner:not(:has(> .sk-window__content[data-state="open"])) {
+    display: none;
+  }
+
+  .sk-window__content {
+    --sk-window-bg: var(--color-bg-surface-overlay);
+    --sk-window-fg: var(--color-text-primary);
+    --sk-window-border-color: var(--color-border-subtle);
+    --sk-window-radius: var(--radius-surface);
+    --sk-window-padding: var(--space-inset-md);
+    --sk-window-shadow: var(--elevation-modal);
+    /* A window behind another steps down one elevation rung, so which one is in front reads from
+     * the shadow alone and not only from which one covers the other. */
+    --sk-window-shadow-behind: var(--elevation-overlay);
+    --sk-window-wash: var(--elevation-wash-overlay);
+    --sk-window-header-bg: var(--color-bg-surface-raised);
+    --sk-window-header-border-color: var(--color-border-subtle);
+    /* How far into the frame an edge can be grabbed. Invisible: the cursor is the affordance. */
+    --sk-window-handle-size: 0.5rem;
+
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    border: 1px solid var(--sk-window-border-color);
+    border-radius: var(--sk-window-radius);
+    background: var(--sk-window-wash) var(--sk-window-bg);
+    color: var(--sk-window-fg);
+    box-shadow: var(--sk-window-shadow);
+    /* The body scrolls, the frame never does; the corners must also clip the header's fill. */
+    overflow: hidden;
+    transition: box-shadow var(--motion-feedback-duration) var(--motion-feedback-easing);
+  }
+
+  .sk-window__content[data-behind] {
+    box-shadow: var(--sk-window-shadow-behind);
+  }
+
+  /* A maximized window IS the viewport: rounded corners inside a full-bleed box would frame nothing. */
+  .sk-window__content[data-maximized] {
+    border-radius: 0;
+  }
+
+  /* The content is focusable (it is where the arrow keys move the window from), and a focused window
+   * must look focused. The inner ring keeps it off the clipped edge. */
+  .sk-window__content:focus-visible {
+    outline: 2px solid var(--color-border-focus);
+    outline-offset: -2px;
+  }
+
+  .sk-window__drag {
+    flex: none;
+  }
+
+  .sk-window__drag:not([data-disabled]) {
+    cursor: move;
+  }
+
+  .sk-window__header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-inline-sm);
+    padding-block: var(--space-inset-xs);
+    padding-inline: var(--sk-window-padding) var(--space-inset-xs);
+    border-block-end: 1px solid var(--sk-window-header-border-color);
+    background: var(--sk-window-header-bg);
+  }
+
+  /* Minimized, the header is all there is: its bottom border would draw a second line under the
+   * frame's own. */
+  .sk-window__content[data-minimized] .sk-window__header {
+    border-block-end-color: transparent;
+  }
+
+  .sk-window__title {
+    flex: 1;
+    min-inline-size: 0;
+    margin: 0;
+    overflow: hidden;
+    font-size: var(--font-size-body);
+    font-weight: var(--font-weight-label);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .sk-window__controls {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--space-inline-xs);
+    /* Grabbing a control must press it, not start a drag; Zag already ignores pointerdowns that land
+     * on a button, this only stops the move cursor from lying about it. */
+    cursor: default;
+  }
+
+  .sk-window__stage[hidden] {
+    display: none;
+  }
+
+  .sk-window__body {
+    flex: 1;
+    min-block-size: 0;
+    padding: var(--sk-window-padding);
+    overflow: auto;
+  }
+
+  .sk-window__body[hidden] {
+    display: none;
+  }
+
+  /* The handles: Zag places them (`position: absolute`, the side, the cursor), this gives them a
+   * thickness. Edges get one dimension, corners both, and corners come later in the markup so they
+   * win the overlap where an edge meets them. */
+  .sk-window__resize {
+    z-index: 1;
+    block-size: var(--sk-window-handle-size);
+    inline-size: var(--sk-window-handle-size);
+  }
+
+  .sk-window__resize:is([data-axis="n"], [data-axis="s"]) {
+    inline-size: 100%;
+  }
+
+  .sk-window__resize:is([data-axis="e"], [data-axis="w"]) {
+    block-size: 100%;
+  }
+
+  .sk-window__resize:is([data-axis="ne"], [data-axis="se"], [data-axis="sw"], [data-axis="nw"]) {
+    block-size: calc(var(--sk-window-handle-size) * 2);
+    inline-size: calc(var(--sk-window-handle-size) * 2);
+  }
+
+  /* The machine disables every handle while minimized or maximized, and when resizing is off. */
+  .sk-window__resize[data-disabled] {
+    display: none;
+  }
+
+  /* A drag or resize in progress owns the pointer: selecting the text it passes over would be a side
+   * effect nobody asked for. */
+  .sk-window__content[data-dragging] {
+    user-select: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sk-window__content {
+      transition: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .sk-window__content {
+      border-color: CanvasText;
+      background: Canvas;
+      color: CanvasText;
+    }
+
+    .sk-window__header {
+      border-block-end-color: CanvasText;
+      background: Canvas;
+    }
+  }
+}

@@ -824,6 +824,58 @@
       ]
     },
     {
+      "category": "actions",
+      "css": "@skryensya/core/components/clipboard.css",
+      "id": "clipboard",
+      "signatures": [
+        {
+          "alternatives": [
+            "Clipboard",
+            "Button.action"
+          ],
+          "avoidWhen": [
+            "quien copia tiene que ver o revisar el valor antes (un enlace para compartir, una clave): eso es Clipboard",
+            "la acción hace algo más que copiar (compartir, exportar, descargar): eso es un Button con su propio nombre"
+          ],
+          "host": "button",
+          "id": "CopyButton",
+          "intent": [
+            "copy-to-clipboard",
+            "copy-code",
+            "copy-a-value"
+          ],
+          "parents": [],
+          "useWhen": [
+            "un bloque de código, un comando o un token se va a pegar en otro lado y seleccionarlo a mano es lento o impreciso",
+            "el valor ya está a la vista (un bloque de código) o no hace falta verlo para copiarlo"
+          ]
+        },
+        {
+          "alternatives": [
+            "CopyButton",
+            "Input"
+          ],
+          "avoidWhen": [
+            "el valor es largo o de varias líneas (código, configuración): eso es un bloque de código con CopyButton",
+            "el valor se puede editar: eso es un Input en un FormField"
+          ],
+          "host": "div",
+          "id": "Clipboard",
+          "intent": [
+            "copy-a-link",
+            "share-link",
+            "copy-api-key",
+            "read-only-value-with-copy"
+          ],
+          "parents": [],
+          "useWhen": [
+            "el valor tiene que verse antes de copiarlo: un enlace para compartir, una clave de API, un identificador",
+            "además del botón, quien usa la página puede querer seleccionar el valor o copiarlo con el teclado"
+          ]
+        }
+      ]
+    },
+    {
       "category": "content",
       "css": "@skryensya/core/components/code-preview.css",
       "id": "code-preview",
@@ -2307,6 +2359,40 @@
       ]
     },
     {
+      "category": "forms",
+      "css": "@skryensya/core/components/listbox.css",
+      "id": "listbox",
+      "signatures": [
+        {
+          "alternatives": [
+            "Select",
+            "Combobox",
+            "RadioGroup",
+            "Menu"
+          ],
+          "avoidWhen": [
+            "es un campo de un formulario que se envía: Listbox no tiene input ni name; eso es Select, RadioGroup o un grupo de Checkbox",
+            "las opciones son muchas o el espacio es poco: un listbox siempre abierto ocupa lo que ocupan sus opciones; eso es Select o Combobox",
+            "cada fila navega a otra página o ejecuta una acción: eso es NavList o Menu, no una elección"
+          ],
+          "host": "div",
+          "id": "Listbox",
+          "intent": [
+            "choose-in-place",
+            "always-open-list",
+            "multi-select-list",
+            "pick-from-visible-options"
+          ],
+          "parents": [],
+          "useWhen": [
+            "quien usa la pantalla tiene que ver todas las opciones mientras elige: una vista, unos pocos filtros, los elementos sobre los que va a actuar",
+            "se puede elegir más de una, y marcar y desmarcar sin abrir nada es más rápido que un desplegable",
+            "la lista se recorre con el teclado (flechas, búsqueda al tipear) y el foco tiene que quedarse en un solo lugar"
+          ]
+        }
+      ]
+    },
+    {
       "category": "feedback",
       "css": "@skryensya/core/components/loader.css",
       "id": "loader",
@@ -2892,6 +2978,39 @@
       ]
     },
     {
+      "category": "forms",
+      "css": "@skryensya/core/components/password-input.css",
+      "id": "password-input",
+      "signatures": [
+        {
+          "alternatives": [
+            "OtpInput",
+            "Clipboard",
+            "Input"
+          ],
+          "avoidWhen": [
+            "es un código de un solo uso de pocos dígitos; eso es un OtpInput",
+            "el secreto se muestra para copiarlo, no se escribe (una clave de API ya generada); eso es un Clipboard",
+            "es un texto cualquiera que no hace falta ocultar; eso es un Input"
+          ],
+          "host": "div",
+          "id": "PasswordInput",
+          "intent": [
+            "password",
+            "password-field",
+            "show-hide-password",
+            "sign-in-password",
+            "new-password"
+          ],
+          "parents": [],
+          "useWhen": [
+            "el campo pide una contraseña, para entrar o para crear una nueva",
+            "quien escribe tiene que poder revisar lo que tipeó antes de enviarlo, sobre todo en un teléfono"
+          ]
+        }
+      ]
+    },
+    {
       "category": "feedback",
       "css": "@skryensya/core/components/placeholder.css",
       "id": "placeholder",
@@ -3037,6 +3156,39 @@
           "useWhen": [
             "hace falta una superficie flotante y nada más: la composición trae su propia semántica",
             "el patrón no tiene título ni acciones de cierre que justifiquen el chrome de Popover"
+          ]
+        }
+      ]
+    },
+    {
+      "category": "layout",
+      "css": "@skryensya/core/components/presence.css",
+      "id": "presence",
+      "signatures": [
+        {
+          "alternatives": [
+            "Details",
+            "Accordion",
+            "Dialog",
+            "Popover"
+          ],
+          "avoidWhen": [
+            "el contenido es un diálogo, popover, menú o tooltip; esos ya animan su propia entrada y salida",
+            "lo que se abre y cierra es una sección con encabezado; eso es Details o Accordion, que animan la altura",
+            "el contenido no cambia de visibilidad; la animación solo retrasaría la lectura"
+          ],
+          "host": "div",
+          "id": "Presence",
+          "intent": [
+            "animate-in-and-out",
+            "exit-animation",
+            "conditional-content",
+            "show-hide-transition"
+          ],
+          "parents": [],
+          "useWhen": [
+            "un contenido aparece y desaparece según un estado, y su salida tiene que verse en vez de cortarse de golpe",
+            "en React, el contenido se renderiza condicionalmente y hay que esperar a que termine la salida antes de desmontarlo"
           ]
         }
       ]
@@ -4738,6 +4890,61 @@
       ]
     },
     {
+      "category": "overlays",
+      "css": "@skryensya/core/components/tour.css",
+      "id": "tour",
+      "signatures": [
+        {
+          "alternatives": [
+            "Tooltip",
+            "Popover",
+            "Steps",
+            "Dialog"
+          ],
+          "avoidWhen": [
+            "la explicación es de un solo control y se necesita al pasar o enfocar: eso es Tooltip",
+            "hay que completar pasos que cambian datos (un alta, una configuración): eso es un formulario por pasos con Steps, no un recorrido que señala",
+            "el contenido es largo o necesita imágenes y ejemplos: eso es una página de ayuda o un Dialog, no una caja junto a un elemento",
+            "la función sólo se entiende con el recorrido: si una pieza necesita un tour para usarse, el problema es la pieza"
+          ],
+          "host": "div",
+          "id": "Tour",
+          "intent": [
+            "product-tour",
+            "guided-tour",
+            "onboarding-walkthrough",
+            "feature-highlight",
+            "coach-marks"
+          ],
+          "parents": [],
+          "useWhen": [
+            "una interfaz nueva o rediseñada tiene pocas piezas que conviene señalar en orden (tres a cinco), y quien la usa puede pedir el recorrido cuando quiera",
+            "cada paso cabe en una idea: qué es este elemento y para qué sirve, en una o dos frases",
+            "la página tiene que seguir usable durante el recorrido: sin fondo que la tape, sin bloquear clics y sin atrapar el foco"
+          ]
+        },
+        {
+          "alternatives": [
+            "Button.action"
+          ],
+          "avoidWhen": [
+            "se quiere iniciar el recorrido solo al cargar la página: un tour nunca empieza sin que alguien lo pida"
+          ],
+          "host": "button",
+          "id": "Tour.Trigger",
+          "intent": [
+            "start-tour",
+            "repeat-tour",
+            "restart-onboarding"
+          ],
+          "parents": [],
+          "useWhen": [
+            "el recorrido tiene que poder iniciarse, y repetirse después de omitirlo o terminarlo, desde un lugar visible y estable (la ayuda, el encabezado)"
+          ]
+        }
+      ]
+    },
+    {
       "category": "navigation",
       "css": "@skryensya/core/components/tree-view.css",
       "id": "tree-view",
@@ -5131,6 +5338,40 @@
       ]
     },
     {
+      "category": "overlays",
+      "css": "@skryensya/core/components/window.css",
+      "id": "window",
+      "signatures": [
+        {
+          "alternatives": [
+            "Dialog",
+            "Popover",
+            "Vaul"
+          ],
+          "avoidWhen": [
+            "hay que decidir algo antes de seguir; eso es un Dialog, que deja la página inerte",
+            "el contenido cuelga de un control y se cierra al hacer clic afuera; eso es un Popover",
+            "el panel entra desde un borde y no se mueve; eso es un Vaul",
+            "sin JavaScript el contenido tiene que seguir visible: una ventana no se abre sin su máquina"
+          ],
+          "host": "div",
+          "id": "Window",
+          "intent": [
+            "floating-window",
+            "movable-panel",
+            "resizable-panel",
+            "non-modal-tool-panel",
+            "floating-panel"
+          ],
+          "parents": [],
+          "useWhen": [
+            "hace falta un panel que conviva con la página: una paleta de herramientas, un inspector, un chat que queda abierto al lado del trabajo",
+            "quien lo usa tiene que poder moverlo, cambiarle el tamaño o minimizarlo para ver lo que tapa"
+          ]
+        }
+      ]
+    },
+    {
       "category": "layout",
       "css": "@skryensya/core/patterns/wrapper.css",
       "id": "wrapper",
@@ -5164,5 +5405,5 @@
     }
   ],
   "schemaVersion": "2.3",
-  "sourceHash": "1cb2fecd44e045a0"
+  "sourceHash": "11751c61a72c6e43"
 }

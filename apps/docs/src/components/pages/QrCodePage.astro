@@ -49,7 +49,54 @@ import "@skryensya/core/components/button.css";
 const locale = getLocale(Astro.url);
 const t = useTranslations(locale);
 
-const install = `pnpm add @skryensya/core @skryensya/react`;
+const install = `pnpm add @skryensya/core @skryensya/react
+# or, for authored HTML
+pnpm add @skryensya/core @skryensya/vanilla`;
+
+const runtimeHtml = `<!-- The shell, with an EMPTY path: the enhancer draws it. -->
+<div class="sk-qr-code" data-sk-qr-code role="img" aria-label="Open your invitation"
+     data-value="https://example.com/invite/8f2c" data-level="Q" data-size="md">
+  <svg class="sk-qr-code__frame" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+    <path class="sk-qr-code__modules" fill="currentColor"></path>
+  </svg>
+</div>`;
+
+const exportReact = `import { useRef } from "react";
+import { QRCode, downloadQrCode } from "@skryensya/react/qr-code";
+import { Button } from "@skryensya/react/button";
+
+export function Invitation({ url }: { url: string }) {
+  const code = useRef<HTMLDivElement>(null);
+  return (
+    <>
+      <QRCode ref={code} value={url} label="Open your invitation" />
+      <Button variant="soft" onClick={() => downloadQrCode(code.current!, { fileName: "invitation" })}>
+        Download PNG
+      </Button>
+    </>
+  );
+}`;
+
+const exportJs = `import { downloadQrCode, qrCodeToDataUrl, qrCodeToSvg } from "@skryensya/vanilla/qr-code";
+
+const code = document.querySelector(".sk-qr-code");
+
+await downloadQrCode(code, { fileName: "invitation" });                // PNG, 1024 px
+await downloadQrCode(code, { type: "image/svg+xml" });                 // vector, for print
+const url = await qrCodeToDataUrl(code, { type: "image/jpeg", size: 512, quality: 0.9 });
+const svg = qrCodeToSvg(code, { polarity: "as-drawn" });               // exactly what is on screen`;
+
+const runtimeJs = `import { initComponents } from "@skryensya/vanilla/auto";
+
+await initComponents();
+
+// Re-point it later: the symbol redraws itself.
+const code = document.querySelector("[data-sk-qr-code]");
+code.dataset.value = \`https://example.com/invite/\${inviteId}\`;
+code.setAttribute("aria-label", "Open your new invitation");
+
+// A value too long for any QR leaves the drawing empty and marks the root.
+if (code.hasAttribute("data-sk-qr-error")) showCopyableLinkInstead();`;
 
 const styles = `@import "@skryensya/core/tokens.scss";
 @import "@skryensya/core/components/qr-code.css";`;
@@ -60,7 +107,11 @@ const styles = `@import "@skryensya/core/tokens.scss";
   description={t("qrCodePage.description")}
   badge={t("qrCodePage.betaBadge")}
   contractId="qr-code"
-  testFiles={["packages/core/src/qr-code.test.ts", "packages/react/src/components/qr-code.test.tsx"]}}
+  testFiles={[
+    "packages/core/src/qr-code.test.ts",
+    "packages/vanilla/src/components/qr-code.test.ts",
+    "packages/react/src/components/qr-code.test.tsx",
+  ]}}
 >
   <Fragment slot="anatomy">
     <p set:html={t("qrCodePage.anatomyBody")} />
@@ -154,6 +205,16 @@ const styles = `@import "@skryensya/core/tokens.scss";
       label={t("qrCodePage.ticketLabel")}
       note={t("qrCodePage.ticketNote")}
     />
+
+    <h3>{t("qrCodePage.runtimeTitle")}</h3>
+    <p set:html={t("qrCodePage.runtimeBody")} />
+    <CodeBlock code={runtimeHtml} label="HTML" lang="html" />
+    <CodeBlock code={runtimeJs} label="JavaScript" />
+
+    <h3>{t("qrCodePage.exportTitle")}</h3>
+    <p set:html={t("qrCodePage.exportBody")} />
+    <CodeBlock code={exportReact} label="React" lang="tsx" />
+    <CodeBlock code={exportJs} label="JavaScript" />
 
     <h3>{t("qrCodePage.limitsTitle")}</h3>
     <ul>

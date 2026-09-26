@@ -1270,15 +1270,6 @@
       "timeline-part-by-part": 365,
       "timeline-the-five-tones": 414
     },
-    "/components/typography": {
-      "code-within-text": 121,
-      "heading": 121,
-      "link-within-text": 97,
-      "output-element": 73,
-      "strong-emphasis": 121,
-      "text": 121,
-      "text-secondary-tone": 97
-    },
     "/es/componentes/description-list": {
       "descriptionlist": 232,
       "descriptionlist-con-divisores-compacta": 312,
@@ -1334,15 +1325,6 @@
       "timeline": 467,
       "timeline-los-cinco-tonos": 389,
       "timeline-parte-por-parte": 365
-    },
-    "/es/componentes/tipografia": {
-      "code-within-text": 121,
-      "heading": 121,
-      "link-within-text": 121,
-      "output-element": 73,
-      "strong-emphasis": 121,
-      "text": 121,
-      "text-secondary-tone": 121
     },
     "/es/tipografia": {
       "caption-a-lg": 175,

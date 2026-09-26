@@ -30,6 +30,14 @@ export const textMessages = {
     "textPage.feedbackTitle": "Feedback de validación",
     "textPage.feedbackBody": "El tono <code>danger</code> comunica el problema; el rol de región viva sigue siendo una decisión del contexto que usa Text.",
     "textPage.feedbackLabel": "Mensaje de validación",
+    "textPage.codeTitle": "Code: un literal dentro del texto",
+    "textPage.codeBody":
+      "<code>Code</code> es para literales: una ruta, un flag, el nombre de una propiedad. Se ve distinto para no confundirlo con prosa. Si es un bloque de código entero, usa <code>CodePreview</code> con su scroll y botón de copiar.",
+    "textPage.codeLabel": "Código dentro de una frase",
+    "textPage.outputTitle": "Output: el resultado de un cálculo",
+    "textPage.outputBody":
+      "<code>Output</code> muestra el resultado de una entrada o interacción. El <code>outputFor</code> nombra los ids de esas entradas para que un lector de pantalla entienda la relación.",
+    "textPage.outputLabel": "Resultado de un cálculo",
     "textPage.contractItem1": "<code>sk-text</code> aporta el estilo base de lectura.",
     "textPage.contractItem2": "<code>data-size</code>: <code>caption</code>, <code>sm</code>, <code>body</code> o <code>lg</code>.",
     "textPage.contractItem3": "<code>data-tone</code>: <code>action</code>, <code>secondary</code>, <code>tertiary</code> o <code>danger</code>.",
@@ -71,6 +79,14 @@ export const textMessages = {
     "textPage.feedbackTitle": "Validation feedback",
     "textPage.feedbackBody": "The <code>danger</code> tone communicates the problem; the live-region role stays a decision of the context using Text.",
     "textPage.feedbackLabel": "Validation message",
+    "textPage.codeTitle": "Code: a literal inside text",
+    "textPage.codeBody":
+      "<code>Code</code> is for literals: a path, a flag, a property name. It looks different so it is not confused with prose. If it is a whole code block, use <code>CodePreview</code> with scroll and copy button.",
+    "textPage.codeLabel": "Code inside a sentence",
+    "textPage.outputTitle": "Output: the result of a calculation",
+    "textPage.outputBody":
+      "<code>Output</code> shows the result of an input or interaction. The <code>outputFor</code> names the ids of those inputs so a screen reader understands the relationship.",
+    "textPage.outputLabel": "Result of a calculation",
     "textPage.contractItem1": "<code>sk-text</code> supplies the base reading style.",
     "textPage.contractItem2": "<code>data-size</code>: <code>caption</code>, <code>sm</code>, <code>body</code>, or <code>lg</code>.",
     "textPage.contractItem3": "<code>data-tone</code>: <code>action</code>, <code>secondary</code>, <code>tertiary</code>, or <code>danger</code>.",

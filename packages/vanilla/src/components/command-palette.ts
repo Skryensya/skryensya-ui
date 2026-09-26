@@ -1,8 +1,10 @@
 import {
   commandPaletteAttrs,
+  commandPaletteEvents,
   commandPaletteOptionContext,
   commandPaletteParts,
   filterCommandPaletteEntries,
+  type CommandPaletteCommandEventDetail,
   type CommandPaletteEntry,
 } from "@skryensya/core/command-palette";
 import { detectMac, formatHotkey } from "@skryensya/core/hotkey";
@@ -151,7 +153,11 @@ export function connectCommandPalette(root: HTMLElement): Cleanup {
       .map((entry, i) => {
         const context = commandPaletteOptionContext(entry);
         return (
-          `<li class="${commandPaletteParts.option}" id="${optionId(i)}" role="option" aria-selected="false" data-href="${escapeAttr(entry.href)}">` +
+          `<li class="${commandPaletteParts.option}" id="${optionId(i)}" role="option" aria-selected="false" ${
+            entry.command === undefined
+              ? `data-href="${escapeAttr(entry.href)}"`
+              : `data-command="${escapeAttr(entry.command)}"`
+          }>` +
           `<span class="${commandPaletteParts.optionLabel}">${escapeAttr(entry.label)}</span>` +
           (context
             ? `<span class="${commandPaletteParts.optionContext}">${escapeAttr(context)}</span>`
@@ -174,9 +180,25 @@ export function connectCommandPalette(root: HTMLElement): Cleanup {
     sizeList();
   };
 
+  /*
+   * A command closes the palette BEFORE it fires: closing a modal dialog hands focus back to
+   * whatever opened it, and a host that answers the command by moving focus (a tour taking it to
+   * its Continue button) has to find the palette already gone, or the close takes the focus back.
+   */
   const go = (i: number) => {
-    const href = results[i]?.href;
-    if (href) window.location.assign(href);
+    const entry = results[i];
+    if (!entry) return;
+    if (entry.command === undefined) {
+      window.location.assign(entry.href);
+      return;
+    }
+    close();
+    root.dispatchEvent(
+      new CustomEvent<CommandPaletteCommandEventDetail>(commandPaletteEvents.command, {
+        bubbles: true,
+        detail: { command: entry.command, entry },
+      }),
+    );
   };
 
   const open = () => {
@@ -218,7 +240,7 @@ export function connectCommandPalette(root: HTMLElement): Cleanup {
     const option = (event.target as HTMLElement).closest<HTMLElement>(
       `.${commandPaletteParts.option}`,
     );
-    if (option?.dataset.href) window.location.assign(option.dataset.href);
+    if (option) go([...list.children].indexOf(option));
   };
 
   const onDialogClick = (event: MouseEvent) => {

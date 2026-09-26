@@ -1,0 +1,26 @@
+# Qué cambió en tour, en las palabras que lee quien lo usa. Sólo se agrega, nunca se reescribe.
+#
+# `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
+# que no coincide, algo de lo que un consumidor depende se movió: escribe la entrada y pega el
+# hash nuevo.
+surface: "94b9ca6fc1977946"
+entries:
+  - date: 2026-09-25
+    kind: feature
+    target: Tour
+    es:
+      title: Un recorrido guiado que no bloquea la página
+      body: >-
+        Nuevo contrato <code>Tour</code>: un aro alrededor de un elemento y un diálogo no modal que lo explica, paso a paso. Sin fondo, sin
+        <code>inert</code> ni <code>aria-modal</code>, y un clic fuera no hace nada. Sólo empieza cuando alguien lo pide (<code>Tour.Trigger</code>
+        o <code>start()</code>), nunca avanza solo, y un paso cuyo objetivo no está o está oculto se omite. El foco va a Continuar en cada cambio de
+        paso (un <code>aria-live</code> anuncia el paso nuevo) y vuelve al disparador al cerrar; <kbd>Esc</kbd> cede ante menús y diálogos abiertos. Recuerda si se completó u omitió, y el
+        disparador puede decir «Repetir tour».
+    en:
+      title: A guided tour that never blocks the page
+      body: >-
+        New <code>Tour</code> contract: a ring around one element and a non-modal dialog that explains it, step by step. No backdrop, no
+        <code>inert</code> or <code>aria-modal</code>, and a click outside does nothing. It starts only when someone asks (<code>Tour.Trigger</code>
+        or <code>start()</code>), never advances on its own, and a step whose target is missing or hidden is skipped. Focus goes to Continue on
+        every step change (an <code>aria-live</code> region announces the new step) and back to the trigger on close; <kbd>Esc</kbd> yields to open menus and dialogs. It remembers whether it was
+        completed or skipped, and the trigger can read "Repeat tour".

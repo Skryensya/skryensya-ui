@@ -26,12 +26,23 @@ const dialogProto = globalThis.HTMLDialogElement?.prototype as
   | (HTMLDialogElement & { showModal?: () => void })
   | undefined;
 if (dialogProto && typeof dialogProto.showModal !== "function") {
-  const show = function show(this: HTMLDialogElement) {
+  /* jsdom parses `:modal` and answers false for everything, having no top layer. The dialogs this
+   * shim opened with `showModal()` are the modal ones, so `matches(":modal")`, the exact query
+   * `focus-trap.ts`'s `isModalDialog` makes, answers from this set. Any other selector is jsdom's. */
+  const modal = new WeakSet<HTMLDialogElement>();
+  const matches = Element.prototype.matches;
+  dialogProto.matches = function (this: HTMLDialogElement, selector: string) {
+    return selector === ":modal" ? modal.has(this) && this.open : matches.call(this, selector);
+  };
+  dialogProto.show = function show(this: HTMLDialogElement) {
     this.setAttribute("open", "");
   };
-  dialogProto.show = show;
-  dialogProto.showModal = show;
+  dialogProto.showModal = function showModal(this: HTMLDialogElement) {
+    this.setAttribute("open", "");
+    modal.add(this);
+  };
   dialogProto.close = function close(this: HTMLDialogElement, returnValue?: string) {
+    modal.delete(this);
     if (!this.hasAttribute("open")) return;
     if (returnValue !== undefined) this.returnValue = returnValue;
     this.removeAttribute("open");

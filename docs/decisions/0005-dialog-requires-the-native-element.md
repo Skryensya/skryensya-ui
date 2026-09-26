@@ -11,6 +11,9 @@ summary: >-
   failing.
 ---
 
+> Amended by [decision 24](./0024-modals-wrap-tab-and-the-tab-order-has-one-definition.md): the kit
+> now wraps Tab at a modal's two ends, the one thing `showModal()` leaves to the page.
+
 The dialog is the first component that needs **behavior**, focus trap, ESC, inert background, focus
 restoration, where `button` needed none.
 

@@ -1,0 +1,15 @@
+# The structure lives in packages/core/src/presence.ts. Here, only why it is chosen.
+
+Presence:
+  useWhen:
+    - "un contenido aparece y desaparece según un estado, y su salida tiene que verse en vez de cortarse de golpe"
+    - "en React, el contenido se renderiza condicionalmente y hay que esperar a que termine la salida antes de desmontarlo"
+  avoidWhen:
+    - "el contenido es un diálogo, popover, menú o tooltip; esos ya animan su propia entrada y salida"
+    - "lo que se abre y cierra es una sección con encabezado; eso es Details o Accordion, que animan la altura"
+    - "el contenido no cambia de visibilidad; la animación solo retrasaría la lectura"
+  alternatives:
+    - Details
+    - Accordion
+    - Dialog
+    - Popover

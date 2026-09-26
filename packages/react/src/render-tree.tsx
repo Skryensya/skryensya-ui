@@ -4,7 +4,7 @@ import { getContract, getSignature } from "@skryensya/core/registry";
 import { resolveReactProps } from "@skryensya/core/react-props";
 import {
   collectionItems,
-  flattenCollectionEntry,
+  reactCollectionEntry,
   isUsageTree,
   slotItems,
   slotsOf,
@@ -40,6 +40,7 @@ const loaders: Record<string, () => Promise<Record<string, unknown>>> = {
   "@skryensya/react/dialog": () => import("./components/dialog.js"),
   "@skryensya/react/split-button": () => import("./components/split-button.js"),
   "@skryensya/react/popover": () => import("./components/popover.js"),
+  "@skryensya/react/window": () => import("./components/window.js"),
   "@skryensya/react/command-palette": () => import("./components/command-palette.js"),
   "@skryensya/react/code-preview": () => import("./components/code-preview.js"),
   "@skryensya/react/details": () => import("./components/details.js"),
@@ -75,6 +76,12 @@ const loaders: Record<string, () => Promise<Record<string, unknown>>> = {
   "@skryensya/react/back-to-top": () => import("./components/back-to-top.js"),
   "@skryensya/react/canvas": () => import("./components/canvas.js"),
   "@skryensya/react/lightbox": () => import("./components/lightbox.js"),
+  "@skryensya/react/tour": () => import("./components/tour.js"),
+  "@skryensya/react/clipboard": () => import("./components/clipboard.js"),
+  "@skryensya/react/listbox": () => import("./components/listbox.js"),
+  /* Named by their contracts and missing from this map since it went lazy, which failed the gate stage. */
+  "@skryensya/react/otp-input": () => import("./components/otp-input.js"),
+  "@skryensya/react/rating": () => import("./components/rating.js"),
   "@skryensya/react/skip-link": () => import("./components/skip-link.js"),
   "@skryensya/react/carousel": () => import("./components/carousel.js"),
   "@skryensya/react/marquee": () => import("./components/marquee.js"),
@@ -94,6 +101,8 @@ const loaders: Record<string, () => Promise<Record<string, unknown>>> = {
   "@skryensya/react/icon": () => import("./components/icon.js"),
   "@skryensya/react/image-frame": () => import("./components/image-frame.js"),
   "@skryensya/react/fade-edge": () => import("./components/fade-edge.js"),
+  "@skryensya/react/presence": () => import("./components/presence.js"),
+  "@skryensya/react/password-input": () => import("./components/password-input.js"),
   "@skryensya/react/qr-code": () => import("./components/qr-code.js"),
   "@skryensya/react/form-field": () => import("./components/form-field.js"),
   "@skryensya/react/input": () => import("./components/input.js"),
@@ -234,8 +243,8 @@ export function renderTree(tree: UsageTree, key?: string | number): ReactNode {
  * has to become the actual prop value React takes, so a tree gets rendered through `renderItem`
  * right here rather than left for a caller to emit separately.
  */
-function flattenEntry(entry: ItemInput, shape?: ContractSlot["item"]): Record<string, unknown> {
-  return flattenCollectionEntry(entry, shape, (values) =>
+function flattenEntry(entry: ItemInput, shape?: ContractSlot["item"]): unknown {
+  return reactCollectionEntry(entry, shape, (values) =>
     values.length === 1 && !isUsageTree(values[0]!) ? values[0] : values.map(renderItem),
   );
 }

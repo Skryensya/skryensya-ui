@@ -224,6 +224,8 @@ export const tagsInputContract = {
                */
               label: { accepts: "text", required: true },
             },
+            /* React's `defaultValue` is `string[]`: an entry reaches it as its text alone. */
+            unwrap: "label",
           },
         },
       },

@@ -2046,6 +2046,26 @@
         "version": "0.0.1-dev"
       }
     ],
+    "clipboard": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-09-25",
+            "en": {
+              "body": "New <code>clipboard</code> contract on <code>@zag-js/clipboard</code>, the same machine in both bindings. <code>CopyButton</code> is the button alone: it copies <code>value</code> or, at the moment of the click, the text of the element <code>target</code> names. <code>Clipboard</code> adds a label and a read-only field showing the value. If the browser refuses the write, the button says so (<code>data-error</code>, \"Copy failed\") instead of showing \"Copied\" anyway.",
+              "title": "Copy to the clipboard, on Zag's machine"
+            },
+            "es": {
+              "body": "Nuevo contrato <code>clipboard</code> sobre <code>@zag-js/clipboard</code>, la misma máquina en las dos capas. <code>CopyButton</code> es el botón solo: copia <code>value</code> o, al momento del clic, el texto del elemento que nombra <code>target</code>. <code>Clipboard</code> suma una etiqueta y un campo de solo lectura con el valor. Si el navegador rechaza la escritura, el botón lo dice (<code>data-error</code>, «No se pudo copiar») en vez de mostrar «Copiado» igual.",
+              "title": "Copiar al portapapeles, sobre la máquina de Zag"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.0.1-dev"
+      }
+    ],
     "code-preview": [
       {
         "date": null,
@@ -2422,6 +2442,18 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-25",
+            "en": {
+              "body": "An entry can carry <code>command</code> instead of <code>href</code>. Commands are listed only once the query starts with <code>/</code>, and a query without it lists only destinations. Activating one closes the palette and fires <code>sk:commandpalettecommand</code> on the dialog with <code>{ command, entry }</code>; React also calls <code>onCommand</code>. It never navigates and never reaches <code>onSelect</code>.",
+              "title": "Commands, alongside destinations"
+            },
+            "es": {
+              "body": "Una entrada puede llevar <code>command</code> en vez de <code>href</code>. Los comandos sólo aparecen cuando la búsqueda empieza con <code>/</code>, y una búsqueda sin <code>/</code> sólo lista destinos. Activar uno cierra la paleta y dispara <code>sk:commandpalettecommand</code> en el diálogo con <code>{ command, entry }</code>; en React también llama a <code>onCommand</code>. Nunca navega ni pasa por <code>onSelect</code>.",
+              "title": "Comandos, además de destinos"
+            },
+            "kind": "feature"
+          },
           {
             "date": "2026-09-17",
             "en": {
@@ -3648,6 +3680,18 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-25",
+            "en": {
+              "body": "New <code>scrollAware</code> option (<code>data-scroll-aware</code>): once the scroll reaches the edge the fade points at, or the content fits without scrolling, <code>data-at-edge</code> is written and the fade retires. Without the option nothing changes. Authored markup needs <code>data-sk-fade-edge</code> for the enhancer to find it.",
+              "title": "FadeEdge can retire its fade at the edge"
+            },
+            "es": {
+              "body": "Nueva opción <code>scrollAware</code> (<code>data-scroll-aware</code>): cuando el scroll llega al borde al que apunta el fundido, o el contenido entra sin scrollear, se escribe <code>data-at-edge</code> y el fundido se retira. Sin la opción no cambia nada. En markup escrito a mano hace falta <code>data-sk-fade-edge</code> para que el enhancer lo encuentre.",
+              "title": "FadeEdge puede retirar el fundido al llegar al borde"
+            },
+            "kind": "feature"
+          },
+          {
             "date": "2026-09-17",
             "en": {
               "body": "With the default transparent mode, <code>color</code> was written and painted nothing. That combination stops validating.",
@@ -4463,6 +4507,19 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-25",
+            "en": {
+              "body": "The three stages of a window, for <code>Window</code>'s controls. <code>restore</code> is the way back from either of the other two, which is why it is one role. Lucide <code>Minus</code>, <code>Maximize2</code> and <code>Minimize2</code>, Phosphor <code>minus</code>, <code>arrows-out-simple</code> and <code>arrows-in-simple</code>, Material <code>minimize</code>, <code>open_in_full</code> and <code>close_fullscreen</code>; all three sets in this repo ship them.",
+              "title": "The stable vocabulary gains minimize, maximize and restore"
+            },
+            "es": {
+              "body": "Las tres etapas de una ventana, para los controles de <code>Window</code>. <code>restore</code> es la vuelta desde cualquiera de las otras dos, por eso es un solo rol. Lucide <code>Minus</code>, <code>Maximize2</code> y <code>Minimize2</code>, Phosphor <code>minus</code>, <code>arrows-out-simple</code> y <code>arrows-in-simple</code>, Material <code>minimize</code>, <code>open_in_full</code> y <code>close_fullscreen</code>; los tres sets del repo ya los traen.",
+              "title": "El vocabulario estable gana minimize, maximize y restore"
+            },
+            "kind": "feature",
+            "target": "name"
+          },
+          {
             "date": "2026-09-23",
             "en": {
               "body": "<code>zoom-in</code>, the pair of <code>zoom-out</code>, and <code>fit</code>, \"show all of it in the view\": the first names no magnifying glass and the second is not <code>maximize</code>, which is about the window. <code>Canvas</code>'s zoom bar consumes them. Lucide <code>ZoomIn</code> and <code>Scan</code>, Phosphor <code>magnifying-glass-plus</code> and <code>corners-out</code>, Material <code>zoom_in</code> and <code>fit_screen</code>; all three sets in this repo ship them.",
@@ -5128,6 +5185,26 @@
             "es": {
               "body": "Entra al catálogo con <code>List</code>, <code>OrderedList</code>, <code>ListItemPlain</code>, <code>ListItem</code>, <code>ListItemLink</code>: los dos bindings lo realizan, y la referencia de esta página sale del contrato compilado en vez de prosa escrita al lado. No tiene enhancer: el markup está completo por sí solo, así que las dos bindings son el mismo markup dos veces. Opciones: <code>density</code>, <code>dividers</code>, <code>href</code>, <code>disabled</code>. La hoja es <code>components/list.css</code>.",
               "title": "List se publica como contrato, con 5 signatures"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.0.1-dev"
+      }
+    ],
+    "listbox": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-09-25",
+            "en": {
+              "body": "New <code>Listbox</code> contract on <code>@zag-js/listbox</code>, the same machine in both bindings: an always-open list with <code>selectionMode</code> <code>single</code>, <code>multiple</code> or <code>extended</code>, vertical or horizontal, typeahead, and focus kept on the list through <code>aria-activedescendant</code>. The initial selection is marked per option with <code>defaultSelected</code>. Every change fires <code>sk:listboxvaluechange</code> with <code>{ value }</code>. It is not a form control.",
+              "title": "A list you choose from in place"
+            },
+            "es": {
+              "body": "Nuevo contrato <code>Listbox</code> sobre <code>@zag-js/listbox</code>, la misma máquina en las dos capas: una lista siempre abierta con <code>selectionMode</code> <code>single</code>, <code>multiple</code> o <code>extended</code>, orientación vertical u horizontal, búsqueda al tipear y el foco en la lista con <code>aria-activedescendant</code>. La selección inicial se marca por opción con <code>defaultSelected</code>. Cada cambio dispara <code>sk:listboxvaluechange</code> con <code>{ value }</code>. No es un control de formulario.",
+              "title": "Una lista para elegir en el lugar"
             },
             "kind": "feature"
           }
@@ -6598,6 +6675,26 @@
         "version": "0.0.1-dev"
       }
     ],
+    "password-input": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-09-25",
+            "en": {
+              "body": "New <code>password-input</code> contract on <code>@zag-js/password-input</code>, the same machine in both bindings. The button toggles between hiding and showing, renames itself (<code>showLabel</code>/<code>hideLabel</code>), and the password hides again when the form is submitted or reset. <code>autoComplete</code> tells signing in (<code>current-password</code>) from creating one (<code>new-password</code>). Unlike Zag's, the button is reachable with Tab and activates with Enter or Space.",
+              "title": "PasswordInput, a password field with a button to show it"
+            },
+            "es": {
+              "body": "Nuevo contrato <code>password-input</code> sobre <code>@zag-js/password-input</code>, la misma máquina en las dos capas. El botón alterna entre ocultar y mostrar, cambia su nombre accesible (<code>showLabel</code>/<code>hideLabel</code>) y la contraseña vuelve a ocultarse al enviar o reiniciar el formulario. <code>autoComplete</code> distingue entre entrar (<code>current-password</code>) y crear una (<code>new-password</code>). A diferencia de Zag, el botón se alcanza con Tab y se activa con Enter o Espacio.",
+              "title": "PasswordInput, un campo de contraseña con botón para mostrarla"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.0.1-dev"
+      }
+    ],
     "placeholder": [
       {
         "date": null,
@@ -6809,6 +6906,26 @@
         "version": "0.0.1-dev"
       }
     ],
+    "presence": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-09-25",
+            "en": {
+              "body": "It joins the catalogue with <code>Presence</code>: content that animates its exit before it leaves. Its state is <code>hidden</code>, and <code>components/presence.css</code> holds it on screen for the exit with <code>allow-discrete</code>, so in authored markup toggling <code>hidden</code> is the whole API. <code>setPresent</code>, from <code>@skryensya/vanilla/presence</code>, also tells you when the exit has finished. In React, <code>present</code>, <code>unmountOnExit</code> and <code>lazyMount</code> cover the case CSS cannot: conditional content that would unmount before it could animate.",
+              "title": "Presence is published as a contract, with one signature"
+            },
+            "es": {
+              "body": "Entra al catálogo con <code>Presence</code>: contenido que anima su salida antes de irse. El estado es <code>hidden</code>, y la hoja <code>components/presence.css</code> lo mantiene en pantalla durante la salida con <code>allow-discrete</code>, así que en markup escrito a mano alternar <code>hidden</code> es toda la API. <code>setPresent</code>, en <code>@skryensya/vanilla/presence</code>, además avisa cuándo terminó la salida. En React, <code>present</code>, <code>unmountOnExit</code> y <code>lazyMount</code> resuelven el caso que el CSS no puede: un contenido condicional que se desmontaría antes de animar.",
+              "title": "Presence se publica como contrato, con una signature"
+            },
+            "kind": "feature"
+          }
+        ],
+        "version": "0.0.1-dev"
+      }
+    ],
     "process-list": [
       {
         "date": null,
@@ -6913,6 +7030,42 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-25",
+            "en": {
+              "body": "<code>moduleShape=\"dot\"</code> and <code>\"rounded\"</code> also rounded the three corner squares, which are what a camera looks for to find the code before reading a single bit. The payload was intact, but a reader could fail to locate the symbol. Those three patterns are now always drawn solid and the chosen shape applies to every other module. What the symbol encodes does not change.",
+              "title": "With dot and rounded, the three finder patterns stay square"
+            },
+            "es": {
+              "body": "<code>moduleShape=\"dot\"</code> y <code>\"rounded\"</code> también redondeaban los tres cuadrados de las esquinas, que son lo que una cámara busca para encontrar el código antes de leer un solo bit. El contenido seguía intacto, pero un lector podía no localizar el símbolo. Ahora esos tres patrones se dibujan siempre sólidos y la forma elegida se aplica al resto de los módulos. Lo que codifica el símbolo no cambia.",
+              "title": "Con dot y rounded, los tres patrones de posición siguen siendo cuadrados"
+            },
+            "kind": "bugfix"
+          },
+          {
+            "date": "2026-09-25",
+            "en": {
+              "body": "New Vanilla enhancer <code>data-sk-qr-code</code> (<code>@skryensya/vanilla/qr-code</code>): it draws a QR whose value is only known in the browser and redraws it when <code>data-value</code>, <code>data-level</code>, <code>data-mask</code>, <code>data-module-shape</code> or <code>data-quiet-zone</code> change, with the same encoder as React and the emitted markup. That is why <code>value</code>, <code>level</code>, <code>mask</code> and <code>quietZone</code> are now written as attributes by both bindings. A QR that is already drawn is not encoded again on load. When the value does not fit, the drawing is left empty and the root carries <code>data-sk-qr-error</code>: it never keeps showing the previous code.",
+              "title": "A QR can be drawn and changed in the browser, with no framework"
+            },
+            "es": {
+              "body": "Nuevo enhancer Vanilla <code>data-sk-qr-code</code> (<code>@skryensya/vanilla/qr-code</code>): dibuja un QR cuyo valor sólo se conoce en el navegador y lo redibuja cuando cambia <code>data-value</code>, <code>data-level</code>, <code>data-mask</code>, <code>data-module-shape</code> o <code>data-quiet-zone</code>, con el mismo codificador que React y el markup emitido. Por eso <code>value</code>, <code>level</code>, <code>mask</code> y <code>quietZone</code> ahora se escriben como atributos en ambos bindings. Un QR ya dibujado no se codifica de nuevo al cargar. Si el valor no cabe, el dibujo queda vacío y la raíz lleva <code>data-sk-qr-error</code>: nunca sigue mostrando el código anterior.",
+              "title": "Un QR se puede dibujar y cambiar en el navegador, sin framework"
+            },
+            "kind": "feature"
+          },
+          {
+            "date": "2026-09-25",
+            "en": {
+              "body": "<code>downloadQrCode</code>, <code>qrCodeToBlob</code>, <code>qrCodeToDataUrl</code> and <code>qrCodeToSvg</code> (<code>@skryensya/core/qr-code-export</code>, re-exported from <code>@skryensya/react/qr-code</code> and <code>@skryensya/vanilla/qr-code</code>) export the QR as it is drawn, with the tone as literal colours, the paper painted and the logo when it is an <code>&lt;svg&gt;</code> or an <code>&lt;img&gt;</code> served with CORS. By default it comes out dark on light even when the page is in dark mode; <code>polarity: \"as-drawn\"</code> exports what is on screen. React's <code>QRCode</code> accepts a <code>ref</code>. The contract still has no download button: this is a function your own button calls.",
+              "title": "Export a QR as PNG, JPEG, WebP or SVG"
+            },
+            "es": {
+              "body": "<code>downloadQrCode</code>, <code>qrCodeToBlob</code>, <code>qrCodeToDataUrl</code> y <code>qrCodeToSvg</code> (<code>@skryensya/core/qr-code-export</code>, reexportados desde <code>@skryensya/react/qr-code</code> y <code>@skryensya/vanilla/qr-code</code>) exportan el QR tal como está dibujado, con el tono en colores literales, el papel pintado y el logo cuando es un <code>&lt;svg&gt;</code> o una <code>&lt;img&gt;</code> con CORS. Por defecto sale oscuro sobre claro aunque la página esté en modo oscuro; <code>polarity: \"as-drawn\"</code> exporta lo que se ve. <code>QRCode</code> en React acepta <code>ref</code>. El contrato sigue sin botón de descarga: es una función que llama el tuyo.",
+              "title": "Exportar un QR como PNG, JPEG, WebP o SVG"
+            },
+            "kind": "feature"
+          },
           {
             "date": "2026-09-17",
             "en": {
@@ -8509,6 +8662,18 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-25",
+            "en": {
+              "body": "<code>stableIconNames</code> gained <code>minimize</code>, <code>maximize</code> and <code>restore</code>, and an IconStateButton's faces are named from that vocabulary, so the enum widens on its own. Nothing that compiled before stops compiling.",
+              "title": "Faces accept minimize, maximize and restore"
+            },
+            "es": {
+              "body": "<code>stableIconNames</code> sumó <code>minimize</code>, <code>maximize</code> y <code>restore</code>, y las faces de IconStateButton se nombran con ese vocabulario, así que el enum se ensancha solo. Nada que ya compilaba deja de compilar.",
+              "title": "Las faces aceptan minimize, maximize y restore"
+            },
+            "kind": "feature"
+          },
+          {
             "date": "2026-09-23",
             "en": {
               "body": "<code>stableIconNames</code> gained <code>zoom-in</code> and <code>fit</code>, and an IconStateButton's faces are named from that vocabulary, so the enum widens on its own. Nothing that compiled before stops compiling.",
@@ -9391,6 +9556,18 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-25",
+            "en": {
+              "body": "A tree with initial tags handed React <code>defaultValue=[{ label: \"react\" }]</code>, which does not typecheck against <code>string[]</code> and throws on render. The collection declares <code>unwrap: \"label\"</code>, so the render and the published snippet pass <code>[\"react\"]</code>. The markup does not change.",
+              "title": "React receives tags as text, not objects"
+            },
+            "es": {
+              "body": "Un árbol con tags iniciales le pasaba a React <code>defaultValue=[{ label: \"react\" }]</code>, que no compila contra <code>string[]</code> y revienta al renderizar. La colección declara <code>unwrap: \"label\"</code>, así que el render y el snippet publicado pasan <code>[\"react\"]</code>. El markup no cambia.",
+              "title": "React recibe los tags como texto, no como objetos"
+            },
+            "kind": "bugfix"
+          },
+          {
             "date": "2026-09-20",
             "en": {
               "body": "It joins the catalogue with <code>TagsInput</code>: several values typed into one field (topics, recipients, labels). It accepts whatever is typed, which is the difference from <code>Combobox</code>: that one resolves what is typed against its own options, and this one takes the person's own vocabulary. The chip <strong>is</strong> a <code>Tag</code> (composed <code>sk-tag</code> classes, not a second drawing); what this family adds is the field around them. The starting tags are authored as markup, one element each, so the field is readable before its JavaScript arrives, and the enhancer takes that list as its seed and swaps it for the live one. Options: <code>max</code>, <code>delimiter</code> (a comma by default, which is what a list pasted from a spreadsheet already has), <code>allowDuplicates</code>, <code>editable</code>, plus the usual field states. Two things worth knowing because they are the machine's: past <code>max</code> a tag is refused <em>in silence</em> and the text stays in the entry, and with <code>allowDuplicates</code> off a repeat is dropped without a word. Its stylesheet is <code>components/tags-input.css</code>.",
@@ -9410,6 +9587,19 @@
       {
         "date": null,
         "entries": [
+          {
+            "date": "2026-09-26",
+            "en": {
+              "body": "<code>content</code> and <code>indicator</code> were already renamed into Tile's vocabulary but kept <code>data-scope=\"radio-group\"</code>, naming parts that machine does not have. They now carry <code>data-scope=\"tile\"</code>, like the root and the item, in the template and in both bindings. No selector read them.",
+              "title": "The radio group's renamed parts move to the tile scope"
+            },
+            "es": {
+              "body": "<code>content</code> e <code>indicator</code> ya estaban renombradas al vocabulario de Tile pero seguían con <code>data-scope=\"radio-group\"</code>, nombrando partes que esa máquina no tiene. Ahora llevan <code>data-scope=\"tile\"</code>, como la raíz y el item, en el template y en los dos bindings. Ningún selector las leía.",
+              "title": "Las partes renombradas del grupo de radios quedan en el scope tile"
+            },
+            "kind": "bugfix",
+            "target": "TileRadioGroup"
+          },
           {
             "date": "2026-09-18",
             "en": {
@@ -9957,6 +10147,19 @@
         "date": null,
         "entries": [
           {
+            "date": "2026-09-25",
+            "en": {
+              "body": "The <code>arrow</code> option is written as <code>data-arrow</code> on the root, and markup did so while React did not: it drew the arrow without saying it. Both roots now match.",
+              "title": "React writes data-arrow on the root"
+            },
+            "es": {
+              "body": "La opción <code>arrow</code> se escribe como <code>data-arrow</code> en la raíz, y el markup lo hacía pero React no: dibujaba la flecha sin decirlo. Ahora las dos raíces son iguales.",
+              "title": "React escribe data-arrow en la raíz"
+            },
+            "kind": "bugfix",
+            "target": "arrow"
+          },
+          {
             "date": "2026-09-17",
             "en": {
               "body": "Interactive or form host signatures publish <code>forward</code> (<code>id</code>/<code>aria-*</code> and link or form attrs where relevant). An attr outside the list is <code>unknown-attr</code>.",
@@ -10088,6 +10291,27 @@
               "title": "Tooltip se publica como contrato, con una signature"
             },
             "kind": "feature"
+          }
+        ],
+        "version": "0.0.1-dev"
+      }
+    ],
+    "tour": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-09-25",
+            "en": {
+              "body": "New <code>Tour</code> contract: a ring around one element and a non-modal dialog that explains it, step by step. No backdrop, no <code>inert</code> or <code>aria-modal</code>, and a click outside does nothing. It starts only when someone asks (<code>Tour.Trigger</code> or <code>start()</code>), never advances on its own, and a step whose target is missing or hidden is skipped. Focus goes to Continue on every step change (an <code>aria-live</code> region announces the new step) and back to the trigger on close; <kbd>Esc</kbd> yields to open menus and dialogs. It remembers whether it was completed or skipped, and the trigger can read \"Repeat tour\".",
+              "title": "A guided tour that never blocks the page"
+            },
+            "es": {
+              "body": "Nuevo contrato <code>Tour</code>: un aro alrededor de un elemento y un diálogo no modal que lo explica, paso a paso. Sin fondo, sin <code>inert</code> ni <code>aria-modal</code>, y un clic fuera no hace nada. Sólo empieza cuando alguien lo pide (<code>Tour.Trigger</code> o <code>start()</code>), nunca avanza solo, y un paso cuyo objetivo no está o está oculto se omite. El foco va a Continuar en cada cambio de paso (un <code>aria-live</code> anuncia el paso nuevo) y vuelve al disparador al cerrar; <kbd>Esc</kbd> cede ante menús y diálogos abiertos. Recuerda si se completó u omitió, y el disparador puede decir «Repetir tour».",
+              "title": "Un recorrido guiado que no bloquea la página"
+            },
+            "kind": "feature",
+            "target": "Tour"
           }
         ],
         "version": "0.0.1-dev"
@@ -10833,6 +11057,27 @@
               "title": "Vaul se publica como contrato, con 2 signatures"
             },
             "kind": "feature"
+          }
+        ],
+        "version": "0.0.1-dev"
+      }
+    ],
+    "window": [
+      {
+        "date": null,
+        "entries": [
+          {
+            "date": "2026-09-25",
+            "en": {
+              "body": "New <code>Window</code> contract on the <code>@zag-js/floating-panel</code> machine, the same one in both bindings. It is a non-modal panel: the title bar drags it, the edges and corners resize it, and its controls minimize, maximize, restore and close it. With focus inside, the arrow keys move it and Escape closes it (or cancels the drag in progress). Several open windows stack, and the last one focused sits on top. The content is a <code>role=\"dialog\"</code> with no <code>aria-modal</code>, named by its title. The controls' names are options (<code>closeLabel</code>, <code>minimizeLabel</code>, <code>maximizeLabel</code>, <code>restoreLabel</code>). Events: <code>sk:windowopenchange</code> and <code>sk:windowstagechange</code>. Its stylesheet is <code>components/window.css</code>.",
+              "title": "A window that moves, resizes and minimizes"
+            },
+            "es": {
+              "body": "Nuevo contrato <code>Window</code> sobre la máquina <code>@zag-js/floating-panel</code>, la misma en los dos bindings. Es un panel no modal: la barra de título lo arrastra, los bordes y esquinas lo redimensionan, y sus controles lo minimizan, lo maximizan, lo restauran y lo cierran. Con el foco adentro, las flechas lo mueven y Escape lo cierra (o cancela el arrastre en curso). Varias ventanas abiertas se apilan y la última enfocada queda arriba. El contenido es un <code>role=\"dialog\"</code> sin <code>aria-modal</code>, nombrado por su título. Los nombres de los controles son opciones (<code>closeLabel</code>, <code>minimizeLabel</code>, <code>maximizeLabel</code>, <code>restoreLabel</code>). Eventos: <code>sk:windowopenchange</code> y <code>sk:windowstagechange</code>. La hoja es <code>components/window.css</code>.",
+              "title": "Una ventana que se mueve, cambia de tamaño y se minimiza"
+            },
+            "kind": "feature",
+            "target": "Window"
           }
         ],
         "version": "0.0.1-dev"
@@ -16711,6 +16956,561 @@
         }
       }
     },
+    "clipboard": {
+      "bindings": {
+        "Clipboard": {
+          "enhancer": "data-sk-clipboard",
+          "markup": true,
+          "portals": false,
+          "react": "@skryensya/react/clipboard#Clipboard"
+        },
+        "CopyButton": {
+          "enhancer": "data-sk-clipboard",
+          "markup": true,
+          "portals": false,
+          "react": "@skryensya/react/clipboard#CopyButton"
+        }
+      },
+      "category": "actions",
+      "css": "@skryensya/core/components/clipboard.css",
+      "eventDetails": {
+        "statusChange": {
+          "detail": {
+            "status": "ClipboardStatus"
+          },
+          "reactDetail": "ClipboardStatus",
+          "reactProp": "onStatusChange",
+          "source": "root",
+          "trigger": "trigger"
+        }
+      },
+      "events": {
+        "statusChange": "sk:clipboardstatuschange"
+      },
+      "hookDetails": {
+        "--sk-clipboard-gap": {
+          "default": "var(--space-stack-xs)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/clipboard.css"
+        },
+        "--sk-clipboard-label-fg": {
+          "default": "var(--color-text-primary)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/clipboard.css"
+        },
+        "--sk-clipboard-label-font-size": {
+          "default": "var(--font-size-body-sm)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/clipboard.css"
+        },
+        "--sk-copy-button-error-fg": {
+          "default": "var(--color-text-danger)",
+          "output": false,
+          "part": "trigger",
+          "sheet": "@skryensya/core/components/copy-button.css"
+        },
+        "--sk-copy-button-feedback-bg": {
+          "default": "var(--color-bg-success-subtle)",
+          "output": false,
+          "part": "trigger",
+          "sheet": "@skryensya/core/components/copy-button.css"
+        },
+        "--sk-copy-button-feedback-border-color": {
+          "default": "var(--color-border-success)",
+          "output": false,
+          "part": "trigger",
+          "sheet": "@skryensya/core/components/copy-button.css"
+        },
+        "--sk-copy-button-feedback-fg": {
+          "default": "var(--color-text-success)",
+          "output": false,
+          "part": "trigger",
+          "sheet": "@skryensya/core/components/copy-button.css"
+        },
+        "--sk-copy-button-feedback-font-size": {
+          "default": "var(--font-size-body-sm)",
+          "output": false,
+          "part": "trigger",
+          "sheet": "@skryensya/core/components/copy-button.css"
+        },
+        "--sk-copy-button-feedback-padding": {
+          "default": "var(--space-inset-xs) var(--space-inset-sm)",
+          "output": false,
+          "part": "trigger",
+          "sheet": "@skryensya/core/components/copy-button.css"
+        },
+        "--sk-copy-button-feedback-radius": {
+          "default": "var(--radius-control)",
+          "output": false,
+          "part": "trigger",
+          "sheet": "@skryensya/core/components/copy-button.css"
+        },
+        "--sk-copy-button-feedback-shadow": {
+          "default": "var(--elevation-raised)",
+          "output": false,
+          "part": "trigger",
+          "sheet": "@skryensya/core/components/copy-button.css"
+        },
+        "--sk-copy-button-feedback-wash": {
+          "default": "var(--elevation-wash-raised)",
+          "output": false,
+          "part": "trigger",
+          "sheet": "@skryensya/core/components/copy-button.css"
+        }
+      },
+      "hooks": [
+        "--sk-clipboard-gap",
+        "--sk-clipboard-label-fg",
+        "--sk-clipboard-label-font-size",
+        "--sk-copy-button-error-fg",
+        "--sk-copy-button-feedback-bg",
+        "--sk-copy-button-feedback-border-color",
+        "--sk-copy-button-feedback-fg",
+        "--sk-copy-button-feedback-font-size",
+        "--sk-copy-button-feedback-padding",
+        "--sk-copy-button-feedback-radius",
+        "--sk-copy-button-feedback-shadow",
+        "--sk-copy-button-feedback-wash"
+      ],
+      "hookSheets": [
+        "@skryensya/core/components/copy-button.css"
+      ],
+      "id": "clipboard",
+      "options": {
+        "copiedLabel": {
+          "default": "Copied",
+          "type": "string"
+        },
+        "errorLabel": {
+          "default": "Copy failed",
+          "type": "string"
+        },
+        "label": {
+          "attr": "aria-label",
+          "default": "Copy",
+          "type": "string"
+        },
+        "size": {
+          "attr": "data-size",
+          "default": "sm",
+          "type": "enum",
+          "values": [
+            "xs",
+            "sm",
+            "md"
+          ]
+        },
+        "target": {
+          "attr": "data-target",
+          "machineInput": true,
+          "type": "string"
+        },
+        "timeout": {
+          "attr": "data-timeout",
+          "default": 2000,
+          "machineInput": true,
+          "min": 0,
+          "type": "number"
+        },
+        "value": {
+          "attr": "value",
+          "machineInput": true,
+          "type": "string"
+        },
+        "variant": {
+          "attr": "data-variant",
+          "default": "soft",
+          "type": "enum",
+          "values": [
+            "soft",
+            "ghost"
+          ]
+        }
+      },
+      "parts": {
+        "control": "sk-clipboard__control",
+        "face": "sk-copy-button__icon",
+        "feedback": "sk-copy-button__feedback",
+        "input": "sk-clipboard__input",
+        "label": "sk-clipboard__label",
+        "root": "sk-clipboard",
+        "status": "sk-copy-button__label",
+        "trigger": "sk-copy-button"
+      },
+      "semantics": {
+        "Clipboard": {
+          "alternatives": [
+            "CopyButton",
+            "Input"
+          ],
+          "avoidWhen": [
+            "el valor es largo o de varias líneas (código, configuración): eso es un bloque de código con CopyButton",
+            "el valor se puede editar: eso es un Input en un FormField"
+          ],
+          "useWhen": [
+            "el valor tiene que verse antes de copiarlo: un enlace para compartir, una clave de API, un identificador",
+            "además del botón, quien usa la página puede querer seleccionar el valor o copiarlo con el teclado"
+          ]
+        },
+        "CopyButton": {
+          "alternatives": [
+            "Clipboard",
+            "Button.action"
+          ],
+          "avoidWhen": [
+            "quien copia tiene que ver o revisar el valor antes (un enlace para compartir, una clave): eso es Clipboard",
+            "la acción hace algo más que copiar (compartir, exportar, descargar): eso es un Button con su propio nombre"
+          ],
+          "useWhen": [
+            "un bloque de código, un comando o un token se va a pegar en otro lado y seleccionarlo a mano es lento o impreciso",
+            "el valor ya está a la vista (un bloque de código) o no hace falta verlo para copiarlo"
+          ]
+        }
+      },
+      "signatures": {
+        "Clipboard": {
+          "compose": [
+            {
+              "of": "button",
+              "sheets": [
+                "@skryensya/core/components/button.css"
+              ],
+              "systemOwned": true
+            },
+            {
+              "of": "input",
+              "sheets": [
+                "@skryensya/core/components/input.css"
+              ],
+              "systemOwned": true
+            },
+            {
+              "of": "icon",
+              "systemOwned": true
+            }
+          ],
+          "forward": [
+            "id",
+            "aria-*"
+          ],
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "copy-a-link",
+            "share-link",
+            "copy-api-key",
+            "read-only-value-with-copy"
+          ],
+          "mount": "data-sk-clipboard",
+          "options": [
+            "value",
+            "label",
+            "copiedLabel",
+            "errorLabel",
+            "timeout"
+          ],
+          "react": {
+            "from": "@skryensya/react/clipboard",
+            "name": "Clipboard"
+          },
+          "requires": [
+            "value",
+            "label"
+          ],
+          "slots": {
+            "fieldLabel": {
+              "accepts": "text",
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "element": "label",
+                "part": "label",
+                "slot": "fieldLabel"
+              },
+              {
+                "children": [
+                  {
+                    "also": [
+                      "sk-input"
+                    ],
+                    "attrs": {
+                      "readonly": "",
+                      "spellcheck": "false",
+                      "type": "text"
+                    },
+                    "element": "input",
+                    "mount": "data-sk-clipboard-input",
+                    "options": [
+                      "value"
+                    ],
+                    "part": "input"
+                  },
+                  {
+                    "also": [
+                      "sk-button",
+                      "sk-interactive",
+                      "sk-icon-toggle",
+                      "sk-anchor"
+                    ],
+                    "attrs": {
+                      "data-icon-only": "",
+                      "data-size": "md",
+                      "data-variant": "soft",
+                      "type": "button"
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "aria-hidden": "true",
+                          "data-face": "idle"
+                        },
+                        "children": [
+                          {
+                            "attrs": {
+                              "data-sk-icon": "copy",
+                              "data-sk-icon-size": "md"
+                            },
+                            "element": "span"
+                          }
+                        ],
+                        "element": "span",
+                        "part": "face"
+                      },
+                      {
+                        "attrs": {
+                          "aria-hidden": "true",
+                          "data-face": "copied"
+                        },
+                        "children": [
+                          {
+                            "attrs": {
+                              "data-sk-icon": "check",
+                              "data-sk-icon-size": "md"
+                            },
+                            "element": "span"
+                          }
+                        ],
+                        "element": "span",
+                        "part": "face"
+                      },
+                      {
+                        "attrs": {
+                          "aria-live": "polite"
+                        },
+                        "element": "span",
+                        "mount": "data-sk-clipboard-status",
+                        "part": "status"
+                      },
+                      {
+                        "also": [
+                          "sk-anchored"
+                        ],
+                        "attrs": {
+                          "aria-hidden": "true",
+                          "data-sk-placement": "inline-start"
+                        },
+                        "children": [
+                          {
+                            "attrs": {
+                              "data-sk-clipboard-feedback-text": "copied"
+                            },
+                            "element": "span",
+                            "textFromOption": "copiedLabel"
+                          },
+                          {
+                            "attrs": {
+                              "data-sk-clipboard-feedback-text": "error"
+                            },
+                            "element": "span",
+                            "textFromOption": "errorLabel"
+                          },
+                          {
+                            "also": [
+                              "sk-anchored-arrow"
+                            ],
+                            "attrs": {
+                              "aria-hidden": "true"
+                            },
+                            "element": "span"
+                          }
+                        ],
+                        "element": "span",
+                        "mount": "data-sk-clipboard-feedback",
+                        "part": "feedback"
+                      }
+                    ],
+                    "element": "button",
+                    "mount": "data-sk-clipboard-trigger",
+                    "options": [
+                      "label"
+                    ],
+                    "part": "trigger"
+                  }
+                ],
+                "element": "div",
+                "part": "control"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        },
+        "CopyButton": {
+          "compose": [
+            {
+              "of": "button",
+              "sheets": [
+                "@skryensya/core/components/button.css"
+              ],
+              "systemOwned": true
+            },
+            {
+              "of": "icon",
+              "systemOwned": true
+            }
+          ],
+          "forward": [
+            "id",
+            "aria-*"
+          ],
+          "host": {
+            "element": "button"
+          },
+          "intent": [
+            "copy-to-clipboard",
+            "copy-code",
+            "copy-a-value"
+          ],
+          "mount": "data-sk-clipboard",
+          "options": [
+            "value",
+            "target",
+            "label",
+            "copiedLabel",
+            "errorLabel",
+            "timeout",
+            "size",
+            "variant"
+          ],
+          "react": {
+            "from": "@skryensya/react/clipboard",
+            "name": "CopyButton"
+          },
+          "requires": [
+            "label"
+          ],
+          "slots": {},
+          "template": {
+            "also": [
+              "sk-button",
+              "sk-interactive",
+              "sk-icon-toggle",
+              "sk-anchor"
+            ],
+            "attrs": {
+              "data-icon-only": "",
+              "type": "button"
+            },
+            "children": [
+              {
+                "attrs": {
+                  "aria-hidden": "true",
+                  "data-face": "idle"
+                },
+                "children": [
+                  {
+                    "attrs": {
+                      "data-sk-icon": "copy",
+                      "data-sk-icon-size": "md"
+                    },
+                    "element": "span"
+                  }
+                ],
+                "element": "span",
+                "part": "face"
+              },
+              {
+                "attrs": {
+                  "aria-hidden": "true",
+                  "data-face": "copied"
+                },
+                "children": [
+                  {
+                    "attrs": {
+                      "data-sk-icon": "check",
+                      "data-sk-icon-size": "md"
+                    },
+                    "element": "span"
+                  }
+                ],
+                "element": "span",
+                "part": "face"
+              },
+              {
+                "attrs": {
+                  "aria-live": "polite"
+                },
+                "element": "span",
+                "mount": "data-sk-clipboard-status",
+                "part": "status"
+              },
+              {
+                "also": [
+                  "sk-anchored"
+                ],
+                "attrs": {
+                  "aria-hidden": "true",
+                  "data-sk-placement": "inline-start"
+                },
+                "children": [
+                  {
+                    "attrs": {
+                      "data-sk-clipboard-feedback-text": "copied"
+                    },
+                    "element": "span",
+                    "textFromOption": "copiedLabel"
+                  },
+                  {
+                    "attrs": {
+                      "data-sk-clipboard-feedback-text": "error"
+                    },
+                    "element": "span",
+                    "textFromOption": "errorLabel"
+                  },
+                  {
+                    "also": [
+                      "sk-anchored-arrow"
+                    ],
+                    "attrs": {
+                      "aria-hidden": "true"
+                    },
+                    "element": "span"
+                  }
+                ],
+                "element": "span",
+                "mount": "data-sk-clipboard-feedback",
+                "part": "feedback"
+              }
+            ],
+            "element": "button",
+            "host": true,
+            "mount": "data-sk-clipboard-trigger",
+            "part": "trigger"
+          }
+        }
+      },
+      "systemOwned": [
+        "status"
+      ]
+    },
     "code-preview": {
       "bindings": {
         "CodePreview": {
@@ -18602,6 +19402,20 @@
       },
       "category": "actions",
       "css": "@skryensya/core/components/command-palette.css",
+      "eventDetails": {
+        "command": {
+          "detail": {
+            "command": "string",
+            "entry": "CommandPaletteCommand"
+          },
+          "reactDetail": "(command: string, entry: CommandPaletteCommand)",
+          "reactProp": "onCommand",
+          "source": "root"
+        }
+      },
+      "events": {
+        "command": "sk:commandpalettecommand"
+      },
       "hookDetails": {
         "--sk-command-palette-border-color": {
           "default": "color-mix(\n      in oklab,\n      var(--color-text-primary) 16%,\n      var(--color-bg-surface-raised)\n    )",
@@ -23693,7 +24507,7 @@
     "fade-edge": {
       "bindings": {
         "FadeEdge": {
-          "enhancer": null,
+          "enhancer": "data-sk-fade-edge",
           "markup": true,
           "portals": false,
           "react": "@skryensya/react/fade-edge#FadeEdge"
@@ -23759,6 +24573,12 @@
             "color"
           ]
         },
+        "scrollAware": {
+          "attr": "data-scroll-aware",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
         "size": {
           "styleProperty": "--sk-fade-edge-size",
           "type": "string"
@@ -23800,9 +24620,11 @@
             "overflow-fade",
             "paint-only-wrapper"
           ],
+          "mount": "data-sk-fade-edge",
           "options": [
             "mode",
             "direction",
+            "scrollAware",
             "size",
             "color"
           ],
@@ -25844,6 +26666,9 @@
             "zoom-out",
             "zoom-in",
             "fit",
+            "minimize",
+            "maximize",
+            "restore",
             "more",
             "menu",
             "info",
@@ -28652,6 +29477,311 @@
             "host": true,
             "part": "root",
             "slot": "children"
+          }
+        }
+      }
+    },
+    "listbox": {
+      "bindings": {
+        "Listbox": {
+          "enhancer": "data-sk-listbox",
+          "markup": true,
+          "portals": false,
+          "react": "@skryensya/react/listbox#Listbox"
+        }
+      },
+      "category": "forms",
+      "css": "@skryensya/core/components/listbox.css",
+      "eventDetails": {
+        "valueChange": {
+          "detail": {
+            "value": "string[]"
+          },
+          "reactProp": "onValueChange",
+          "source": "root",
+          "trigger": "item"
+        }
+      },
+      "events": {
+        "valueChange": "sk:listboxvaluechange"
+      },
+      "hookDetails": {
+        "--sk-listbox-bg": {
+          "default": "var(--color-bg-surface)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/listbox.css"
+        },
+        "--sk-listbox-border-color": {
+          "default": "var(--color-border-default)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/listbox.css"
+        },
+        "--sk-listbox-gap": {
+          "default": "var(--space-stack-xs)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/listbox.css"
+        },
+        "--sk-listbox-item-disabled-fg": {
+          "default": "var(--color-text-disabled)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/listbox.css"
+        },
+        "--sk-listbox-item-fg": {
+          "default": "var(--color-text-primary)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/listbox.css"
+        },
+        "--sk-listbox-item-padding": {
+          "default": "var(--space-inset-xs) var(--space-inset-sm)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/listbox.css"
+        },
+        "--sk-listbox-item-radius": {
+          "default": "var(--radius-control)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/listbox.css"
+        },
+        "--sk-listbox-item-selected-fg": {
+          "default": "var(--color-text-accent)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/listbox.css"
+        },
+        "--sk-listbox-label-fg": {
+          "default": "var(--color-text-primary)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/listbox.css"
+        },
+        "--sk-listbox-max-block-size": {
+          "default": "18rem",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/listbox.css"
+        },
+        "--sk-listbox-padding": {
+          "default": "var(--space-inset-xs)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/listbox.css"
+        },
+        "--sk-listbox-radius": {
+          "default": "var(--radius-surface)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/listbox.css"
+        }
+      },
+      "hooks": [
+        "--sk-listbox-bg",
+        "--sk-listbox-border-color",
+        "--sk-listbox-gap",
+        "--sk-listbox-item-disabled-fg",
+        "--sk-listbox-item-fg",
+        "--sk-listbox-item-padding",
+        "--sk-listbox-item-radius",
+        "--sk-listbox-item-selected-fg",
+        "--sk-listbox-label-fg",
+        "--sk-listbox-max-block-size",
+        "--sk-listbox-padding",
+        "--sk-listbox-radius"
+      ],
+      "id": "listbox",
+      "options": {
+        "disabled": {
+          "attr": "data-disabled",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "orientation": {
+          "attr": "data-orientation",
+          "default": "vertical",
+          "machineInput": true,
+          "type": "enum",
+          "values": [
+            "vertical",
+            "horizontal"
+          ]
+        },
+        "selectionMode": {
+          "attr": "data-selection-mode",
+          "default": "single",
+          "machineInput": true,
+          "type": "enum",
+          "values": [
+            "single",
+            "multiple",
+            "extended"
+          ]
+        }
+      },
+      "parts": {
+        "content": "sk-listbox__content",
+        "item": "sk-listbox__item",
+        "itemIndicator": "sk-listbox__item-indicator",
+        "itemText": "sk-listbox__item-text",
+        "label": "sk-listbox__label",
+        "root": "sk-listbox"
+      },
+      "semantics": {
+        "Listbox": {
+          "alternatives": [
+            "Select",
+            "Combobox",
+            "RadioGroup",
+            "Menu"
+          ],
+          "avoidWhen": [
+            "es un campo de un formulario que se envía: Listbox no tiene input ni name; eso es Select, RadioGroup o un grupo de Checkbox",
+            "las opciones son muchas o el espacio es poco: un listbox siempre abierto ocupa lo que ocupan sus opciones; eso es Select o Combobox",
+            "cada fila navega a otra página o ejecuta una acción: eso es NavList o Menu, no una elección"
+          ],
+          "useWhen": [
+            "quien usa la pantalla tiene que ver todas las opciones mientras elige: una vista, unos pocos filtros, los elementos sobre los que va a actuar",
+            "se puede elegir más de una, y marcar y desmarcar sin abrir nada es más rápido que un desplegable",
+            "la lista se recorre con el teclado (flechas, búsqueda al tipear) y el foco tiene que quedarse en un solo lugar"
+          ]
+        }
+      },
+      "signatures": {
+        "Listbox": {
+          "compose": [
+            {
+              "of": "icon",
+              "systemOwned": true
+            }
+          ],
+          "forward": [
+            "id",
+            "aria-*"
+          ],
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "choose-in-place",
+            "always-open-list",
+            "multi-select-list",
+            "pick-from-visible-options"
+          ],
+          "mount": "data-sk-listbox",
+          "options": [
+            "selectionMode",
+            "orientation",
+            "disabled"
+          ],
+          "react": {
+            "from": "@skryensya/react/listbox",
+            "name": "Listbox"
+          },
+          "slots": {
+            "items": {
+              "accepts": "items",
+              "item": {
+                "key": "value",
+                "options": {
+                  "defaultSelected": {
+                    "attr": "data-default-selected",
+                    "default": false,
+                    "trueValue": "",
+                    "type": "boolean"
+                  },
+                  "disabled": {
+                    "attr": "data-disabled",
+                    "default": false,
+                    "trueValue": "",
+                    "type": "boolean"
+                  },
+                  "value": {
+                    "attr": "data-value",
+                    "type": "string"
+                  }
+                },
+                "requires": [
+                  "value"
+                ],
+                "slots": {
+                  "label": {
+                    "accepts": "text",
+                    "required": true
+                  }
+                }
+              },
+              "minItems": 1,
+              "required": true
+            },
+            "label": {
+              "accepts": "text",
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "element": "span",
+                "mount": "data-sk-listbox-label",
+                "part": "label",
+                "slot": "label"
+              },
+              {
+                "children": [
+                  {
+                    "also": [
+                      "sk-interactive"
+                    ],
+                    "children": [
+                      {
+                        "element": "span",
+                        "itemSlot": "label",
+                        "mount": "data-sk-listbox-item-text",
+                        "part": "itemText"
+                      },
+                      {
+                        "attrs": {
+                          "aria-hidden": "true"
+                        },
+                        "children": [
+                          {
+                            "attrs": {
+                              "data-sk-icon": "check",
+                              "data-sk-icon-size": "md"
+                            },
+                            "element": "span"
+                          }
+                        ],
+                        "element": "span",
+                        "mount": "data-sk-listbox-item-indicator",
+                        "part": "itemIndicator"
+                      }
+                    ],
+                    "element": "li",
+                    "itemOptions": [
+                      "value",
+                      "disabled",
+                      "defaultSelected"
+                    ],
+                    "mount": "data-sk-listbox-item",
+                    "part": "item",
+                    "repeat": "items"
+                  }
+                ],
+                "element": "ul",
+                "mount": "data-sk-listbox-content",
+                "part": "content"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
           }
         }
       }
@@ -33334,6 +34464,405 @@
         }
       }
     },
+    "password-input": {
+      "bindings": {
+        "PasswordInput": {
+          "enhancer": "data-sk-password-input",
+          "markup": true,
+          "portals": false,
+          "react": "@skryensya/react/password-input#PasswordInput"
+        }
+      },
+      "category": "forms",
+      "css": "@skryensya/core/components/password-input.css",
+      "eventDetails": {
+        "visibilityChange": {
+          "detail": {
+            "visible": "boolean"
+          },
+          "reactProp": "onVisibilityChange",
+          "source": "root",
+          "trigger": "visibilityTrigger"
+        }
+      },
+      "events": {
+        "visibilityChange": "sk:passwordinputvisibilitychange"
+      },
+      "hookDetails": {
+        "--sk-password-input-bg": {
+          "default": "var(--color-bg-surface-sunken)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/password-input.css"
+        },
+        "--sk-password-input-border-color": {
+          "default": "var(--color-border-default)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/password-input.css"
+        },
+        "--sk-password-input-border-width": {
+          "default": "1px",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/password-input.css"
+        },
+        "--sk-password-input-fg": {
+          "default": "var(--color-text-primary)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/password-input.css"
+        },
+        "--sk-password-input-gap": {
+          "default": "var(--space-stack-xs)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/password-input.css"
+        },
+        "--sk-password-input-hint-color": {
+          "default": "var(--color-text-secondary)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/password-input.css"
+        },
+        "--sk-password-input-invalid-border-color": {
+          "default": "var(--color-border-danger)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/password-input.css"
+        },
+        "--sk-password-input-label-color": {
+          "default": "var(--color-text-secondary)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/password-input.css"
+        },
+        "--sk-password-input-min-inline-size": {
+          "default": "12rem",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/password-input.css"
+        },
+        "--sk-password-input-radius": {
+          "default": "var(--radius-control)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/password-input.css"
+        },
+        "--sk-password-input-shadow": {
+          "default": "var(--elevation-sunken)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/password-input.css"
+        },
+        "--sk-password-input-toggle-color": {
+          "default": "var(--color-text-secondary)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/password-input.css"
+        },
+        "--sk-password-input-toggle-inset": {
+          "default": "calc((var(--size-touch-target) - var(--size-control-sm)) * 0.5)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/password-input.css"
+        },
+        "--sk-password-input-toggle-radius": {
+          "default": "var(--radius-control)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/password-input.css"
+        },
+        "--sk-password-input-wash": {
+          "default": "var(--elevation-wash-sunken)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/password-input.css"
+        }
+      },
+      "hooks": [
+        "--sk-password-input-bg",
+        "--sk-password-input-border-color",
+        "--sk-password-input-border-width",
+        "--sk-password-input-fg",
+        "--sk-password-input-gap",
+        "--sk-password-input-hint-color",
+        "--sk-password-input-invalid-border-color",
+        "--sk-password-input-label-color",
+        "--sk-password-input-min-inline-size",
+        "--sk-password-input-radius",
+        "--sk-password-input-shadow",
+        "--sk-password-input-toggle-color",
+        "--sk-password-input-toggle-inset",
+        "--sk-password-input-toggle-radius",
+        "--sk-password-input-wash"
+      ],
+      "id": "password-input",
+      "options": {
+        "autoComplete": {
+          "attr": "autocomplete",
+          "default": "current-password",
+          "machineInput": true,
+          "type": "enum",
+          "values": [
+            "current-password",
+            "new-password"
+          ]
+        },
+        "defaultVisible": {
+          "attr": "data-default-visible",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "disabled": {
+          "attr": "disabled",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "hideLabel": {
+          "attr": "data-hide-label",
+          "default": "Hide password",
+          "machineInput": true,
+          "type": "string"
+        },
+        "ignorePasswordManagers": {
+          "attr": "data-ignore-password-managers",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "invalid": {
+          "attr": "data-invalid",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "name": {
+          "attr": "name",
+          "machineInput": true,
+          "type": "string"
+        },
+        "placeholder": {
+          "attr": "placeholder",
+          "type": "string"
+        },
+        "readOnly": {
+          "attr": "readonly",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "required": {
+          "attr": "required",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "showLabel": {
+          "attr": "aria-label",
+          "default": "Show password",
+          "machineInput": true,
+          "type": "string"
+        }
+      },
+      "parts": {
+        "control": "sk-password-input__control",
+        "hint": "sk-password-input__hint",
+        "input": "sk-password-input__input",
+        "label": "sk-password-input__label",
+        "root": "sk-password-input",
+        "visibilityTrigger": "sk-password-input__visibility-trigger"
+      },
+      "semantics": {
+        "PasswordInput": {
+          "alternatives": [
+            "OtpInput",
+            "Clipboard",
+            "Input"
+          ],
+          "avoidWhen": [
+            "es un código de un solo uso de pocos dígitos; eso es un OtpInput",
+            "el secreto se muestra para copiarlo, no se escribe (una clave de API ya generada); eso es un Clipboard",
+            "es un texto cualquiera que no hace falta ocultar; eso es un Input"
+          ],
+          "useWhen": [
+            "el campo pide una contraseña, para entrar o para crear una nueva",
+            "quien escribe tiene que poder revisar lo que tipeó antes de enviarlo, sobre todo en un teléfono"
+          ]
+        }
+      },
+      "signatures": {
+        "PasswordInput": {
+          "compose": [
+            {
+              "of": "button",
+              "sheets": [
+                "@skryensya/core/components/button.css"
+              ],
+              "systemOwned": true
+            },
+            {
+              "of": "icon",
+              "systemOwned": true
+            }
+          ],
+          "forward": [
+            "id",
+            "aria-*"
+          ],
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "password",
+            "password-field",
+            "show-hide-password",
+            "sign-in-password",
+            "new-password"
+          ],
+          "mount": "data-sk-password-input",
+          "options": [
+            "name",
+            "autoComplete",
+            "placeholder",
+            "defaultVisible",
+            "ignorePasswordManagers",
+            "disabled",
+            "readOnly",
+            "required",
+            "invalid",
+            "showLabel",
+            "hideLabel"
+          ],
+          "react": {
+            "from": "@skryensya/react/password-input",
+            "name": "PasswordInput"
+          },
+          "slots": {
+            "hint": {
+              "accepts": "text"
+            },
+            "label": {
+              "accepts": "text",
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "element": "label",
+                "mount": "data-sk-password-input-label",
+                "part": "label",
+                "slot": "label"
+              },
+              {
+                "children": [
+                  {
+                    "attrs": {
+                      "autocapitalize": "off",
+                      "spellcheck": "false",
+                      "type": "password"
+                    },
+                    "element": "input",
+                    "mount": "data-sk-password-input-input",
+                    "options": [
+                      "name",
+                      "autoComplete",
+                      "placeholder",
+                      "disabled",
+                      "readOnly",
+                      "required"
+                    ],
+                    "part": "input"
+                  },
+                  {
+                    "also": [
+                      "sk-button",
+                      "sk-interactive",
+                      "sk-icon-toggle"
+                    ],
+                    "attrs": {
+                      "aria-expanded": "false",
+                      "data-icon-only": "",
+                      "data-size": "sm",
+                      "data-state": "hidden",
+                      "data-variant": "ghost",
+                      "type": "button"
+                    },
+                    "children": [
+                      {
+                        "attrs": {
+                          "aria-hidden": "true",
+                          "data-face": "show"
+                        },
+                        "children": [
+                          {
+                            "attrs": {
+                              "data-sk-icon": "visibility",
+                              "data-sk-icon-size": "sm"
+                            },
+                            "element": "span"
+                          }
+                        ],
+                        "element": "span"
+                      },
+                      {
+                        "attrs": {
+                          "aria-hidden": "true",
+                          "data-face": "hide"
+                        },
+                        "children": [
+                          {
+                            "attrs": {
+                              "data-sk-icon": "visibility-off",
+                              "data-sk-icon-size": "sm"
+                            },
+                            "element": "span"
+                          }
+                        ],
+                        "element": "span"
+                      }
+                    ],
+                    "element": "button",
+                    "mount": "data-sk-password-input-trigger",
+                    "options": [
+                      "showLabel",
+                      "hideLabel"
+                    ],
+                    "part": "visibilityTrigger"
+                  }
+                ],
+                "element": "div",
+                "mount": "data-sk-password-input-control",
+                "part": "control"
+              },
+              {
+                "element": "span",
+                "part": "hint",
+                "slot": "hint",
+                "whenGiven": "hint"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "options": [
+              "defaultVisible",
+              "ignorePasswordManagers",
+              "invalid"
+            ],
+            "part": "root"
+          }
+        }
+      }
+    },
     "placeholder": {
       "bindings": {
         "Placeholder": {
@@ -34241,6 +35770,137 @@
         }
       }
     },
+    "presence": {
+      "bindings": {
+        "Presence": {
+          "enhancer": null,
+          "markup": true,
+          "portals": false,
+          "react": "@skryensya/react/presence#Presence"
+        }
+      },
+      "category": "layout",
+      "css": "@skryensya/core/components/presence.css",
+      "hookDetails": {
+        "--sk-presence-enter-distance": {
+          "default": "var(--motion-enter-distance)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/presence.css"
+        },
+        "--sk-presence-enter-duration": {
+          "default": "var(--motion-enter-duration)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/presence.css"
+        },
+        "--sk-presence-enter-easing": {
+          "default": "var(--motion-enter-easing)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/presence.css"
+        },
+        "--sk-presence-exit-distance": {
+          "default": "var(--motion-exit-distance)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/presence.css"
+        },
+        "--sk-presence-exit-duration": {
+          "default": "var(--motion-exit-duration)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/presence.css"
+        },
+        "--sk-presence-exit-easing": {
+          "default": "var(--motion-exit-easing)",
+          "output": false,
+          "part": "root",
+          "sheet": "@skryensya/core/components/presence.css"
+        }
+      },
+      "hooks": [
+        "--sk-presence-enter-distance",
+        "--sk-presence-enter-duration",
+        "--sk-presence-enter-easing",
+        "--sk-presence-exit-distance",
+        "--sk-presence-exit-duration",
+        "--sk-presence-exit-easing"
+      ],
+      "id": "presence",
+      "options": {
+        "present": {
+          "attr": "data-state",
+          "default": true,
+          "falseValue": "closed",
+          "trueValue": "open",
+          "type": "boolean"
+        }
+      },
+      "parts": {
+        "root": "sk-presence"
+      },
+      "semantics": {
+        "Presence": {
+          "alternatives": [
+            "Details",
+            "Accordion",
+            "Dialog",
+            "Popover"
+          ],
+          "avoidWhen": [
+            "el contenido es un diálogo, popover, menú o tooltip; esos ya animan su propia entrada y salida",
+            "lo que se abre y cierra es una sección con encabezado; eso es Details o Accordion, que animan la altura",
+            "el contenido no cambia de visibilidad; la animación solo retrasaría la lectura"
+          ],
+          "useWhen": [
+            "un contenido aparece y desaparece según un estado, y su salida tiene que verse en vez de cortarse de golpe",
+            "en React, el contenido se renderiza condicionalmente y hay que esperar a que termine la salida antes de desmontarlo"
+          ]
+        }
+      },
+      "signatures": {
+        "Presence": {
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "animate-in-and-out",
+            "exit-animation",
+            "conditional-content",
+            "show-hide-transition"
+          ],
+          "options": [
+            "present"
+          ],
+          "react": {
+            "from": "@skryensya/react/presence",
+            "name": "Presence"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "attrsWhen": [
+              {
+                "attrs": {
+                  "hidden": ""
+                },
+                "equals": "false",
+                "option": "present"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root",
+            "slot": "children"
+          }
+        }
+      }
+    },
     "process-list": {
       "bindings": {
         "ProcessList": {
@@ -34622,7 +36282,7 @@
     "qr-code": {
       "bindings": {
         "QRCode": {
-          "enhancer": null,
+          "enhancer": "data-sk-qr-code",
           "markup": true,
           "portals": false,
           "react": "@skryensya/react/qr-code#QRCode"
@@ -34677,7 +36337,6 @@
         },
         "level": {
           "attr": "data-level",
-          "computedInput": true,
           "default": "Q",
           "type": "enum",
           "values": [
@@ -34696,7 +36355,6 @@
         },
         "mask": {
           "attr": "data-mask",
-          "computedInput": true,
           "default": "auto",
           "type": "enum",
           "values": [
@@ -34746,7 +36404,6 @@
         },
         "quietZone": {
           "attr": "data-quiet-zone",
-          "computedInput": true,
           "default": 4,
           "integer": true,
           "min": 0,
@@ -34767,7 +36424,6 @@
         },
         "value": {
           "attr": "data-value",
-          "computedInput": true,
           "type": "string"
         }
       },
@@ -34815,6 +36471,7 @@
             "scan-to-open",
             "link-to-a-phone"
           ],
+          "mount": "data-sk-qr-code",
           "options": [
             "value",
             "level",
@@ -40058,6 +41715,9 @@
                       "zoom-out",
                       "zoom-in",
                       "fit",
+                      "minimize",
+                      "maximize",
+                      "restore",
                       "more",
                       "menu",
                       "info",
@@ -42894,7 +44554,8 @@
                     "accepts": "text",
                     "required": true
                   }
-                }
+                },
+                "unwrap": "label"
               },
               "prop": "defaultValue"
             }
@@ -44021,7 +45682,8 @@
                   },
                   {
                     "attrs": {
-                      "data-part": "content"
+                      "data-part": "content",
+                      "data-scope": "tile"
                     },
                     "element": "span",
                     "itemSlot": "label",
@@ -44030,7 +45692,8 @@
                   {
                     "attrs": {
                       "aria-hidden": "true",
-                      "data-part": "indicator"
+                      "data-part": "indicator",
+                      "data-scope": "tile"
                     },
                     "element": "span",
                     "part": "selectionIndicator"
@@ -45777,6 +47440,626 @@
           }
         }
       }
+    },
+    "tour": {
+      "bindings": {
+        "Tour": {
+          "enhancer": "data-sk-tour",
+          "markup": true,
+          "portals": false,
+          "react": "@skryensya/react/tour#Tour"
+        },
+        "Tour.Trigger": {
+          "enhancer": null,
+          "markup": true,
+          "portals": false,
+          "react": "@skryensya/react/tour#Tour.Trigger"
+        }
+      },
+      "category": "overlays",
+      "css": "@skryensya/core/components/tour.css",
+      "eventDetails": {
+        "statusChange": {
+          "detail": {
+            "status": "TourStatus"
+          },
+          "reactDetail": "TourStatus",
+          "reactProp": "onStatusChange",
+          "source": "root"
+        },
+        "stepChange": {
+          "detail": {
+            "index": "number",
+            "step": "TourStep"
+          },
+          "reactDetail": "(index: number, step: TourStep)",
+          "reactProp": "onStepChange",
+          "source": "root"
+        }
+      },
+      "events": {
+        "statusChange": "sk:tourstatuschange",
+        "stepChange": "sk:tourstepchange"
+      },
+      "hookDetails": {
+        "--sk-tour-arrow-offset": {
+          "default": "50%",
+          "output": true,
+          "part": "popover",
+          "sheet": "@skryensya/core/components/tour.css"
+        },
+        "--sk-tour-arrow-size": {
+          "default": "12px",
+          "output": false,
+          "part": "popover",
+          "sheet": "@skryensya/core/components/tour.css"
+        },
+        "--sk-tour-bg": {
+          "default": "light-dark(\n      color-mix(in oklab, var(--color-action-accent) 12%, var(--color-bg-surface-overlay)),\n      color-mix(in oklab, var(--color-action-accent) 24%, var(--color-bg-inverse))\n    )",
+          "output": false,
+          "part": "popover",
+          "sheet": "@skryensya/core/components/tour.css"
+        },
+        "--sk-tour-border-color": {
+          "default": "light-dark(color-mix(in oklab, var(--color-action-accent) 30%, transparent), transparent)",
+          "output": false,
+          "part": "popover",
+          "sheet": "@skryensya/core/components/tour.css"
+        },
+        "--sk-tour-fg": {
+          "default": "light-dark(var(--color-text-primary), var(--color-text-inverse))",
+          "output": false,
+          "part": "popover",
+          "sheet": "@skryensya/core/components/tour.css"
+        },
+        "--sk-tour-max-inline-size": {
+          "default": "20rem",
+          "output": false,
+          "part": "popover",
+          "sheet": "@skryensya/core/components/tour.css"
+        },
+        "--sk-tour-muted-fg": {
+          "default": "var(--sk-tour-fg)",
+          "output": false,
+          "part": "popover",
+          "sheet": "@skryensya/core/components/tour.css"
+        },
+        "--sk-tour-padding": {
+          "default": "var(--space-inset-sm) var(--space-inset-sm) var(--space-inset-sm) var(--space-inset-md)",
+          "output": false,
+          "part": "popover",
+          "sheet": "@skryensya/core/components/tour.css"
+        },
+        "--sk-tour-radius": {
+          "default": "var(--radius-surface)",
+          "output": false,
+          "part": "popover",
+          "sheet": "@skryensya/core/components/tour.css"
+        },
+        "--sk-tour-ring-color": {
+          "default": "var(--color-border-accent)",
+          "output": false,
+          "part": "ring",
+          "sheet": "@skryensya/core/components/tour.css"
+        },
+        "--sk-tour-ring-halo": {
+          "default": "var(--color-bg-canvas)",
+          "output": false,
+          "part": "ring",
+          "sheet": "@skryensya/core/components/tour.css"
+        },
+        "--sk-tour-ring-offset": {
+          "default": "6px",
+          "output": false,
+          "part": "ring",
+          "sheet": "@skryensya/core/components/tour.css"
+        },
+        "--sk-tour-ring-width": {
+          "default": "3px",
+          "output": false,
+          "part": "ring",
+          "sheet": "@skryensya/core/components/tour.css"
+        },
+        "--sk-tour-shadow": {
+          "default": "var(--elevation-overlay)",
+          "output": false,
+          "part": "popover",
+          "sheet": "@skryensya/core/components/tour.css"
+        }
+      },
+      "hooks": [
+        "--sk-tour-bg",
+        "--sk-tour-fg",
+        "--sk-tour-muted-fg",
+        "--sk-tour-border-color",
+        "--sk-tour-radius",
+        "--sk-tour-padding",
+        "--sk-tour-shadow",
+        "--sk-tour-max-inline-size",
+        "--sk-tour-arrow-size",
+        "--sk-tour-arrow-offset",
+        "--sk-tour-ring-color",
+        "--sk-tour-ring-halo",
+        "--sk-tour-ring-width",
+        "--sk-tour-ring-offset"
+      ],
+      "hookSheets": [
+        "@skryensya/core/patterns/visually-hidden.css"
+      ],
+      "id": "tour",
+      "options": {
+        "closeLabel": {
+          "attr": "aria-label",
+          "default": "Close tour",
+          "type": "string"
+        },
+        "finishLabel": {
+          "default": "Finish",
+          "type": "string"
+        },
+        "nextLabel": {
+          "default": "Continue",
+          "type": "string"
+        },
+        "opens": {
+          "attr": "data-sk-tour-open",
+          "refersTo": {
+            "contract": "tour",
+            "option": "tourId"
+          },
+          "type": "string"
+        },
+        "previousLabel": {
+          "default": "Previous",
+          "type": "string"
+        },
+        "progressLabel": {
+          "attr": "data-progress-label",
+          "default": "Step {index} of {count}",
+          "machineInput": true,
+          "type": "string"
+        },
+        "remember": {
+          "attr": "data-remember",
+          "default": true,
+          "falseValue": "false",
+          "machineInput": true,
+          "type": "boolean"
+        },
+        "restartLabel": {
+          "type": "string"
+        },
+        "skipLabel": {
+          "default": "Skip tour",
+          "type": "string"
+        },
+        "tourId": {
+          "attr": "id",
+          "prop": "id",
+          "type": "string"
+        },
+        "triggerLabel": {
+          "prop": "label",
+          "type": "string"
+        }
+      },
+      "outputHooks": [
+        "--sk-tour-arrow-offset"
+      ],
+      "parts": {
+        "arrow": "sk-tour__arrow",
+        "content": "sk-tour__content",
+        "control": "sk-tour__control",
+        "description": "sk-tour__description",
+        "finishLabel": "sk-tour__finish-label",
+        "footer": "sk-tour__footer",
+        "header": "sk-tour__header",
+        "live": "sk-tour__live",
+        "nav": "sk-tour__nav",
+        "nextLabel": "sk-tour__next-label",
+        "popover": "sk-tour__popover",
+        "progress": "sk-tour__progress",
+        "ring": "sk-tour__ring",
+        "root": "sk-tour",
+        "step": "sk-tour__step",
+        "stepDescription": "sk-tour__step-description",
+        "steps": "sk-tour__steps",
+        "stepTitle": "sk-tour__step-title",
+        "title": "sk-tour__title",
+        "trigger": "sk-tour__trigger",
+        "triggerRestart": "sk-tour__trigger-restart",
+        "triggerStart": "sk-tour__trigger-start"
+      },
+      "semantics": {
+        "Tour": {
+          "alternatives": [
+            "Tooltip",
+            "Popover",
+            "Steps",
+            "Dialog"
+          ],
+          "avoidWhen": [
+            "la explicación es de un solo control y se necesita al pasar o enfocar: eso es Tooltip",
+            "hay que completar pasos que cambian datos (un alta, una configuración): eso es un formulario por pasos con Steps, no un recorrido que señala",
+            "el contenido es largo o necesita imágenes y ejemplos: eso es una página de ayuda o un Dialog, no una caja junto a un elemento",
+            "la función sólo se entiende con el recorrido: si una pieza necesita un tour para usarse, el problema es la pieza"
+          ],
+          "useWhen": [
+            "una interfaz nueva o rediseñada tiene pocas piezas que conviene señalar en orden (tres a cinco), y quien la usa puede pedir el recorrido cuando quiera",
+            "cada paso cabe en una idea: qué es este elemento y para qué sirve, en una o dos frases",
+            "la página tiene que seguir usable durante el recorrido: sin fondo que la tape, sin bloquear clics y sin atrapar el foco"
+          ]
+        },
+        "Tour.Trigger": {
+          "alternatives": [
+            "Button.action"
+          ],
+          "avoidWhen": [
+            "se quiere iniciar el recorrido solo al cargar la página: un tour nunca empieza sin que alguien lo pida"
+          ],
+          "useWhen": [
+            "el recorrido tiene que poder iniciarse, y repetirse después de omitirlo o terminarlo, desde un lugar visible y estable (la ayuda, el encabezado)"
+          ]
+        }
+      },
+      "signatures": {
+        "Tour": {
+          "compose": [
+            {
+              "of": "button",
+              "sheets": [
+                "@skryensya/core/components/button.css"
+              ],
+              "systemOwned": true
+            },
+            {
+              "of": "icon",
+              "systemOwned": true
+            }
+          ],
+          "forward": [
+            "aria-*"
+          ],
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "product-tour",
+            "guided-tour",
+            "onboarding-walkthrough",
+            "feature-highlight",
+            "coach-marks"
+          ],
+          "mount": "data-sk-tour",
+          "options": [
+            "tourId",
+            "progressLabel",
+            "nextLabel",
+            "finishLabel",
+            "previousLabel",
+            "skipLabel",
+            "closeLabel",
+            "remember"
+          ],
+          "react": {
+            "from": "@skryensya/react/tour",
+            "name": "Tour"
+          },
+          "requires": [
+            "tourId"
+          ],
+          "slots": {
+            "items": {
+              "accepts": "items",
+              "item": {
+                "options": {
+                  "placement": {
+                    "attr": "data-placement",
+                    "default": "block-end",
+                    "type": "enum",
+                    "values": [
+                      "block-start",
+                      "block-end",
+                      "inline-start",
+                      "inline-end"
+                    ]
+                  },
+                  "target": {
+                    "attr": "data-tour-target",
+                    "type": "string"
+                  }
+                },
+                "requires": [
+                  "target",
+                  "title",
+                  "description"
+                ],
+                "slots": {
+                  "description": {
+                    "accepts": "text",
+                    "required": true
+                  },
+                  "title": {
+                    "accepts": "text",
+                    "required": true
+                  }
+                }
+              },
+              "minItems": 1,
+              "prop": "steps",
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "attrs": {
+                  "hidden": ""
+                },
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "element": "p",
+                        "itemSlot": "title",
+                        "part": "stepTitle"
+                      },
+                      {
+                        "element": "p",
+                        "itemSlot": "description",
+                        "part": "stepDescription"
+                      }
+                    ],
+                    "element": "li",
+                    "itemOptions": [
+                      "target",
+                      "placement"
+                    ],
+                    "part": "step",
+                    "repeat": "items"
+                  }
+                ],
+                "element": "ol",
+                "part": "steps"
+              },
+              {
+                "attrs": {
+                  "aria-hidden": "true",
+                  "hidden": "",
+                  "popover": "manual"
+                },
+                "element": "div",
+                "part": "ring"
+              },
+              {
+                "also": [
+                  "sk-visually-hidden"
+                ],
+                "attrs": {
+                  "aria-atomic": "true",
+                  "aria-live": "polite"
+                },
+                "element": "p",
+                "part": "live"
+              },
+              {
+                "attrs": {
+                  "hidden": "",
+                  "popover": "manual",
+                  "role": "dialog"
+                },
+                "children": [
+                  {
+                    "attrs": {
+                      "aria-hidden": "true"
+                    },
+                    "element": "div",
+                    "part": "arrow"
+                  },
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "element": "p",
+                            "part": "progress"
+                          },
+                          {
+                            "also": [
+                              "sk-button",
+                              "sk-interactive"
+                            ],
+                            "attrs": {
+                              "data-icon-only": "",
+                              "data-size": "xs",
+                              "data-tour-action": "close",
+                              "data-variant": "ghost",
+                              "type": "button"
+                            },
+                            "children": [
+                              {
+                                "attrs": {
+                                  "data-sk-icon": "close",
+                                  "data-sk-icon-size": "sm"
+                                },
+                                "element": "span"
+                              }
+                            ],
+                            "element": "button",
+                            "options": [
+                              "closeLabel"
+                            ],
+                            "part": "control"
+                          }
+                        ],
+                        "element": "div",
+                        "part": "header"
+                      },
+                      {
+                        "element": "h2",
+                        "part": "title"
+                      },
+                      {
+                        "element": "p",
+                        "part": "description"
+                      },
+                      {
+                        "children": [
+                          {
+                            "also": [
+                              "sk-button",
+                              "sk-interactive"
+                            ],
+                            "attrs": {
+                              "data-size": "sm",
+                              "data-tour-action": "skip",
+                              "data-variant": "ghost",
+                              "type": "button"
+                            },
+                            "children": [
+                              {
+                                "element": "span",
+                                "textFromOption": "skipLabel"
+                              }
+                            ],
+                            "element": "button",
+                            "part": "control"
+                          },
+                          {
+                            "children": [
+                              {
+                                "also": [
+                                  "sk-button",
+                                  "sk-interactive"
+                                ],
+                                "attrs": {
+                                  "data-size": "sm",
+                                  "data-tour-action": "previous",
+                                  "data-variant": "soft",
+                                  "type": "button"
+                                },
+                                "children": [
+                                  {
+                                    "element": "span",
+                                    "textFromOption": "previousLabel"
+                                  }
+                                ],
+                                "element": "button",
+                                "part": "control"
+                              },
+                              {
+                                "also": [
+                                  "sk-button",
+                                  "sk-interactive"
+                                ],
+                                "attrs": {
+                                  "data-size": "sm",
+                                  "data-tour-action": "next",
+                                  "type": "button"
+                                },
+                                "children": [
+                                  {
+                                    "element": "span",
+                                    "part": "nextLabel",
+                                    "textFromOption": "nextLabel"
+                                  },
+                                  {
+                                    "element": "span",
+                                    "part": "finishLabel",
+                                    "textFromOption": "finishLabel"
+                                  }
+                                ],
+                                "element": "button",
+                                "part": "control"
+                              }
+                            ],
+                            "element": "div",
+                            "part": "nav"
+                          }
+                        ],
+                        "element": "div",
+                        "part": "footer"
+                      }
+                    ],
+                    "element": "div",
+                    "part": "content"
+                  }
+                ],
+                "element": "div",
+                "part": "popover"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        },
+        "Tour.Trigger": {
+          "compose": [
+            {
+              "of": "button",
+              "sheets": [
+                "@skryensya/core/components/button.css"
+              ],
+              "systemOwned": true
+            }
+          ],
+          "forward": [
+            "id",
+            "aria-*"
+          ],
+          "host": {
+            "element": "button"
+          },
+          "intent": [
+            "start-tour",
+            "repeat-tour",
+            "restart-onboarding"
+          ],
+          "options": [
+            "opens",
+            "triggerLabel",
+            "restartLabel"
+          ],
+          "react": {
+            "from": "@skryensya/react/tour",
+            "name": "Tour.Trigger"
+          },
+          "requires": [
+            "opens",
+            "triggerLabel"
+          ],
+          "slots": {},
+          "template": {
+            "also": [
+              "sk-button",
+              "sk-interactive"
+            ],
+            "attrs": {
+              "data-size": "md",
+              "data-variant": "soft",
+              "type": "button"
+            },
+            "children": [
+              {
+                "element": "span",
+                "part": "triggerStart",
+                "textFromOption": "triggerLabel"
+              },
+              {
+                "element": "span",
+                "part": "triggerRestart",
+                "textFromOption": "restartLabel",
+                "whenGiven": "restartLabel"
+              }
+            ],
+            "element": "button",
+            "host": true,
+            "part": "trigger"
+          }
+        }
+      },
+      "systemOwned": []
     },
     "tree-view": {
       "bindings": {
@@ -47854,6 +50137,603 @@
         }
       }
     },
+    "window": {
+      "a11y": [
+        {
+          "because": "An icon-only trigger shows no text, so the trigger button owns the accessible name; the glyph is decorative.",
+          "requiresOneOf": [
+            "triggerLabel"
+          ],
+          "when": {
+            "triggerIconOnly": true
+          }
+        }
+      ],
+      "bindings": {
+        "Window": {
+          "enhancer": "data-sk-window",
+          "markup": true,
+          "portals": true,
+          "react": "@skryensya/react/window#Window"
+        }
+      },
+      "category": "overlays",
+      "css": "@skryensya/core/components/window.css",
+      "eventDetails": {
+        "openChange": {
+          "detail": {
+            "open": "boolean"
+          },
+          "reactProp": "onOpenChange",
+          "source": "root",
+          "trigger": "trigger"
+        },
+        "stageChange": {
+          "detail": {
+            "stage": "WindowStage"
+          },
+          "reactProp": "onStageChange",
+          "source": "root",
+          "trigger": "stage"
+        }
+      },
+      "events": {
+        "openChange": "sk:windowopenchange",
+        "stageChange": "sk:windowstagechange"
+      },
+      "hookDetails": {
+        "--sk-window-bg": {
+          "default": "var(--color-bg-surface-overlay)",
+          "output": false,
+          "part": "content",
+          "sheet": "@skryensya/core/components/window.css"
+        },
+        "--sk-window-border-color": {
+          "default": "var(--color-border-subtle)",
+          "output": false,
+          "part": "content",
+          "sheet": "@skryensya/core/components/window.css"
+        },
+        "--sk-window-fg": {
+          "default": "var(--color-text-primary)",
+          "output": false,
+          "part": "content",
+          "sheet": "@skryensya/core/components/window.css"
+        },
+        "--sk-window-handle-size": {
+          "default": "0.5rem",
+          "output": false,
+          "part": "content",
+          "sheet": "@skryensya/core/components/window.css"
+        },
+        "--sk-window-header-bg": {
+          "default": "var(--color-bg-surface-raised)",
+          "output": false,
+          "part": "content",
+          "sheet": "@skryensya/core/components/window.css"
+        },
+        "--sk-window-header-border-color": {
+          "default": "var(--color-border-subtle)",
+          "output": false,
+          "part": "content",
+          "sheet": "@skryensya/core/components/window.css"
+        },
+        "--sk-window-padding": {
+          "default": "var(--space-inset-md)",
+          "output": false,
+          "part": "content",
+          "sheet": "@skryensya/core/components/window.css"
+        },
+        "--sk-window-radius": {
+          "default": "var(--radius-surface)",
+          "output": false,
+          "part": "content",
+          "sheet": "@skryensya/core/components/window.css"
+        },
+        "--sk-window-shadow": {
+          "default": "var(--elevation-modal)",
+          "output": false,
+          "part": "content",
+          "sheet": "@skryensya/core/components/window.css"
+        },
+        "--sk-window-shadow-behind": {
+          "default": "var(--elevation-overlay)",
+          "output": false,
+          "part": "content",
+          "sheet": "@skryensya/core/components/window.css"
+        },
+        "--sk-window-wash": {
+          "default": "var(--elevation-wash-overlay)",
+          "output": false,
+          "part": "content",
+          "sheet": "@skryensya/core/components/window.css"
+        }
+      },
+      "hooks": [
+        "--sk-window-bg",
+        "--sk-window-border-color",
+        "--sk-window-fg",
+        "--sk-window-handle-size",
+        "--sk-window-header-bg",
+        "--sk-window-header-border-color",
+        "--sk-window-padding",
+        "--sk-window-radius",
+        "--sk-window-shadow",
+        "--sk-window-shadow-behind",
+        "--sk-window-wash"
+      ],
+      "id": "window",
+      "options": {
+        "closeLabel": {
+          "attr": "aria-label",
+          "default": "Close",
+          "type": "string"
+        },
+        "closeOnEscape": {
+          "attr": "data-close-on-escape",
+          "default": true,
+          "falseValue": "false",
+          "machineInput": true,
+          "type": "boolean"
+        },
+        "defaultHeight": {
+          "attr": "data-default-height",
+          "machineInput": true,
+          "min": 1,
+          "type": "number"
+        },
+        "defaultOpen": {
+          "attr": "data-default-open",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "defaultWidth": {
+          "attr": "data-default-width",
+          "machineInput": true,
+          "min": 1,
+          "type": "number"
+        },
+        "draggable": {
+          "attr": "data-draggable",
+          "default": true,
+          "falseValue": "false",
+          "machineInput": true,
+          "type": "boolean"
+        },
+        "maximizeLabel": {
+          "attr": "aria-label",
+          "default": "Maximize",
+          "type": "string"
+        },
+        "minHeight": {
+          "attr": "data-min-height",
+          "machineInput": true,
+          "min": 1,
+          "type": "number"
+        },
+        "minimizeLabel": {
+          "attr": "aria-label",
+          "default": "Minimize",
+          "type": "string"
+        },
+        "minWidth": {
+          "attr": "data-min-width",
+          "machineInput": true,
+          "min": 1,
+          "type": "number"
+        },
+        "persistRect": {
+          "attr": "data-persist-rect",
+          "default": false,
+          "machineInput": true,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "resizable": {
+          "attr": "data-resizable",
+          "default": true,
+          "falseValue": "false",
+          "machineInput": true,
+          "type": "boolean"
+        },
+        "restoreLabel": {
+          "attr": "aria-label",
+          "default": "Restore",
+          "type": "string"
+        },
+        "triggerIconOnly": {
+          "attr": "data-icon-only",
+          "default": false,
+          "trueValue": "",
+          "type": "boolean"
+        },
+        "triggerLabel": {
+          "attr": "aria-label",
+          "type": "string"
+        },
+        "triggerSize": {
+          "attr": "data-size",
+          "type": "string",
+          "valuesFrom": {
+            "contract": "button",
+            "option": "size"
+          }
+        },
+        "triggerTone": {
+          "attr": "data-tone",
+          "type": "string",
+          "valuesFrom": {
+            "contract": "button",
+            "option": "tone"
+          }
+        },
+        "triggerVariant": {
+          "attr": "data-variant",
+          "type": "string",
+          "valuesFrom": {
+            "contract": "button",
+            "option": "variant"
+          }
+        }
+      },
+      "parts": {
+        "body": "sk-window__body",
+        "close": "sk-window__close",
+        "content": "sk-window__content",
+        "controls": "sk-window__controls",
+        "drag": "sk-window__drag",
+        "header": "sk-window__header",
+        "positioner": "sk-window__positioner",
+        "resize": "sk-window__resize",
+        "root": "sk-window",
+        "stage": "sk-window__stage",
+        "title": "sk-window__title",
+        "trigger": "sk-window__trigger"
+      },
+      "semantics": {
+        "Window": {
+          "alternatives": [
+            "Dialog",
+            "Popover",
+            "Vaul"
+          ],
+          "avoidWhen": [
+            "hay que decidir algo antes de seguir; eso es un Dialog, que deja la página inerte",
+            "el contenido cuelga de un control y se cierra al hacer clic afuera; eso es un Popover",
+            "el panel entra desde un borde y no se mueve; eso es un Vaul",
+            "sin JavaScript el contenido tiene que seguir visible: una ventana no se abre sin su máquina"
+          ],
+          "useWhen": [
+            "hace falta un panel que conviva con la página: una paleta de herramientas, un inspector, un chat que queda abierto al lado del trabajo",
+            "quien lo usa tiene que poder moverlo, cambiarle el tamaño o minimizarlo para ver lo que tapa"
+          ]
+        }
+      },
+      "signatures": {
+        "Window": {
+          "compose": [
+            {
+              "of": "button",
+              "sheets": [
+                "@skryensya/core/components/button.css"
+              ],
+              "systemOwned": true
+            },
+            {
+              "of": "icon",
+              "systemOwned": true
+            }
+          ],
+          "forward": [
+            "id",
+            "aria-*"
+          ],
+          "host": {
+            "element": "div"
+          },
+          "intent": [
+            "floating-window",
+            "movable-panel",
+            "resizable-panel",
+            "non-modal-tool-panel",
+            "floating-panel"
+          ],
+          "mount": "data-sk-window",
+          "options": [
+            "defaultOpen",
+            "draggable",
+            "resizable",
+            "closeOnEscape",
+            "persistRect",
+            "defaultWidth",
+            "defaultHeight",
+            "minWidth",
+            "minHeight",
+            "closeLabel",
+            "minimizeLabel",
+            "maximizeLabel",
+            "restoreLabel",
+            "triggerLabel",
+            "triggerVariant",
+            "triggerTone",
+            "triggerSize",
+            "triggerIconOnly"
+          ],
+          "portals": {
+            "container": true
+          },
+          "react": {
+            "from": "@skryensya/react/window",
+            "name": "Window"
+          },
+          "slots": {
+            "children": {
+              "accepts": "node",
+              "required": true
+            },
+            "title": {
+              "accepts": "text",
+              "required": true
+            },
+            "trigger": {
+              "accepts": "node",
+              "required": true
+            }
+          },
+          "template": {
+            "children": [
+              {
+                "also": [
+                  "sk-button",
+                  "sk-interactive"
+                ],
+                "attrs": {
+                  "type": "button"
+                },
+                "element": "button",
+                "mount": "data-sk-window-trigger",
+                "options": [
+                  "triggerLabel",
+                  "triggerVariant",
+                  "triggerTone",
+                  "triggerSize",
+                  "triggerIconOnly"
+                ],
+                "part": "trigger",
+                "slot": "trigger"
+              },
+              {
+                "children": [
+                  {
+                    "children": [
+                      {
+                        "children": [
+                          {
+                            "children": [
+                              {
+                                "element": "h2",
+                                "mount": "data-sk-window-title",
+                                "part": "title",
+                                "slot": "title"
+                              },
+                              {
+                                "children": [
+                                  {
+                                    "also": [
+                                      "sk-button",
+                                      "sk-interactive"
+                                    ],
+                                    "attrs": {
+                                      "data-icon-only": "",
+                                      "data-size": "sm",
+                                      "data-stage": "minimized",
+                                      "data-variant": "ghost",
+                                      "type": "button"
+                                    },
+                                    "children": [
+                                      {
+                                        "attrs": {
+                                          "data-sk-icon": "minimize",
+                                          "data-sk-icon-size": "sm"
+                                        },
+                                        "element": "span"
+                                      }
+                                    ],
+                                    "element": "button",
+                                    "mount": "data-sk-window-stage",
+                                    "options": [
+                                      "minimizeLabel"
+                                    ],
+                                    "part": "stage"
+                                  },
+                                  {
+                                    "also": [
+                                      "sk-button",
+                                      "sk-interactive"
+                                    ],
+                                    "attrs": {
+                                      "data-icon-only": "",
+                                      "data-size": "sm",
+                                      "data-stage": "maximized",
+                                      "data-variant": "ghost",
+                                      "type": "button"
+                                    },
+                                    "children": [
+                                      {
+                                        "attrs": {
+                                          "data-sk-icon": "maximize",
+                                          "data-sk-icon-size": "sm"
+                                        },
+                                        "element": "span"
+                                      }
+                                    ],
+                                    "element": "button",
+                                    "mount": "data-sk-window-stage",
+                                    "options": [
+                                      "maximizeLabel"
+                                    ],
+                                    "part": "stage"
+                                  },
+                                  {
+                                    "also": [
+                                      "sk-button",
+                                      "sk-interactive"
+                                    ],
+                                    "attrs": {
+                                      "data-icon-only": "",
+                                      "data-size": "sm",
+                                      "data-stage": "default",
+                                      "data-variant": "ghost",
+                                      "type": "button"
+                                    },
+                                    "children": [
+                                      {
+                                        "attrs": {
+                                          "data-sk-icon": "restore",
+                                          "data-sk-icon-size": "sm"
+                                        },
+                                        "element": "span"
+                                      }
+                                    ],
+                                    "element": "button",
+                                    "mount": "data-sk-window-stage",
+                                    "options": [
+                                      "restoreLabel"
+                                    ],
+                                    "part": "stage"
+                                  },
+                                  {
+                                    "also": [
+                                      "sk-button",
+                                      "sk-interactive"
+                                    ],
+                                    "attrs": {
+                                      "data-icon-only": "",
+                                      "data-size": "sm",
+                                      "data-variant": "ghost",
+                                      "type": "button"
+                                    },
+                                    "children": [
+                                      {
+                                        "attrs": {
+                                          "data-sk-icon": "close",
+                                          "data-sk-icon-size": "sm"
+                                        },
+                                        "element": "span"
+                                      }
+                                    ],
+                                    "element": "button",
+                                    "mount": "data-sk-window-close",
+                                    "options": [
+                                      "closeLabel"
+                                    ],
+                                    "part": "close"
+                                  }
+                                ],
+                                "element": "div",
+                                "mount": "data-sk-window-controls",
+                                "part": "controls"
+                              }
+                            ],
+                            "element": "div",
+                            "mount": "data-sk-window-header",
+                            "part": "header"
+                          }
+                        ],
+                        "element": "div",
+                        "mount": "data-sk-window-drag",
+                        "part": "drag"
+                      },
+                      {
+                        "element": "div",
+                        "mount": "data-sk-window-body",
+                        "part": "body",
+                        "slot": "children"
+                      },
+                      {
+                        "attrs": {
+                          "data-axis": "n"
+                        },
+                        "element": "div",
+                        "mount": "data-sk-window-resize",
+                        "part": "resize"
+                      },
+                      {
+                        "attrs": {
+                          "data-axis": "e"
+                        },
+                        "element": "div",
+                        "mount": "data-sk-window-resize",
+                        "part": "resize"
+                      },
+                      {
+                        "attrs": {
+                          "data-axis": "s"
+                        },
+                        "element": "div",
+                        "mount": "data-sk-window-resize",
+                        "part": "resize"
+                      },
+                      {
+                        "attrs": {
+                          "data-axis": "w"
+                        },
+                        "element": "div",
+                        "mount": "data-sk-window-resize",
+                        "part": "resize"
+                      },
+                      {
+                        "attrs": {
+                          "data-axis": "ne"
+                        },
+                        "element": "div",
+                        "mount": "data-sk-window-resize",
+                        "part": "resize"
+                      },
+                      {
+                        "attrs": {
+                          "data-axis": "se"
+                        },
+                        "element": "div",
+                        "mount": "data-sk-window-resize",
+                        "part": "resize"
+                      },
+                      {
+                        "attrs": {
+                          "data-axis": "sw"
+                        },
+                        "element": "div",
+                        "mount": "data-sk-window-resize",
+                        "part": "resize"
+                      },
+                      {
+                        "attrs": {
+                          "data-axis": "nw"
+                        },
+                        "element": "div",
+                        "mount": "data-sk-window-resize",
+                        "part": "resize"
+                      }
+                    ],
+                    "element": "div",
+                    "mount": "data-sk-window-content",
+                    "part": "content"
+                  }
+                ],
+                "element": "div",
+                "mount": "data-sk-window-positioner",
+                "part": "positioner"
+              }
+            ],
+            "element": "div",
+            "host": true,
+            "part": "root"
+          }
+        }
+      }
+    },
     "wrapper": {
       "bindings": {
         "Wrapper": {
@@ -47978,7 +50858,7 @@
     "working": "0.0.1"
   },
   "schemaVersion": "2.3",
-  "sourceHash": "1cb2fecd44e045a0",
+  "sourceHash": "11751c61a72c6e43",
   "vocabulary": {
     "a11y": "When `when` holds, one of `requiresOneOf` must be given: an option, a raw attribute, a filled slot, or a child signature by name.",
     "atLeastOneOf": "At least one member of each group counts: a filled slot, a boolean option set to true, or an option other than its default.",

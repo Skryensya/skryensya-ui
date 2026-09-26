@@ -1,3 +1,5 @@
+import { tabbables } from "./focus-trap.js";
+
 /*
  * FEED, the DOM half both bindings run. Kept out of `feed.ts` because that file is a contract the
  * compiler imports, and the compiler has no DOM. Same split as `toolbar-dom.ts`.
@@ -58,48 +60,26 @@ export function applyFeedArticleTabStops(
   }
 }
 
-/*
- * What Ctrl+Home / Ctrl+End land on. The pattern's words are "the first focusable element before
- * the feed" and "after the feed", so this is a document-order question, not a feed-subtree one.
- */
-const FOCUSABLE_SELECTOR = [
-  "a[href]",
-  "button:not([disabled])",
-  "input:not([disabled]):not([type=hidden])",
-  "select:not([disabled])",
-  "textarea:not([disabled])",
-  "summary",
-  "audio[controls]",
-  "video[controls]",
-  '[contenteditable]:not([contenteditable="false"])',
-  '[tabindex]:not([tabindex="-1"])',
-].join(",");
-
 /**
  * The nearest focusable element before or after the feed, skipping everything inside it.
+ *
+ * The pattern's words are "the first focusable element before the feed" and "after the feed", so
+ * this is a document-order question over the whole document, not a feed-subtree one.
  *
  * "First ... before the feed" reads as nearest, not as the document's first: the reader is leaving
  * the stream backwards and expects the control just above it, the way Shift+Tab out of the first
  * article would have got there.
  *
- * `inert` and `hidden` subtrees are skipped by attribute rather than by `offsetParent`, which is
- * the usual way to ask "is this really visible" and is the wrong tool twice over here: jsdom does
- * no layout, so it reports `null` for every element and both bindings' tests would see an empty
- * candidate list, and in a browser it also rejects anything inside a `position: fixed` ancestor,
- * which a sticky header before the feed very often is.
+ * "Focusable" is `focus-trap.ts`'s `tabbables`, the kit's one tab-order list, which also explains
+ * why visibility is never read from `offsetParent` (jsdom lays nothing out; a browser rejects
+ * anything under `position: fixed`, which a sticky header before the feed very often is).
  */
 export function feedExitTarget(
   root: HTMLElement,
   edge: "before" | "after",
 ): HTMLElement | undefined {
-  const candidates = Array.from(
-    root.ownerDocument.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
-  ).filter(
-    (element) =>
-      !root.contains(element) &&
-      element !== root &&
-      !element.closest("[inert]") &&
-      !element.closest("[hidden]"),
+  const candidates = tabbables(root.ownerDocument.documentElement).filter(
+    (element) => !root.contains(element),
   );
 
   if (edge === "after") {

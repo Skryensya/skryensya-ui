@@ -1,0 +1,25 @@
+# Qué cambió en clipboard, en las palabras que lee quien lo usa. Sólo se agrega, nunca se reescribe.
+#
+# `surface` es la forma del contrato la última vez que alguien la revisó. Si el compilador dice
+# que no coincide, algo de lo que un consumidor depende se movió: escribe la entrada y pega el
+# hash nuevo.
+surface: "bae189ce647acb71"
+entries:
+  - date: 2026-09-25
+    kind: feature
+    es:
+      title: Copiar al portapapeles, sobre la máquina de Zag
+      body: >-
+        Nuevo contrato <code>clipboard</code> sobre <code>@zag-js/clipboard</code>, la misma máquina en las dos
+        capas. <code>CopyButton</code> es el botón solo: copia <code>value</code> o, al momento del clic, el
+        texto del elemento que nombra <code>target</code>. <code>Clipboard</code> suma una etiqueta y un campo
+        de solo lectura con el valor. Si el navegador rechaza la escritura, el botón lo dice
+        (<code>data-error</code>, «No se pudo copiar») en vez de mostrar «Copiado» igual.
+    en:
+      title: Copy to the clipboard, on Zag's machine
+      body: >-
+        New <code>clipboard</code> contract on <code>@zag-js/clipboard</code>, the same machine in both
+        bindings. <code>CopyButton</code> is the button alone: it copies <code>value</code> or, at the moment
+        of the click, the text of the element <code>target</code> names. <code>Clipboard</code> adds a label
+        and a read-only field showing the value. If the browser refuses the write, the button says so
+        (<code>data-error</code>, "Copy failed") instead of showing "Copied" anyway.

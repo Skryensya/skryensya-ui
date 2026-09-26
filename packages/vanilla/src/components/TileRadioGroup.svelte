@@ -91,19 +91,26 @@
       /*
        * The machine's part names are the radio group's (`item-text`, `item-control`); the tile's
        * vocabulary is `content` and `indicator`, and the CSS reads the tile's. Restored after the
-       * patch, exactly as `data-scope` is. React does the same by writing them after the spread.
+       * patch, and re-scoped with them: a renamed part left under `radio-group` named a part that
+       * machine does not have. React does the same by writing both after the spread.
        */
       {
         part: "item-text",
         node: () => item.text,
         props: () => api.getItemTextProps({ value: item.value }),
-        after: (node) => node.setAttribute("data-part", "content"),
+        after: (node) => {
+          scopeTile(node);
+          node.setAttribute("data-part", "content");
+        },
       },
       {
         part: "item-control",
         node: () => item.control,
         props: () => api.getItemControlProps({ value: item.value }),
-        after: (node) => node.setAttribute("data-part", "indicator"),
+        after: (node) => {
+          scopeTile(node);
+          node.setAttribute("data-part", "indicator");
+        },
       },
     ]),
   ];

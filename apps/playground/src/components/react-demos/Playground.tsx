@@ -1558,6 +1558,7 @@ function PlaygroundTool({ catalogue, languages, strings }: Props) {
   /** A palette row, applied: the same path as clicking the rail (edits are still confirmed first),
    *  plus opening the branch it lives in so the rail agrees with the stage about where we are. */
   const selectFromSearch = (entry: CommandPaletteEntry) => {
+    if (entry.href === undefined) return;
     const params = new URLSearchParams(entry.href.startsWith("?") ? entry.href.slice(1) : entry.href);
     const componentPart = params.get(COMPONENT_PARAM);
     const examplePart = params.get(EXAMPLE_PARAM);

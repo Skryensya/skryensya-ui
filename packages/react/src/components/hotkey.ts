@@ -1,16 +1,14 @@
-import { detectMac, isTypingContext, matchesHotkey, parseHotkey } from "@skryensya/core/hotkey";
+import { bindHotkey } from "@skryensya/core/hotkey";
 import { useEffect, useRef } from "react";
 
 /*
  * HOTKEY, the React binding.
  *
- * `useHotkey("mod+k", open)` is the vanilla `bindHotkey` as a hook: it consumes the same core matcher
- * (never the vanilla package, the two bindings are siblings over core, decision 14) and adds only what
- * React needs. The handler goes through a ref so a new closure every render does not re-bind the
- * listener, and the effect's cleanup removes it, the component lifecycle is the subscription. Platform
- * detection and the typing check are the core's, shared with the vanilla binding beside the matcher.
+ * `useHotkey("mod+k", open)` is the core's `bindHotkey` (on `@zag-js/hotkeys`' store, decision 25)
+ * held for the life of the component: the effect binds, its cleanup unbinds. The handler goes through
+ * a ref so a new closure every render does not re-bind. It never imports the vanilla package; the two
+ * bindings are siblings over core (decision 14), and here they share the implementation outright.
  */
-
 export interface UseHotkeyOptions {
   /** Where to listen. Defaults to `window`. Pass an element to scope the shortcut to it. */
   target?: Window | HTMLElement | Document | null;
@@ -41,22 +39,11 @@ export function useHotkey(
 
   useEffect(() => {
     if (!enabled) return;
-    const node = target ?? (typeof window !== "undefined" ? window : null);
-    if (!node) return;
-
-    const isMac = mac ?? detectMac();
-    const parsed = parseHotkey(spec);
-    const hasModifier = parsed.mod || parsed.meta || parsed.ctrl || parsed.alt;
-
-    const onKeydown = (event: Event) => {
-      if (!(event instanceof KeyboardEvent)) return;
-      if (!enableWhileTyping && !hasModifier && isTypingContext(event.target)) return;
-      if (!matchesHotkey(event, parsed, isMac)) return;
-      if (preventDefault) event.preventDefault();
-      handlerRef.current(event);
-    };
-
-    node.addEventListener("keydown", onKeydown);
-    return () => node.removeEventListener("keydown", onKeydown);
+    return bindHotkey(spec, (event) => handlerRef.current(event), {
+      target: target ?? undefined,
+      preventDefault,
+      enableWhileTyping,
+      mac,
+    });
   }, [spec, target, preventDefault, enableWhileTyping, enabled, mac]);
 }

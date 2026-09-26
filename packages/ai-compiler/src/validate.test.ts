@@ -3660,10 +3660,10 @@ describe("qr-code: a string made scannable", () => {
     expect(markup).toContain('data-module-shape="dot"');
     expect(markup).toMatch(/viewBox="0 0 \d+ \d+"/);
     expect(markup).toMatch(/<path[^>]*d="M/);
-    expect(markup).not.toContain("https://ui.skryensya.dev");
+    expect(markup).toContain('data-value="https://ui.skryensya.dev"');
   });
 
-  it("publishes five hooks with no mount, events, or foreign hookSheets", () => {
+  it("publishes five hooks, mounts the runtime enhancer, and has no events or foreign hookSheets", () => {
     const contract = getContract("qr-code")!;
     expect(contract.hooks).toEqual([
       "--sk-qr-code-logo-ratio",
@@ -3673,7 +3673,7 @@ describe("qr-code: a string made scannable", () => {
       "--sk-qr-code-size",
     ]);
     expect(contract.events).toBeUndefined();
-    expect(contract.signatures.QRCode.mount).toBeUndefined();
+    expect(contract.signatures.QRCode.mount).toBe("data-sk-qr-code");
     expect(contract.hookSheets ?? []).toEqual([]);
     expect(contract.options.logoRatio).toMatchObject({ min: 0, max: 0.5 });
     expect(contract.options.moduleShape.computedInput).toBeUndefined();

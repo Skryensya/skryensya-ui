@@ -1,0 +1,15 @@
+# The structure lives in packages/core/src/window.ts. Here, only why it is chosen.
+
+Window:
+  useWhen:
+    - "hace falta un panel que conviva con la página: una paleta de herramientas, un inspector, un chat que queda abierto al lado del trabajo"
+    - "quien lo usa tiene que poder moverlo, cambiarle el tamaño o minimizarlo para ver lo que tapa"
+  avoidWhen:
+    - "hay que decidir algo antes de seguir; eso es un Dialog, que deja la página inerte"
+    - "el contenido cuelga de un control y se cierra al hacer clic afuera; eso es un Popover"
+    - "el panel entra desde un borde y no se mueve; eso es un Vaul"
+    - "sin JavaScript el contenido tiene que seguir visible: una ventana no se abre sin su máquina"
+  alternatives:
+    - Dialog
+    - Popover
+    - Vaul

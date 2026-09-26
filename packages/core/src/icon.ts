@@ -112,6 +112,12 @@ export const stableIconNames = [
   /* Fits the whole of something into the view it is shown in: a canvas's "show me all of it". A set
    * may draw four outward corners or a frame; not "maximize", which is about the WINDOW. */
   "fit",
+  /* The three stages of a Window, the reason "fit" is not "maximize". Each names what the control
+   * DOES to the window, not a drawing: a set may draw a bar, an underscore or arrows. `restore` is
+   * the way back from either of the other two, which is why it is one role and not two. */
+  "minimize",
+  "maximize",
+  "restore",
   "more",
   "menu",
 

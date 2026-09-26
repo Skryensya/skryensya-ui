@@ -13,7 +13,6 @@
  * page, and after each one sweeps for wrappers that are now visible. A sweep is one
  * `querySelectorAll` over a handful of nodes; the events are all reader actions.
  */
-import { initCopyButtons } from "./copy-button.js";
 
 const WRAPPER = "[data-sk-deferred-code]:not([data-sk-deferred-ready])";
 
@@ -39,11 +38,11 @@ export function sweepDeferredCode(): void {
 
   /*
    * The clones carry CodePreview roots and CopyButtons that no enhancer has seen: they were not in
-   * the document when the page mounted. Both are idempotent and find their own roots, so re-running
-   * them adopts the new nodes and leaves every other instance alone.
+   * the document when the page mounted. Both mounts are idempotent and find their own roots, so
+   * re-running them adopts the new nodes and leaves every other instance alone.
    */
   void import("@skryensya/vanilla/code-preview").then(({ mountCodePreview }) => mountCodePreview());
-  initCopyButtons();
+  void import("@skryensya/vanilla/clipboard").then(({ mountClipboard }) => mountClipboard());
 }
 
 /* Reveals arrive in bursts (a tab change moves a panel, a binding change moves several), so the

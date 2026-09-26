@@ -1,7 +1,7 @@
 import { qrGeometry } from "@skryensya/core/qr-code";
 import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { QRCode } from "./qr-code.js";
+import { QRCode, qrCodeToSvg } from "./qr-code.js";
 
 /*
  * The React binding's own job is small on purpose: the geometry comes from Core, so what is left to
@@ -77,5 +77,13 @@ describe("QRCode", () => {
   it("serializes module shape for the stylesheet's shape-rendering switch", () => {
     const ui = render(<QRCode label="Open" shape="dot" value="https://ui.skryensya.dev" />);
     expect(ui.getByRole("img", { name: "Open" }).getAttribute("data-module-shape")).toBe("dot");
+  });
+  it("hands its rendered root to a ref, which is what the export functions take", () => {
+    let node: HTMLDivElement | null = null;
+    render(<QRCode label="Abrir" ref={(element) => {
+          node = element;
+        }} value="https://example.com" />);
+    expect(node).not.toBeNull();
+    expect(qrCodeToSvg(node!)).toContain("<path d=\"M");
   });
 });

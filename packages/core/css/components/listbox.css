@@ -1,0 +1,153 @@
+/* TIER 3, LISTBOX: a list of options chosen from in place, on `@zag-js/listbox`.
+ *
+ * STATE IS THE MACHINE'S: `data-highlighted` is the option the keyboard is on, `data-state="checked"`
+ * a chosen one, `data-disabled` one that cannot be. The options look like Select's (the same row
+ * height, the same state layer, the same check) because they are the same thing without the popup.
+ *
+ * FOCUS STAYS ON THE LIST. `aria-activedescendant` points at the highlighted option, so the options
+ * never receive focus themselves: the ring goes on the highlighted row, and on the list only while
+ * nothing inside is highlighted.
+ */
+
+@layer components {
+  .sk-listbox {
+    --sk-listbox-gap: var(--space-stack-xs);
+    --sk-listbox-label-fg: var(--color-text-primary);
+    --sk-listbox-bg: var(--color-bg-surface);
+    --sk-listbox-border-color: var(--color-border-default);
+    --sk-listbox-radius: var(--radius-surface);
+    --sk-listbox-padding: var(--space-inset-xs);
+    --sk-listbox-max-block-size: 18rem;
+    --sk-listbox-item-fg: var(--color-text-primary);
+    --sk-listbox-item-selected-fg: var(--color-text-accent);
+    --sk-listbox-item-disabled-fg: var(--color-text-disabled);
+    --sk-listbox-item-padding: var(--space-inset-xs) var(--space-inset-sm);
+    --sk-listbox-item-radius: var(--radius-control);
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--sk-listbox-gap);
+    min-inline-size: 0;
+  }
+
+  .sk-listbox__label {
+    color: var(--sk-listbox-label-fg);
+    font-size: var(--font-size-body-sm);
+    font-weight: var(--font-weight-label);
+    line-height: var(--font-line-height-body);
+  }
+
+  .sk-listbox__content {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: 0;
+    padding: var(--sk-listbox-padding);
+    max-block-size: var(--sk-listbox-max-block-size);
+    overflow: auto;
+    overscroll-behavior: contain;
+    list-style: none;
+    border: 1px solid var(--sk-listbox-border-color);
+    border-radius: var(--sk-listbox-radius);
+    background: var(--sk-listbox-bg);
+  }
+
+  .sk-listbox__content[data-orientation="horizontal"] {
+    flex-direction: row;
+    max-block-size: none;
+    overflow-x: auto;
+  }
+
+  .sk-listbox__content:focus-visible:not([aria-activedescendant]) {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  .sk-listbox__content:focus-visible {
+    outline: none;
+  }
+
+  .sk-listbox__item {
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--space-inline-sm);
+    align-items: center;
+    min-inline-size: 0;
+    min-block-size: var(--size-touch-target);
+    padding: var(--sk-listbox-item-padding);
+    border-radius: var(--sk-listbox-item-radius);
+    color: var(--sk-listbox-item-fg);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .sk-listbox__content[data-orientation="horizontal"] > .sk-listbox__item {
+    flex: none;
+  }
+
+  /* Chosen: the accent text, the label weight and the SELECTED rung of the state layer, so a chosen
+     row reads as chosen without the check, and a highlighted one (the hover rung) stays distinct. */
+  .sk-listbox__item[data-state="checked"] {
+    --state-layer-opacity: var(--state-layer-selected-opacity);
+
+    color: var(--sk-listbox-item-selected-fg);
+    font-weight: var(--font-weight-label);
+  }
+
+  .sk-listbox__item[data-highlighted] {
+    --state-layer-opacity: var(--state-layer-hover-opacity);
+  }
+
+  /* The keyboard's position, shown only while the list itself has focus: a pointer hovering a row
+     already has the state layer, and a ring on a list nobody is typing in would be noise. */
+  .sk-listbox__content:focus-visible > .sk-listbox__item[data-highlighted] {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: calc(-1 * var(--focus-ring-width));
+  }
+
+  .sk-listbox__item[data-disabled] {
+    --state-layer-opacity: var(--state-layer-disabled-opacity);
+    color: var(--sk-listbox-item-disabled-fg);
+    cursor: not-allowed;
+  }
+
+  .sk-listbox__item-text {
+    min-inline-size: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Zag writes `hidden` on the check of an unchosen option. Kept in the layout (and just invisible),
+     so choosing one never shifts its text. */
+  .sk-listbox__item-indicator,
+  .sk-listbox__item-indicator[hidden] {
+    display: inline-flex;
+    visibility: hidden;
+  }
+
+  .sk-listbox__item[data-state="checked"] > .sk-listbox__item-indicator {
+    visibility: visible;
+  }
+
+  .sk-listbox[data-disabled] .sk-listbox__item {
+    color: var(--sk-listbox-item-disabled-fg);
+    cursor: not-allowed;
+  }
+
+  @media (forced-colors: active) {
+    .sk-listbox__content {
+      border-color: CanvasText;
+    }
+
+    .sk-listbox__item[data-state="checked"] {
+      color: Highlight;
+    }
+
+    .sk-listbox__item[data-disabled] {
+      color: GrayText;
+    }
+  }
+}

@@ -1,9 +1,13 @@
-/* TIER 3, COPY BUTTON: declarative clipboard action with transient feedback.
+/* TIER 3, COPY BUTTON: the button of the `clipboard` contract (CopyButton, and Clipboard's trigger).
+ *
+ * STATE COMES FROM THE MACHINE: `data-copied` is what `@zag-js/clipboard` writes on the trigger while
+ * the copied state lasts, and `data-error` is what both bindings add on top when the browser refused
+ * the write (see core/src/clipboard.ts). Nothing here needs a script to open or close the flag.
  *
  * Compose onto `.sk-button` (typically `subtle` or `ghost`, icon-only: see button.css for what
  * `subtle` is) and `.sk-icon-toggle`. Face size comes from the button (`data-size="sm"` paints
  * at control-sm); the button's ::after expands the hit to the touch floor. The idle/copied morph
- * is the Icon Toggle pattern; this file maps `data-sk-copy-button-state` onto those faces, owns
+ * is the Icon Toggle pattern; this file maps `data-copied`/`data-error` onto those faces, owns
  * the live label, and paints the feedback flag.
  *
  * THE FLAG'S PLACEMENT IS NOT HERE. It is the Anclaje pattern (decision 25): the root also carries
@@ -38,14 +42,15 @@
    * Idle unless the copy just succeeded. Error keeps the copy glyph and only retones the button:
    * a failed copy is not a check.
    */
-  .sk-copy-button:not([data-sk-copy-button-state="copied"]) > [data-face="idle"],
-  .sk-copy-button[data-sk-copy-button-state="copied"] > [data-face="copied"] {
+  .sk-copy-button:not([data-copied]) > [data-face="idle"],
+  .sk-copy-button[data-error] > [data-face="idle"],
+  .sk-copy-button[data-copied]:not([data-error]) > [data-face="copied"] {
     --sk-icon-toggle-on: 1;
   }
 
   /* One rule for the two things a failed copy changes: the button's own colour, and the tone the
      flag inherits from here. Danger's trio, the same shape as success's above. */
-  .sk-copy-button[data-sk-copy-button-state="error"] {
+  .sk-copy-button[data-error] {
     --sk-copy-button-feedback-bg: var(--color-bg-danger-subtle);
     --sk-copy-button-feedback-fg: var(--color-text-danger);
     --sk-copy-button-feedback-border-color: var(--color-border-danger);
@@ -115,8 +120,8 @@
     transition-timing-function: var(--motion-state-change-easing);
   }
 
-  /* The flag lasts exactly as long as the check icon: one enhancer, one timer, both attributes
-     cleared in the same call. */
+  /* The flag lasts exactly as long as the machine's copied state: both bindings mirror it into
+     `data-state`, which is also what the Anchoring pattern shows the arrow for. */
   .sk-copy-button__feedback[data-state="open"] {
     visibility: visible;
     opacity: 1;
@@ -133,15 +138,15 @@
 
   /* Both sentences are in the markup and the state picks one, exactly like the two icons. Copied is
      what shows by default, so an authored flag reads right before anything has run. */
-  .sk-copy-button [data-sk-copy-button-feedback-text="error"] {
+  .sk-copy-button [data-sk-clipboard-feedback-text="error"] {
     display: none;
   }
 
-  .sk-copy-button[data-sk-copy-button-state="error"] [data-sk-copy-button-feedback-text="copied"] {
+  .sk-copy-button[data-error] [data-sk-clipboard-feedback-text="copied"] {
     display: none;
   }
 
-  .sk-copy-button[data-sk-copy-button-state="error"] [data-sk-copy-button-feedback-text="error"] {
+  .sk-copy-button[data-error] [data-sk-clipboard-feedback-text="error"] {
     display: inline;
   }
 

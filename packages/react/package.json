@@ -21,6 +21,14 @@
       "types": "./src/components/badge.tsx",
       "default": "./src/components/badge.tsx"
     },
+    "./password-input": {
+      "types": "./src/components/password-input.tsx",
+      "default": "./src/components/password-input.tsx"
+    },
+    "./presence": {
+      "types": "./src/components/presence.tsx",
+      "default": "./src/components/presence.tsx"
+    },
     "./callout": {
       "types": "./src/components/callout.tsx",
       "default": "./src/components/callout.tsx"
@@ -233,6 +241,18 @@
       "types": "./src/components/lightbox.tsx",
       "default": "./src/components/lightbox.tsx"
     },
+    "./tour": {
+      "types": "./src/components/tour.tsx",
+      "default": "./src/components/tour.tsx"
+    },
+    "./clipboard": {
+      "types": "./src/components/clipboard.tsx",
+      "default": "./src/components/clipboard.tsx"
+    },
+    "./listbox": {
+      "types": "./src/components/listbox.tsx",
+      "default": "./src/components/listbox.tsx"
+    },
     "./back-to-top": {
       "types": "./src/components/back-to-top.tsx",
       "default": "./src/components/back-to-top.tsx"
@@ -320,6 +340,10 @@
     "./tooltip": {
       "types": "./src/components/tooltip.tsx",
       "default": "./src/components/tooltip.tsx"
+    },
+    "./window": {
+      "types": "./src/components/window.tsx",
+      "default": "./src/components/window.tsx"
     },
     "./popover": {
       "types": "./src/components/popover.tsx",

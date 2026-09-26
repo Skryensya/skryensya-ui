@@ -9,6 +9,7 @@ import {
   type SlotContent,
   type UsageTree,
 } from "@skryensya/core/usage-tree";
+import { floatingClasses } from "./floating.js";
 import { canonicalTrees } from "./trees.js";
 /*
  * `test` comes from the fixtures, not from `@playwright/test`, for the worker-scoped `stagePage`
@@ -63,7 +64,7 @@ test("every canonical tree paints something", async ({ stagePage: page }) => {
    * Measuring in the page is one evaluate, and it reports EVERY case that draws nothing rather
    * than only the first, which is the shape of claim this gate makes anyway.
    */
-  const problems = await page.evaluate((cases) => {
+  const problems = await page.evaluate(([cases, floating]) => {
     const found: string[] = [];
 
     for (const name of cases) {
@@ -76,7 +77,7 @@ test("every canonical tree paints something", async ({ stagePage: page }) => {
          * not to. Vanilla nests the positioner instead, so it never hit this.
          */
         const painted = host
-          ? [...host.children].find((child) => !child.classList.contains("sk-anchored"))
+          ? [...host.children].find((child) => !floating.some((name) => child.classList.contains(name)))
           : undefined;
 
         if (!painted) {
@@ -91,7 +92,7 @@ test("every canonical tree paints something", async ({ stagePage: page }) => {
     }
 
     return found;
-  }, names);
+  }, [names, [...floatingClasses]] as const);
 
   expect(problems, "a canonical tree that renders no box is a tree the static gates cannot see").toEqual([]);
 });

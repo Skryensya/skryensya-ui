@@ -314,6 +314,12 @@ A tier-2 motion token naming what a transition *means* (enter, feedback, expand)
 lasts. Components consume intent only, so retuning a primitive restyles the system.
 _Avoid_: duration token, easing token, timing token
 
+**Presence**:
+A component. Content that plays an exit before it leaves: `hidden` is its state, and the CSS holds it
+on screen for the exit with `allow-discrete`. The React binding keeps the host mounted and drops only
+its children, once the exit has painted. Not a machine: how long to wait is read off computed style.
+_Avoid_: transition (that is the CSS property), mount/unmount (that is what it delays), animate-presence
+
 ## The top layer
 
 **Top layer**:
@@ -355,6 +361,14 @@ Pulling a Vaul back toward its edge to close it. The one Vaul behaviour with no 
 and none in Zag either, so it is the only JavaScript a Vaul costs, and it is opt-in: a Vaul is
 complete without it. Not "swipe": a swipe is a flick with no position, and this tracks the finger.
 _Avoid_: swipe, swipe-to-close, snap points
+
+**Window**:
+A component. A **non-modal** panel the person moves by its title bar, resizes from its edges, and
+minimizes, maximizes or closes from its controls, over `@zag-js/floating-panel`. It is placed
+relative to the page, never to an anchor or an edge, and the page behind it stays live: a Dialog
+asks for an answer first, a Window waits beside the work. Its three **stages** are `default`,
+`minimized` and `maximized`, and `restore` is the way back from either of the last two.
+_Avoid_: floating panel, floating window, palette, modeless dialog
 
 ## Anchored placement
 

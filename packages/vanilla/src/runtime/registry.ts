@@ -51,6 +51,10 @@ const registrations: readonly Registration[] = [
     load: async () => (await import("../components/otp-input.js")).mountOtpInput,
   },
   {
+    selector: "[data-sk-password-input]",
+    load: async () => (await import("../components/password-input.js")).mountPasswordInput,
+  },
+  {
     selector: "[data-sk-rating]",
     load: async () => (await import("../components/rating.js")).mountRating,
   },
@@ -62,6 +66,11 @@ const registrations: readonly Registration[] = [
     selector: "[data-sk-segmented]",
     load: async () =>
       (await import("../components/segmented.js")).mountSegmented,
+  },
+  {
+    /* Only the opted-in ones: a plain FadeEdge is paint and has nothing to watch. */
+    selector: "[data-sk-fade-edge][data-scroll-aware]",
+    load: async () => (await import("../components/fade-edge.js")).mountFadeEdge,
   },
   {
     selector: "[data-sk-stat][data-animate]",
@@ -199,6 +208,10 @@ const registrations: readonly Registration[] = [
     load: async () => (await import("../components/tooltip.js")).mountTooltip,
   },
   {
+    selector: "[data-sk-window]",
+    load: async () => (await import("../components/window.js")).mountWindow,
+  },
+  {
     selector: "[data-sk-menu]",
     load: async () => (await import("../components/menu.js")).mountMenu,
   },
@@ -286,8 +299,32 @@ const registrations: readonly Registration[] = [
     load: async () => (await import("../components/canvas.js")).mountCanvas,
   },
   {
+    /*
+     * EVERY `<dialog>`, including the ones the entries around it also claim: this one marks nothing
+     * and only installs the document's modal Tab wrap (`components/dialog.ts`), so it can overlap.
+     */
+    selector: "dialog",
+    load: async () => (await import("../components/dialog.js")).mountDialog,
+  },
+  {
     selector: "dialog[data-sk-lightbox]",
     load: async () => (await import("../components/lightbox.js")).mountLightbox,
+  },
+  {
+    selector: "[data-sk-qr-code]",
+    load: async () => (await import("../components/qr-code.js")).mountQrCode,
+  },
+  {
+    selector: "[data-sk-tour]",
+    load: async () => (await import("../components/tour.js")).mountTour,
+  },
+  {
+    selector: "[data-sk-clipboard]",
+    load: async () => (await import("../components/clipboard.js")).mountClipboard,
+  },
+  {
+    selector: "[data-sk-listbox]",
+    load: async () => (await import("../components/listbox.js")).mountListbox,
   },
   /*
    * LAST ON PURPOSE, and it is the only entry in this table whose POSITION means anything.

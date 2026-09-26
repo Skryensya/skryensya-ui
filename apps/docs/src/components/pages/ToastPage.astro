@@ -8,6 +8,7 @@ import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
 import {
   toastActionTree,
+  toastAnatomyCss,
   toastAnatomyTree,
   toastEmitScript,
   toastEmitTree,
@@ -17,7 +18,6 @@ import {
   toastStatusScript,
   toastStatusTree,
 } from "../../demos/toast";
-import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
 
 const t = useTranslations(getLocale(Astro.url));
@@ -108,7 +108,7 @@ await initComponents();`;
     <p set:html={t("toastPage.anatomyBody")} />
     <ComponentPreview
       tree={toastAnatomyTree(t)}
-      css={annotationDemoCss}
+      css={toastAnatomyCss}
       label={t("toastPage.anatomyPreviewLabel")}
       screens={false}
       hideSource

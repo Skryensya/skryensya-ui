@@ -1,0 +1,91 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { annotationDemoCss } from "../../demos/annotation";
+import {
+  listboxAnatomyTree,
+  listboxHorizontalTree,
+  listboxMultipleTree,
+  listboxSingleTree,
+} from "../../demos/listbox";
+import { getLocale, useTranslations } from "../../i18n";
+import "@skryensya/core/components/listbox.css";
+/* The anatomy diagram is an Annotated frame, so this page needs its sheet. */
+import "@skryensya/core/components/annotation.css";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const react = `import { Listbox } from "@skryensya/react/listbox";
+import "@skryensya/core/components/listbox.css";
+
+<Listbox
+  label="Labels"
+  selectionMode="multiple"
+  items={labels}
+  onValueChange={({ value }) => setFilters(value)}
+/>`;
+
+const vanilla = `document.addEventListener("sk:listboxvaluechange", (event) => {
+  setFilters(event.detail.value);
+});`;
+---
+
+<ComponentPageShell
+  title="Listbox"
+  description={t("listbox.description")}
+  badge={t("listbox.betaBadge")}
+  contractId="listbox"
+  styleGroups={[{ file: "components/listbox.css", probe: "sk-listbox" }]}
+  testFiles={[
+    "packages/vanilla/src/components/listbox.svelte.test.ts",
+    "packages/react/src/components/listbox.test.tsx",
+  ]}
+>
+  <Fragment slot="anatomy">
+    <p set:html={t("listbox.anatomyBody")} />
+    <ComponentPreview
+      tree={listboxAnatomyTree(t)}
+      css={annotationDemoCss}
+      label={t("listbox.anatomyPreviewLabel")}
+      screens={false}
+      hideSource
+      chrome={false}
+    />
+  </Fragment>
+
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("listbox.lede")} />
+
+    <h3>{t("listbox.whenTitle")}</h3>
+    <ul>
+      <li set:html={t("listbox.whenItem1")} />
+      <li set:html={t("listbox.whenItem2")} />
+      <li set:html={t("listbox.whenItem3")} />
+    </ul>
+
+    <h3>{t("listbox.singleTitle")}</h3>
+    <p set:html={t("listbox.singleBody")} />
+    <ComponentPreview tree={listboxSingleTree(t)} label={t("listbox.singleLabel")} />
+
+    <h3>{t("listbox.multipleTitle")}</h3>
+    <p set:html={t("listbox.multipleBody")} />
+    <ComponentPreview tree={listboxMultipleTree(t)} label={t("listbox.multipleLabel")} />
+
+    <h3>{t("listbox.horizontalTitle")}</h3>
+    <p set:html={t("listbox.horizontalBody")} />
+    <ComponentPreview tree={listboxHorizontalTree(t)} label={t("listbox.horizontalLabel")} />
+
+    <h3>{t("listbox.keyboardTitle")}</h3>
+    <ul>
+      <li set:html={t("listbox.keyboardItem1")} />
+      <li set:html={t("listbox.keyboardItem2")} />
+      <li set:html={t("listbox.keyboardItem3")} />
+    </ul>
+
+    <h3>{t("listbox.eventsTitle")}</h3>
+    <p set:html={t("listbox.eventsBody")} />
+    <CodeBlock code={react} label="React" lang="tsx" />
+    <CodeBlock code={vanilla} label="JavaScript" lang="ts" />
+  </Fragment>
+</ComponentPageShell>

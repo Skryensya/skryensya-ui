@@ -161,6 +161,8 @@ export function TagsInput({
           aria-label={label}
           className={tagsInputParts.input}
           placeholder={placeholder}
+          // The template's own static attr: authored markup always had it, React never wrote it.
+          type="text"
         />
       </div>
       <input {...api.getHiddenInputProps()} className={tagsInputParts.hidden} />

@@ -3,7 +3,7 @@
 # `surface` is the shape of the contract the last time somebody reviewed it. If the compiler says it
 # does not match, something a consumer depends on has moved: write the entry and paste in the new
 # hash.
-surface: "83a7e74756377251"
+surface: "77058b2f6f0d72b4"
 entries:
   - date: 2026-09-17
     kind: feature
@@ -236,3 +236,21 @@ entries:
       body: >-
         The kit is an English library and its defaults were Spanish: <code>closeLabel</code> Close, <code>placeholder</code> Search…, <code>emptyLabel</code> No results.. An interface in another
         language passes its own texts, and the <code>locale</code> it needs.
+  - date: 2026-09-25
+    kind: feature
+    es:
+      title: Comandos, además de destinos
+      body: >-
+        Una entrada puede llevar <code>command</code> en vez de <code>href</code>. Los comandos sólo
+        aparecen cuando la búsqueda empieza con <code>/</code>, y una búsqueda sin <code>/</code>
+        sólo lista destinos. Activar uno cierra la paleta y dispara
+        <code>sk:commandpalettecommand</code> en el diálogo con <code>{ command, entry }</code>; en
+        React también llama a <code>onCommand</code>. Nunca navega ni pasa por <code>onSelect</code>.
+    en:
+      title: Commands, alongside destinations
+      body: >-
+        An entry can carry <code>command</code> instead of <code>href</code>. Commands are listed only
+        once the query starts with <code>/</code>, and a query without it lists only destinations.
+        Activating one closes the palette and fires <code>sk:commandpalettecommand</code> on the
+        dialog with <code>{ command, entry }</code>; React also calls <code>onCommand</code>. It never
+        navigates and never reaches <code>onSelect</code>.

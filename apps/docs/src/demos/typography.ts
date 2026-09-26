@@ -1,44 +1,18 @@
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import type { Translate } from "../i18n";
 
-export const textTree = (t: Translate): UsageTree => ({
-  contract: "typography",
-  signature: "Text",
-  slots: { children: t("demo.typography.text.body") },
-});
-
-export const textSecondaryTree = (t: Translate): UsageTree => ({
-  contract: "typography",
-  signature: "Text",
-  options: { tone: "secondary" },
-  slots: { children: t("demo.typography.textSecondary.body") },
-});
-
-export const headingTree = (t: Translate): UsageTree => ({
-  contract: "typography",
-  signature: "Heading",
-  options: { headingElement: "h2", headingSize: "lg" },
-  slots: { children: t("demo.typography.heading.text") },
-});
-
-export const linkTree = (t: Translate): UsageTree => ({
-  contract: "typography",
-  signature: "Text",
-  slots: {
-    children: t("demo.typography.linkContext"),
-  },
-});
-
-export const strongTree = (t: Translate): UsageTree => ({
-  contract: "typography",
-  signature: "Text",
-  slots: { children: t("demo.typography.strong.body") },
-});
-
+/* Real `Code` nodes between runs of text: a `<code>` written into a translated string is escaped
+   by React and is never the contract's own element in either binding. */
 export const codeTree = (t: Translate): UsageTree => ({
   contract: "typography",
   signature: "Text",
-  slots: { children: t("demo.typography.code.body") },
+  children: [
+    t("demo.typography.code.before"),
+    { contract: "typography", signature: "Code", children: "data-role" },
+    t("demo.typography.code.between"),
+    { contract: "typography", signature: "Code", children: "--color-surface" },
+    t("demo.typography.code.after"),
+  ],
 });
 
 export const outputTree = (t: Translate): UsageTree => ({

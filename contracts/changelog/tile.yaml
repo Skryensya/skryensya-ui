@@ -5,6 +5,21 @@
 # hash.
 surface: "00533a54468128d6"
 entries:
+  - date: 2026-09-26
+    kind: bugfix
+    target: TileRadioGroup
+    es:
+      title: Las partes renombradas del grupo de radios quedan en el scope tile
+      body: >-
+        <code>content</code> e <code>indicator</code> ya estaban renombradas al vocabulario de Tile pero seguían con
+        <code>data-scope="radio-group"</code>, nombrando partes que esa máquina no tiene. Ahora llevan <code>data-scope="tile"</code>, como la
+        raíz y el item, en el template y en los dos bindings. Ningún selector las leía.
+    en:
+      title: The radio group's renamed parts move to the tile scope
+      body: >-
+        <code>content</code> and <code>indicator</code> were already renamed into Tile's vocabulary but kept
+        <code>data-scope="radio-group"</code>, naming parts that machine does not have. They now carry <code>data-scope="tile"</code>, like
+        the root and the item, in the template and in both bindings. No selector read them.
   - date: 2026-09-18
     kind: feature
     es:

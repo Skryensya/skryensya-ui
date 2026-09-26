@@ -476,7 +476,9 @@ const signatureTrees: readonly Canonical[] = [
     /* The one contract whose payload is COMPUTED into an attribute rather than authored: G2 compares
        the two bindings' `<path d>` here, which is the only check that both call the same encoder. */
     name: "qr-code/default",
-    enhanced: false,
+    /* Enhanced since the Vanilla binding can draw and re-point a symbol at runtime: the emitted root
+       carries `data-sk-qr-code` and its `data-value`, which is what the enhancer mounts on. */
+    enhanced: true,
     tree: {
       contract: "qr-code",
       signature: "QRCode",
@@ -531,6 +533,38 @@ const signatureTrees: readonly Canonical[] = [
         contract: "typography",
         signature: "Text",
         children: "Un texto que se desvanece en el borde",
+      },
+    },
+  },
+  {
+    /* Closed on purpose: the open state is a plain div, and `hidden` from `present: false` is the
+       attribute the contract adds that both bindings have to agree on. */
+    name: "presence/closed",
+    enhanced: false,
+    tree: {
+      contract: "presence",
+      signature: "Presence",
+      options: { present: false },
+      children: {
+        contract: "typography",
+        signature: "Text",
+        children: "Contenido que sale con una animación",
+      },
+    },
+  },
+  {
+    /* Enhanced: the watcher writes `data-at-edge` in both bindings, and this short text fits, so
+       both have to land on the attribute present. */
+    name: "fade-edge/scroll-aware",
+    enhanced: true,
+    tree: {
+      contract: "fade-edge",
+      signature: "FadeEdge",
+      options: { scrollAware: true },
+      children: {
+        contract: "typography",
+        signature: "Text",
+        children: "Un texto que entra entero, sin scroll",
       },
     },
   },
@@ -1358,6 +1392,26 @@ const signatureTrees: readonly Canonical[] = [
       },
     },
   },
+  /*
+   * CLOSED, like every other portalling tree here. Open, the two windows on the stage share one
+   * stack, so one is `data-topmost` and the other `data-behind` for a reason neither binding
+   * controls, and React's portal puts the dialog before the trigger in the accessibility tree.
+   * The open window is covered by each binding's own tests; this compares the full closed markup.
+   */
+  {
+    name: "window/closed",
+    enhanced: true,
+    tree: {
+      contract: "window",
+      signature: "Window",
+      options: { defaultWidth: 360, defaultHeight: 220 },
+      slots: {
+        trigger: "Abrir inspector",
+        title: "Inspector",
+        children: "Las propiedades de la capa seleccionada.",
+      },
+    },
+  },
   /* Open but not yet searched: the list is empty in BOTH bindings until something is typed. */
   {
     name: "command-palette/open",
@@ -1719,6 +1773,21 @@ const signatureTrees: readonly Canonical[] = [
       signature: "NumberField",
       options: { name: "noches", min: 1, max: 14, step: 1 },
       slots: { label: "Noches" },
+    },
+  },
+  {
+    /*
+     * Sign-up shape: `new-password` so a manager offers to generate one, and a hint the input is
+     * described by. The toggle's two names are authored, so both bindings have to land on the same
+     * resting `aria-label`.
+     */
+    name: "password-input/new",
+    enhanced: true,
+    tree: {
+      contract: "password-input",
+      signature: "PasswordInput",
+      options: { name: "clave", autoComplete: "new-password", showLabel: "Mostrar contraseña", hideLabel: "Ocultar contraseña" },
+      slots: { label: "Contraseña nueva", hint: "Al menos 12 caracteres" },
     },
   },
   {
@@ -3142,6 +3211,111 @@ const signatureTrees: readonly Canonical[] = [
             closeLabel: "Cerrar",
             previousLabel: "Anterior",
             nextLabel: "Siguiente",
+          },
+        },
+      ],
+    },
+  },
+
+  /*
+   * LISTBOX in multiple mode with two options chosen from the start and one disabled: the three
+   * states every option can be in, which both bindings have to write the same way at rest.
+   */
+  {
+    name: "listbox/multiple",
+    enhanced: true,
+    tree: {
+      contract: "listbox",
+      signature: "Listbox",
+      options: { selectionMode: "multiple" },
+      slots: {
+        label: "Etiquetas",
+        items: [
+          { options: { value: "bug", defaultSelected: true }, slots: { label: "Bug" } },
+          { options: { value: "docs" }, slots: { label: "Documentación" } },
+          { options: { value: "design", defaultSelected: true }, slots: { label: "Diseño" } },
+          { options: { value: "legacy", disabled: true }, slots: { label: "Legado" } },
+        ],
+      },
+    },
+  },
+
+  /*
+   * CLIPBOARD, both signatures at rest: the machine writes the trigger's name and the field's ids,
+   * and both bindings have to land on the same ones before anyone clicks.
+   */
+  {
+    name: "clipboard/copy-button",
+    enhanced: true,
+    tree: {
+      contract: "clipboard",
+      signature: "CopyButton",
+      options: { value: "pnpm add @skryensya/core", label: "Copiar comando", copiedLabel: "Copiado", errorLabel: "No se pudo copiar" },
+    },
+  },
+  {
+    name: "clipboard/field",
+    enhanced: true,
+    tree: {
+      contract: "clipboard",
+      signature: "Clipboard",
+      options: {
+        value: "https://skryensya.dev/s/4821",
+        label: "Copiar enlace",
+        copiedLabel: "Copiado",
+        errorLabel: "No se pudo copiar",
+      },
+      slots: { fieldLabel: "Enlace para compartir" },
+    },
+  },
+
+  /*
+   * TOUR is a trigger and a tour that only mean something together. At rest the tour is its hidden
+   * step list and two hidden top-layer boxes, which is exactly what both bindings must agree on and
+   * the root the vanilla conformance gate needs to see enhanced. The steps point at the trigger itself
+   * and at a heading, so every target exists in the rendered tree.
+   */
+  {
+    name: "tour/two-steps",
+    enhanced: true,
+    tree: {
+      contract: "layout",
+      signature: "Stack",
+      options: { gap: "md" },
+      children: [
+        {
+          contract: "typography",
+          signature: "Heading",
+          options: { headingSize: "h3", flush: true },
+          attrs: { id: "gate-tour-heading" },
+          children: "Proyectos",
+        },
+        {
+          contract: "tour",
+          signature: "Tour.Trigger",
+          options: { opens: "gate-tour", triggerLabel: "Iniciar tour", restartLabel: "Repetir tour" },
+          attrs: { id: "gate-tour-trigger" },
+        },
+        {
+          contract: "tour",
+          signature: "Tour",
+          options: {
+            tourId: "gate-tour",
+            progressLabel: "Paso {index} de {count}",
+            nextLabel: "Continuar",
+            finishLabel: "Finalizar",
+            previousLabel: "Anterior",
+            skipLabel: "Omitir tour",
+            closeLabel: "Cerrar tour",
+          },
+          slots: {
+            items: [
+              { options: { target: "#gate-tour-heading" }, slots: { title: "Proyectos", description: "Todo lo que tienes en curso." } },
+              {
+                options: { target: "#gate-tour-trigger", placement: "inline-end" },
+                slots: { title: "Repetir", description: "Vuelve a este recorrido cuando quieras." },
+              },
+            ],
           },
         },
       ],

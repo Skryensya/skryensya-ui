@@ -1975,46 +1975,29 @@ main {
  * to sit flush, so `:not([data-flush])` gets these element rules out of its way and lets the layered
  * flush reset win.
  *
- * A COMPONENT'S OWN HEADING IS NOT PROSE, and naming each one here is the same fence `main a:not(…)`
- * further down already draws for component anchors, for the same reason. These are bare element
- * selectors: they reach every `<h2>`/`<h3>` on the page AND inside every preview frame, which clones
- * these stylesheets, so a part that happens to be a real heading was being repainted as a section
- * title of the document. Measured on Toc's own caption: 12px/600 as the component defines it, 24px/700
- * with 64px of `--space-section` above it once this rule won, which is what made a previewed Toc look
- * nothing like the one this site runs in its own rail.
- *
- * `data-flush` was the existing escape, and it is the wrong tool for this: it is a DOCS convention, so
- * relying on it means every consumer of a published component has to know a docs-site attribute to get
- * that component's own type back. Exactly the coupling `data-sk-toc-rail` was just deleted for. The
- * docs shell's own `Toc.astro` still writes `data-flush`, which is why the rail looked right while
- * every other rendering of the same component did not.
- *
- * `.sk-heading` is excluded for the same reason: Heading owns its size and carries no block margin,
- * so a Heading in a preview or a card stays as tight as the component defines it without `flush`. */
-h1:not([data-flush], .sk-heading) {
+ * A COMPONENT'S OWN HEADING IS NOT PROSE. These are bare element selectors: they reach every heading
+ * on the page AND inside every preview frame, which clones this sheet, so a part that happens to be a
+ * real heading was repainted as a section title of the document (Toc's caption at 24px/700 with 64px
+ * above it; a Tour's title pushed down inside its own box). They used to name each such part in a
+ * `:not()` list re-earned one component at a time. Every kit class is `sk-`-prefixed, so the prefix
+ * IS the rule, the same fence `p:not([class*="sk-"])` below draws: anything the kit drew keeps what
+ * its own sheet says. */
+h1:not([data-flush], [class*="sk-"]) {
   margin: 0 0 var(--space-stack-sm);
   font-size: var(--font-size-heading-lg);
   line-height: var(--font-line-height-heading);
   font-weight: var(--font-weight-heading);
 }
 
-h2:not(
-    [data-flush],
-    .sk-heading,
-    .sk-toc__title,
-    .sk-dialog__title,
-    .sk-popover__title,
-    .sk-empty-state__title,
-    .docs-drawer__title
-  ) {
-  margin: var(--space-section) 0 var(--space-stack-sm);
+h2:not([data-flush], [class*="sk-"], .docs-drawer__title) {
+  margin: 0 0 var(--space-stack-sm);
   font-size: var(--font-size-heading-md);
   line-height: var(--font-line-height-heading);
   font-weight: var(--font-weight-heading);
 }
 
-h3:not([data-flush], .sk-heading, .sk-nav-list__group-label) {
-  margin: var(--space-stack-lg) 0 var(--space-stack-xs);
+h3:not([data-flush], [class*="sk-"]) {
+  margin: 0 0 var(--space-stack-xs);
   font-size: var(--font-size-heading-sm);
   line-height: var(--font-line-height-heading);
   font-weight: var(--font-weight-heading);
@@ -2023,11 +2006,31 @@ h3:not([data-flush], .sk-heading, .sk-nav-list__group-label) {
 /* No "sm/md/lg" alias exists past h3 (the docs never needed a fourth prose level before the hero
    tabs pilot demoted a whole tier of headings by one step): `--font-size-heading-h4` is the type
    scale's own floor for h4 and up, so this reads it directly instead of inventing a new alias. */
-h4:not([data-flush], .sk-heading) {
-  margin: var(--space-stack-md) 0 var(--space-stack-xs);
+h4:not([data-flush], [class*="sk-"]) {
+  margin: 0 0 var(--space-stack-xs);
   font-size: var(--font-size-heading-h4);
   line-height: var(--font-line-height-heading);
   font-weight: var(--font-weight-heading);
+}
+
+/*
+ * A HEADING OWNS NO SPACE ABOVE ITSELF. The element rules above give only the gap to what follows;
+ * room ABOVE a heading is a decision about the context it sits in, taken case by case, never a
+ * property every heading carries into every card, dialog and preview frame that clones this sheet.
+ *
+ * This is the one case taken: the docs' own running prose, unclassed headings inside `main`, where a
+ * new section needs air above it. Preview frames have no `main`, and a kit part always has a class.
+ */
+main :where(h2):not([class], [data-flush]) {
+  margin-block-start: var(--space-section);
+}
+
+main :where(h3):not([class], [data-flush]) {
+  margin-block-start: var(--space-stack-lg);
+}
+
+main :where(h4):not([class], [data-flush]) {
+  margin-block-start: var(--space-stack-md);
 }
 
 /* Same unlayered-beats-`@layer components` fact as the headings above, and the same fix: this is
@@ -3582,4 +3585,25 @@ html[data-sk-component-preview-pref="vanilla"] [data-sk-install-binding="react"]
   color: var(--color-fg-muted);
   font-size: var(--font-size-caption);
   font-variant-numeric: tabular-nums;
+}
+
+/*
+ * EVERY ANATOMY DIAGRAM IS A 4:3 FRAME, with the drawing fitted and centred inside it.
+ *
+ * An anatomy is an Annotated whose canvas only fits (`fitOnly`, set for all of them by
+ * ComponentPreview), so this is the one selector that names them all and nothing else: the Annotation
+ * page's own zoomable demos are not `fitOnly` and keep the canvas's own sizing. One ratio for all of
+ * them is what makes a page of diagrams read as one set, and it lets each diagram's height be known
+ * from its width alone.
+ *
+ * The canvas sizes its viewport to the fitted drawing (`--sk-canvas-fit-block-size`) inside a floor
+ * and a cap; here the ratio decides instead, so all three are released. The canvas reads a
+ * ratio-fixed height back as a cap of its own, so a drawing taller than 4:3 shrinks to fit rather
+ * than being cut, and `canvasFitView` centres it on both axes.
+ */
+.sk-annotated-figure > .sk-canvas[data-fit-only] > .sk-canvas__viewport {
+  block-size: auto;
+  min-block-size: 0;
+  max-block-size: none;
+  aspect-ratio: 4 / 3;
 }

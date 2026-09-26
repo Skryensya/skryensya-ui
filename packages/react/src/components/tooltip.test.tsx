@@ -22,6 +22,23 @@ describe("Tooltip", () => {
     expect(ui.getByLabelText("Delete")).toBeTruthy();
   });
 
+  it("writes data-arrow on the root only when the arrow is asked for", () => {
+    const withArrow = render(
+      <Tooltip arrow content="Pista">
+        <button aria-label="Ayuda" type="button" />
+      </Tooltip>,
+    );
+    expect(withArrow.container.querySelector(".sk-tooltip")!.getAttribute("data-arrow")).toBe("");
+    withArrow.unmount();
+
+    const without = render(
+      <Tooltip content="Pista">
+        <button aria-label="Ayuda" type="button" />
+      </Tooltip>,
+    );
+    expect(without.container.querySelector(".sk-tooltip")!.hasAttribute("data-arrow")).toBe(false);
+  });
+
   it("stays closed while disabled", () => {
     const ui = render(
       <Tooltip content="No debería verse" disabled openDelay={0}>

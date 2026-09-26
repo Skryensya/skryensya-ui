@@ -43,6 +43,11 @@ export const fadeEdgeMessages = {
       "La variable <code>--sk-fade-edge-size</code> controla qué tan ancha es la zona que se desvanece (por defecto <code>4rem</code>), en cualquiera de los dos modos. Mueves el control y el CSS se actualiza en vivo sobre el mismo feed con scroll de arriba.",
     "fadeEdge.intensityLabel": "Intensidad del desvanecido",
 
+    "fadeEdge.scrollAwareTitle": "Atento al scroll",
+    "fadeEdge.scrollAwareBody":
+      "Con <code>scrollAware</code> (<code>data-scroll-aware</code> en HTML) el fundido se retira cuando el scroll llega al borde al que apunta, y también cuando el contenido entra entero sin scrollear: ya no hay nada más en esa dirección. Baja hasta la última fila y el fundido desaparece; vuelve a subir y reaparece. El elemento con FadeEdge tiene que ser el mismo que scrollea.",
+    "fadeEdge.scrollAwareLabel": "Fundido atento al scroll",
+
     "fadeEdge.apiTitle": "Variables y atributos",
     "fadeEdge.apiItem1":
       "<code>data-fade</code>: <code>transparent</code> (por defecto, revela el fondo detrás) o <code>color</code> (pinta un degradado opaco encima)",
@@ -108,6 +113,11 @@ export const fadeEdgeMessages = {
     "fadeEdge.intensityBody":
       "<code>--sk-fade-edge-size</code> controls how wide the fading band is (<code>4rem</code> by default), in either mode. Move the control and the CSS updates live on the same scrolling feed from above.",
     "fadeEdge.intensityLabel": "Fade intensity",
+
+    "fadeEdge.scrollAwareTitle": "Scroll-aware",
+    "fadeEdge.scrollAwareBody":
+      "With <code>scrollAware</code> (<code>data-scroll-aware</code> in HTML) the fade retires once the scroll reaches the edge it points at, and also when the content fits without scrolling at all: there is nothing more that way. Scroll to the last row and the fade goes; scroll back up and it returns. The FadeEdge element has to be the one that scrolls.",
+    "fadeEdge.scrollAwareLabel": "Scroll-aware fade",
 
     "fadeEdge.apiTitle": "Variables and attributes",
     "fadeEdge.apiItem1":

@@ -1,5 +1,16 @@
 import { qrGeometry, qrCodeParts, type QrLevel, type QrMask, type QrModuleShape, type QrPolarity, type QrSize, type QrTone, qrCodeContract } from "@skryensya/core/qr-code";
-import type { CSSProperties, HTMLAttributes, ReactNode } from "react";
+import type { CSSProperties, HTMLAttributes, ReactNode, Ref } from "react";
+
+/* Export works on the rendered element: pass the `ref` of a <QRCode> to these. */
+export {
+  QrExportError,
+  downloadQrCode,
+  qrCodeToBlob,
+  qrCodeToDataUrl,
+  qrCodeToSvg,
+  type QrExportOptions,
+  type QrExportType,
+} from "@skryensya/core/qr-code-export";
 
 /* Derived, never restated: the default lives in the contract. */
 const { level: levelOption, mask: maskOption, logoRatio: logoRatioOption, polarity: polarityOption, quietZone: quietZoneOption, moduleShape: moduleShapeOption, qrSize: qrSizeOption, tone: toneOption } = qrCodeContract.options;
@@ -22,6 +33,8 @@ export type QRCodeProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
   polarity?: QrPolarity;
   /** Anything the kit publishes, laid over the cleared middle. Pair it with `logoRatio`. */
   logo?: ReactNode;
+  /** The rendered root: what `downloadQrCode` and the other export functions take. */
+  ref?: Ref<HTMLDivElement>;
 };
 
 /*
@@ -64,10 +77,16 @@ export function QRCode({
       {...props}
       aria-label={label}
       className={className ? `${qrCodeParts.root} ${className}` : qrCodeParts.root}
+      data-level={level}
+      data-mask={mask}
       data-module-shape={shape}
       data-polarity={polarity}
+      data-quiet-zone={quietZone}
       data-size={size}
       data-tone={tone}
+      /* What it encodes, stated in the markup like the other three encoder inputs: the Vanilla
+         enhancer redraws from these, and the two bindings must emit the same attributes. */
+      data-value={value}
       role="img"
       /* The ratio reaches the stylesheet as a custom property, which is what sizes the logo box;
          the markup emitter writes the same one from the contract's `styleProperty`. */

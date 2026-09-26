@@ -9,15 +9,37 @@ import type { ComponentContract } from "./contract.js";
  * The consumer authors the index (JSON) and the option markup contract; the Vanilla enhancer filters
  * and drives aria-activedescendant. Interaction paint stays on `sk-interactive` where present.
  */
-export type CommandPaletteEntry = {
+type CommandPaletteEntryBase = {
   label: string;
-  href: string;
   aliases?: readonly string[];
   /** Context shown beside the label (section › group, path, etc.). */
   context?: string;
   section?: string;
   group?: string;
 };
+
+/** A destination: activating it navigates to `href`. */
+export type CommandPaletteLink = CommandPaletteEntryBase & { href: string; command?: undefined };
+
+/**
+ * An action rather than a place: activating it closes the palette and fires
+ * `sk:commandpalettecommand` (React: `onCommand`) with `command`, and the host does the rest.
+ *
+ * HIDDEN UNTIL ASKED FOR. A command is listed only once the query starts with
+ * `COMMAND_PALETTE_COMMAND_PREFIX` ("/"), and a query that does not start with it lists only links.
+ * Someone searching for "tour" is looking for the Tour page, not starting one; typing "/" first is
+ * the explicit "I want to DO something" that the same word cannot say on its own.
+ */
+export type CommandPaletteCommand = CommandPaletteEntryBase & { command: string; href?: undefined };
+
+export type CommandPaletteEntry = CommandPaletteLink | CommandPaletteCommand;
+
+/** What a query starts with to ask for commands instead of destinations. */
+export const COMMAND_PALETTE_COMMAND_PREFIX = "/";
+
+export function isCommandPaletteCommand(entry: CommandPaletteEntry): entry is CommandPaletteCommand {
+  return typeof entry.command === "string";
+}
 
 export const commandPaletteParts = {
   root: "sk-command-palette",
@@ -46,6 +68,16 @@ export const commandPaletteAttrs = {
   hint: "data-sk-command-palette-hint",
 } as const;
 
+export const commandPaletteEvents = {
+  /** On the root, bubbling, when a command entry is activated. Detail: `{ command, entry }`. */
+  command: "sk:commandpalettecommand",
+} as const;
+
+export type CommandPaletteCommandEventDetail = {
+  command: string;
+  entry: CommandPaletteCommand;
+};
+
 export type CommandPaletteAttr = keyof typeof commandPaletteAttrs;
 export type CommandPaletteAttrName = (typeof commandPaletteAttrs)[CommandPaletteAttr];
 
@@ -62,7 +94,9 @@ export function scoreCommandPaletteEntry(
   entry: CommandPaletteEntry,
   query: string,
 ): number | null {
-  const names = [entry.label, ...(entry.aliases ?? [])].map(normalizeCommandPaletteQuery);
+  const names = [entry.command ?? "", entry.label, ...(entry.aliases ?? [])]
+    .filter(Boolean)
+    .map(normalizeCommandPaletteQuery);
   const context = normalizeCommandPaletteQuery(
     entry.context ?? `${entry.section ?? ""} ${entry.group ?? ""}`,
   );
@@ -76,9 +110,13 @@ export function filterCommandPaletteEntries(
   index: readonly CommandPaletteEntry[],
   query: string,
 ): CommandPaletteEntry[] {
-  const q = normalizeCommandPaletteQuery(query);
-  if (q === "") return [...index];
-  return index
+  const asksForCommands = query.trimStart().startsWith(COMMAND_PALETTE_COMMAND_PREFIX);
+  const pool = index.filter((entry) => isCommandPaletteCommand(entry) === asksForCommands);
+  const q = normalizeCommandPaletteQuery(
+    asksForCommands ? query.trimStart().slice(COMMAND_PALETTE_COMMAND_PREFIX.length) : query,
+  );
+  if (q === "") return pool;
+  return pool
     .map((entry) => ({ entry, rank: scoreCommandPaletteEntry(entry, q) }))
     .filter((row): row is { entry: CommandPaletteEntry; rank: number } => row.rank !== null)
     .sort((a, b) => a.rank - b.rank)
@@ -129,6 +167,15 @@ export const commandPaletteContract = {
    * (same shape as Dialog's own hookSheets).
    */
   hookSheets: ["@skryensya/core/patterns/dialog-vaul.css"],
+  events: commandPaletteEvents,
+  eventDetails: {
+    command: {
+      detail: { command: "string", entry: "CommandPaletteCommand" },
+      reactProp: "onCommand",
+      reactDetail: "(command: string, entry: CommandPaletteCommand)",
+      source: "root",
+    },
+  },
 
   options: {
     /** Names the dialog for anyone who cannot see it. An option, not a slot: both bindings put it

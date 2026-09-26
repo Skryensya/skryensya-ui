@@ -4,7 +4,8 @@ import {
   filterCommandPaletteEntries,
   normalizeCommandPaletteQuery,
   scoreCommandPaletteEntry,
-  type CommandPaletteEntry,
+  type CommandPaletteCommand,
+  type CommandPaletteLink,
 } from "./command-palette.js";
 
 /*
@@ -12,9 +13,15 @@ import {
  * halves rank the same index the same way, so the ranking is the contract, not an implementation
  * detail of whichever one the reader happens to be looking at.
  */
-const entry = (over: Partial<CommandPaletteEntry> = {}): CommandPaletteEntry => ({
+const entry = (over: Partial<CommandPaletteLink> = {}): CommandPaletteLink => ({
   href: "/x",
   label: "Botón",
+  ...over,
+});
+
+const command = (over: Partial<CommandPaletteCommand> = {}): CommandPaletteCommand => ({
+  command: "tour",
+  label: "/tour",
   ...over,
 });
 
@@ -103,6 +110,31 @@ describe("filterCommandPaletteEntries", () => {
 
   it("comes back empty when nothing matched", () => {
     expect(filterCommandPaletteEntries(index, "zzz")).toEqual([]);
+  });
+});
+
+describe("filterCommandPaletteEntries with commands", () => {
+  const tour = command({ command: "tour", label: "/tour", aliases: ["guide"] });
+  const theme = command({ command: "theme", label: "/theme" });
+  const tourPage = entry({ href: "/components/tour", label: "Tour" });
+  const index = [tourPage, tour, theme];
+
+  it("keeps commands out of an ordinary search, even one that names them", () => {
+    // Searching "tour" is looking for the Tour page; starting one takes the "/".
+    expect(filterCommandPaletteEntries(index, "")).toEqual([tourPage]);
+    expect(filterCommandPaletteEntries(index, "tour")).toEqual([tourPage]);
+  });
+
+  it("lists every command, and only commands, for a bare slash", () => {
+    expect(filterCommandPaletteEntries(index, "/")).toEqual([tour, theme]);
+    expect(filterCommandPaletteEntries(index, "  /")).toEqual([tour, theme]);
+  });
+
+  it("matches what follows the slash against the command, its label and its aliases", () => {
+    expect(filterCommandPaletteEntries(index, "/to")).toEqual([tour]);
+    expect(filterCommandPaletteEntries(index, "/TOUR")).toEqual([tour]);
+    expect(filterCommandPaletteEntries(index, "/guide")).toEqual([tour]);
+    expect(filterCommandPaletteEntries(index, "/zzz")).toEqual([]);
   });
 });
 

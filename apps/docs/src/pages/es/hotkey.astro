@@ -22,7 +22,8 @@ function Palette() {
 const specs = `"mod+k"        // ⌘K on Mac, Ctrl+K everywhere else
 "mod+shift+p"  // exact combination: does NOT fire with "mod+p"
 "shift+/"      // "?" for help
-"escape"       // a single key, no modifier`;
+"escape"       // a single key, no modifier
+"g > i"        // a sequence: g, then i`;
 
 const format = `import { formatHotkey } from "@skryensya/core/hotkey";
 
@@ -40,9 +41,10 @@ formatHotkey("mod+k", false);  // "Ctrl+K"
   <p class="lede">
     Un atajo de teclado es comportamiento sin equivalente en la plataforma, <code>accesskey</code>
     existe pero el navegador lo esconde detrás de sus propios acordes y nunca da un gatillo tipo ⌘K. Así
-    que el sistema lo envía, partido igual que todo comportamiento: el matcher puro en
-    <code>@skryensya/core</code>, el binding imperativo en <code>@skryensya/vanilla</code>, el hook
-    declarativo en <code>@skryensya/react</code>.
+    que el sistema lo trae, construido sobre
+    <a href="https://zagjs.com/utilities/hotkeys"><code>@zag-js/hotkeys</code></a>: leer, comparar,
+    mostrar y enganchar viven en <code>@skryensya/core</code>, y <code>@skryensya/vanilla</code> y
+    <code>@skryensya/react</code> exponen el mismo binding como función y como hook.
   </p>
   <p>
     Pruébalo ahora: aprieta <kbd class="sk-kbd" data-sk-command-palette-hint>⌘K</kbd>, el buscador de esta documentación
@@ -62,22 +64,24 @@ formatHotkey("mod+k", false);  // "Ctrl+K"
 
   <h2>Vanilla</h2>
   <p>
-    <code>bindHotkey(spec, handler)</code> engancha un listener de <code>keydown</code> y devuelve su
-    propia limpieza, la misma forma que devuelve todo enhancer del sistema.
+    <code>bindHotkey(spec, handler)</code> registra el atajo en su propio store de hotkeys de Zag y
+    devuelve su propia limpieza, la misma forma que devuelve todo enhancer del sistema.
   </p>
   <CodeBlock code={vanilla} label="JavaScript" />
 
   <h2>React</h2>
   <p>
-    <code>useHotkey(spec, handler)</code> es lo mismo como hook: consume el mismo matcher del core
-    (nunca el paquete vanilla, los dos bindings son hermanos sobre el core), pasa el handler por un ref
-    para no re-enganchar en cada render, y la limpieza del efecto quita el listener.
+    <code>useHotkey(spec, handler)</code> es la misma función como hook: llama al
+    <code>bindHotkey</code> del core (nunca el paquete vanilla, los dos bindings son hermanos sobre el
+    core), pasa el handler por un ref para no re-enganchar en cada render, y la limpieza del efecto lo
+    desengancha.
   </p>
   <CodeBlock code={react} label="React" />
 
   <h2>El spec</h2>
   <p>
-    Modificadores y una tecla, separados por <code>+</code>, en cualquier orden. El acorde es
+    Primero los modificadores, después la tecla, separados por <code>+</code>; <code>&gt;</code>
+    separa los pasos de una secuencia. El acorde es
     <strong>exacto</strong>: <code>"mod+k"</code> no dispara con <code>mod+shift+k</code>, para que un
     atajo no se trague en silencio un superconjunto que la app quería para otra cosa.
   </p>
@@ -103,8 +107,9 @@ formatHotkey("mod+k", false);  // "Ctrl+K"
       que llama <code>preventDefault()</code> por defecto.
     </li>
     <li>
-      <strong>No maneja secuencias</strong> (tipo <code>g</code> después de <code>g</code>) ni scopes por
-      widget: es un acorde y un handler. Lo demás lo arma quien lo consume, como el buscador de arriba.
+      <strong>Maneja secuencias</strong> (<code>"g &gt; i"</code>: <code>g</code> y después
+      <code>i</code> antes de un segundo), pero no scopes por widget: es un spec y un handler. Lo demás
+      lo arma quien lo consume, como el buscador de arriba.
     </li>
   </ul>
 </Base>

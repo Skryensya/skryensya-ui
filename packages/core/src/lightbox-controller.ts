@@ -1,3 +1,4 @@
+import { tabbables, trapModalDialogs } from "./focus-trap.js";
 import { isTypingContext } from "./hotkey.js";
 import {
   LIGHTBOX_DOUBLE_TAP_MS,
@@ -223,8 +224,6 @@ const isShowable = (image: unknown): image is LightboxImage =>
   typeof (image as LightboxImage).src === "string" &&
   (image as LightboxImage).src.trim() !== "";
 
-const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-
 /**
  * Wire one lightbox. Both bindings call exactly this on a `<dialog>` carrying the lightbox's parts.
  * Connecting the same dialog twice returns the controller it already has.
@@ -238,6 +237,7 @@ export function connectLightbox(dialog: HTMLDialogElement, initial: LightboxConf
 
   const doc = dialog.ownerDocument;
   const win = doc.defaultView ?? window;
+  const releaseTrap = trapModalDialogs(doc);
   const part = <T extends HTMLElement = HTMLElement>(name: keyof typeof lightboxParts): T | null =>
     dialog.querySelector<T>(`.${lightboxParts[name]}`);
 
@@ -1402,39 +1402,13 @@ export function connectLightbox(dialog: HTMLDialogElement, initial: LightboxConf
   };
 
   /* ---- keyboard ---- */
-  const focusables = (): HTMLElement[] =>
-    Array.from(dialog.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
-      (element) =>
-        !element.closest("[hidden]") &&
-        !(element as HTMLButtonElement).disabled &&
-        (typeof element.checkVisibility !== "function" || element.checkVisibility()),
-    );
-
   /*
-   * THE TAB WRAP. `showModal()` keeps focus off the inert page, but Tab from the last control still
-   * leaves for the browser's own toolbar. APG's modal traps it; so does this: last wraps to first,
-   * first wraps to last, and a focus that somehow sits outside (on <body>, after a click on the
-   * photo) re-enters at the right end.
+   * THE TAB WRAP is not here. `showModal()` keeps focus off the inert page but lets Tab from the last
+   * control leave for the browser's toolbar; `trapModalDialogs`, held from connect to `destroy()`,
+   * wraps it for this dialog exactly as for every other modal in the kit, `<body>` re-entry included.
+   * Not per session: it is stateless and only acts on a `:modal` dialog, so holding it while closed
+   * costs one idle listener, the same one Dialog and Vaul hold while mounted.
    */
-  const trapTab = (event: KeyboardEvent): void => {
-    const list = focusables();
-    const active = doc.activeElement as HTMLElement | null;
-    if (list.length === 0) {
-      event.preventDefault();
-      return;
-    }
-    const first = list[0]!;
-    const last = list[list.length - 1]!;
-    const inside = active !== null && dialog.contains(active) && active !== dialog;
-    if (event.shiftKey && (!inside || active === first)) {
-      event.preventDefault();
-      last.focus();
-    } else if (!event.shiftKey && (!inside || active === last)) {
-      event.preventDefault();
-      first.focus();
-    }
-  };
-
   const onKeyDown = (event: KeyboardEvent): void => {
     if (!isOpen || event.defaultPrevented) return;
     if (closing) {
@@ -1445,10 +1419,7 @@ export function connectLightbox(dialog: HTMLDialogElement, initial: LightboxConf
     /* The page is inert, so a key can only come from inside the dialog or from <body> (focus lands
        there after a click on something that cannot hold it). Anything else is not ours. */
     if (target && target !== doc.body && target !== doc.documentElement && !dialog.contains(target)) return;
-    if (event.key === "Tab") {
-      trapTab(event);
-      return;
-    }
+    if (event.key === "Tab") return;
     if (event.key !== "Escape" && isTypingContext(event.target)) return;
     const action = lightboxKeyAction(event, { zoomed: zoomed(), zoomEnabled: zoomEnabled(), rtl: rtl() });
     if (!action) return;
@@ -1592,7 +1563,7 @@ export function connectLightbox(dialog: HTMLDialogElement, initial: LightboxConf
     animateIn(returnFocus);
     /* A known, harmless first stop: Close, the one control every reader can use. Explicit rather
        than `autofocus`, which React does not write to the DOM. */
-    (control("close") ?? focusables()[0] ?? dialog).focus({ preventScroll: true });
+    (control("close") ?? tabbables(dialog)[0] ?? dialog).focus({ preventScroll: true });
     config.onOpenChange?.(true);
     emit(lightboxEvents.openChange, { open: true });
     commit();
@@ -1773,6 +1744,7 @@ export function connectLightbox(dialog: HTMLDialogElement, initial: LightboxConf
     destroy() {
       close();
       detachSession();
+      releaseTrap();
       dialog.removeEventListener("click", onClick);
       dialog.removeEventListener("cancel", onCancel);
       dialog.removeEventListener("close", onNativeClose);

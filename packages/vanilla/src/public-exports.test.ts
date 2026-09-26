@@ -2,7 +2,12 @@ import { mountAccordion } from "@skryensya/vanilla/accordion";
 import { mountAnnotated } from "@skryensya/vanilla/annotation";
 import { mountBackToTop } from "@skryensya/vanilla/back-to-top";
 import { mountCanvas } from "@skryensya/vanilla/canvas";
+import { mountDialog } from "@skryensya/vanilla/dialog";
 import { mountLightbox } from "@skryensya/vanilla/lightbox";
+import { mountTour } from "@skryensya/vanilla/tour";
+import { mountClipboard } from "@skryensya/vanilla/clipboard";
+import { mountListbox } from "@skryensya/vanilla/listbox";
+import { mountQrCode } from "@skryensya/vanilla/qr-code";
 import { mountBreadcrumb } from "@skryensya/vanilla/breadcrumb";
 import { initComponents } from "@skryensya/vanilla/auto";
 import { mountButton } from "@skryensya/vanilla/button";
@@ -39,6 +44,8 @@ import { mountRating } from "@skryensya/vanilla/rating";
 import { mountSelect } from "@skryensya/vanilla/select";
 import { mountSegmented } from "@skryensya/vanilla/segmented";
 import { mountStat } from "@skryensya/vanilla/stat";
+import { mountFadeEdge } from "@skryensya/vanilla/fade-edge";
+import { mountPasswordInput } from "@skryensya/vanilla/password-input";
 import { mountSidebar } from "@skryensya/vanilla/sidebar";
 import { mountSlider } from "@skryensya/vanilla/slider";
 import { mountSliderRange } from "@skryensya/vanilla/slider-range";
@@ -58,6 +65,7 @@ import { mountTooltip } from "@skryensya/vanilla/tooltip";
 import { mountTreegrid } from "@skryensya/vanilla/treegrid";
 import { mountTreeView } from "@skryensya/vanilla/tree-view";
 import { mountVaul } from "@skryensya/vanilla/vaul";
+import { mountWindow } from "@skryensya/vanilla/window";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -80,7 +88,12 @@ const mounts = [
   mountButton,
   mountCalendar,
   mountCanvas,
+  mountDialog,
   mountLightbox,
+  mountTour,
+  mountClipboard,
+  mountListbox,
+  mountQrCode,
   mountCarousel,
   mountChart,
   mountCheckboxGroup,
@@ -93,6 +106,7 @@ const mounts = [
   mountDatePicker,
   mountDiagram,
   mountExpandableTile,
+  mountFadeEdge,
   mountFeed,
   mountFileUpload,
   mountFolder,
@@ -106,6 +120,7 @@ const mounts = [
   mountNavListGroup,
   mountNumberField,
   mountOtpInput,
+  mountPasswordInput,
   mountRating,
   mountSegmented,
   mountSelect,
@@ -128,12 +143,13 @@ const mounts = [
   mountTreegrid,
   mountTreeView,
   mountVaul,
+  mountWindow,
 ];
 
 describe("Vanilla public entry points", () => {
   it("publishes the lazy auto-loader and one mount for every regular enhanced module", () => {
     expect(initComponents).toBeTypeOf("function");
-    expect(mounts).toHaveLength(55);
+    expect(mounts).toHaveLength(63);
     expect(mounts.every((mount) => typeof mount === "function")).toBe(true);
   });
 
@@ -180,7 +196,12 @@ describe("Vanilla public entry points", () => {
         mountButton,
         mountCalendar,
         mountCanvas,
+        mountDialog,
         mountLightbox,
+        mountTour,
+        mountClipboard,
+        mountListbox,
+        mountQrCode,
         mountCarousel,
         mountChart,
         mountCheckboxGroup,
@@ -193,6 +214,7 @@ describe("Vanilla public entry points", () => {
         mountDatePicker,
         mountDiagram,
         mountExpandableTile,
+        mountFadeEdge,
         mountFeed,
         mountFileUpload,
         mountFolder,
@@ -206,6 +228,7 @@ describe("Vanilla public entry points", () => {
         mountNavListGroup,
         mountNumberField,
         mountOtpInput,
+        mountPasswordInput,
         mountRating,
         mountSegmented,
         mountSelect,
@@ -228,6 +251,7 @@ describe("Vanilla public entry points", () => {
         mountTreegrid,
         mountTreeView,
         mountVaul,
+        mountWindow,
       }).map(([name]) => name),
     );
 

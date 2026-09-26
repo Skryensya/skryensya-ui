@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { formatHotkey, matchesHotkey, parseHotkey, type KeyChord } from "./hotkey.js";
 
 /*
- * The matcher is pure and takes `isMac` as a parameter precisely so it can be tested on both
+ * The matcher takes `isMac` as a parameter precisely so it can be tested on both
  * platforms in the same process: `mod` is ⌘ on a Mac and Ctrl everywhere else, which is the whole
  * reason this is a primitive instead of an inline `event.metaKey` check at every call site.
  */
@@ -15,36 +15,35 @@ const chord = (over: Partial<KeyChord> & { key: string }): KeyChord => ({
 });
 
 describe("parseHotkey", () => {
-  it("reads modifiers and the key regardless of order or spacing", () => {
-    expect(parseHotkey("mod+k")).toEqual({
-      alt: false,
-      ctrl: false,
-      key: "k",
-      meta: false,
-      mod: true,
-      shift: false,
-    });
-    // A spec is authored by hand, so it must not be finicky about order or whitespace.
-    expect(parseHotkey(" K + MOD ")).toEqual(parseHotkey("mod+k"));
+  it("resolves mod per platform and normalises the key", () => {
+    expect(parseHotkey("mod+k", true)).toMatchObject({ meta: true, ctrl: false, keys: ["K"] });
+    expect(parseHotkey("mod+k", false)).toMatchObject({ meta: false, ctrl: true, keys: ["K"] });
+    // A spec is authored by hand, so case and whitespace do not matter.
+    expect(parseHotkey(" MOD + k ", true)).toMatchObject(parseHotkey("mod+k", true));
+  });
+
+  it("reads modifiers first: a key written before them is not a chord", () => {
+    // Zag's syntax, and a change from the kit's own parser, which took tokens in any order.
+    expect(parseHotkey("k+mod", true).meta).toBe(false);
   });
 
   it("accepts the several names people give the same modifier", () => {
-    expect(parseHotkey("cmd+k").meta).toBe(true);
-    expect(parseHotkey("command+k").meta).toBe(true);
-    expect(parseHotkey("control+k").ctrl).toBe(true);
-    expect(parseHotkey("option+k").alt).toBe(true);
-    expect(parseHotkey("opt+k").alt).toBe(true);
+    expect(parseHotkey("cmd+k", false).meta).toBe(true);
+    expect(parseHotkey("command+k", false).meta).toBe(true);
+    expect(parseHotkey("control+k", true).ctrl).toBe(true);
+    expect(parseHotkey("option+k", true).alt).toBe(true);
   });
 
   it("expands the key aliases a spec is likely to use", () => {
-    expect(parseHotkey("esc").key).toBe("escape");
-    expect(parseHotkey("return").key).toBe("enter");
-    expect(parseHotkey("space").key).toBe(" ");
+    expect(parseHotkey("esc", false).keys).toEqual(["Escape"]);
+    expect(parseHotkey("return", false).keys).toEqual(["Enter"]);
+    expect(parseHotkey("space", false).keys).toEqual([" "]);
   });
 
-  it("leaves the key empty when the spec is only modifiers", () => {
-    expect(parseHotkey("mod+shift").key).toBe("");
-    expect(parseHotkey("").key).toBe("");
+  it("reads `>` as a sequence of steps", () => {
+    const parsed = parseHotkey("g > i", false);
+    expect(parsed.isSequence).toBe(true);
+    expect(parsed.keys).toEqual(["G", "I"]);
   });
 });
 
@@ -88,11 +87,6 @@ describe("matchesHotkey", () => {
     expect(matchesHotkey(chord({ key: "Meta", metaKey: true }), "mod", true)).toBe(false);
   });
 
-  it("takes an already-parsed spec, so a binding can parse once and match many times", () => {
-    const parsed = parseHotkey("mod+k");
-    expect(matchesHotkey(chord({ key: "k", metaKey: true }), parsed, true)).toBe(true);
-  });
-
   it("treats absent modifier flags as up", () => {
     expect(matchesHotkey({ key: "k", metaKey: true }, "mod+k", true)).toBe(true);
     expect(matchesHotkey({ key: "k" }, "mod+k", true)).toBe(false);
@@ -111,15 +105,15 @@ describe("formatHotkey", () => {
     expect(formatHotkey("shift+alt+k", false)).toBe("Alt+Shift+K");
   });
 
-  it("names the keys that have no glyph", () => {
+  it("uses Zag's glyphs for the named keys", () => {
     expect(formatHotkey("escape", false)).toBe("Esc");
-    expect(formatHotkey("mod+enter", true)).toBe("⌘Enter");
-    expect(formatHotkey("space", false)).toBe("Space");
+    expect(formatHotkey("mod+enter", true)).toBe("⌘↵");
+    expect(formatHotkey("space", false)).toBe("␣");
     expect(formatHotkey("mod+arrowup", true)).toBe("⌘↑");
   });
 
-  it("upper-cases a single letter and leaves longer keys alone", () => {
+  it("upper-cases letters and function keys", () => {
     expect(formatHotkey("k", false)).toBe("K");
-    expect(formatHotkey("f5", false)).toBe("f5");
+    expect(formatHotkey("f5", false)).toBe("F5");
   });
 });

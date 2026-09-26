@@ -1,6 +1,7 @@
-import { commandPaletteAttrs, commandPaletteParts, commandPaletteOptionContext, filterCommandPaletteEntries, type CommandPaletteEntry, commandPaletteContract } from "@skryensya/core/command-palette";
+import { commandPaletteAttrs, commandPaletteEvents, commandPaletteParts, commandPaletteOptionContext, filterCommandPaletteEntries, type CommandPaletteCommand, type CommandPaletteCommandEventDetail, type CommandPaletteEntry, commandPaletteContract } from "@skryensya/core/command-palette";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Icon } from "./icon.js";
+import { useModalTabWrap } from "./modal-tab-wrap.js";
 import { useVaulDrag } from "./vaul-drag.js";
 
 /* Derived, never restated: the default lives in the contract. */
@@ -57,6 +58,12 @@ export type CommandPaletteProps = {
    * the palette's job ends the moment a choice is made.
    */
   onSelect?: (entry: CommandPaletteEntry) => void;
+  /**
+   * A command entry (`{ command }` instead of `{ href }`) was activated. Commands only list once the
+   * query starts with "/", never navigate, and never reach `onSelect`: the dialog closes, then this
+   * runs and `sk:commandpalettecommand` fires on the dialog, the same event the enhancer dispatches.
+   */
+  onCommand?: (command: string, entry: CommandPaletteCommand) => void;
 };
 
 export function CommandPalette({
@@ -66,12 +73,14 @@ export function CommandPalette({
   id,
   items: itemsProp = [],
   label,
+  onCommand,
   onSelect,
   open = openOption.default,
   placeholder = placeholderOption.default,
   vaul = vaulOption.default,
 }: CommandPaletteProps) {
   const dialog = useRef<HTMLDialogElement>(null);
+  useModalTabWrap();
   /* The drag half of Dialog Vaul, which the Vanilla enhancer gets from `connectVaul`. A sheet only
      ever slides from block-end, so the edge is not a choice here. */
   useVaulDrag(dialog, { enabled: vaul, edge: "block-end" });
@@ -127,8 +136,16 @@ export function CommandPalette({
   const choose = (entry: CommandPaletteEntry | undefined) => {
     if (!entry) return;
     dialog.current?.close();
-    if (onSelect) onSelect(entry);
-    else if (entry.href) window.location.assign(entry.href);
+    if (entry.command !== undefined) {
+      onCommand?.(entry.command, entry);
+      dialog.current?.dispatchEvent(
+        new CustomEvent<CommandPaletteCommandEventDetail>(commandPaletteEvents.command, {
+          bubbles: true,
+          detail: { command: entry.command, entry },
+        }),
+      );
+    } else if (onSelect) onSelect(entry);
+    else window.location.assign(entry.href);
   };
 
   /*
@@ -266,9 +283,10 @@ export function CommandPalette({
             <li
               aria-selected={i === active}
               className={commandPaletteParts.option}
+              data-command={entry.command}
               data-href={entry.href}
               id={optionId(i)}
-              key={entry.href}
+              key={entry.command === undefined ? entry.href : `command:${entry.command}`}
               /* A row is activated on the pointer too, the same as the enhancer's own list click.
                * `onMouseDown` is not the handler: the field must keep focus, and a click that has
                * already closed the dialog never needs the option to have been focused at all. */

@@ -1,0 +1,70 @@
+---
+import ComponentPageShell from "./ComponentPageShell.astro";
+import CodeBlock from "../CodeBlock.astro";
+import ComponentPreview from "../ComponentPreview.astro";
+import { clipboardFieldTree, clipboardSizesTree, clipboardTargetTree } from "../../demos/clipboard";
+import { getLocale, useTranslations } from "../../i18n";
+import "@skryensya/core/components/clipboard.css";
+
+const t = useTranslations(getLocale(Astro.url));
+
+const react = `import { Clipboard, CopyButton } from "@skryensya/react/clipboard";
+import "@skryensya/core/components/clipboard.css";
+
+<CopyButton target="install" label="Copy the install command" />
+
+<Clipboard
+  fieldLabel="Share link"
+  label="Copy link"
+  value={shareUrl}
+  onStatusChange={(status) => status === "error" && reportCopyFailure()}
+/>`;
+
+const vanilla = `document.addEventListener("sk:clipboardstatuschange", (event) => {
+  if (event.detail.status === "error") reportCopyFailure();
+});`;
+---
+
+<ComponentPageShell
+  title="Clipboard"
+  description={t("clipboard.description")}
+  badge={t("clipboard.betaBadge")}
+  contractId="clipboard"
+  testFiles={["packages/react/src/components/clipboard.test.tsx", "packages/vanilla/src/components/clipboard.svelte.test.ts"]}
+>
+  <Fragment slot="usage">
+    <p class="lede" set:html={t("clipboard.lede")} />
+
+    <h3>{t("clipboard.whenTitle")}</h3>
+    <ul>
+      <li set:html={t("clipboard.whenItem1")} />
+      <li set:html={t("clipboard.whenItem2")} />
+      <li set:html={t("clipboard.whenItem3")} />
+    </ul>
+
+    <h3>{t("clipboard.targetTitle")}</h3>
+    <p set:html={t("clipboard.targetBody")} />
+    <ComponentPreview tree={clipboardTargetTree(t)} label={t("clipboard.targetLabel")} />
+
+    <h3>{t("clipboard.fieldTitle")}</h3>
+    <p set:html={t("clipboard.fieldBody")} />
+    <ComponentPreview tree={clipboardFieldTree(t)} label={t("clipboard.fieldLabel")} />
+
+    <h3>{t("clipboard.sizesTitle")}</h3>
+    <p set:html={t("clipboard.sizesBody")} />
+    <ComponentPreview tree={clipboardSizesTree(t)} label={t("clipboard.sizesLabel")} />
+
+    <h3>{t("clipboard.feedbackTitle")}</h3>
+    <ul>
+      <li set:html={t("clipboard.feedbackItem1")} />
+      <li set:html={t("clipboard.feedbackItem2")} />
+      <li set:html={t("clipboard.feedbackItem3")} />
+      <li set:html={t("clipboard.feedbackItem4")} />
+    </ul>
+
+    <h3>{t("clipboard.eventsTitle")}</h3>
+    <p set:html={t("clipboard.eventsBody")} />
+    <CodeBlock code={react} label="React" lang="tsx" />
+    <CodeBlock code={vanilla} label="JavaScript" lang="ts" />
+  </Fragment>
+</ComponentPageShell>

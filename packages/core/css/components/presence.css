@@ -1,0 +1,60 @@
+/*
+ * TIER 3, PRESENCE
+ *
+ * Content that animates in and out. `hidden` is the whole state: remove it and the content fades
+ * and rises in; set it and the content fades and falls out, and only THEN leaves the layout.
+ *
+ * The same idiom Dialog and Popover use for their own close (ADR-0005):
+ *   - `transition-behavior: allow-discrete` on `display`, so `display: none` lands at the END of the
+ *     exit instead of the first frame. Written into each `transition` shorthand, never after it,
+ *     because a shorthand declared later silently resets it.
+ *   - `@starting-style`, the only way to transition FROM `display: none` on the way in.
+ * A browser without either still shows and hides correctly; it just does it without the motion.
+ *
+ * Reduced motion needs nothing here: the enter/exit intent tokens already drop their distance and
+ * shorten to a plain fade under `prefers-reduced-motion` (semantic/_reduced-motion.scss).
+ *
+ * Example:
+ *  <div class="sk-presence" data-state="closed" hidden>…</div>
+ */
+@layer components {
+  .sk-presence {
+    --sk-presence-enter-duration: var(--motion-enter-duration);
+    --sk-presence-enter-easing: var(--motion-enter-easing);
+    --sk-presence-enter-distance: var(--motion-enter-distance);
+    --sk-presence-exit-duration: var(--motion-exit-duration);
+    --sk-presence-exit-easing: var(--motion-exit-easing);
+    --sk-presence-exit-distance: var(--motion-exit-distance);
+
+    opacity: 1;
+    translate: 0 0;
+    transition:
+      opacity var(--sk-presence-enter-duration) var(--sk-presence-enter-easing),
+      translate var(--sk-presence-enter-duration) var(--sk-presence-enter-easing),
+      display var(--sk-presence-enter-duration) var(--sk-presence-enter-easing) allow-discrete;
+  }
+
+  /*
+   * Restated rather than left to the user agent's own `[hidden]` rule: a consumer class that sets
+   * `display: grid` on the host would otherwise outrank it and the content would never leave.
+   *
+   * The exit travels the shorter `exit` distance DOWN, the reverse of the enter: it is leaving the
+   * way it came, and it is already decided, so it spends less time doing it (ADR-0004).
+   */
+  .sk-presence[hidden] {
+    display: none;
+    opacity: 0;
+    translate: 0 var(--sk-presence-exit-distance);
+    transition:
+      opacity var(--sk-presence-exit-duration) var(--sk-presence-exit-easing),
+      translate var(--sk-presence-exit-duration) var(--sk-presence-exit-easing),
+      display var(--sk-presence-exit-duration) var(--sk-presence-exit-easing) allow-discrete;
+  }
+
+  @starting-style {
+    .sk-presence:not([hidden]) {
+      opacity: 0;
+      translate: 0 var(--sk-presence-enter-distance);
+    }
+  }
+}

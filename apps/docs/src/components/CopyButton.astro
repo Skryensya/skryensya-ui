@@ -1,10 +1,12 @@
 ---
 /*
- * Astro authors the shared CopyButton DOM contract and the selected icon geometry. Behaviour comes
- * from the regular lazy Vanilla registry; this adapter neither owns nor mounts a private runtime.
+ * The kit's `CopyButton` (the `clipboard` contract), authored for the code blocks. The markup is the
+ * contract's; the behaviour is `@skryensya/vanilla/clipboard`, which the lazy registry mounts on
+ * `[data-sk-clipboard]` like any other component. The icons are inlined here rather than left as
+ * `data-sk-icon` placeholders, so a block that arrives late (DeferredCode) never shows an empty box.
  */
 import { iconMarkup } from "../icons";
-import "@skryensya/core/components/copy-button.css";
+import "@skryensya/core/components/clipboard.css";
 /* The feedback flag is an anchored box: the pattern is where its placement and its arrow live. */
 import "@skryensya/core/patterns/anchored.css";
 import { getLocale, useTranslations } from "../i18n";
@@ -24,11 +26,6 @@ const { target, label } = Astro.props;
 const t = useTranslations(getLocale(Astro.url));
 const copyIcon = iconMarkup("copy");
 const copiedIcon = iconMarkup("check");
-const idleLabel = label ?? t("copy.code");
-/* "Code copied" only makes sense for the code-block default; a custom label gets the generic
-   success/error wording instead. */
-const successAriaLabel = label ? t("copy.copied") : t("copy.codeCopied");
-const errorAriaLabel = label ? t("copy.error") : t("copy.failed");
 ---
 
 {/*
@@ -41,32 +38,28 @@ const errorAriaLabel = label ? t("copy.error") : t("copy.failed");
  * of it opts back out.
  */}
 <button
-  class="sk-button sk-interactive sk-icon-toggle sk-copy-button sk-anchor"
+  class="sk-copy-button sk-button sk-interactive sk-icon-toggle sk-anchor"
+  data-sk-clipboard
+  data-sk-clipboard-trigger
+  data-target={target}
   data-variant="soft"
   data-size="sm"
   data-icon-only
   data-sk-density-scope
-  data-sk-copy-button
-  data-sk-copy-button-target={target}
   type="button"
-  aria-label={idleLabel}
-  data-sk-copy-button-success-label={t("copy.copied")}
-  data-sk-copy-button-error-label={t("copy.error")}
-  data-sk-copy-button-success-aria-label={successAriaLabel}
-  data-sk-copy-button-error-aria-label={errorAriaLabel}
+  aria-label={label ?? t("copy.code")}
 >
-  <span class="sk-copy-button__icon" data-sk-copy-button-icon="idle" data-face="idle" aria-hidden="true"><Fragment set:html={copyIcon} /></span>
-  <span class="sk-copy-button__icon" data-sk-copy-button-icon="copied" data-face="copied" aria-hidden="true"><Fragment set:html={copiedIcon} /></span>
-  <span class="sk-copy-button__label" data-sk-copy-button-label aria-live="polite">{t("copy.action")}</span>
+  <span class="sk-copy-button__icon" data-face="idle" aria-hidden="true"><Fragment set:html={copyIcon} /></span>
+  <span class="sk-copy-button__icon" data-face="copied" aria-hidden="true"><Fragment set:html={copiedIcon} /></span>
+  <span class="sk-copy-button__label" data-sk-clipboard-status aria-live="polite"></span>
   <span
     class="sk-copy-button__feedback sk-anchored"
-    data-sk-copy-button-feedback
+    data-sk-clipboard-feedback
     data-sk-placement="inline-start"
     aria-hidden="true"
   >
-    <span data-sk-copy-button-feedback-text="copied">{t("copy.copied")}</span>
-    <span data-sk-copy-button-feedback-text="error">{t("copy.error")}</span>
+    <span data-sk-clipboard-feedback-text="copied">{t("copy.copied")}</span>
+    <span data-sk-clipboard-feedback-text="error">{t("copy.error")}</span>
     <span class="sk-anchored-arrow" aria-hidden="true"></span>
   </span>
 </button>
-

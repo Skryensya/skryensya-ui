@@ -78,6 +78,152 @@ describe("the match rule", () => {
     expect(termMatchesWord("tab", "table")).toBe(false);
     expect(termMatchesWord("tab", "tab")).toBe(true);
   });
+
+  /*
+   * Every pair the previous rule (a shared prefix of max(4, shorter - 2)) accepted by accident,
+   * found by running the eval prompts against the real index. Each shares a prefix and then
+   * diverges, which is what the current rule refuses.
+   */
+  it.each([
+    ["active", "action"],
+    ["active", "actions"],
+    ["three", "thread"],
+    ["overlapping", "overlays"],
+    ["oversized", "over"],
+    ["headline", "header"],
+    ["prominent", "prompt"],
+    ["accent", "accept"],
+    ["page", "pager"],
+    ["time", "timeline"],
+    ["work", "workflow"],
+    ["view", "viewer"],
+    ["companies", "comparar"],
+    ["editorial", "editor"],
+    ["breakout", "break"],
+    ["linkedin", "linked"],
+    ["checkbox", "check"],
+  ])("refuses the accidental pair %s / %s", (term, word) => {
+    expect(termMatchesWord(term, word)).toBe(false);
+  });
+
+  it.each([
+    ["navigate", "navigation"],
+    ["navigation", "navigate"],
+    ["setting", "settings"],
+    ["toggle", "toggles"],
+    ["tabs", "tab"],
+    ["pages", "page"],
+    ["botones", "boton"],
+    ["immediately", "immediate"],
+    ["navegacion", "navega"],
+    ["lista", "list"],
+    ["tabla", "table"],
+    ["opening", "open"],
+    ["linked", "link"],
+    ["switcher", "switch"],
+    ["selection", "select"],
+    ["labelled", "label"],
+    ["scrolling", "scroll"],
+    ["navigates", "navigation"],
+    ["closing", "close"],
+    ["cambiar", "cambia"],
+    ["navegar", "navegacion"],
+    ["imagen", "image"],
+    ["shown", "show"],
+  ])("keeps the inflection %s / %s", (term, word) => {
+    expect(termMatchesWord(term, word)).toBe(true);
+  });
+
+  it("reads a camelCase word in a query whole, the way intents spell it", () => {
+    const result = discover(real, snippets, { query: "JavaScript" });
+    expect(result.input.terms).toEqual(["javascript"]);
+    expect(result.candidates.map((c) => c.signature)).toContain("DetailsGroup");
+  });
+});
+
+describe("negation", () => {
+  const signatures = (query: string) => discover(real, snippets, { query }).candidates.map((c) => c.signature);
+
+  it("separates negated terms from the ones searched for", () => {
+    const { input } = discover(real, snippets, { query: "a switch that changes immediately, with no save button" });
+    expect(input.terms).toEqual(["switch", "changes", "immediately"]);
+    expect(input.negated).toEqual(["save", "button"]);
+  });
+
+  it("does not admit or promote a candidate through a negated term", () => {
+    const order = signatures("switch with no save button");
+    expect(order[0]).toBe("Switch");
+    expect(order).not.toContain("SplitButton");
+    for (const candidate of discover(real, snippets, { query: "switch with no save button" }).candidates) {
+      expect(candidate.matched.some((m) => m.term === "switch" && m.negation === undefined), candidate.signature).toBe(true);
+    }
+    // Switch's own useWhen says "there is no save button involved": the whole phrase agrees.
+    const sw = discover(real, snippets, { query: "switch with no save button" }).candidates[0]!;
+    expect(sw.matched).toContainEqual(expect.objectContaining({ field: "useWhen", term: "save", negation: "both" }));
+  });
+
+  it("agrees with a value only when it negates the whole negated phrase", () => {
+    // Hero's "never a row of buttons of equal weight" negates `buttons`, not "save button".
+    const hero = discover(real, snippets, { query: "a hero with no save button" }).candidates.find((c) => c.signature === "Hero")!;
+    for (const match of hero.matched.filter((m) => m.term === "button")) expect(match.negation).toBe("query");
+  });
+
+  it("keeps a negated match as evidence on a candidate admitted otherwise", () => {
+    const result = discover(real, snippets, { query: "switch with no button" });
+    const stateButton = result.candidates.find((c) => c.signature === "StateButton")!;
+    expect(stateButton.matched).toContainEqual({ field: "signature", term: "button", value: "StateButton", negation: "query" });
+  });
+
+  it("ends a negation at a clause or at a new clause word", () => {
+    expect(discover(real, snippets, { query: "no menu, a navigation list" }).input.negated).toEqual(["menu"]);
+    expect(discover(real, snippets, { query: "without a menu and with links" }).input.terms).toEqual(["links"]);
+    expect(discover(real, snippets, { query: "doesn't need a dialog" }).input.negated).toEqual(["dialog"]);
+  });
+
+  it("navigation without a menu", () => {
+    const result = discover(real, snippets, { query: "navigation without a menu" });
+    expect(result.input).toMatchObject({ terms: ["navigation"], negated: ["menu"] });
+    expect(result.candidates.length).toBeGreaterThan(0);
+    for (const candidate of result.candidates) {
+      for (const match of candidate.matched.filter((m) => m.term === "menu")) expect(match.negation, candidate.signature).toBe("query");
+      expect(candidate.matched.some((m) => m.term === "navigation"), candidate.signature).toBe(true);
+    }
+  });
+
+  it("works in Spanish: sin and no", () => {
+    expect(discover(real, snippets, { query: "un switch sin botón de guardar" }).input).toMatchObject({
+      terms: ["switch"],
+      negated: ["boton", "guardar"],
+    });
+    expect(discover(real, snippets, { query: "navegación que no tenga menú" }).input).toMatchObject({
+      terms: ["navegacion"],
+      negated: ["tenga", "menu"],
+    });
+    expect(signatures("un switch sin botón de guardar")).not.toContain("SplitButton");
+  });
+
+  it("counts a negated term where the value negates it too", () => {
+    const result = discover(real, snippets, { query: "an FAQ without JavaScript" });
+    const group = result.candidates.find((c) => c.signature === "DetailsGroup")!;
+    expect(group.matched).toContainEqual({ field: "intent", term: "javascript", value: "faq-without-javascript", negation: "both" });
+    expect(result.candidates[0]!.signature).toBe("DetailsGroup");
+    expect(discover(real, snippets, { query: "un FAQ sin JavaScript" }).candidates[0]!.signature).toBe("DetailsGroup");
+  });
+
+  it("reads 'with X disabled' as 'without X', and nothing looser", () => {
+    const faq = discover(real, snippets, { query: "an FAQ that works with JavaScript disabled" });
+    expect(faq.input).toMatchObject({ terms: ["faq", "works"], negated: ["javascript"] });
+    expect(faq.input.ignored).toContain("disabled");
+    expect(faq.candidates[0]!.signature).toBe("DetailsGroup");
+    expect(discover(real, snippets, { query: "funciona con JavaScript desactivado" }).input.negated).toEqual(["javascript"]);
+    // A description of a state, not an absence.
+    expect(discover(real, snippets, { query: "a disabled button" }).input).toMatchObject({ terms: ["disabled", "button"], negated: [] });
+    expect(discover(real, snippets, { query: "a form with the submit button disabled" }).input.negated).toEqual([]);
+  });
+
+  it("a word used both ways is searched for", () => {
+    expect(discover(real, snippets, { query: "a button, but no save button" }).input).toMatchObject({ terms: ["button"], negated: ["save"] });
+  });
 });
 
 describe("determinism", () => {
@@ -119,6 +265,35 @@ describe("evidence", () => {
 });
 
 describe("the ordering rules", () => {
+  it("never lets an avoidWhen match make a candidate look better than one without it", () => {
+    const both: CompiledIndex = {
+      ...fixture,
+      contracts: [
+        { id: "a", category: "forms", css: "a.css", signatures: [signature("Warned", { intent: ["toggle"], avoidWhen: ["a toggle that navigates"] })] },
+        { id: "b", category: "forms", css: "b.css", signatures: [signature("Clean", { intent: ["toggle"] })] },
+      ],
+    };
+    // Same naming evidence; Warned is first in the catalogue and names the case in its avoidWhen.
+    expect(discover(both, noSnippets, { query: "toggle" }).candidates.map((c) => c.signature)).toEqual(["Clean", "Warned"]);
+  });
+
+  it("prefers more terms in ONE naming value, then a whole-name match", () => {
+    const named: CompiledIndex = {
+      ...fixture,
+      contracts: [
+        { id: "tree-view", category: "data", css: "a.css", signatures: [signature("TreeView", { intent: ["nested-list"] })] },
+        { id: "segmented", category: "forms", css: "b.css", signatures: [signature("Segmented", { intent: ["view-switcher"] })] },
+        { id: "state-button", category: "actions", css: "c.css", signatures: [signature("StateButton", { intent: ["icon-button"] })] },
+        { id: "button", category: "actions", css: "d.css", signatures: [signature("Button.go")] },
+      ],
+    };
+    const order = (query: string) => discover(named, noSnippets, { query }).candidates.map((c) => c.signature);
+    // Both match two terms by name; Segmented's two are one intent, TreeView's are spread out.
+    expect(order("list view switcher")).toEqual(["Segmented", "TreeView"]);
+    // StateButton matches "button" in more naming fields, but `button` IS Button.go's family.
+    expect(order("button")).toEqual(["Button.go", "StateButton"]);
+  });
+
   it("puts naming-field matches first, then prose, then avoidWhen-only, then catalogue order", () => {
     const order = discover(fixture, noSnippets, { query: "toggle switch" }).candidates.map((c) => c.signature);
     // Switch: naming 1 (switch). ProseOnly: prose 1. AvoidOnly: avoidWhen only.
@@ -199,6 +374,76 @@ describe("examples", () => {
     expect(card).toBeDefined();
     expect(card!.matched.length + card!.uses.length).toBeGreaterThan(0);
     expect(Object.keys(card!)).not.toContain("tree");
+  });
+});
+
+/*
+ * Discovery quality against the real index, stated as properties rather than as a pinned list: a
+ * new family may enter these results, and that is fine, as long as the ones that matter keep their
+ * place relative to the ones that do not. No prompt here is special-cased anywhere in discover.ts.
+ */
+describe("discovery quality on real prompts", () => {
+  const order = (query: string, limit?: number) =>
+    discover(real, snippets, { query, ...(limit ? { limit } : {}) }).candidates.map((c) => c.signature);
+  const before = (list: readonly string[], a: string, b: string) => {
+    expect(list, `${a} is a candidate`).toContain(a);
+    if (list.includes(b)) expect(list.indexOf(a), `${a} before ${b}`).toBeLessThan(list.indexOf(b));
+  };
+
+  it("navigation CTA: Button.navigation first, Button.action visible below it, no pager", () => {
+    const list = order('A prominent "See pricing" button that takes the visitor to the /pricing page.');
+    expect(list[0]).toBe("Button.navigation");
+    before(list, "Button.navigation", "Button.action");
+    expect(list).toContain("Button.action");
+    for (const pager of ["TablePager", "TablePagerBar", "TablePagerSize", "TablePagerNav", "Pagination"]) before(list, "Button.navigation", pager);
+    const action = discover(real, snippets, { query: "pricing button to the pricing page" }).candidates.find((c) => c.signature === "Button.action")!;
+    expect(action.matched.some((m) => m.field === "avoidWhen")).toBe(true);
+  });
+
+  it("immediate setting: Switch first, SplitButton not promoted by a negated save", () => {
+    const list = order("A switch to turn on dark mode immediately, with no save button involved.");
+    expect(list[0]).toBe("Switch");
+    expect(list).not.toContain("SplitButton");
+  });
+
+  it("native no-JS FAQ: DetailsGroup first, Accordion visible with its avoidWhen", () => {
+    const query = "An FAQ with three questions where opening one closes the others, and it must work with JavaScript disabled.";
+    const result = discover(real, snippets, { query });
+    const list = result.candidates.map((c) => c.signature);
+    expect(list[0]).toBe("DetailsGroup");
+    before(list, "DetailsGroup", "Accordion");
+    const accordion = result.candidates.find((c) => c.signature === "Accordion")!;
+    expect(accordion.matched.some((m) => m.field === "avoidWhen" && m.term === "javascript")).toBe(true);
+    expect(list).not.toContain("CommentThread");
+  });
+
+  it("exclusive view switcher: Segmented ahead of generic list and action candidates", () => {
+    const list = order("A List / Grid view switcher where exactly one view is active at a time.");
+    expect(list[0]).toBe("Segmented");
+    for (const generic of ["List", "ListItem", "Grid", "Button.action", "Timeline", "Menu"]) before(list, "Segmented", generic);
+    expect(list).not.toContain("Button.action");
+  });
+
+  it("expressive landing page: the expressive primitives are in the default candidate set", () => {
+    const list = order(
+      "A cinematic editorial landing page with an oversized headline, overlapping image, breakout sections, and strong visual hierarchy.",
+    );
+    for (const id of ["Hero", "LayoutGrid", "Heading", "ImageFrame", "MediaCaption"]) expect(list, id).toContain(id);
+    for (const id of ["Hero", "LayoutGrid", "Heading", "MediaCaption"]) before(list, id, "Lightbox");
+    // A pager family may appear through an intent that literally says "page", never through `pager`,
+    // and never above the primitives the prompt is about.
+    const result = discover(real, snippets, {
+      query: "A cinematic editorial landing page with an oversized headline, overlapping image, breakout sections, and strong visual hierarchy.",
+    });
+    for (const candidate of result.candidates) {
+      for (const match of candidate.matched.filter((m) => m.term === "page"))
+        expect(wordsOf(match.value), `${candidate.signature}: ${match.value}`).toContain("page");
+      // Nothing through the old accident: "overlapping" is not the `overlays` category.
+      expect(candidate.matched.some((m) => m.value === "overlays"), candidate.signature).toBe(false);
+    }
+    for (const pager of ["TablePager", "TablePagerSize", "Pagination"]) before(list, "Hero", pager);
+    // MediaGradient, which only lives inside a MediaCaption, is matched too, past the default limit.
+    expect(order("A cinematic editorial landing page with an oversized headline, overlapping image.", 40)).toContain("MediaGradient");
   });
 });
 

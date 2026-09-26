@@ -75,7 +75,37 @@ export type ValidateOutcome =
  */
 export const CATALOG_PAGE_SIZE = 10;
 
+/*
+ * TWO BOUNDS on a `get_contracts` call. At most 8 ids, and at most CONTRACTS_BATCH_BYTES of
+ * serialized contracts. A page-scale composition touches eight to ten families; eight typical ones
+ * (median ~5KB without semantics) are ~40KB, while the eight LARGEST are ~110KB, past the size at
+ * which Claude Code stops inlining a tool result (the reason `get_catalog` is paged). A batch over
+ * the byte budget fails whole, like any other, and says exactly how to split it.
+ */
+export const CONTRACTS_BATCH_LIMIT = 8;
+export const CONTRACTS_BATCH_BYTES = 48_000;
+
+/** A contract as `get_contract` returns it: the semantic overlay only when asked for. */
+export type ContractView = Omit<CompiledContract, "semantics"> & Partial<Pick<CompiledContract, "semantics">>;
+
 export type AgentService = ReturnType<typeof createAgentService>;
+
+/** Consecutive groups, in the order asked, each within the byte budget (a family over it alone). */
+function splitByBudget(ids: readonly string[], sizes: readonly number[]): string[][] {
+  const groups: string[][] = [];
+  let bytes = 0;
+  ids.forEach((id, at) => {
+    const last = groups.at(-1);
+    if (last && bytes + sizes[at]! <= CONTRACTS_BATCH_BYTES) {
+      last.push(id);
+      bytes += sizes[at]!;
+    } else {
+      groups.push([id]);
+      bytes = sizes[at]!;
+    }
+  });
+  return groups;
+}
 
 export function createAgentService(pair: CompiledPair, snippets: readonly AgentSnippet[]) {
   const provenance: Provenance = {
@@ -88,6 +118,16 @@ export function createAgentService(pair: CompiledPair, snippets: readonly AgentS
     ok: false,
     value: { ...provenance, error, detail },
   });
+
+  const unpublished = (ids: readonly string[]) =>
+    `Published: ${Object.keys(pair.manifest.contracts).join(", ")}. A family the kit ships but ` +
+    `this list omits has no contract yet, and composing against ${ids.length === 1 ? "it" : "them"} would be guessing.`;
+
+  const view = (contract: CompiledContract, detail: "contract" | "full"): ContractView => {
+    if (detail === "full") return contract;
+    const { semantics: _semantics, ...rest } = contract;
+    return rest;
+  };
 
   // Pure functions of the artifact and the snippets, so computed once per service, not per call.
   const exampleIndex: readonly ExampleIndexEntry[] = snippets.map((snippet) => ({
@@ -130,18 +170,43 @@ export function createAgentService(pair: CompiledPair, snippets: readonly AgentS
       });
     },
 
-    contract(id: string, detail: "contract" | "full"): AgentResult<Omit<CompiledContract, "semantics"> & Partial<Pick<CompiledContract, "semantics">>> {
+    contract(id: string, detail: "contract" | "full"): AgentResult<ContractView> {
       const contract = pair.manifest.contracts[id];
-      if (!contract) {
+      if (!contract) return fail(`No published contract "${id}".`, unpublished([id]));
+      return ok(view(contract, detail));
+    },
+
+    /*
+     * Several families for one composition, in one answer: the ids in the order asked (a repeated
+     * id once, where it first appears), provenance once at the top. ALL OR NOTHING: one unknown id
+     * fails the call and names every unknown id, so a caller never mistakes a partial answer for
+     * the families it asked for.
+     */
+    contracts(ids: readonly string[], detail: "contract" | "full"): AgentResult<{ readonly contracts: readonly ContractView[] }> {
+      const wanted = [...new Set(ids)];
+      if (wanted.length === 0) return fail("No contract ids given.", "Pass one to " + CONTRACTS_BATCH_LIMIT + " family ids.");
+      if (wanted.length > CONTRACTS_BATCH_LIMIT) {
         return fail(
-          `No published contract "${id}".`,
-          `Published: ${Object.keys(pair.manifest.contracts).join(", ")}. A family the kit ships but ` +
-            "this list omits has no contract yet, and composing against it would be guessing.",
+          `Too many contract ids: ${wanted.length}.`,
+          `At most ${CONTRACTS_BATCH_LIMIT} per call; split the rest into another call.`,
         );
       }
-      if (detail === "full") return ok(contract);
-      const { semantics: _semantics, ...rest } = contract;
-      return ok(rest);
+      const unknown = wanted.filter((id) => !pair.manifest.contracts[id]);
+      if (unknown.length > 0) {
+        return fail(`No published contract ${unknown.map((id) => `"${id}"`).join(", ")}.`, unpublished(unknown));
+      }
+      const contracts = wanted.map((id) => view(pair.manifest.contracts[id]!, detail));
+      const sizes = contracts.map((contract) => JSON.stringify(contract).length);
+      const total = sizes.reduce((sum, size) => sum + size, 0);
+      if (total > CONTRACTS_BATCH_BYTES) {
+        return fail(
+          `These contracts are ${total} bytes together, over the ${CONTRACTS_BATCH_BYTES}-byte budget of one call.`,
+          `Split them, in this order: ${splitByBudget(wanted, sizes)
+            .map((group) => `[${group.join(", ")}]`)
+            .join(" then ")}. A group of one is get_contract.`,
+        );
+      }
+      return ok({ contracts });
     },
 
     examples(): AgentResult<{ readonly examples: readonly ExampleIndexEntry[] }> {

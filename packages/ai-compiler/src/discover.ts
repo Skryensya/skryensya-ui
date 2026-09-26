@@ -60,7 +60,7 @@ const NAMING_FIELDS: ReadonlySet<string> = new Set(["signature", "contract", "in
 const CANDIDATE_EXAMPLE_LIMIT = 5;
 
 export type DiscoverInput = {
-  /** Free text in any language. Matched word by word, lexically. */
+  /** Free text, matched word by word, lexically, against a catalogue written in English. */
   readonly query?: string;
   /** Intent terms as the index spells them (`on-off`, `navigation`), matched whole. */
   readonly intents?: readonly string[];
@@ -81,8 +81,15 @@ export type DiscoverMatch = {
   readonly term: string;
   /** The field value it matched: an intent term, an id, one `useWhen` line, an example id. */
   readonly value: string;
+  /**
+   * Present when the input negated the term ("with no save button"). `query`: only the input
+   * negates it, so this match is evidence of a conflict and never counts toward order. `both`: the
+   * value negates the input's whole negated phrase too (`faq-without-javascript` for "without
+   * JavaScript", "there is no save button involved" for "no save button"), so the two agree and it
+   * counts as usual.
+   */
+  readonly negation?: "query" | "both";
 };
-
 
 export type DiscoverCandidate = {
   readonly signature: string;
@@ -115,7 +122,13 @@ export type DiscoverCoverage = "complete" | "partial" | "none" | "browse";
 export type DiscoverResult = {
   /** What was actually searched for, after normalization, so a miss can be diagnosed. */
   readonly input: {
+    /** Terms searched for. */
     readonly terms: readonly string[];
+    /**
+     * Terms the input negated ("no X", "without X", "sin X"). They never admit a candidate or
+     * improve its order; where one matches an admitted candidate it is reported with `negation`.
+     */
+    readonly negated: readonly string[];
     /** Words dropped before matching: too short, or a function word in English or Spanish. */
     readonly ignored: readonly string[];
     readonly filters: {
@@ -136,7 +149,10 @@ export type DiscoverResult = {
   /** How many signatures matched before `limit` was applied. */
   readonly total: number;
   readonly truncated: boolean;
-  /** Input terms no field matched at all. A non-empty list is the cue to rephrase or read the catalogue. */
+  /**
+   * Input terms (not negated ones) no field matched at all. A non-empty list is the cue to rephrase
+   * or read the catalogue.
+   */
   readonly unmatchedTerms: readonly string[];
   readonly examples: readonly DiscoverExample[];
   /** Every category with how many families and signatures it holds: a first facet to narrow by. */
@@ -191,35 +207,200 @@ export function wordsOf(text: string): readonly string[] {
 }
 
 /**
- * THE MATCH RULE, the only one: an input term matches a field word when they are equal, or when
- * both are at least 4 characters and share a prefix of at least max(4, shorter length - 2)
- * characters. That lets `navigate` meet `navigation`, `setting` meet `settings` and `toggle` meet
- * `toggles` without any stemmer, dictionary or synonym list, and it stops `card` from meeting
- * `carousel`. Anything subtler would be a ranker, which is what ADR-0026 keeps out.
+ * THE MATCH RULE. An input term matches a field word when:
+ *
+ *   1. they are equal, or one is the plural of the other (`s`/`es`, the shorter at least 3
+ *      characters): `tab`/`tabs`, `boton`/`botones`; or
+ *   2. they share a prefix of at least 7 characters: `navigate`/`navigation`,
+ *      `configure`/`configuration`; or
+ *   3. they are ONE STEM PLUS ENDINGS: some shared prefix of at least 4 characters after which each
+ *      word has nothing left or one of the ENDINGS below. `select` + `ion`, `open` + `ing`,
+ *      `clos` + `e`/`ing`, `cambi` + `a`/`ar`, `naveg` + `acion`/`ar`, `list` + `a`, `tabl` + `a`/`e`.
+ *      With a 4-letter stem and nothing left of the input, the catalogue word is usually a
+ *      different word that starts the same way (`view` is not `viewer`), so that one case is refused.
+ *
+ * Words under 4 characters only match by rule 1.
+ *
+ * THE ENDINGS are a closed, written list of English and Spanish inflections, not a stemmer and not
+ * a dictionary of words. An extension counts only when it is one of them, which is what refuses a
+ * compound or a different word that merely starts like a catalogue word: `editorial` is not `editor`
+ * (-ial), `breakout` is not `break` (-out), `linkedin` is not `linked` (-in), `page` is not `pager`
+ * (-r), `active` is not `action` (-ve/-on), `three` is not `thread` (-e/-ad).
+ *
+ * The rule before this one took a shared prefix of max(4, shorter - 2), which let every pair above
+ * match. `discover.test.ts` pins each pair, both the ones this refuses and the ones it must keep.
  */
 export function termMatchesWord(term: string, word: string): boolean {
-  if (term === word) return true;
-  const shorter = Math.min(term.length, word.length);
-  if (shorter < 4) return false;
+  if (samePlural(term, word)) return true;
+  const [shorter, longer] = term.length <= word.length ? [term, word] : [word, term];
+  if (shorter.length < 4) return false;
   let shared = 0;
-  while (shared < shorter && term[shared] === word[shared]) shared += 1;
-  return shared >= Math.max(4, shorter - 2);
+  while (shared < shorter.length && term[shared] === word[shared]) shared += 1;
+  if (shared >= 7) return true;
+  for (let stem = shared; stem >= 4; stem -= 1) {
+    const [short, long] = [shorter.slice(stem), longer.slice(stem)];
+    if (stem === 4 && short === "" && term.length < word.length) continue;
+    if (inflects(shorter.slice(0, stem), short) && inflects(shorter.slice(0, stem), long)) return true;
+  }
+  return false;
+}
+
+const PLURAL_ENDINGS: ReadonlySet<string> = new Set(["s", "es"]);
+
+/** Equal, or one the plural of the other (`s`/`es`, the shorter at least 3 characters). */
+function samePlural(a: string, b: string): boolean {
+  if (a === b) return true;
+  const [shorter, longer] = a.length <= b.length ? [a, b] : [b, a];
+  return shorter.length >= 3 && longer.startsWith(shorter) && PLURAL_ENDINGS.has(longer.slice(shorter.length));
+}
+
+const ENDINGS: ReadonlySet<string> = new Set([
+  // English
+  "e", "s", "es", "d", "ed", "er", "ers", "ing", "ings", "ion", "ions", "ly", "able", "n",
+  // Spanish (plus the "e", "es", "er", "n" above)
+  "a", "o", "as", "os", "ar", "ir", "an", "en", "ado", "ada", "ados", "adas", "ando", "cion", "ciones",
+  "acion", "aciones", "mente",
+]);
+
+/** Nothing left, a listed ending, or a listed ending after a doubled consonant (`label` + `led`). */
+function inflects(stem: string, rest: string): boolean {
+  if (rest === "" || ENDINGS.has(rest)) return true;
+  return rest.length > 1 && rest[0] === stem.at(-1) && /[bcdfgklmnprstvz]/.test(rest[0]!) && ENDINGS.has(rest.slice(1));
 }
 
 function textMatches(term: string, text: string): boolean {
-  return wordsOf(text).some((word) => termMatchesWord(term, word));
+  return fieldWords(text).some(({ word }) => termMatchesWord(term, word));
 }
 
-/** Input text to terms. Short words and function words are reported back as `ignored`. */
-function termsOf(query: string | undefined): { terms: string[]; ignored: string[] } {
-  const terms: string[] = [];
-  const ignored: string[] = [];
-  for (const word of wordsOf(query ?? "")) {
-    const keep = (word.length >= 3 || /\d/.test(word)) && !STOPWORDS.has(word);
-    const into = keep ? terms : ignored;
-    if (!into.includes(word)) into.push(word);
+/*
+ * NEGATION, and nothing more of syntax than that. "A switch with no save button" should not make
+ * `save` and `button` evidence FOR a split button. The scanner below is deliberately small, the same
+ * on both sides, and not a parser:
+ *
+ *   - a negator (`no`, `not`, `without`, `never`; `sin`, `no`, `ni`, `nunca`) negates the next
+ *     NEGATION_REACH content words after it;
+ *   - clause punctuation, or a word that opens a new clause (`and`, `but`, `with`; `y`, `pero`,
+ *     `sino`, `con`), ends the negation early; `or`/`o` do not, so "no save or cancel" negates both;
+ *   - `n't` is read as `not`;
+ *   - one postposed form, the absolute construction "with X disabled" (`with`/`con`, exactly ONE
+ *     word, then `disabled`/`off`/`desactivado`/`deshabilitado`/`apagado`), negates X: "works with
+ *     JavaScript disabled" is "works without JavaScript". Exactly one word, because "with the submit
+ *     button disabled" describes a button that is there, and a bare "a disabled button" is a
+ *     description, not a negation. The marker word is consumed like a negator.
+ *
+ * Any other postposed negation ("sin que haga falta X", "JavaScript is not needed") is NOT
+ * recognised, and says so here rather than being guessed at.
+ */
+const NEGATORS: ReadonlySet<string> = new Set(["no", "not", "without", "never", "sin", "ni", "nunca"]);
+const NEGATION_BREAKS: ReadonlySet<string> = new Set(["and", "but", "with", "y", "pero", "sino", "con"]);
+const NEGATION_REACH = 3;
+const WITH = new Set(["with", "con"]);
+const POSTPOSED: ReadonlySet<string> = new Set([
+  "disabled", "off", "desactivado", "desactivada", "deshabilitado", "deshabilitada", "apagado", "apagada",
+]);
+const CLAUSES = /[.,;:!?¡¿()[\]{}\n"“”]+/u;
+
+/** `group`: which negation a negated word belongs to, so "no save button" stays one phrase. */
+type PolarWord = { readonly word: string; readonly negated: boolean; readonly group?: number; readonly syntax?: true };
+
+/** Whether a word can be a search term at all: long enough (or a number) and not a function word. */
+function isContentWord(word: string): boolean {
+  return (word.length >= 3 || /\d/.test(word)) && !STOPWORDS.has(word) && !NEGATORS.has(word);
+}
+
+/** Splits into words and marks each one negated or not, clause by clause. */
+function polarWords(text: string, split: (clause: string) => readonly string[]): PolarWord[] {
+  const out: PolarWord[] = [];
+  let group = 0;
+  for (const clause of text.replace(/n['’]t\b/giu, " not").split(CLAUSES)) {
+    let reach = 0;
+    for (const word of split(clause)) {
+      if (NEGATORS.has(word)) {
+        reach = NEGATION_REACH;
+        group += 1;
+        continue;
+      }
+      if (NEGATION_BREAKS.has(word)) reach = 0;
+      const content = isContentWord(word);
+      const [before, x] = [out.at(-2), out.at(-1)];
+      if (POSTPOSED.has(word) && x && before && WITH.has(before.word) && isContentWord(x.word) && !out.at(-1)?.syntax) {
+        group += 1;
+        out[out.length - 1] = { word: x.word, negated: true, group };
+        out.push({ word, negated: false, syntax: true });
+        continue;
+      }
+      const negated = reach > 0 && content;
+      out.push(negated ? { word, negated, group } : { word, negated });
+      if (content && reach > 0) reach -= 1;
+    }
   }
-  return { terms, ignored };
+  return out;
+}
+
+/*
+ * A field's words: its ids split at camelCase AND kept whole, so `NavListLink` offers nav, list,
+ * link and navlistlink. An input word is never split at camelCase, which is why the whole form is
+ * needed: "JavaScript" in a query is `javascript`, the way every intent spells it, not java + script.
+ */
+function fieldWords(text: string): readonly PolarWord[] {
+  const cached = FIELD_WORDS.get(text);
+  if (cached) return cached;
+  const words = polarWords(text, (clause) => {
+    const words: string[] = [];
+    for (const token of clause.split(/[^\p{L}\p{N}]+/u)) {
+      const parts = wordsOf(token);
+      words.push(...parts);
+      if (parts.length > 1) words.push(foldCase(token));
+    }
+    return words;
+  });
+  FIELD_WORDS.set(text, words);
+  return words;
+}
+
+/* A pure function of the text, so memoized: the same prose is otherwise re-cut once per term. */
+const FIELD_WORDS = new Map<string, readonly PolarWord[]>();
+
+/** The first word of `text` a term matches, and whether the text negates it there. */
+function matchIn(term: string, text: string): PolarWord | undefined {
+  return fieldWords(text).find(({ word }) => termMatchesWord(term, word));
+}
+
+/**
+ * Input text to terms: positive ones, negated ones (see NEGATORS), and words dropped as too short
+ * or as function words. A word used both ways is positive: "a button, but no save button" still
+ * asks for a button.
+ */
+function termsOf(query: string | undefined): {
+  terms: string[];
+  negated: string[];
+  /** Each negation's words, together: "no save button" is one phrase, [save, button]. */
+  phrases: string[][];
+  ignored: string[];
+} {
+  const positive: string[] = [];
+  const negated: string[] = [];
+  const ignored: string[] = [];
+  const groups = new Map<number, string[]>();
+  const words = polarWords(query ?? "", (clause) => foldCase(clause).split(/[^\p{L}\p{N}]+/u).filter(Boolean));
+  for (const { word, negated: isNegated, group, syntax } of words) {
+    const into = syntax || !isContentWord(word) ? ignored : isNegated ? negated : positive;
+    if (!into.includes(word)) into.push(word);
+    if (into === negated && group !== undefined) groups.set(group, [...(groups.get(group) ?? []), word]);
+  }
+  const kept = negated.filter((word) => !positive.includes(word));
+  const phrases = [...groups.values()].map((phrase) => phrase.filter((word) => kept.includes(word))).filter((phrase) => phrase.length > 0);
+  return { terms: positive, negated: kept, phrases, ignored };
+}
+
+/**
+ * Whether a value negates a whole negated phrase of the input: every word of "no save button" is
+ * negated in the value too ("there is no save button involved"). One shared negated word is not
+ * agreement: "never a row of buttons" says nothing about save buttons.
+ */
+function negatesPhrase(value: string, phrase: readonly string[]): boolean {
+  const words = fieldWords(value);
+  return phrase.every((term) => words.some(({ word, negated }) => negated && termMatchesWord(term, word)));
 }
 
 type Row = {
@@ -242,7 +423,18 @@ function examplesBySignature(snippets: readonly DiscoverSnippet[]): ReadonlyMap<
   return into;
 }
 
-function matchRow(row: Row, terms: readonly string[], intents: readonly string[]): DiscoverMatch[] {
+/** Whether a match counts toward admission and order: anything but a negation only the input makes. */
+function counts(match: DiscoverMatch): boolean {
+  return match.negation !== "query" && !match.field.endsWith("-filter");
+}
+
+function matchRow(
+  row: Row,
+  terms: readonly string[],
+  negated: readonly string[],
+  phrases: readonly (readonly string[])[],
+  intents: readonly string[],
+): DiscoverMatch[] {
   const matched: DiscoverMatch[] = [];
   const signature = row.signature;
 
@@ -251,19 +443,45 @@ function matchRow(row: Row, terms: readonly string[], intents: readonly string[]
     if (exact) matched.push({ field: "intent", term, value: exact });
   }
 
-  for (const term of terms) {
-    const fields: Array<[DiscoverField, readonly string[]]> = [
-      ["signature", [signature.id]],
-      ["contract", [row.contract]],
-      ["intent", signature.intent],
-      ["category", row.category ? [row.category] : []],
-      ["useWhen", signature.useWhen],
-      ["alternatives", signature.alternatives],
-      ["avoidWhen", signature.avoidWhen],
-    ];
-    for (const [field, values] of fields) {
-      const value = values.find((text) => textMatches(term, text));
-      if (value !== undefined) matched.push({ field, term, value });
+  const fields: Array<[DiscoverField, readonly string[]]> = [
+    ["signature", [signature.id]],
+    ["contract", [row.contract]],
+    ["intent", signature.intent],
+    ["category", row.category ? [row.category] : []],
+    ["useWhen", signature.useWhen],
+    ["alternatives", signature.alternatives],
+    ["avoidWhen", signature.avoidWhen],
+  ];
+  for (const [field, values] of fields) {
+    /*
+     * Which value a term is reported against, when several match: the one most input terms match
+     * (so "view switcher" is reported as the single intent `view-switcher`, not two), then the one
+     * equal to the term, then the first. Only reported values feed the ordering rules, so this is
+     * what keeps every rule recomputable from `matched`.
+     */
+    const hits = values.map((value) => ({
+      value,
+      terms: terms.filter((term) => matchIn(term, value) !== undefined),
+    }));
+    const pick = (term: string, candidates: typeof hits) =>
+      [...candidates].sort(
+        (a, b) =>
+          b.terms.length - a.terms.length ||
+          Number(samePlural(foldCase(b.value), term)) - Number(samePlural(foldCase(a.value), term)),
+      )[0];
+
+    for (const term of terms) {
+      const best = pick(term, hits.filter((hit) => hit.terms.includes(term)));
+      if (best) matched.push({ field, term, value: best.value });
+    }
+    for (const term of negated) {
+      const mine = phrases.filter((phrase) => phrase.includes(term));
+      const found = values.flatMap((value) => {
+        const word = matchIn(term, value);
+        return word ? [{ value, both: mine.some((phrase) => negatesPhrase(value, phrase)) }] : [];
+      });
+      const best = found.find((hit) => hit.both) ?? found[0];
+      if (best) matched.push({ field, term, value: best.value, negation: best.both ? "both" : "query" });
     }
   }
 
@@ -273,51 +491,74 @@ function matchRow(row: Row, terms: readonly string[], intents: readonly string[]
 type Scored = {
   readonly row: Row;
   readonly matched: readonly DiscoverMatch[];
-  /** Distinct input terms matched in signature, contract, intent or category. */
+  /** Distinct counting terms matched in signature, contract, intent or category. */
   readonly naming: number;
-  /** Distinct naming fields (of those four) that matched any term. */
+  /** The most distinct counting terms any ONE naming value matched: `view-switcher` for "view switcher". */
+  readonly phrase: number;
+  /** Distinct counting terms equal to a whole naming value, or its plural: "buttons" and the `button` family. */
+  readonly exact: number;
+  /** Distinct naming fields (of those four) that matched a counting term. */
   readonly namingFields: number;
-  /** Distinct input terms matched in any field except avoidWhen. */
+  /** Distinct counting terms matched in any field except avoidWhen. */
   readonly positive: number;
-  /** Distinct input terms matched anywhere. */
-  readonly any: number;
+  /** Distinct counting terms matched in avoidWhen: the case described is one this is NOT for. */
+  readonly avoided: number;
 };
 
 /*
- * THE ORDERING RULES, in priority order. Each is a count a person can redo by hand from `matched`:
+ * THE ORDERING RULES, in priority order. Each is a count a person can redo by hand from `matched`,
+ * using only the matches that count (every one except `negation: "query"`):
  *
- *   1. More distinct input terms matched in a naming field (signature, contract, intent, category).
- *   2. Then more distinct naming fields matched. "switch" in a signature's own id AND its family id
- *      (Switch) outranks "switch" inside one intent term of an unrelated family
- *      (`code-with-a-density-switch`), which rule 1 alone scores the same.
- *   3. Then more distinct terms matched in any field but avoidWhen (adds useWhen, alternatives).
- *   4. Then more distinct terms matched at all (adds avoidWhen).
- *   5. Then catalogue order: the order `get_catalog` lists families and, within one, signatures.
+ *   Naming evidence (signature, contract, intent, category):
+ *   1. More distinct terms matched in a naming field.
+ *   2. Then more terms matched by ONE naming value. "view switcher" meeting Segmented's single
+ *      intent `view-switcher` says more than "view" in TreeView's id and "list" in one of its intents.
+ *   3. Then more terms equal to a whole naming value, or its plural. "button" IS the `button`
+ *      family; it is only a part of `state-button` and of the intent `icon-button-with-states`.
+ *   4. Then more distinct naming fields matched. "switch" in a signature's own id AND its family id
+ *      (Switch) outranks "switch" inside one intent term of an unrelated family.
+ *   Positive semantic evidence:
+ *   5. Then more distinct terms matched in any field but avoidWhen (adds useWhen, alternatives).
+ *   Conflicting evidence:
+ *   6. Then FEWER distinct terms matched in avoidWhen. Such a match still admits a candidate, since
+ *      "exactly what this is not for" is how an agent reaches the alternative, but it never makes a
+ *      candidate look better than one without it.
+ *   7. Then catalogue order: the order `get_catalog` lists families and, within one, signatures.
  *
- * Rule 5 is total, so there are no ties left for anything unstable to decide. A candidate matched
- * only through filters has all three counts at zero and keeps catalogue order.
+ * Rule 7 is total, so there are no ties left for anything unstable to decide. A candidate matched
+ * only through filters has every count at zero and keeps catalogue order.
  */
 function compareCandidates(a: Scored, b: Scored): number {
   return (
     b.naming - a.naming ||
+    b.phrase - a.phrase ||
+    b.exact - a.exact ||
     b.namingFields - a.namingFields ||
     b.positive - a.positive ||
-    b.any - a.any ||
+    a.avoided - b.avoided ||
     a.row.order - b.row.order
   );
 }
 
-function scoreOf(row: Row, matched: readonly DiscoverMatch[]): Scored {
+function scoreOf(row: Row, all: readonly DiscoverMatch[]): Scored {
+  const matched = all.filter(counts);
   const distinct = (keep: (match: DiscoverMatch) => boolean) =>
     new Set(matched.filter(keep).map((match) => match.term)).size;
-  const lexical = (match: DiscoverMatch) => !match.field.endsWith("-filter");
+  const naming = matched.filter((match) => NAMING_FIELDS.has(match.field));
+  const byValue = new Map<string, Set<string>>();
+  for (const match of naming) {
+    const key = `${match.field}\u0000${match.value}`;
+    byValue.set(key, (byValue.get(key) ?? new Set()).add(match.term));
+  }
   return {
     row,
-    matched,
+    matched: all,
     naming: distinct((match) => NAMING_FIELDS.has(match.field)),
-    namingFields: new Set(matched.filter((match) => NAMING_FIELDS.has(match.field)).map((match) => match.field)).size,
-    positive: distinct((match) => lexical(match) && match.field !== "avoidWhen"),
-    any: distinct(lexical),
+    phrase: Math.max(0, ...[...byValue.values()].map((set) => set.size)),
+    exact: new Set(naming.filter((match) => samePlural(foldCase(match.value), match.term)).map((match) => match.term)).size,
+    namingFields: new Set(naming.map((match) => match.field)).size,
+    positive: distinct((match) => match.field !== "avoidWhen"),
+    avoided: distinct((match) => match.field === "avoidWhen"),
   };
 }
 
@@ -326,7 +567,7 @@ export function discover(
   snippets: readonly DiscoverSnippet[],
   input: DiscoverInput,
 ): DiscoverResult {
-  const { terms, ignored } = termsOf(input.query);
+  const { terms, negated, phrases, ignored } = termsOf(input.query);
   const intents = [...new Set((input.intents ?? []).map((term) => foldCase(term.trim())).filter(Boolean))];
   const limit = Math.min(Math.max(1, Math.trunc(input.limit ?? DISCOVER_DEFAULT_LIMIT)), DISCOVER_MAX_LIMIT);
   const includeDeprecated = input.includeDeprecated === true;
@@ -350,7 +591,7 @@ export function discover(
 
   if (terms.length === 0 && intents.length === 0 && !hasFilter) {
     return {
-      input: { terms, ignored, filters, limit },
+      input: { terms, negated, ignored, filters, limit },
       coverage: "browse",
       candidates: [],
       total: 0,
@@ -377,8 +618,9 @@ export function discover(
     if (host && row.signature.host !== host) continue;
     if (input.parent && !row.signature.parents.includes(input.parent)) continue;
 
-    const lexical = matchRow(row, terms, intents);
-    if (allTerms.length > 0 && lexical.length === 0) continue;
+    const lexical = matchRow(row, terms, negated, phrases, intents);
+    // A negation only the input makes never admits: "no save button" is not a reason to list SplitButton.
+    if (allTerms.length > 0 && !lexical.some(counts)) continue;
 
     const filterEvidence: DiscoverMatch[] = [
       ...(input.category ? [{ field: "category-filter" as const, term: input.category, value: row.category ?? "" }] : []),
@@ -386,7 +628,7 @@ export function discover(
       ...(input.parent ? [{ field: "parent-filter" as const, term: input.parent, value: input.parent }] : []),
     ];
     const matched = [...lexical, ...filterEvidence];
-    for (const match of lexical) termsSeen.add(match.term);
+    for (const match of lexical) if (counts(match)) termsSeen.add(match.term);
 
     scored.push(scoreOf(row, matched));
   }
@@ -400,7 +642,7 @@ export function discover(
     candidates.length === 0 ? "none" : unmatchedTerms.length > 0 || truncated ? "partial" : "complete";
 
   return {
-    input: { terms, ignored, filters, limit },
+    input: { terms, negated, ignored, filters, limit },
     coverage,
     candidates,
     total: scored.length,
@@ -513,14 +755,16 @@ function guidanceFor(coverage: DiscoverCoverage, unmatched: readonly string[], t
         truncated ? "More candidates matched than `limit` returned; narrow with a filter or raise `limit`." : "",
       ].filter(Boolean);
       return (
-        `${parts.join(" ")} Matching is lexical, so a missing word may just be phrased differently: ` +
-        "retry with other words or `intents` from a no-argument call, or page through get_catalog " +
+        `${parts.join(" ")} Matching is lexical and the catalogue is written in English, so a missing ` +
+        "word may just be phrased differently: retry in English or with other words, try `intents` " +
+        "from a no-argument call, or page through get_catalog " +
         `if nothing here fits. ${validate}`
       );
     }
     case "none":
       return (
-        "Nothing matched. Matching is lexical, so rephrase, try `intents` from a no-argument call, " +
+        "Nothing matched. Matching is lexical and the catalogue is written in English, so rephrase " +
+        "in English, try `intents` from a no-argument call, " +
         "or page through get_catalog, which lists every published family."
       );
     case "browse":

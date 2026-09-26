@@ -2,6 +2,7 @@ import { z } from "zod";
 import type {
   AgentError,
   CatalogPage,
+  ContractView,
   Example,
   ExampleIndexEntry,
   Provenance,
@@ -121,6 +122,10 @@ const match = z.object({
   field: z.string().describe("Which compiled field matched, or which filter admitted the candidate."),
   term: z.string().describe("The normalized input term or filter value."),
   value: z.string().describe("The field value it matched."),
+  negation: z
+    .enum(["query", "both"])
+    .optional()
+    .describe("The input negated the term. `query`: a conflict, never counted toward order. `both`: the value negates it too, so they agree."),
 });
 
 // ── Output: one schema per tool ────────────────────────────────────────────────────────────────
@@ -138,17 +143,22 @@ export const catalogOutput = z.object({
  * A compiled contract is large and nested, and `get_contract` is its authority, so the schema names
  * the fields a client can rely on and admits the rest as-is rather than restating ComponentContract.
  */
-export const contractOutput = z
-  .object({
-    ...provenance,
-    id: z.string(),
-    category: z.string().optional(),
-    css: z.string(),
-    parts: z.record(z.string(), z.string()),
-    signatures: z.record(z.string(), z.unknown()),
-    semantics: z.record(z.string(), z.unknown()).optional(),
-  })
-  .loose();
+const contractFields = {
+  id: z.string(),
+  category: z.string().optional(),
+  css: z.string(),
+  parts: z.record(z.string(), z.string()),
+  signatures: z.record(z.string(), z.unknown()),
+  semantics: z.record(z.string(), z.unknown()).optional(),
+};
+
+export const contractOutput = z.object({ ...provenance, ...contractFields }).loose();
+
+/** Several contracts, provenance once at the top rather than once per family. */
+export const contractsOutput = z.object({
+  ...provenance,
+  contracts: z.array(z.object(contractFields).loose()).describe("The families asked for, in the order asked."),
+});
 
 /*
  * ONE object, not a union of "index" and "one example": a union has no `type: object` root, and the
@@ -170,6 +180,7 @@ export const discoverOutput = z.object({
   ...provenance,
   input: z.object({
     terms: z.array(z.string()),
+    negated: z.array(z.string()).describe("Terms the input negated (no X, without X, sin X): never evidence for a candidate."),
     ignored: z.array(z.string()),
     filters: z.object({
       category: z.string().optional(),
@@ -240,17 +251,62 @@ type Writable<T> = T extends readonly (infer U)[]
   : T extends object
     ? { -readonly [K in keyof T]: Writable<T[K]> }
     : T;
-type Fits<Value, Schema extends z.ZodType> = Writable<Value> extends z.infer<Schema> ? true : never;
+
+/*
+ * TWO CHECKS, because assignability alone is one-directional: a result with a field the schema
+ * never declared still "fits" it, so a field the service grew would reach clients undescribed by
+ * the outputSchema they validate against. `ExtraKeys` walks the value type (each member of a union
+ * on its own, arrays by element) and names every key the schema does not declare, as a dotted path.
+ * It stops where the schema deliberately admits anything: `unknown`, or a record/loose object.
+ */
+type Dotted<Path extends string, Key extends string> = Path extends "" ? Key : `${Path}.${Key}`;
+type ExtraKeys<Value, Schema, Path extends string = ""> = unknown extends Schema
+  ? never
+  : Value extends readonly (infer Item)[]
+    ? NonNullable<Schema> extends readonly (infer SchemaItem)[]
+      ? ExtraKeys<Item, SchemaItem, `${Path}[]`>
+      : never
+    : Value extends object
+      ? string extends keyof NonNullable<Schema>
+        ? never
+        :
+            | Dotted<Path, Exclude<keyof Value, keyof NonNullable<Schema> | symbol | number>>
+            | {
+                [K in keyof Value & keyof NonNullable<Schema> & string]-?: ExtraKeys<
+                  NonNullable<Value[K]>,
+                  NonNullable<Schema>[K],
+                  Dotted<Path, K>
+                >;
+              }[keyof Value & keyof NonNullable<Schema> & string]
+      : never;
+
+type Pinned<Value, Schema extends z.ZodType> =
+  Writable<Value> extends z.infer<Schema>
+    ? [ExtraKeys<Value, z.infer<Schema>>] extends [never]
+      ? true
+      : { undeclaredFields: ExtraKeys<Value, z.infer<Schema>> }
+    : { doesNotFit: Value };
+
 const pins: [
-  Fits<Provenance & CatalogPage, typeof catalogOutput>,
-  Fits<Provenance & { examples: readonly ExampleIndexEntry[] }, typeof examplesOutput>,
-  Fits<Provenance & Example, typeof examplesOutput>,
-  Fits<Provenance & DiscoverResult, typeof discoverOutput>,
-  Fits<Provenance & ValidateOutcome, typeof validateOutput>,
-  Fits<AgentError, typeof errorOutput>,
-  Fits<OptionInput, typeof optionValue>,
-] = [true, true, true, true, true, true, true];
+  Pinned<Provenance & CatalogPage, typeof catalogOutput>,
+  Pinned<Provenance & { examples: readonly ExampleIndexEntry[] }, typeof examplesOutput>,
+  Pinned<Provenance & Example, typeof examplesOutput>,
+  Pinned<Provenance & DiscoverResult, typeof discoverOutput>,
+  Pinned<Provenance & ValidateOutcome, typeof validateOutput>,
+  Pinned<Provenance & ContractView, typeof contractOutput>,
+  Pinned<Provenance & { contracts: readonly ContractView[] }, typeof contractsOutput>,
+  Pinned<AgentError, typeof errorOutput>,
+  Pinned<OptionInput, typeof optionValue>,
+] = [true, true, true, true, true, true, true, true, true];
 void pins;
+
+/* The guard, guarded: a result with one field the schema lacks must not compile as pinned. */
+// @ts-expect-error `extra` is not declared by the schema, so this is `{ undeclaredFields: "extra" }`.
+const undeclared: Pinned<{ kept: string; extra: number }, z.ZodObject<{ kept: z.ZodString }>> = true;
+// @ts-expect-error the same inside an array: `{ undeclaredFields: "rows[].extra" }`.
+const nested: Pinned<{ rows: readonly { kept: string; extra: number }[] }, z.ZodObject<{ rows: z.ZodArray<z.ZodObject<{ kept: z.ZodString }>> }>> = true;
+void undeclared;
+void nested;
 
 // ── Input validation that answers like every other failure ─────────────────────────────────────
 

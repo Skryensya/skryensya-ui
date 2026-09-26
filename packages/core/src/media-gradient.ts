@@ -68,7 +68,7 @@ export const mediaGradientContract = {
      * publishing something that paints nothing: absolutely positioned with no box to fill.
      */
     MediaCaption: {
-      intent: ["caption-over-a-photo", "text-on-media", "overlay-title"],
+      intent: ["caption-over-a-photo", "text-over-an-image", "text-on-media", "overlay-title"],
       host: { element: "div" },
       options: ["edge", "captionElement"],
       parents: ["ImageFrame"],
@@ -80,7 +80,7 @@ export const mediaGradientContract = {
     },
 
     MediaGradient: {
-      intent: ["readable-text-over-a-photo", "scrim-behind-a-caption"],
+      intent: ["readable-text-over-a-photo", "readable-text-over-an-image", "scrim-behind-a-caption"],
       host: { element: "div" },
       options: ["strength"],
       parents: ["MediaCaption"],

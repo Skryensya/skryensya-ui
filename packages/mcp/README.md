@@ -20,13 +20,14 @@ the same input give the same bytes, and only `validate_ui` decides whether a tre
 | 1 | `discover_ui` | Narrows the catalogue to candidate signatures, each with the evidence that matched it. |
 | 2 | `get_examples` | Established example trees: the index with no id, one full tree with an id. |
 | 3 | `get_contract` | One family's contract: options, slots, constraints, accessibility and CSS. |
-| 4 | `validate_ui` | Validates a usage tree; when valid, returns Vanilla markup, React source, data module and CSS. |
-| 5 | `get_catalog` | The exhaustive catalogue, paged: every family and signature with useWhen and avoidWhen. |
+| 4 | `get_contracts` | Up to 8 contracts in one call, in the order asked, for one composition. |
+| 5 | `validate_ui` | Validates a usage tree; when valid, returns Vanilla markup, React source, data module and CSS. |
+| 6 | `get_catalog` | The exhaustive catalogue, paged: every family and signature with useWhen and avoidWhen. |
 
 <!-- tools:end -->
 
 The usual path is `discover_ui` -> (`get_examples` when a related example fits) -> `get_contract`
--> `validate_ui`. `get_catalog` is the exhaustive list: the fallback when discovery finds nothing
+for one family, or `get_contracts` for several in one call -> `validate_ui`. `get_catalog` is the exhaustive list: the fallback when discovery finds nothing
 that fits, and still the authority on what is published. Neither a full catalogue read nor an
 examples call is mandatory any more ([ADR-0026](../../docs/decisions/0026-deterministic-discovery-narrows-the-catalogue.md)).
 
@@ -37,18 +38,32 @@ to the artifact that produced it.
 
 `discover_ui` narrows about two hundred signatures to a candidate set. It compares the words of a
 `query` (and whole `intents` terms) with compiled fields: signature id, contract id, intent,
-category, `useWhen`, `alternatives`, `avoidWhen`. Each candidate carries `matched`, the exact field,
-term and value that admitted it, plus its `useWhen`, `avoidWhen` and related example ids. There is no
-score. Candidates are ordered by written rules:
+category, `useWhen`, `alternatives`, `avoidWhen`. The catalogue is written in English, so queries
+should be too. Two words match when they are equal, differ by a plural, share seven letters, or are
+one stem plus endings from a closed list (`navigate`/`navigation`, `close`/`closing`,
+`select`/`selection`); prefixes shared by accident do not match (`active`/`action`, `page`/`pager`,
+`editorial`/`editor`). Each candidate
+carries `matched`, the exact field, term and value that admitted it, plus its `useWhen`, `avoidWhen`
+and related example ids. There is no score. Candidates are ordered by written rules:
 
 1. more distinct terms matched in a naming field (signature, contract, intent, category);
-2. then more distinct naming fields matched;
-3. then more distinct terms matched in any field but `avoidWhen`;
-4. then more distinct terms matched at all;
-5. then catalogue order.
+2. then more terms matched by one naming value (`view switcher` meeting the intent `view-switcher`);
+3. then more terms equal to a whole naming value or its plural (`buttons` and the `button` family);
+4. then more distinct naming fields matched;
+5. then more distinct terms matched in any field but `avoidWhen`;
+6. then FEWER distinct terms matched in `avoidWhen`;
+7. then catalogue order.
 
-A match only in `avoidWhen` still counts, on purpose: "this is exactly what that signature is not
-for" is how an agent reaches the alternative that is. `coverage` is `complete`, `partial` (a term
+A match only in `avoidWhen` still admits a candidate, on purpose: "this is exactly what that
+signature is not for" is how an agent reaches the alternative that is. It never ranks a candidate
+above one without it.
+
+Simple negation is recognised, and nothing more of syntax: `no`, `not`, `without`, `never`, `sin`,
+`ni`, `nunca` negate the next few words of their clause, and "with X disabled" negates X. Negated terms come back in
+`input.negated`; they never admit a candidate or improve its order, and where one matches an
+admitted candidate it is reported with `negation: "query"`. When the matched value negates the whole
+negated phrase too (`faq-without-javascript` for "an FAQ without JavaScript", "there is no save
+button involved" for "no save button"), it is `negation: "both"` and counts. `coverage` is `complete`, `partial` (a term
 matched nothing, or `limit` cut candidates), `none`, or `browse` (no input: the intent vocabulary
 and hosts are returned instead). On `none` or `partial`, the guidance points at `get_catalog`.
 
@@ -128,13 +143,16 @@ request, no sessions, so `GET` and `DELETE` on `/mcp` from a 2025-era client ans
 
 | Variable | Default | Meaning |
 |---|---|---|
-| `HOST` | `0.0.0.0` when `NODE_ENV=production`, else `127.0.0.1` | Listen address. |
-| `PORT` | `8787` | Listen port. |
+| `HOST` | `0.0.0.0` when `NODE_ENV=production`, else `127.0.0.1` | Listen address. Blank reads as unset. |
+| `PORT` | `8787` | Listen port, a whole number from 0 to 65535. |
 | `NODE_ENV` | | `production` changes the `HOST` default. |
 | `MCP_HTTP_TOKEN` | unset | When set, `/mcp` requires `Authorization: Bearer <token>`. |
 | `MCP_ALLOWED_HOSTS` | localhost names on a loopback bind, none otherwise | Comma-separated hostnames the `Host` header may name. Unset on a public bind: not checked, so set it in production. |
 | `MCP_ALLOWED_ORIGINS` | localhost names | Comma-separated hostnames a browser `Origin` may come from. Requests with no `Origin` (every non-browser client) pass. |
-| `MCP_MAX_BODY_BYTES` | `1000000` | Largest accepted request body; larger answers `413`. |
+| `MCP_MAX_BODY_BYTES` | `1000000` | Largest accepted request body, a whole number from 1024 to 67108864; larger answers `413`. |
+
+A numeric variable that is not a whole number in its range (`1mb`, `-1`, `1e6`) stops the process at
+startup with a message naming the variable, rather than being read as something else.
 
 `GET /healthz` answers `{"status":"ok"}` without auth and without touching the catalogue. The
 artifact is loaded and verified at startup, so a process that answers it can serve.

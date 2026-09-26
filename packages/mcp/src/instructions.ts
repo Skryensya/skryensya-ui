@@ -16,7 +16,7 @@ export const instructions = [
   "   with useWhen, avoidWhen and `matched` evidence. Matching is lexical, not semantic: you choose.",
   "   If `coverage` is none or partial and nothing fits, page through get_catalog, the exhaustive list.",
   "2. If a related example fits, read it with get_examples(id) and adapt its content, not just its shape.",
-  "3. get_contract(id) for each family you chose.",
+  "3. Read the contracts you chose: get_contract(id) for one family, get_contracts(ids) for several.",
   "4. Build the tree. Four fields, easily confused:",
   "   - options:  values the signature declares, mapped to attributes by the contract (variant, href).",
   "   - attrs:    passed to the host element untouched (aria-label, id, rel, target).",

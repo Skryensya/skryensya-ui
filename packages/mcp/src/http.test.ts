@@ -64,9 +64,33 @@ describe("configuration from the environment", () => {
     expect(httpConfigFromEnv({ MCP_HTTP_TOKEN: "s3cret" }).token).toBe("s3cret");
   });
 
-  it("refuses a nonsense PORT", () => {
+  it("refuses a nonsense PORT, and reads a blank one as unset", () => {
     expect(() => httpConfigFromEnv({ PORT: "eighty" })).toThrow(/PORT/);
+    expect(() => httpConfigFromEnv({ PORT: "70000" })).toThrow(/PORT must be a whole number from 0 to 65535, got "70000"/);
+    expect(() => httpConfigFromEnv({ PORT: "80.5" })).toThrow(/PORT/);
+    expect(httpConfigFromEnv({ PORT: "" }).port).toBe(8787);
   });
+
+  it("reads a blank HOST as unset instead of binding every interface", () => {
+    expect(httpConfigFromEnv({ HOST: "" }).host).toBe("127.0.0.1");
+    expect(httpConfigFromEnv({ HOST: " ", NODE_ENV: "production" }).host).toBe("0.0.0.0");
+  });
+
+  it("reads MCP_MAX_BODY_BYTES as a whole number in a sane range", () => {
+    expect(httpConfigFromEnv({}).maxBodyBytes).toBe(1_000_000);
+    expect(httpConfigFromEnv({ MCP_MAX_BODY_BYTES: "2048" }).maxBodyBytes).toBe(2048);
+    expect(httpConfigFromEnv({ MCP_MAX_BODY_BYTES: " 5000000 " }).maxBodyBytes).toBe(5_000_000);
+    expect(httpConfigFromEnv({ MCP_MAX_BODY_BYTES: "" }).maxBodyBytes).toBe(1_000_000);
+  });
+
+  it.each(["1mb", "-1", "0", "12.5", "1e6", "0x10", "100", "999999999999", "NaN"])(
+    "refuses MCP_MAX_BODY_BYTES=%s at startup, naming the variable",
+    (value) => {
+      expect(() => httpConfigFromEnv({ MCP_MAX_BODY_BYTES: value })).toThrow(
+        `MCP_MAX_BODY_BYTES must be a whole number from 1024 to 67108864, got "${value}".`,
+      );
+    },
+  );
 });
 
 describe("routes and gates", () => {
@@ -250,5 +274,17 @@ describe("the shipped binary", () => {
     } finally {
       proc.kill("SIGKILL");
     }
+  }, 30_000);
+
+  it("refuses to start on a malformed MCP_MAX_BODY_BYTES, before it listens", async () => {
+    const proc = spawnBinary({ PORT: "8797", MCP_MAX_BODY_BYTES: "1mb" });
+    let stdout = "";
+    let stderr = "";
+    proc.stdout!.on("data", (chunk) => (stdout += chunk));
+    proc.stderr!.on("data", (chunk) => (stderr += chunk));
+    const code = await new Promise<number | null>((resolve) => proc.on("exit", resolve));
+    expect(code).not.toBe(0);
+    expect(stderr).toContain('MCP_MAX_BODY_BYTES must be a whole number from 1024 to 67108864, got "1mb".');
+    expect(stdout).not.toContain("listening");
   }, 30_000);
 });

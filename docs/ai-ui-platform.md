@@ -245,12 +245,13 @@ escribe una clase, y esa regla no se toca.
 discover_ui({ query?, intents?, category?, host?, parent? })  // deterministic, lexical candidates with evidence
 get_examples({ id? })            // established trees: the index, or one tree
 get_contract({ id, detail? })    // a family's compiled contract
+get_contracts({ ids, detail? })  // up to 8 families' contracts in one call, in the order asked
 validate_ui({ tree })            // G0-G3 over the tree; if it passes, the emitted code and the CSS
 get_catalog({ page? })           // the exhaustive index, paged: the fallback and the authority
 ```
 
 `discover_ui` narrows the catalogue before the agent chooses; it is lexical, explains every
-candidate, and has no score. `get_catalog` stays the complete list. `validate_ui` returns
+candidate, has no score, and keeps negated words (`no`, `without`, `sin`) from counting as evidence. `get_catalog` stays the complete list. `validate_ui` returns
 `{ valid, problems[], emitted: { vanilla, react, reactData }, css }`: the agent uses what was
 emitted and never types it. Every result carries `schemaVersion` and `sourceHash` as
 `structuredContent` validated against the tool's `outputSchema`, and as JSON text.

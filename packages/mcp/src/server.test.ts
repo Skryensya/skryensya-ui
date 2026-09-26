@@ -4,12 +4,14 @@ import { StdioClientTransport } from "@modelcontextprotocol/client/stdio";
 import { Client as LegacyClient } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport as LegacyStdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { snippets } from "@skryensya/snippets";
+import { createAgentService } from "@skryensya/ai-compiler/agent";
 import { SCHEMA_VERSION } from "@skryensya/ai-compiler/artifact";
 import { emitMarkup, emitReactSource } from "@skryensya/ai-compiler/emit";
 import { sheetsForTree } from "@skryensya/ai-compiler/sheets-for-tree";
 import { validateUsageTree } from "@skryensya/ai-compiler/validate";
 import type { UsageTree } from "@skryensya/core/usage-tree";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { pair } from "./manifest.js";
 import { errorOutput } from "./schemas.js";
 import { toolNames, tools } from "./tools.js";
 
@@ -62,7 +64,7 @@ describe("the surface", () => {
   it("exposes exactly the declared inventory, in workflow order", async () => {
     const { tools: listed } = await client.listTools();
     expect(listed.map((tool) => tool.name)).toEqual([...toolNames]);
-    expect(toolNames).toEqual(["discover_ui", "get_examples", "get_contract", "validate_ui", "get_catalog"]);
+    expect(toolNames).toEqual(["discover_ui", "get_examples", "get_contract", "get_contracts", "validate_ui", "get_catalog"]);
   });
 
   it("declares an outputSchema and read-only annotations on every tool", async () => {
@@ -104,6 +106,13 @@ describe("discover_ui", () => {
     expect(isError).toBe(false);
     expect(payload.coverage).toBe("none");
     expect(payload.guidance).toContain("get_catalog");
+  });
+
+  it("reports negated terms, and never lets them admit a candidate", async () => {
+    const { payload } = await call("discover_ui", { query: "a switch that applies at once, with no save button" });
+    expect(payload.input.negated).toEqual(["save", "button"]);
+    expect(payload.candidates[0].signature).toBe("Switch");
+    expect(payload.candidates.map((c: Payload) => c.signature)).not.toContain("SplitButton");
   });
 
   it("returns the vocabulary when called with nothing", async () => {
@@ -160,6 +169,51 @@ describe("get_contract", () => {
     const { isError, payload } = await call("get_contract", { id: "nonesuch" });
     expect(isError).toBe(true);
     expect(payload.detail).toContain("button");
+  });
+});
+
+describe("get_contracts", () => {
+  it("returns several contracts in the order asked, provenance once at the top", async () => {
+    const { isError, payload } = await call("get_contracts", { ids: ["hero", "layout", "typography", "button", "hero"] });
+    expect(isError).toBe(false);
+    expect(payload.contracts.map((c: Payload) => c.id)).toEqual(["hero", "layout", "typography", "button"]);
+    for (const contract of payload.contracts) {
+      expect(contract.schemaVersion).toBeUndefined();
+      expect(contract.sourceHash).toBeUndefined();
+      expect(contract.semantics).toBeUndefined();
+    }
+    expect(payload.contracts[0].signatures.Hero.descendants).toEqual([expect.objectContaining({ of: ["Heading"], min: 1 })]);
+  });
+
+  it("returns exactly what get_contract returns for each family", async () => {
+    const batch = (await call("get_contracts", { ids: ["button", "switch"], detail: "full" })).payload;
+    for (const contract of batch.contracts) {
+      const { schemaVersion: _v, sourceHash: _h, ...single } = (await call("get_contract", { id: contract.id, detail: "full" })).payload;
+      expect(contract).toEqual(single);
+    }
+  });
+
+  it("fails the whole call on an unknown id, naming every unknown one", async () => {
+    const { isError, payload } = await call("get_contracts", { ids: ["button", "nonesuch", "nope"] });
+    expect(isError).toBe(true);
+    expect(payload.error).toBe('No published contract "nonesuch", "nope".');
+    expect(payload.detail).toContain("button");
+    expect(payload.contracts).toBeUndefined();
+  });
+
+  it("bounds the batch, and answers the bound like any invalid argument", async () => {
+    const ids = ["button", "switch", "hero", "layout", "typography", "box", "list", "avatar", "navbar"];
+    const { isError, payload } = await call("get_contracts", { ids });
+    expect(isError).toBe(true);
+    expect(payload.error).toBe("Invalid arguments for get_contracts.");
+    expect(payload.detail).toMatch(/^ids: /);
+    expect((await call("get_contracts", { ids: [] })).isError).toBe(true);
+  });
+
+  it("is the service's answer, unchanged: the adapter adds nothing", async () => {
+    const service = createAgentService(pair, snippets);
+    const { payload } = await call("get_contracts", { ids: ["navbar", "wrapper"] });
+    expect(payload).toEqual(JSON.parse(JSON.stringify(service.contracts(["navbar", "wrapper"], "contract").value)));
   });
 });
 
@@ -379,6 +433,11 @@ describe("a client of the previous server", () => {
 
       const catalog = await legacy.callTool({ name: "get_catalog", arguments: {} });
       expect(JSON.parse((catalog.content as { text: string }[])[0]!.text).page).toBe(1);
+
+      const contract = await legacy.callTool({ name: "get_contract", arguments: { id: "button" } });
+      expect(JSON.parse((contract.content as { text: string }[])[0]!.text).id).toBe("button");
+      const batch = await legacy.callTool({ name: "get_contracts", arguments: { ids: ["button", "hero"] } });
+      expect(JSON.parse((batch.content as { text: string }[])[0]!.text).contracts.map((c: Payload) => c.id)).toEqual(["button", "hero"]);
     } finally {
       await legacy.close();
     }

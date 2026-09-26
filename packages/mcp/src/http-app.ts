@@ -65,9 +65,9 @@ const list = (value: string | undefined) =>
  */
 export function httpConfigFromEnv(env: NodeJS.ProcessEnv): HttpConfig {
   const production = env.NODE_ENV === "production";
-  const host = env.HOST ?? (production ? "0.0.0.0" : "127.0.0.1");
-  const port = Number(env.PORT ?? 8787);
-  if (!Number.isInteger(port) || port < 0 || port > 65535) throw new Error(`PORT must be an integer from 0 to 65535, got "${env.PORT}".`);
+  // Blank is unset: `HOST=` would otherwise bind every interface, on a laptop too.
+  const host = env.HOST?.trim() || (production ? "0.0.0.0" : "127.0.0.1");
+  const port = integerFromEnv(env, "PORT", 8787, 0, 65_535);
 
   const explicitHosts = list(env.MCP_ALLOWED_HOSTS);
   const allowedHosts = explicitHosts.length > 0 ? explicitHosts : LOOPBACK.has(host) ? LOCALHOST_NAMES : [];
@@ -81,8 +81,31 @@ export function httpConfigFromEnv(env: NodeJS.ProcessEnv): HttpConfig {
     ...(token ? { token } : {}),
     allowedHosts,
     allowedOrigins: explicitOrigins.length > 0 ? explicitOrigins : LOCALHOST_NAMES,
-    maxBodyBytes: Number(env.MCP_MAX_BODY_BYTES ?? 1_000_000),
+    maxBodyBytes: integerFromEnv(env, "MCP_MAX_BODY_BYTES", 1_000_000, MIN_BODY_BYTES, MAX_BODY_BYTES),
   };
+}
+
+/*
+ * The body limit's sane range. Below 1KiB not even an `initialize` request fits; above 64MiB the
+ * limit has stopped protecting anything a usage tree could need. Outside it, the value is a typo.
+ */
+const MIN_BODY_BYTES = 1_024;
+const MAX_BODY_BYTES = 64 * 1_024 * 1_024;
+
+/*
+ * A whole number from the environment, or startup fails saying which variable and why. `Number()`
+ * alone was too forgiving to be a parser: `MCP_MAX_BODY_BYTES=1mb` is NaN, and `size > NaN` is never
+ * true, so a typo silently REMOVED the limit; `-1` refused every request; `PORT=` read as 0, a random
+ * port. Digits only, so `1e6` and `0x10` are refused rather than guessed at. Blank is unset.
+ */
+function integerFromEnv(env: NodeJS.ProcessEnv, name: string, fallback: number, min: number, max: number): number {
+  const raw = env[name]?.trim();
+  if (!raw) return fallback;
+  const value = /^\d+$/.test(raw) ? Number(raw) : Number.NaN;
+  if (!Number.isSafeInteger(value) || value < min || value > max) {
+    throw new Error(`${name} must be a whole number from ${min} to ${max}, got "${env[name]}".`);
+  }
+  return value;
 }
 
 /*

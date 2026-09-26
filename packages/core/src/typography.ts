@@ -172,7 +172,7 @@ export const typographyContract = {
     },
 
     Heading: {
-      intent: ["section-title", "page-title", "heading"],
+      intent: ["section-title", "page-title", "heading", "headline"],
       host: { element: "h2" },
       options: ["headingSize", "headingElement", "flush"],
       slots: { children: { accepts: "node", required: true } },

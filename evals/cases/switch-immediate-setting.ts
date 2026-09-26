@@ -15,6 +15,12 @@ export const switchImmediateSettingCase: EvalCase = {
     { uses: ["Switch", "TileSwitch"], because: "the change applies immediately, with nothing to submit" },
     { avoids: ["Checkbox", "TileCheckbox"], because: "a checkbox is a value submitted with a form" },
   ],
+  counterexamples: [
+    {
+      tree: { contract: "checkbox", signature: "Checkbox", options: { name: "dark-mode" }, children: "Modo oscuro" },
+      because: "a checkbox: the same box to tick, and a value that waits for a submit",
+    },
+  ],
   tree: {
     contract: "switch",
     signature: "Switch",

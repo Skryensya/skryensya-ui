@@ -26,7 +26,7 @@ export interface WorkflowMetrics {
   validateCalls: number;
   /** `validate_ui` calls after the first: each one is a repair loop. */
   repairLoops: number;
-  /** Calls to discover_ui, get_catalog, get_examples or get_contract before the first validate_ui. */
+  /** Calls to discover_ui, get_catalog, get_examples, get_contract or get_contracts before the first validate_ui. */
   discoveryCallsBeforeFirstValidate: number;
   /** Example ids fetched with `get_examples(id)`. */
   examplesRead: string[];
@@ -36,6 +36,21 @@ export interface WorkflowMetrics {
   selected?: string;
   /** Every signature the final tree uses. */
   signatures: string[];
+  /** `get_contract` calls: one family each. */
+  contractCalls: number;
+  /** `get_contracts` calls: several families each. */
+  contractBatchCalls: number;
+  /** Families read through either, counted once each. */
+  contractsRead: number;
+  /** Candidates returned across every `discover_ui` call: how much the agent had to read past. */
+  discoverCandidates: number;
+  /** Terms `discover_ui` reported as negated, across its calls (absent from servers before negation). */
+  negatedTerms: number;
+  /**
+   * For the final tree's non-layout signatures, the best 1-based rank each reached in any
+   * `discover_ui` result, or null when discovery never returned it. Lower means it was easier to find.
+   */
+  discoveryRanks: Record<string, number | null>;
 }
 
 export interface CaseScore {
@@ -136,9 +151,9 @@ export function scoreCase(evalCase: EvalCase, lang: "es" | "en", calls: ToolCall
   };
 }
 
-const DISCOVERY_TOOLS = new Set(["discover_ui", "get_catalog", "get_examples", "get_contract"]);
+const DISCOVERY_TOOLS = new Set(["discover_ui", "get_catalog", "get_examples", "get_contract", "get_contracts"]);
 
-function metricsOf(calls: readonly ToolCallRecord[], finalTree: UsageTree | undefined): WorkflowMetrics {
+export function metricsOf(calls: readonly ToolCallRecord[], finalTree: UsageTree | undefined): WorkflowMetrics {
   const count = (name: string) => calls.filter((call) => call.name === name).length;
   const firstValidate = calls.findIndex((call) => call.name === "validate_ui");
   const beforeValidate = firstValidate === -1 ? calls : calls.slice(0, firstValidate);
@@ -156,6 +171,26 @@ function metricsOf(calls: readonly ToolCallRecord[], finalTree: UsageTree | unde
   // "Used" means the final tree shares a non-layout signature with an example the agent read.
   const layout = new Set(["Stack", "Inline", "Grid", "Box", "Text", "Heading"]);
 
+  const contractIds = new Set<string>();
+  for (const call of calls) {
+    const args = call.args as { id?: unknown; ids?: unknown } | undefined;
+    if (call.name === "get_contract" && typeof args?.id === "string") contractIds.add(args.id);
+    if (call.name === "get_contracts" && Array.isArray(args?.ids)) for (const id of args.ids) if (typeof id === "string") contractIds.add(id);
+  }
+
+  const discoverResults = calls
+    .filter((call) => call.name === "discover_ui" && call.result)
+    .map((call) => call.result as { candidates?: { signature: string }[]; input?: { negated?: string[] } });
+  const bestRank = new Map<string, number>();
+  for (const result of discoverResults) {
+    (result.candidates ?? []).forEach(({ signature }, at) => {
+      if (at + 1 < (bestRank.get(signature) ?? Number.POSITIVE_INFINITY)) bestRank.set(signature, at + 1);
+    });
+  }
+  const discoveryRanks = Object.fromEntries(
+    discoverResults.length === 0 ? [] : signatures.filter((id) => !layout.has(id)).map((id) => [id, bestRank.get(id) ?? null]),
+  );
+
   return {
     toolCalls: calls.length,
     catalogPages: count("get_catalog"),
@@ -168,5 +203,11 @@ function metricsOf(calls: readonly ToolCallRecord[], finalTree: UsageTree | unde
     usedExample: signatures.some((id) => exampleSignatures.has(id) && !layout.has(id)),
     ...(finalTree ? { selected: `${finalTree.contract}/${finalTree.signature}` } : {}),
     signatures,
+    contractCalls: count("get_contract"),
+    contractBatchCalls: count("get_contracts"),
+    contractsRead: contractIds.size,
+    discoverCandidates: discoverResults.reduce((sum, result) => sum + (result.candidates?.length ?? 0), 0),
+    negatedTerms: discoverResults.reduce((sum, result) => sum + (result.input?.negated?.length ?? 0), 0),
+    discoveryRanks,
   };
 }

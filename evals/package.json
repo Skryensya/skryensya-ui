@@ -5,7 +5,7 @@
   "type": "module",
   "description": "F7: a corpus of product intents in Spanish and English, each paired with a hand-composed, MCP-validated usage tree. Re-validates every tree against G0-G3 on every run, so a contract change that breaks a known-good composition fails here first.",
   "scripts": {
-    "check": "tsc -p tsconfig.json --noEmit && tsx run.ts",
+    "check": "tsc -p tsconfig.json --noEmit && vitest run && tsx run.ts",
     "agent": "tsx run-agent.ts"
   },
   "dependencies": {
@@ -19,6 +19,7 @@
   "devDependencies": {
     "@types/node": "catalog:",
     "tsx": "^4.19.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.11"
   }
 }

@@ -32,9 +32,12 @@ museum of past failures: `confirmation-dialog`, `paginated-data-table`, `field-w
 
 **Semantic choice** ([ADR-0028](../docs/decisions/0028-evals-judge-choices-with-invariants.md)).
 Cases where two structurally valid trees differ in whether they are RIGHT, so validity alone cannot
-score them. Each declares `invariants` (`uses` at least one of some
-signatures, `avoids` all of others) that any correct answer satisfies, rather than demanding the
-reference tree:
+score them. Each declares `invariants` that any correct answer satisfies, rather than demanding the
+reference tree: `uses` / `avoids` signatures, a `count` of nodes, an ancestor that `contains` a
+descendant at any depth, an `option` value (optionally `within` an ancestor), `before` for document
+order, `anchors` for what the section an in-page link points at holds, and `anyOf` for one
+requirement two valid trees meet two ways. Nothing reads copy. Each case may also declare
+`counterexamples`: trees that validate and are still wrong, each of which must break an invariant.
 
 - `cta-navigates-to-pricing`: action vs navigation (Button.navigation, never Button.action).
 - `switch-immediate-setting` and `checkbox-no-for-id`: Switch vs Checkbox, in both directions.
@@ -42,8 +45,18 @@ reference tree:
 - `view-switcher-exclusive`: a component vs the alternative its `avoidWhen` names (Segmented or
   RadioGroup, never pressed Button.action).
 
-`run.ts` checks every reference tree satisfies its own invariants, so an invariant no answer could
-meet fails the static gate instead of every live run.
+`personal-landing-page` is the page-scale case: it passes only with a navbar, a main landmark, a hero
+holding a real heading, a navbar before the hero, a hero `Button.navigation` that links to the section
+holding the featured card and the project rows, no `Button.action`, a card with an image
+and a title, several compact rows, a round portrait, an email link and enough links overall.
+
+`run.ts` checks every reference tree satisfies its own invariants (so an invariant no answer could
+meet fails the static gate instead of every live run), that every invariant is well formed, and
+that every counterexample validates and still breaks one (so an invariant set that would pass the
+wrong answer fails the static gate too). A case may also declare `alternatives`, correct answers
+that differ from the reference, which must validate and pass every invariant: the landing page's is
+a live agent's own page, and it caught the first draft of that case's link count requiring project
+rows to be links, which the prompt never asks. `invariants.test.ts` pins each predicate.
 
 Every tree here was built by hand from the real contracts (`get_contract`) and confirmed valid with
 the real `validate_ui` before it was written down.
@@ -88,7 +101,10 @@ composition that passes G0-G3, not the only one a correct agent could produce.
 Every run also records how the agent got there (`metrics` in each case's `.json`, columns in
 `index.md`, means in `summary.json`): tool calls, catalogue pages read, whether `discover_ui` was
 used, discovery calls before the first `validate_ui`, repair loops (every `validate_ui` after the
-first), examples read and whether the final tree used one, and the selected root signature.
+first), examples read and whether the final tree used one, the selected root signature,
+`get_contract` and `get_contracts` calls, discovery candidates read, the best rank discovery gave
+each signature the final tree uses (or that it never returned it), negated terms, and how many
+valid trees an invariant rejected.
 
 ```
 pnpm --filter @skryensya/evals agent [--provider anthropic|openai|claude-code|codex-cli] \
@@ -115,7 +131,11 @@ pnpm --filter @skryensya/evals agent --provider claude-code --workflow catalog \
 pnpm --filter @skryensya/evals agent --provider claude-code --case <ids>
 ```
 
-Compare the two runs' `summary.json`, then `git worktree remove /tmp/sk-mcp-before`.
+Compare the two runs case by case with `pnpm --filter @skryensya/evals exec tsx agent/compare.ts
+<runDirBefore> <runDirAfter>`, then `git worktree remove /tmp/sk-mcp-before`. The comparison
+recomputes every metric from each run's recorded calls, so an older run is comparable, and re-judges
+both runs' final trees against the CURRENT invariants, which is how a richer invariant shows the
+earlier passes it would have failed.
 
 Needs `packages/mcp` built (`pnpm --filter @skryensya/mcp build`). Without `--provider`, it picks
 the first available one, in declaration order (`anthropic`, `openai`, `claude-code`, `codex-cli`):

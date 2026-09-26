@@ -14,6 +14,23 @@ export const ctaNavigatesToPricingCase: EvalCase = {
   invariants: [
     { uses: ["Button.navigation", "Link"], because: "it takes the visitor to another page, so it is a link" },
     { avoids: ["Button.action"], because: "Button.action's avoidWhen: it leads to another URL" },
+    {
+      anyOf: [
+        { option: { signature: ["Button.navigation", "Link"], name: "href", equals: "/pricing" } },
+        { option: { signature: ["Button.navigation", "Link"], name: "href", equals: "/precios" } },
+      ],
+      because: "the prompt names the destination, /pricing (/precios in Spanish)",
+    },
+  ],
+  counterexamples: [
+    {
+      tree: { contract: "button", signature: "Button.action", options: { tone: "accent" }, children: "See pricing" },
+      because: "an action button that looks identical and goes nowhere",
+    },
+    {
+      tree: { contract: "button", signature: "Button.navigation", options: { tone: "accent", href: "/" }, children: "See pricing" },
+      because: "a link, to the wrong page",
+    },
   ],
   tree: {
     contract: "button",

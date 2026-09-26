@@ -25,9 +25,9 @@ export const evalSystemPrompts: Readonly<Record<Workflow, string>> = {
   discovery:
     framing +
     "Compose it with the skryensya-ui MCP tools: discover_ui to find candidate signatures, " +
-    "get_examples for a related example when one fits, get_contract to read how the chosen family is " +
-    "configured, validate_ui to check the tree and receive the emitted code, and get_catalog only " +
-    "when discovery finds nothing that fits.",
+    "get_examples for a related example when one fits, get_contract to read how a chosen family is " +
+    "configured (get_contracts for several families at once), validate_ui to check the tree and " +
+    "receive the emitted code, and get_catalog only when discovery finds nothing that fits.",
   catalog:
     framing +
     "Compose it with the MCP tools: get_catalog to find the right signature, get_contract to read " +

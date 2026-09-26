@@ -158,7 +158,8 @@ async function main(): Promise<void> {
     const m = score.metrics;
     console.log(
       `  ${mark}  ${score.caseId} [${lang}]${note}  ` +
-        `(calls ${m.toolCalls}, catalog ${m.catalogPages}, discover ${m.discoverCalls}, repairs ${m.repairLoops})`,
+        `(calls ${m.toolCalls}, catalog ${m.catalogPages}, discover ${m.discoverCalls}, ` +
+        `contracts ${m.contractCalls}+${m.contractBatchCalls} batch, repairs ${m.repairLoops})`,
     );
     return score;
   });
@@ -178,6 +179,11 @@ async function main(): Promise<void> {
     `  mean per run: ${summary.meanToolCalls} tool calls, ${summary.meanCatalogPages} catalogue pages, ` +
       `${summary.meanDiscoveryCallsBeforeFirstValidate} discovery calls before the first validate_ui, ` +
       `${summary.meanRepairLoops} repair loops; discover_ui used in ${summary.usedDiscovery}, examples used in ${summary.usedExample}`,
+  );
+  console.log(
+    `  contracts: ${summary.meanContractCalls} get_contract + ${summary.meanContractBatchCalls} get_contracts per run; ` +
+      `discovery: ${summary.meanDiscoverCandidates} candidates read, chosen signatures at mean rank ` +
+      `${summary.meanDiscoveryRank ?? "n/a"}, ${summary.missedByDiscovery} never returned; ${summary.validButWrong} valid but wrong`,
   );
   console.log(`  report: ${runDir}`);
   console.log(`  view it: pnpm --filter @skryensya/eval-viewer dev`);

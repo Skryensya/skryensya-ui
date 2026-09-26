@@ -15,6 +15,21 @@ export const viewSwitcherExclusiveCase: EvalCase = {
     { uses: ["Segmented", "RadioGroup", "TileRadioGroup"], because: "one of a small exclusive set is a single-choice control" },
     { avoids: ["Button.action", "StateButton"], because: "Button.action's avoidWhen: `pressed` for the chosen item of an exclusive group" },
   ],
+  counterexamples: [
+    {
+      tree: {
+        contract: "layout",
+        signature: "Inline",
+        options: { gap: "xs" },
+        attrs: { role: "group", "aria-label": "View" },
+        children: [
+          { contract: "button", signature: "Button.action", options: { pressed: true }, children: "List" },
+          { contract: "button", signature: "Button.action", options: { pressed: false }, children: "Grid" },
+        ],
+      },
+      because: "two pressed toggles, which do not make each other un-pressed or share arrow keys",
+    },
+  ],
   tree: {
     contract: "segmented",
     signature: "Segmented",

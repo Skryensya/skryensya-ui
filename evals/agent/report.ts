@@ -32,9 +32,20 @@ export interface RunSummary {
   meanCatalogPages: number;
   meanDiscoveryCallsBeforeFirstValidate: number;
   meanRepairLoops: number;
+  /** Valid trees that broke an invariant: what validity alone would have passed. */
+  validButWrong: number;
+  meanContractCalls: number;
+  meanContractBatchCalls: number;
+  meanDiscoverCandidates: number;
+  /** Mean best discovery rank of the final trees' non-layout signatures, over those discovery returned. */
+  meanDiscoveryRank: number | null;
+  /** How many of those signatures discovery never returned at all. */
+  missedByDiscovery: number;
 }
 
 export function summarize(scores: readonly CaseScore[]): RunSummary {
+  const allRanks = scores.flatMap((score) => Object.values(score.metrics.discoveryRanks));
+  const ranks = allRanks.filter((rank): rank is number => rank !== null);
   const mean = (pick: (score: CaseScore) => number) =>
     scores.length === 0 ? 0 : Math.round((scores.reduce((sum, score) => sum + pick(score), 0) / scores.length) * 100) / 100;
   return {
@@ -47,6 +58,12 @@ export function summarize(scores: readonly CaseScore[]): RunSummary {
     meanCatalogPages: mean((score) => score.metrics.catalogPages),
     meanDiscoveryCallsBeforeFirstValidate: mean((score) => score.metrics.discoveryCallsBeforeFirstValidate),
     meanRepairLoops: mean((score) => score.metrics.repairLoops),
+    validButWrong: scores.filter((score) => score.valid && !score.passed).length,
+    meanContractCalls: mean((score) => score.metrics.contractCalls),
+    meanContractBatchCalls: mean((score) => score.metrics.contractBatchCalls),
+    meanDiscoverCandidates: mean((score) => score.metrics.discoverCandidates),
+    meanDiscoveryRank: ranks.length === 0 ? null : Math.round((ranks.reduce((a, b) => a + b, 0) / ranks.length) * 100) / 100,
+    missedByDiscovery: allRanks.filter((rank) => rank === null).length,
   };
 }
 
@@ -96,8 +113,11 @@ function caseMd(meta: RunMeta, score: CaseScore): string {
     "",
   ];
 
-  if (!score.valid) {
+  if (!score.passed) {
     lines.push("## Why it failed", "", score.reason ?? "(no reason recorded)", "");
+  }
+  if (score.brokenInvariants.length > 0) {
+    lines.push("## Broken invariants", "", ...score.brokenInvariants.map((broken) => `- ${broken}`), "");
   }
 
   if (score.finalTree) {
@@ -135,7 +155,7 @@ function indexMd(meta: RunMeta, scores: readonly CaseScore[]): string {
     const m = score.metrics;
     return (
       `| ${score.caseId} | ${score.lang} | ${verdict} | ${m.selected ?? ""} | ${m.toolCalls} | ${m.catalogPages} | ` +
-      `${m.discoverCalls} | ${m.discoveryCallsBeforeFirstValidate} | ${m.repairLoops} | ${m.usedExample ? "yes" : ""} | ` +
+      `${m.discoverCalls} | ${m.contractCalls} / ${m.contractBatchCalls} | ${m.discoveryCallsBeforeFirstValidate} | ${m.repairLoops} | ${m.usedExample ? "yes" : ""} | ` +
       `[detail](./${file}.md) |`
     );
   });
@@ -150,10 +170,13 @@ function indexMd(meta: RunMeta, scores: readonly CaseScore[]): string {
     `**Result:** ${summary.passed}/${summary.runs} passed, ${summary.valid}/${summary.runs} valid`,
     `**Means:** ${summary.meanToolCalls} tool calls, ${summary.meanCatalogPages} catalogue pages, ` +
       `${summary.meanDiscoveryCallsBeforeFirstValidate} discovery calls before the first validate_ui, ` +
-      `${summary.meanRepairLoops} repair loops`,
+      `${summary.meanRepairLoops} repair loops, ${summary.meanContractCalls} get_contract + ` +
+      `${summary.meanContractBatchCalls} get_contracts, ${summary.meanDiscoverCandidates} discovery candidates read, ` +
+      `chosen signatures at discovery rank ${summary.meanDiscoveryRank ?? "n/a"} (${summary.missedByDiscovery} never returned)`,
+    `**Valid but wrong:** ${summary.validButWrong} (valid trees an invariant rejected)`,
     "",
-    "| Case | Lang | Verdict | Selected | Calls | Catalog pages | discover_ui | Before 1st validate | Repairs | Example used | Detail |",
-    "|---|---|---|---|---|---|---|---|---|---|---|",
+    "| Case | Lang | Verdict | Selected | Calls | Catalog pages | discover_ui | Contracts (single / batch) | Before 1st validate | Repairs | Example used | Detail |",
+    "|---|---|---|---|---|---|---|---|---|---|---|---|",
     ...rows,
     "",
   ].join("\n");

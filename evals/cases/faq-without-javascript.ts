@@ -15,6 +15,27 @@ export const faqWithoutJavascriptCase: EvalCase = {
     { uses: ["Details", "DetailsGroup"], because: "it has to work without JavaScript" },
     { avoids: ["Accordion"], because: "Accordion's exclusivity comes from an enhancer" },
   ],
+  counterexamples: [
+    {
+      tree: {
+        contract: "accordion",
+        signature: "Accordion",
+        children: [
+          ["cancel", "Can I cancel anytime?", "Yes, from your account settings."],
+          ["refunds", "Do you offer refunds?", "Within 30 days of purchase."],
+        ].map(([value, question, answer]) => ({
+          contract: "accordion",
+          signature: "Accordion.Item",
+          options: { value: value! },
+          children: [
+            { contract: "accordion", signature: "Accordion.Trigger", children: question! },
+            { contract: "accordion", signature: "Accordion.Content", children: answer! },
+          ],
+        })),
+      },
+      because: "an Accordion: the same FAQ, whose one-open-at-a-time needs the enhancer",
+    },
+  ],
   tree: {
     contract: "accordion",
     signature: "DetailsGroup",

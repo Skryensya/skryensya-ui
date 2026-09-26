@@ -15,6 +15,12 @@ export const checkboxNoForIdCase: EvalCase = {
     { uses: ["Checkbox", "TileCheckbox"], because: "accepting terms is a value submitted with the form" },
     { avoids: ["Switch", "TileSwitch"], because: "a switch applies at once; nothing here takes effect before submit" },
   ],
+  counterexamples: [
+    {
+      tree: { contract: "switch", signature: "Switch", options: { name: "terms" }, children: "Acepto los términos y condiciones" },
+      because: "a switch, which says the terms were accepted the moment it moved",
+    },
+  ],
   tree: {
     contract: "checkbox",
     signature: "Checkbox",

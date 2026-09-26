@@ -18,8 +18,8 @@ Button.action:
     - "va sobre media o sobre una superficie de color desconocida: `variant: translucent`"
     - "el botón se queda encendido: `pressed`, un toggle real (negrita en una barra, un voto, play/pausa). Ausente si no es un toggle; `false` si lo es y está apagado"
   avoidWhen:
-    - lleva a otra URL, aunque se vea igual: esa es Button.navigation
-    - la acción es secundaria dentro de un texto: eso es un Link
+    - 'lleva a otra URL, aunque se vea igual: esa es Button.navigation'
+    - 'la acción es secundaria dentro de un texto: eso es un Link'
     - "dos `solid` + `accent` visibles a la vez: si todo es la acción principal, ninguna lo es"
     - "un tono en un botón que no actúa sobre nada: un disclosure o un toggle es neutral, no accent"
     - "`danger` en algo que se deshace con un clic: el tono miente sobre el costo"
@@ -36,8 +36,8 @@ Button.navigation:
     - una llamada a la acción principal que es un enlace
     - "los mismos dos ejes que Button.action: un enlace puede ser discreto (`ghost`) y seguir siendo la acción principal (`accent`)"
   avoidWhen:
-    - el destino no está disponible: un enlace no se deshabilita, se renderiza contenido no enlazable
-    - el enlace vive dentro de un párrafo: eso es un Link
+    - 'el destino no está disponible: un enlace no se deshabilita, se renderiza contenido no enlazable'
+    - 'el enlace vive dentro de un párrafo: eso es un Link'
     - "`tone: danger` en un enlace: navegar no destruye nada; lo destructivo es la acción que la página de destino ofrece"
   alternatives:
     - Button.action

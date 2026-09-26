@@ -87,6 +87,18 @@ describe("readOverlays", () => {
     expect(conflictsAbout(result, '"Fantasma" as an alternative')).toHaveLength(1);
   });
 
+  it("refuses a line YAML read as a map, and accepts the same line quoted", () => {
+    const unquoted = readOverlays(
+      overlayDir({ "dialog.yaml": `${completeOverlayFor("dialog")}  avoidWhen:\n    - it navigates: that is a link\n` }),
+    );
+    expect(conflictsAbout(unquoted, "avoidWhen has a line YAML read as")).toHaveLength(1);
+
+    const quoted = readOverlays(
+      overlayDir({ "dialog.yaml": `${completeOverlayFor("dialog")}  avoidWhen:\n    - 'it navigates: that is a link'\n` }),
+    );
+    expect(conflictsAbout(quoted, "YAML read as")).toHaveLength(0);
+  });
+
   it("accepts an alternative that names a signature from another contract", () => {
     const result = readOverlays(
       overlayDir({

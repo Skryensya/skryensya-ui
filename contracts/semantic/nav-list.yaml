@@ -5,10 +5,10 @@ NavList:
     - la lista de destinos de un sidebar, un navbar o un drawer
     - navegación principal o secundaria de una página
   avoidWhen:
-    - son acciones de una aplicación, no destinos: eso es un menú, con role="menu"
-    - es una ruta jerárquica hasta la página actual: eso es un Breadcrumb
-    - es un índice de encabezados de la página actual: eso es un Toc
-    - la barra tiene desplegables de comandos o sub-destinos con menuitem: eso es Menubar
+    - 'son acciones de una aplicación, no destinos: eso es un menú, con role="menu"'
+    - 'es una ruta jerárquica hasta la página actual: eso es un Breadcrumb'
+    - 'es un índice de encabezados de la página actual: eso es un Toc'
+    - 'la barra tiene desplegables de comandos o sub-destinos con menuitem: eso es Menubar'
   alternatives:
     - Menu
     - Breadcrumb
@@ -21,7 +21,7 @@ NavListGroup:
     - hace falta el <ul> aunque el grupo no lleve rótulo visible
     - "con collapsible: la sección se puede ocultar/mostrar. El patrón WAI 'Disclosure (Navigation)'"
   avoidWhen:
-    - hay un solo destino y ningún rótulo: el grupo sigue siendo obligatorio, no es opcional
+    - 'hay un solo destino y ningún rótulo: el grupo sigue siendo obligatorio, no es opcional'
     - "collapsible sin label: el botón necesita el texto del rótulo para tener algo que mostrar"
     - "heading sin label: un encabezado vacío es peor que ninguno"
     - "collapsible y heading juntos: el collapsible ya es un botón; heading no aplica"
@@ -32,7 +32,7 @@ NavListLink:
     - marca la página actual con current
     - "tiene sus propios sub-destinos: un NavListGroup en el slot nested, adentro del mismo <li>"
   avoidWhen:
-    - dispara una acción en vez de navegar: eso es Button.action
+    - 'dispara una acción en vez de navegar: eso es Button.action'
   alternatives:
     - Button.navigation
 

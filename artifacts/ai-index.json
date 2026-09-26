@@ -452,12 +452,8 @@
             "Link"
           ],
           "avoidWhen": [
-            {
-              "lleva a otra URL, aunque se vea igual": "esa es Button.navigation"
-            },
-            {
-              "la acción es secundaria dentro de un texto": "eso es un Link"
-            },
+            "lleva a otra URL, aunque se vea igual: esa es Button.navigation",
+            "la acción es secundaria dentro de un texto: eso es un Link",
             "dos `solid` + `accent` visibles a la vez: si todo es la acción principal, ninguna lo es",
             "un tono en un botón que no actúa sobre nada: un disclosure o un toggle es neutral, no accent",
             "`danger` en algo que se deshace con un clic: el tono miente sobre el costo",
@@ -491,12 +487,8 @@
             "Link"
           ],
           "avoidWhen": [
-            {
-              "el destino no está disponible": "un enlace no se deshabilita, se renderiza contenido no enlazable"
-            },
-            {
-              "el enlace vive dentro de un párrafo": "eso es un Link"
-            },
+            "el destino no está disponible: un enlace no se deshabilita, se renderiza contenido no enlazable",
+            "el enlace vive dentro de un párrafo: eso es un Link",
             "`tone: danger` en un enlace: navegar no destruye nada; lo destructivo es la acción que la página de destino ofrece"
           ],
           "host": "a",
@@ -1200,9 +1192,7 @@
           ],
           "avoidWhen": [
             "hace falta comparar Vanilla y React del MISMO componente: eso es la maquinaria de este sitio, no un contrato publicado",
-            {
-              "el bloque es sólo código, sin nada que mostrar arriba": "eso es CodePreview solo"
-            }
+            "el bloque es sólo código, sin nada que mostrar arriba: eso es CodePreview solo"
           ],
           "host": "div",
           "id": "ComponentPreview.bare",
@@ -1213,9 +1203,7 @@
           ],
           "parents": [],
           "useWhen": [
-            {
-              "hay que mostrar algo junto a su código fuente": "un ejemplo, una demo, un caso de uso"
-            },
+            "hay que mostrar algo junto a su código fuente: un ejemplo, una demo, un caso de uso",
             "la superficie de docs no necesita comparar dos bindings ni presets de pantalla"
           ]
         }
@@ -1911,13 +1899,9 @@
             "Placeholder"
           ],
           "avoidWhen": [
-            {
-              "es la identidad circular de una persona": "eso es un Avatar"
-            },
+            "es la identidad circular de una persona: eso es un Avatar",
             "no hay medio que mostrar, ni src ni contenido autoreado; el marco vacío es una caja vacía, no un placeholder",
-            {
-              "el contenido aún no cargó y hace falta una silueta": "eso es Placeholder, no un ImageFrame sin src"
-            }
+            "el contenido aún no cargó y hace falta una silueta: eso es Placeholder, no un ImageFrame sin src"
           ],
           "host": "div",
           "id": "ImageFrame",
@@ -2730,18 +2714,10 @@
             "Menubar"
           ],
           "avoidWhen": [
-            {
-              "son acciones de una aplicación, no destinos": "eso es un menú, con role=\"menu\""
-            },
-            {
-              "es una ruta jerárquica hasta la página actual": "eso es un Breadcrumb"
-            },
-            {
-              "es un índice de encabezados de la página actual": "eso es un Toc"
-            },
-            {
-              "la barra tiene desplegables de comandos o sub-destinos con menuitem": "eso es Menubar"
-            }
+            "son acciones de una aplicación, no destinos: eso es un menú, con role=\"menu\"",
+            "es una ruta jerárquica hasta la página actual: eso es un Breadcrumb",
+            "es un índice de encabezados de la página actual: eso es un Toc",
+            "la barra tiene desplegables de comandos o sub-destinos con menuitem: eso es Menubar"
           ],
           "host": "nav",
           "id": "NavList",
@@ -2760,9 +2736,7 @@
         {
           "alternatives": [],
           "avoidWhen": [
-            {
-              "hay un solo destino y ningún rótulo": "el grupo sigue siendo obligatorio, no es opcional"
-            },
+            "hay un solo destino y ningún rótulo: el grupo sigue siendo obligatorio, no es opcional",
             "collapsible sin label: el botón necesita el texto del rótulo para tener algo que mostrar",
             "heading sin label: un encabezado vacío es peor que ninguno",
             "collapsible y heading juntos: el collapsible ya es un botón; heading no aplica"
@@ -2790,9 +2764,7 @@
             "Button.navigation"
           ],
           "avoidWhen": [
-            {
-              "dispara una acción en vez de navegar": "eso es Button.action"
-            }
+            "dispara una acción en vez de navegar: eso es Button.action"
           ],
           "host": "a",
           "id": "NavListLink",
@@ -4349,9 +4321,7 @@
           ],
           "avoidWhen": [
             "el contenido de cada sección es largo y el usuario querría verlo todo junto: eso es un Accordion o una página con secciones",
-            {
-              "cada pestaña navega a otra URL": "eso es un NavList"
-            },
+            "cada pestaña navega a otra URL: eso es un NavList",
             "hay una sola sección; una pestaña sola no es una elección"
           ],
           "host": "div",
@@ -4364,9 +4334,7 @@
           "parents": [],
           "useWhen": [
             "varias secciones comparten una región y sólo una se ve a la vez",
-            {
-              "el contenido es hermano, no una jerarquía": "todas las pestañas están al mismo nivel"
-            },
+            "el contenido es hermano, no una jerarquía: todas las pestañas están al mismo nivel",
             "el usuario alterna entre vistas del mismo objeto (resumen, actividad, ajustes)",
             "la lista siempre lleva nombre (aria-label o aria-labelledby a un título visible)"
           ]
@@ -4775,12 +4743,8 @@
             "NavList"
           ],
           "avoidWhen": [
-            {
-              "los destinos son páginas distintas, no secciones de ESTA página": "eso es NavList"
-            },
-            {
-              "el documento es corto y cabe entero en una pantalla": "un índice no ahorra nada ahí"
-            }
+            "los destinos son páginas distintas, no secciones de ESTA página: eso es NavList",
+            "el documento es corto y cabe entero en una pantalla: un índice no ahorra nada ahí"
           ],
           "host": "aside",
           "id": "Toc",
@@ -4792,9 +4756,7 @@
           "parents": [],
           "useWhen": [
             "un documento largo tiene varias secciones (h2/h3) y el lector necesita saltar entre ellas",
-            {
-              "hace falta ver, mientras se lee, en qué sección se está": "el \"current\" lo mueve el scroll-spy"
-            },
+            "hace falta ver, mientras se lee, en qué sección se está: el \"current\" lo mueve el scroll-spy",
             "el title nombra el nav y encabeza la lista, así que siempre va (\"En esta página\")"
           ]
         }
@@ -5405,5 +5367,5 @@
     }
   ],
   "schemaVersion": "2.3",
-  "sourceHash": "11751c61a72c6e43"
+  "sourceHash": "6a8848d2f682bd05"
 }

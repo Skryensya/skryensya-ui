@@ -86,6 +86,23 @@ export function readOverlays(dir: string): OverlayReadResult {
       }
     }
 
+    /*
+     * Every line is PROSE, a string. YAML reads an unquoted `- situation: reason` as a one-key map,
+     * and 19 lines did exactly that: the index typed them as strings, consumers that trusted the
+     * type got objects, and every one of those lines read naturally in the file. Quote the line.
+     */
+    for (const [signature, semantics] of Object.entries(parsed)) {
+      for (const field of ["useWhen", "avoidWhen", "alternatives"] as const) {
+        for (const line of (semantics[field] ?? []) as readonly unknown[]) {
+          if (typeof line === "string") continue;
+          conflicts.push(
+            `${file}: ${signature}.${field} has a line YAML read as ${JSON.stringify(line)}, not a ` +
+              `string. An unquoted "a: b" in a list is a map; wrap the whole line in quotes.`,
+          );
+        }
+      }
+    }
+
     semantics[id] = parsed;
   }
 

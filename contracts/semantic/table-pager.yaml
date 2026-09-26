@@ -2,45 +2,45 @@
 
 TablePager:
   useWhen:
-    - "una tabla escrita a mano necesita paginar filas en el cliente y cambiar cuántas se ven"
-    - "va la tabla (TableScroll) y después un TablePagerBar con su TablePagerNav; se paginan las filas del tbody"
+    - "a hand-written table needs to page its rows on the client and change how many are shown"
+    - "the table (TableScroll) goes first and then a TablePagerBar with its TablePagerNav; the tbody's rows are paged"
   avoidWhen:
-    - "los datos vienen paginados del servidor; la aplicación debe controlar esa consulta"
+    - "the data comes paged from the server; the application has to control that query"
   alternatives:
     - Table
 
 TablePagerBar:
   useWhen:
-    - "agrupa el tamaño de página, el rango visible y la navegación de un TablePager"
+    - "it groups a TablePager's page size, visible range and navigation"
   avoidWhen:
-    - "está fuera de un TablePager"
+    - "it is outside a TablePager"
   alternatives: []
 
 TablePagerSize:
   useWhen:
-    - "contiene el selector que cambia cuántas filas muestra el TablePager"
+    - "it holds the selector that changes how many rows the TablePager shows"
   avoidWhen:
-    - "no existe elección de tamaño de página"
+    - "there is no page-size choice"
   alternatives: []
 
 TablePagerEnd:
   useWhen:
-    - "agrupa el rango visible y la navegación al final de la barra"
+    - "it groups the visible range and the navigation at the end of the bar"
   avoidWhen:
-    - "está fuera de un TablePagerBar"
+    - "it is outside a TablePagerBar"
   alternatives: []
 
 TablePagerStatus:
   useWhen:
-    - "muestra el rango de filas visibles y el total"
+    - "it shows the range of visible rows and the total"
   avoidWhen:
-    - "el texto no describe un TablePager"
+    - "the text does not describe a TablePager"
   alternatives: []
 
 TablePagerNav:
   useWhen:
-    - "el enhancer debe generar los controles de página de un TablePager"
+    - "the enhancer has to generate a TablePager's page controls"
   avoidWhen:
-    - "se necesita paginación autónoma; eso es Pagination"
+    - "standalone pagination is needed; that is Pagination"
   alternatives:
     - Pagination

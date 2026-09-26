@@ -2,28 +2,28 @@
 
 Avatar.initials:
   useWhen:
-    - "no hay foto y hacen falta las iniciales de la persona"
-    - "el avatar identifica a alguien y necesita nombre accesible"
+    - "there is no photo and the person's initials are needed"
+    - "the avatar identifies someone and needs an accessible name"
   avoidWhen:
-    - "es una imagen cualquiera recortada; eso es un ImageFrame"
+    - "it is any cropped image; that is an ImageFrame"
   alternatives:
     - ImageFrame
 
 Avatar.image:
   useWhen:
-    - "hay una foto que identifica a una persona o entidad"
-    - "el recorte circular necesita conservar el nombre como texto alternativo"
+    - "a photo identifies a person or an entity"
+    - "the round crop needs to keep the name as alternative text"
   avoidWhen:
-    - "es una imagen de contenido y no una identidad; usa ImageFrame"
+    - "it is a content image and not an identity; use ImageFrame"
   alternatives:
     - Avatar.initials
     - ImageFrame
 
 AvatarGroup:
   useWhen:
-    - "varias identidades se muestran juntas en una pila compacta"
-    - "el excedente visible se resume con un contador"
+    - "several identities are shown together in a compact stack"
+    - "the visible overflow is summarized with a count"
   avoidWhen:
-    - "cada persona necesita nombre, detalle o acción visible; usa List"
+    - "each person needs a visible name, detail or action; use List"
   alternatives:
     - List

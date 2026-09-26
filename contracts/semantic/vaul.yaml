@@ -2,39 +2,39 @@
 
 Vaul:
   useWhen:
-    - "un panel modal llega desde un borde y se puede cerrar arrastrándolo: un filtro, una hoja de acciones, compartir"
-    - "en móvil conviene que la tarea se apoye en un borde y no en una caja centrada"
+    - "a modal panel arrives from an edge and can be closed by dragging it: a filter, an action sheet, sharing"
+    - "on mobile the task should rest on an edge rather than in a centered box"
   avoidWhen:
-    - "es una decisión corta que hay que confirmar: eso es Dialog, centrado y con título propio"
-    - "es un Dialog que solo en móvil debe volverse hoja inferior: eso es Dialog con vaul, que conserva su header y su título"
-    - "no bloquea el resto de la pantalla: eso es Popover"
+    - "it is a short decision that has to be confirmed: that is Dialog, centered and with a title of its own"
+    - "it is a Dialog that should become a bottom sheet only on mobile: that is Dialog with vaul, which keeps its header and its title"
+    - "it does not block the rest of the screen: that is Popover"
   alternatives:
     - Dialog
     - Popover
 
 Vaul.drawer:
   useWhen:
-    - "el panel modal ocupa su borde entero: la navegación de un móvil, un panel lateral de filtros"
-    - "el contenido es una lista larga que necesita todo el alto"
+    - "the modal panel takes its whole edge: mobile navigation, a side panel of filters"
+    - "the content is a long list that needs the full height"
   avoidWhen:
-    - "alcanza con una hoja que se apoya en el borde: eso es Vaul"
-    - "la navegación debe quedar visible junto al contenido: un drawer es modal y bloquea la página; eso es Sidebar"
+    - "a sheet resting on the edge is enough: that is Vaul"
+    - "the navigation has to stay visible beside the content: a drawer is modal and blocks the page; that is Sidebar"
   alternatives:
     - Vaul
     - Sidebar
 
 Vaul.Trigger:
   useWhen:
-    - "un botón de la página abre un Vaul: opens es el panelId del panel, y los dos van en el mismo árbol"
+    - "a button on the page opens a Vaul: opens is the panel's panelId, and both go in the same tree"
   avoidWhen:
-    - "el panel se abre desde script, no desde un botón; entonces no hace falta trigger"
-    - "abre un popover o un menú anclado al botón; eso es Popover o Menu, que traen su propio trigger"
+    - "the panel opens from script, not from a button; then no trigger is needed"
+    - "it opens a popover or a menu anchored to the button; that is Popover or Menu, which bring their own trigger"
   alternatives:
     - Popover
     - Menu
 
 Vaul.Close:
   useWhen:
-    - "el panel necesita un botón propio para cerrarse (un Listo, una X): va dentro del Vaul"
+    - "the panel needs a button of its own to close (a Done, an X): it goes inside the Vaul"
   avoidWhen:
-    - "el botón confirma una acción además de cerrar; ahí conviene un Button que haga la acción y cierre desde su propio handler"
+    - "the button confirms an action besides closing; there a Button that performs the action and closes from its own handler fits better"

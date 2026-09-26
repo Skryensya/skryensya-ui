@@ -2,11 +2,11 @@
 
 Loader:
   useWhen:
-    - "hay una espera de duración desconocida"
-    - "con label, ES el estado que se anuncia; sin label, acompaña a un texto que ya lo dice"
+    - "there is a wait of unknown length"
+    - "with a label, it IS the announced state; without one, it accompanies text that already says it"
   avoidWhen:
-    - "se conoce el progreso; eso es un Progress con su valor"
-    - "el contenido tiene forma y se puede prefigurar; eso es un Placeholder"
+    - "the progress is known; that is a Progress with its value"
+    - "the content has a shape and can be prefigured; that is a Placeholder"
   alternatives:
     - Placeholder
     - Progress
@@ -14,11 +14,11 @@ Loader:
 
 Loader.status:
   useWhen:
-    - "la espera ya se ve (hay esqueletos, o una barra) y falta que además se anuncie"
-    - "el estado de carga tiene que existir para un lector de pantalla sin dibujar nada"
+    - "the wait is already visible (there are skeletons, or a bar) and it still needs announcing"
+    - "the loading state has to exist for a screen reader without drawing anything"
   avoidWhen:
-    - "no hay nada más que indique la espera; entonces se necesita un Loader visible"
-    - "el progreso es medible; eso es un Progress, que ya se anuncia solo"
+    - "nothing else shows the wait; then a visible Loader is needed"
+    - "the progress is measurable; that is a Progress, which already announces itself"
   alternatives:
     - Loader
     - Progress

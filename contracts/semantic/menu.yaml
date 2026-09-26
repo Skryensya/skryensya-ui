@@ -2,14 +2,14 @@
 
 Menu:
   useWhen:
-    - "un conjunto de comandos que actúan sobre algo, detrás de un disparador"
-    - "las acciones son demasiadas para mostrarlas todas, o son secundarias"
-    - "un submenú: la misma lista, anidada sin límite"
+    - "a set of commands acting on something, behind a trigger"
+    - "the actions are too many to show them all, or they are secondary"
+    - "a submenu: the same list, nested without limit"
   avoidWhen:
-    - "es una elección de un valor dentro de un formulario; eso es Select"
-    - "el contenido es una descripción y no una lista de acciones; eso es Tooltip o Popover"
-    - "la barra es de comandos de aplicación (Archivo/Editar/Ver); eso es Menubar"
-    - "navegación de sitio con panel de varias columnas; eso es Megamenu"
+    - "it is choosing a value inside a form; that is Select"
+    - "the content is a description and not a list of actions; that is Tooltip or Popover"
+    - "the bar is application commands (File/Edit/View); that is Menubar"
+    - "site navigation with a multi-column panel; that is Megamenu"
   alternatives:
     - Select
     - Popover

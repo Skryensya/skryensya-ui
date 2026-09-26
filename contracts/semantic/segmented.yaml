@@ -2,12 +2,12 @@
 
 Segmented:
   useWhen:
-    - "dos o tres opciones excluyentes que conviene ver todas a la vez"
-    - "cambia una vista, no un dato del formulario"
+    - "two or three exclusive options that are best seen all at once"
+    - "it changes a view, not a value of the form"
   avoidWhen:
-    - "son más de tres o cuatro; ahí conviene un RadioGroup o un Select"
-    - "el valor se envía con el formulario; eso es un RadioGroup"
-    - "hace falta un panel asociado a cada opción; eso son Tabs"
+    - "there are more than three or four; a RadioGroup or a Select fits better there"
+    - "the value is submitted with the form; that is a RadioGroup"
+    - "each option needs an associated panel; those are Tabs"
   alternatives:
     - RadioGroup
     - Select

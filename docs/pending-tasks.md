@@ -396,7 +396,13 @@ paso de cada ítem es abrir la página + el contrato y decidir. Orden alfabétic
   246 files), the templated headers of all 79 changelog and 78 semantic files, and
   `package.json`'s `pnpm.comment-overrides`. Items below are written in English because ADR-0021 now
   requires it, which is why this file reads mixed until its own row is taken.
-  - [ ] `contracts/semantic/*.yaml` `useWhen`/`avoidWhen` (81 files). **Take this first.** It is the
+  - [x] `contracts/semantic/*.yaml` `useWhen`/`avoidWhen`: done 2026-09-26, all 97 files, by hand
+    and line by line, not machine-translated; identifiers, backticked values and option keys did not
+    move. Measured effect on discovery over the eval prompts: English recall of the reference trees'
+    signatures 43/51 -> 46/51, Spanish 37/51 -> 30/51 (a Spanish word now only meets an English
+    catalogue through a cognate), which is why `discover_ui` now tells agents to query in English.
+    The note below about component pages was stale: `apps/docs/src/lib/contract-reference.ts` drops
+    `semantics`. Kept for the record: It is the
     only Spanish with no counterpart at all
     (zero `en:` keys, against 14 in `contracts/changelog/button.yaml`), and it is not inert: it reaches
     agents through `get_catalog`/`get_contract` and renders on component pages, which now sit on the

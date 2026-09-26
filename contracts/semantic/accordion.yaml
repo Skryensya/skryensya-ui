@@ -2,15 +2,15 @@
 
 Accordion:
   useWhen:
-    - "hay varias secciones largas y conviene coordinar cuáles quedan abiertas: FAQ, términos"
-    - "type=single: abrir una cierra la anterior para que la página no crezca sin fin"
-    - "type=multiple: varias pueden quedar abiertas a la vez, pero siguen siendo un solo acordeón"
+    - "there are several long sections and which stay open is worth coordinating: an FAQ, terms"
+    - "type=single: opening one closes the previous, so the page does not grow without end"
+    - "type=multiple: several can stay open at once, and they are still one accordion"
   avoidWhen:
-    - "son pocas secciones cortas; mostrarlas todas se lee más rápido que plegarlas"
-    - "el contenido se compara entre secciones; plegar obliga a recordar en vez de mirar"
-    - "las secciones son vistas alternativas del mismo espacio; eso es Tabs"
-    - "es una sola superficie plegable, sin coordinación entre hermanas; eso es ExpandableTile"
-    - "nada necesita controlarse ni escucharse desde afuera: DetailsGroup lo hace sin JavaScript"
+    - "there are a few short sections; showing them all reads faster than folding them"
+    - "the content is compared across sections; folding forces remembering instead of looking"
+    - "the sections are alternative views of the same space; that is Tabs"
+    - "it is a single collapsible surface with no coordination between siblings; that is ExpandableTile"
+    - "nothing needs to be controlled or listened to from outside: DetailsGroup does it without JavaScript"
   alternatives:
     - Tabs
     - ExpandableTile
@@ -18,54 +18,54 @@ Accordion:
 
 Accordion.Item:
   useWhen:
-    - "es una sección del acordeón; su `value` es cómo el acordeón la nombra"
+    - "it is one section of the accordion; its `value` is how the accordion names it"
   avoidWhen:
-    - "está sola, fuera de un acordeón; eso es un ExpandableTile"
+    - "it stands alone, outside an accordion; that is an ExpandableTile"
   alternatives:
     - ExpandableTile
 
 Accordion.Trigger:
   useWhen:
-    - "es el encabezado que abre y cierra su sección"
+    - "it is the header that opens and closes its section"
   avoidWhen:
-    - "está fuera de un Accordion.Item; no tiene qué abrir"
+    - "it is outside an Accordion.Item; there is nothing for it to open"
   alternatives: []
 
 Accordion.Content:
   useWhen:
-    - "es el cuerpo que se pliega dentro de su sección"
+    - "it is the body that folds inside its section"
   avoidWhen:
-    - "está fuera de un Accordion.Item; no tiene quién lo abra"
+    - "it is outside an Accordion.Item; nothing opens it"
   alternatives: []
 
 DetailsGroup:
   useWhen:
-    - "varias secciones se abren y cierran, y alcanza con que el navegador se encargue"
-    - "conviene que sólo una quede abierta: los hermanos con el mismo name ya lo hacen solos"
+    - "several sections open and close, and letting the browser handle it is enough"
+    - "only one should stay open: siblings sharing a name already do that on their own"
   avoidWhen:
-    - "hay que controlar desde afuera qué queda abierto, o escuchar cuándo cambia: eso pide Accordion"
+    - "which one is open has to be controlled from outside, or its changes listened to: that needs Accordion"
   alternatives:
     - Accordion
 
 Details:
   useWhen:
-    - "una sección que se despliega y no necesita nada de JavaScript"
-    - "importa que funcione antes de que cargue cualquier script"
+    - "a section that expands and needs no JavaScript at all"
+    - "it matters that it works before any script loads"
   avoidWhen:
-    - "hay que saber desde afuera si está abierto, o poder deshabilitar la sección: eso es Accordion.Item"
+    - "whether it is open has to be known from outside, or the section has to be disabled: that is Accordion.Item"
   alternatives:
     - Accordion.Item
 
 Details.Summary:
   useWhen:
-    - "es lo que el estado cerrado muestra y lo que abre la sección"
+    - "it is what the closed state shows and what opens the section"
   avoidWhen:
-    - "está fuera de un Details; no tiene qué abrir"
+    - "it is outside a Details; there is nothing for it to open"
   alternatives: []
 
 Details.Content:
   useWhen:
-    - "es lo que la apertura revela"
+    - "it is what opening reveals"
   avoidWhen:
-    - "está fuera de un Details; no tiene quién lo abra"
+    - "it is outside a Details; nothing opens it"
   alternatives: []

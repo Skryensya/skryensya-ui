@@ -2,15 +2,15 @@
 
 SkipLink:
   useWhen:
-    - "la página empieza con chrome que se repite en todas: marca, navegación global, buscador"
-    - "hay que cumplir WCAG 2.4.1: quien navega con teclado necesita saltar ese bloque"
-    - "va primero en el documento y no se ve hasta que recibe el foco"
-    - "puede haber más de uno; el primero apunta al contenido, que es lo que casi todo el mundo vino a leer"
+    - "the page starts with chrome repeated on every page: brand, global navigation, search"
+    - "WCAG 2.4.1 has to be met: keyboard users need to skip that block"
+    - "it goes first in the document and is not seen until it takes focus"
+    - "there can be more than one; the first points at the content, which is what almost everyone came to read"
   avoidWhen:
-    - "el destino no es enfocable: sin tabindex=\"-1\" el Tab siguiente vuelve al chrome que se quiso saltar"
-    - "hay algo enfocable antes: entonces ese algo es el bloque que nadie puede saltar"
-    - "el destino puede no estar en la página: un enlace a algo que no existe es una promesa que no se puede seguir"
-    - "es un enlace visible dentro del texto; eso es Link"
-    - "se quiere esconder texto que nadie va a enfocar: eso es la clase sk-visually-hidden"
+    - "the target is not focusable: without tabindex=\"-1\" the next Tab goes back to the chrome that was meant to be skipped"
+    - "something focusable comes before it: then that something is the block nobody can skip"
+    - "the target may not be on the page: a link to something that does not exist is a promise that cannot be kept"
+    - "it is a visible link inside the text; that is Link"
+    - "the aim is hiding text nobody will focus: that is the sk-visually-hidden class"
   alternatives:
     - Link

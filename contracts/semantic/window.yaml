@@ -2,13 +2,13 @@
 
 Window:
   useWhen:
-    - "hace falta un panel que conviva con la página: una paleta de herramientas, un inspector, un chat que queda abierto al lado del trabajo"
-    - "quien lo usa tiene que poder moverlo, cambiarle el tamaño o minimizarlo para ver lo que tapa"
+    - "a panel has to live alongside the page: a tool palette, an inspector, a chat that stays open beside the work"
+    - "whoever uses it has to be able to move it, resize it or minimize it to see what it covers"
   avoidWhen:
-    - "hay que decidir algo antes de seguir; eso es un Dialog, que deja la página inerte"
-    - "el contenido cuelga de un control y se cierra al hacer clic afuera; eso es un Popover"
-    - "el panel entra desde un borde y no se mueve; eso es un Vaul"
-    - "sin JavaScript el contenido tiene que seguir visible: una ventana no se abre sin su máquina"
+    - "something has to be decided before going on; that is a Dialog, which makes the page inert"
+    - "the content hangs from a control and closes on an outside click; that is a Popover"
+    - "the panel comes in from an edge and does not move; that is a Vaul"
+    - "the content has to stay visible without JavaScript: a window does not open without its machine"
   alternatives:
     - Dialog
     - Popover

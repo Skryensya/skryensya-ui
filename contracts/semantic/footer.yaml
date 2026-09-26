@@ -7,16 +7,16 @@
 
 Footer:
   useWhen:
-    - "es el cierre de la página: la banda final que dice \"la página termina aquí\", con navegación secundaria, aviso legal o crédito"
-    - "el host es un <footer> a nivel de documento, y eso YA es el landmark contentinfo sin escribir role: nunca se pone role=\"contentinfo\" a mano"
-    - "hay como mucho UN <footer> de documento por página; un footer que pertenece de verdad a un <article> es válido pero deja de ser el landmark, y esa es una decisión de quien compone"
-    - "la anatomía es libre, igual que Hero: adentro se compone con layout.Grid para la fila de columnas, nav-list.NavList para cada columna (con su propio nombre accesible), typography.Text para el aviso legal, wrapper.Wrapper para sostener la medida de la página"
-    - "por defecto surface=\"sunken\" y divider (borde superior) prendido: un footer que comparte el fondo de la página se lee como \"más contenido\", que es lo único que un footer no es"
+    - "it closes the page: the final band that says \"the page ends here\", with secondary navigation, legal notice or credit"
+    - "the host is a document-level <footer>, which IS the contentinfo landmark without writing a role: never put role=\"contentinfo\" by hand"
+    - "there is at most ONE document <footer> per page; a footer that truly belongs to an <article> is valid but stops being the landmark, and that is the composer's decision"
+    - "the anatomy is free, like Hero's: inside, compose with layout.Grid for the row of columns, nav-list.NavList for each column (with its own accessible name), typography.Text for the legal notice, wrapper.Wrapper to hold the page's measure"
+    - "by default surface=\"sunken\" and divider (a top border) on: a footer sharing the page's background reads as \"more content\", which is the one thing a footer is not"
   avoidWhen:
-    - "sólo hace falta separar una sección del resto con relleno o borde en medio de la página; eso es un Box"
-    - "es una barra de acciones pegada abajo de un panel o un diálogo (una fila de botones de confirmación); eso se compone con layout.Inline dentro del contenedor, no con Footer"
-    - "cada columna de enlaces iría sin nombre accesible: una fila de navigation sin nombre en la lista de landmarks es peor que no tenerla; cada columna es un NavList con aria-label o encabezado visible"
-    - "el footer necesita más de dos niveles jerárquicos compitiendo (columnas, franja de newsletter, barra legal, sub-crédito, todo a la vez sin orden): separa lo que sobra en su propia región antes del footer"
+    - "a section only needs separating from the rest with padding or a border mid-page; that is a Box"
+    - "it is an action bar stuck to the bottom of a panel or a dialog (a row of confirm buttons); that is composed with layout.Inline inside the container, not with Footer"
+    - "each column of links would have no accessible name: an unnamed navigation in the landmark list is worse than none; each column is a NavList with an aria-label or a visible heading"
+    - "the footer needs more than two hierarchy levels competing (columns, newsletter band, legal bar, sub-credit, all at once with no order): move what is extra into its own region before the footer"
   alternatives:
     - Box
     - Hero

@@ -2,11 +2,11 @@
 
 TimeField:
   useWhen:
-    - "hay que escribir una hora y el formato importa: la reserva, el turno, el horario de atención"
-    - "conviene que cada segmento se pueda corregir por separado sin volver a escribir todo"
-    - "el formato tiene que seguir al locale (12 o 24 horas, AM/PM adelante o atrás)"
+    - "a time has to be typed and the format matters: a booking, a shift, opening hours"
+    - "each segment should be correctable separately without retyping everything"
+    - "the format has to follow the locale (12 or 24 hours, AM/PM before or after)"
   avoidWhen:
-    - "también hace falta el día; eso es un DatePicker, o los dos juntos"
-    - "es una duración, no una hora del día; eso es un NumberField con su unidad"
+    - "the day is needed too; that is a DatePicker, or both together"
+    - "it is a duration, not a time of day; that is a NumberField with its unit"
   alternatives:
     - NumberField

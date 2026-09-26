@@ -2,53 +2,53 @@
 
 Text:
   useWhen:
-    - "un párrafo, una bajada, una nota al pie"
-    - "el tono dice jerarquía: secondary para lo accesorio, danger para un error en prosa (acompañado de texto que lo diga, no sólo del color)"
-    - "la línea chica sobre un título es textRole eyebrow; la bajada bajo el título es textRole subtitle"
+    - "a paragraph, a sub-line, a footnote"
+    - "the tone says hierarchy: secondary for what is accessory, danger for an error in prose (with text that says so, not only the color)"
+    - "the small line above a title is textRole eyebrow; the sub-line under the title is textRole subtitle"
   avoidWhen:
-    - "titula una sección; eso es un Heading, aunque se vea chico"
-    - "va dentro de otra línea de texto, un botón o un label como <p>: ahí es textElement span"
+    - "it titles a section; that is a Heading, even if it looks small"
+    - "it goes inside another line of text, a button or a label as a <p>: there it is textElement span"
 
 Heading:
   useWhen:
-    - "abre una sección y hay que decir a qué nivel del documento pertenece: headingElement (h1–h6) es el nivel, headingSize sólo el aspecto"
-    - "el tamaño se elige por escalón (h1–h6, display-sm/md/lg); sm, md, lg y display son alias heredados"
+    - "it opens a section and which document level it belongs to has to be said: headingElement (h1–h6) is the level, headingSize only the look"
+    - "the size is chosen by step (h1–h6, display-sm/md/lg); sm, md, lg and display are legacy aliases"
   avoidWhen:
-    - "sólo se busca texto grande; el nivel es estructura, no tamaño"
-    - "el título es la etiqueta chica de un grupo (un kicker); eso es Text con textRole eyebrow"
+    - "only large text is wanted; the level is structure, not size"
+    - "the title is a group's small label (a kicker); that is Text with textRole eyebrow"
   alternatives:
     - Text
 
 Link:
   useWhen:
-    - "un enlace dentro de una frase, subrayado y en el flujo del texto"
+    - "a link inside a sentence, underlined and in the flow of the text"
   avoidWhen:
-    - "se ve y se usa como botón; eso es Button.navigation"
+    - "it looks and works like a button; that is Button.navigation"
   alternatives:
     - Button.navigation
 Strong:
   useWhen:
-    - "una frase dentro de texto tiene importancia fuerte, no sólo un peso visual distinto"
+    - "a phrase inside text has strong importance, not just a different visual weight"
   avoidWhen:
-    - "titula una sección; eso es un Heading"
-    - "sólo se quiere un peso distinto para toda la línea sin decir que importa más; eso es Text con weight"
+    - "it titles a section; that is a Heading"
+    - "only a different weight for the whole line is wanted, without saying it matters more; that is Text with weight"
   alternatives:
     - Heading
 
 Output:
   useWhen:
-    - "muestra el resultado calculado de una entrada o interacción; outputFor nombra los ids de esas entradas"
+    - "it shows the computed result of an input or an interaction; outputFor names the ids of those inputs"
   avoidWhen:
-    - "es texto estático sin relación con un cálculo; eso es Text"
+    - "it is static text unrelated to any computation; that is Text"
   alternatives:
     - Text
 
 Code:
   useWhen:
-    - "hay un literal dentro de una frase: una ruta, un flag, el nombre de una propiedad"
-    - "conviene que se lea distinto del texto que lo rodea para no confundirlo con prosa"
+    - "there is a literal inside a sentence: a path, a flag, a property name"
+    - "it should read differently from the surrounding text so it is not mistaken for prose"
   avoidWhen:
-    - "es un bloque de código entero: eso es CodePreview, con su scroll y su botón de copiar"
-    - "sólo se busca énfasis; eso es Strong y es otra afirmación"
+    - "it is a whole block of code: that is CodePreview, with its scroll and its copy button"
+    - "only emphasis is wanted; that is Strong, and it is a different claim"
   alternatives:
     - Strong

@@ -2,13 +2,13 @@
 
 Icon:
   useWhen:
-    - "refuerza una acción que ya tiene texto; sin label, decorativo"
-    - "es el único contenido de un control cuadrado, y entonces el CONTROL lleva el nombre accesible, no el icono"
-    - "el nombre es un rol que el sistema nombra: delete, visibility, chevron-down"
+    - "it reinforces an action that already has text; without a label, decorative"
+    - "it is the only content of a square control, and then the CONTROL carries the accessible name, not the icon"
+    - "the name is a role the system names: delete, visibility, chevron-down"
   avoidWhen:
-    - "es un concepto de producto (una factura, un avión): eso se pasa como icon data en el binding React, no como nombre estable"
-    - "se le pondría label dentro de un botón que ya tiene texto; el nombre accesible quedaría duplicado"
-    - "hace falta un control con forma de botón: eso es Button (iconOnly) o StateButton, no un Icon solo"
+    - "it is a product concept (an invoice, an airplane): that is passed as icon data in the React binding, not as a stable name"
+    - "it would get a label inside a button that already has text; the accessible name would be duplicated"
+    - "a button-shaped control is needed: that is Button (iconOnly) or StateButton, not an Icon alone"
   alternatives:
     - Button.action
     - StateButton

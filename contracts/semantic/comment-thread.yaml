@@ -2,54 +2,55 @@
 
 CommentThread:
   useWhen:
-    - "hay una conversación con respuestas anidadas y hace falta un contenedor que la nombre"
+    - "there is a conversation with nested replies and it needs a container that names it"
   avoidWhen:
-    - "el stream es plano, sin respuestas anidadas; eso es un Feed"
-    - "es una jerarquía seleccionable (archivos, un índice); eso es un TreeView"
-    - "hay un solo comentario y nada alrededor; eso es un Comment suelto"
+    - "the stream is flat, with no nested replies; that is a Feed"
+    - "it is a selectable hierarchy (files, an index); that is a TreeView"
+    - "there is one comment and nothing around it; that is a single Comment"
   alternatives:
     - Feed
     - TreeView
 
 Comment:
   useWhen:
-    - "una unidad de conversación: quién la escribió, cuándo y qué dijo"
-    - "hace falta citar un comentario fuera de su hilo; no necesita contenedor"
+    - "one unit of conversation: who wrote it, when, and what it said"
+    - "a comment has to be quoted outside its thread; it needs no container"
   avoidWhen:
-    - "es contenido de un stream plano sin respuestas; eso es un FeedArticle"
+    - "it is content of a flat stream with no replies; that is a FeedArticle"
   alternatives:
     - FeedArticle
 
 CommentActions:
   useWhen:
-    - "un comentario admite acciones: votar, responder, borrar"
+    - "a comment takes actions: vote, reply, delete"
   avoidWhen:
-    - "el comentario es de sólo lectura; entonces simplemente no se compone"
-    - "es una barra de acciones de una vista entera, no de una unidad de contenido; eso es un Toolbar"
+    - "the comment is read-only; then this is simply not composed"
+    - "it is an action bar for a whole view, not for one unit of content; that is a Toolbar"
   alternatives:
     - Toolbar
 
 CommentVote:
   useWhen:
-    - "hay un puntaje que se sube o se baja, con el voto propio del lector reflejado"
+    - "there is a score that goes up or down, with the reader's own vote reflected"
+    - "the product reacts rather than ranks, with like and dislike instead of upvote and downvote: `voteStyle: \"like\"` draws thumbs, and both labels are then passed (`Like`, `Dislike`, or the product's own words)"
   avoidWhen:
-    - "es una sola valoración sin dirección (me gusta); eso es un StateButton"
+    - "it is a single rating with no direction (a like); that is a StateButton"
   alternatives:
     - StateButton
 
 CommentComposer:
   useWhen:
-    - "hace falta escribir un comentario o una respuesta, con el control que decida el consumidor"
+    - "a comment or a reply has to be written, with whatever control the consumer decides"
   avoidWhen:
-    - "el formulario hace algo más que publicar un cuerpo de texto; eso es un form propio con FormField"
+    - "the form does more than publish a body of text; that is a form of its own with FormField"
   alternatives:
     - FormField
 
 CommentTemplate:
   useWhen:
-    - "la app crea comentarios en runtime y necesita un blueprint que clonar"
+    - "the app creates comments at runtime and needs a blueprint to clone"
   avoidWhen:
-    - "el markup se renderiza entero de nuevo; en React no hace falta, se vuelve a renderizar"
-    - "lo que se crea es un aviso transitorio y no un comentario; eso es un ToastTemplate"
+    - "the markup is re-rendered whole; in React it is not needed, it simply renders again"
+    - "what is created is a transient notice and not a comment; that is a ToastTemplate"
   alternatives:
     - ToastTemplate

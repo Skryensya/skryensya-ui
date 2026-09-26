@@ -2,12 +2,12 @@
 
 Popover:
   useWhen:
-    - "hace falta un panel con contenido propio colgado de un control: un formulario corto, una explicación con formato"
-    - "conviene que el navegador se encargue de cerrar al hacer clic afuera y con Escape"
+    - "a panel with content of its own hanging from a control is needed: a short form, a formatted explanation"
+    - "the browser should handle closing on an outside click and on Escape"
   avoidWhen:
-    - "es una descripción de una línea; eso es un Tooltip y no roba el foco"
-    - "es una lista de acciones; eso es un Menu, que ya trae la navegación por teclado"
-    - "bloquea la pantalla hasta decidir; eso es un Dialog"
+    - "it is a one-line description; that is a Tooltip and it does not steal focus"
+    - "it is a list of actions; that is a Menu, which already brings keyboard navigation"
+    - "it blocks the screen until a decision is made; that is a Dialog"
   alternatives:
     - Tooltip
     - Menu
@@ -15,11 +15,11 @@ Popover:
 
 Popover.bare:
   useWhen:
-    - "hace falta una superficie flotante y nada más: la composición trae su propia semántica"
-    - "el patrón no tiene título ni acciones de cierre que justifiquen el chrome de Popover"
+    - "a floating surface and nothing more is needed: the composition brings its own semantics"
+    - "the pattern has no title or close actions that would justify Popover's chrome"
   avoidWhen:
-    - "hay un título o algo que cerrar: eso es Popover y ya trae esa anatomía"
-    - "es una descripción de una línea; eso es un Tooltip"
+    - "there is a title or something to close: that is Popover, which already brings that anatomy"
+    - "it is a one-line description; that is a Tooltip"
   alternatives:
     - Popover
     - Tooltip

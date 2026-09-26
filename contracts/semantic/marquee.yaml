@@ -2,31 +2,31 @@
 
 Marquee:
   useWhen:
-    - "una franja breve y repetida gana sentido al moverse, pero el movimiento sólo debe empezar después de que la persona lo pida"
-    - "logos, nombres o palabras forman un ritmo visual continuo y no son destinos ni controles"
-    - "una columna breve de marcas o actualizaciones inertes necesita viajar hacia arriba o abajo dentro de una altura visible definida"
-    - "una vez iniciada por la persona, la franja conserva su ritmo al pasar el puntero: hover no revoca una decisión explícita"
-    - "hace falta un control de Play/Pausa sí o sí: aquí el botón no es opcional, es la única causa de movimiento que tiene"
+    - "a short, repeated band gains meaning by moving, but the motion should only start after the person asks for it"
+    - "logos, names or words form a continuous visual rhythm and are neither destinations nor controls"
+    - "a short column of inert marks or updates needs to travel up or down within a defined visible height"
+    - "once started by the person, the band keeps its rhythm under the pointer: hover does not revoke an explicit decision"
+    - "a Play/Pause control is required no matter what: here the button is not optional, it is the only cause of motion there is"
   avoidWhen:
-    - "el contenido tiene enlaces, botones o cualquier parada de foco; duplicarlos crea controles repetidos y eso es Carousel o una lista"
-    - "cada ítem importa por separado o se tiene que comparar; el movimiento baja su legibilidad"
-    - "la franja tiene que actualizar datos en vivo; un marquee repite pintura, no anuncia cambios"
+    - "the content has links, buttons or any focus stop; duplicating them creates repeated controls, and that is a Carousel or a list"
+    - "each item matters separately or has to be compared; motion lowers its legibility"
+    - "the band has to update live data; a marquee repeats paint, it does not announce changes"
   alternatives:
     - Carousel
     - Inline
 
 Marquee.autoplay:
   useWhen:
-    - "la franja es ambientación secundaria y puede empezar sola sin ocultar ni reemplazar información necesaria"
-    - "el contenido es decorativo y se puede ignorar por completo, así que la franja puede correr sin control (`control` viene apagado)"
-    - "la franja lleva algo que alguien podría querer leer, y entonces se enciende `control` y se acepta el costo del botón de pausa"
-    - "una columna secundaria de marcas o actualizaciones inertes aporta contexto al viajar hacia arriba o abajo sin reemplazar información necesaria"
-    - "la franja se detiene temporalmente con hover o foco, además del control persistente; esa pausa ayuda a inspeccionar las marcas sin reemplazar el control"
+    - "the band is secondary ambience and can start on its own without hiding or replacing needed information"
+    - "the content is decorative and can be ignored completely, so the band can run with no control (`control` is off)"
+    - "the band carries something someone might want to read, so `control` is turned on and the cost of the pause button is accepted"
+    - "a secondary column of inert marks or updates adds context by travelling up or down without replacing needed information"
+    - "the band pauses temporarily on hover or focus, besides the persistent control; that pause helps inspecting the marks without replacing the control"
   avoidWhen:
-    - "el movimiento no aporta información ni identidad; una fila quieta hace el mismo trabajo sin distraer"
-    - "no hay lugar para el botón de pausa; entonces no hay lugar para movimiento automático que dure más de cinco segundos"
-    - "se apaga `control` sobre contenido que no es decorativo: sin ese botón la franja queda fuera de WCAG 2.2.2, porque el hover es una ayuda y no un mecanismo, y con hijos inertes no hay nada que reciba foco"
-    - "el contenido es esencial para completar una tarea; no debe pasar por la vista de manera temporal"
+    - "the motion adds neither information nor identity; a still row does the same job without distracting"
+    - "there is no room for the pause button; then there is no room for automatic motion lasting more than five seconds"
+    - "`control` is turned off over content that is not decorative: without that button the band falls outside WCAG 2.2.2, because hover is an aid and not a mechanism, and with inert children nothing takes focus"
+    - "the content is essential to complete a task; it must not pass through the view temporarily"
   alternatives:
     - Marquee
     - Carousel

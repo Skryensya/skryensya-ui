@@ -2,30 +2,30 @@
 
 ToastRegion:
   useWhen:
-    - "la página va a mostrar toasts: son suyos, y sin región no hay dónde ponerlos"
-    - "hace falta que se anuncien solos; la región es la que el lector de pantalla ya está mirando"
+    - "the page is going to show toasts: they belong to it, and without a region there is nowhere to put them"
+    - "they have to announce themselves; the region is what the screen reader is already watching"
   avoidWhen:
-    - "hay un solo mensaje y es parte de la página; eso es un Callout en su lugar"
+    - "there is a single message and it is part of the page; that is a Callout in place"
   alternatives:
     - Callout
 
 Toast:
   useWhen:
-    - "confirmar algo que ya pasó y no requiere respuesta: se guardó, se envió, se copió"
-    - "ofrecer deshacer una acción durante unos segundos"
-    - "avisar que terminó algo que corría en segundo plano"
+    - "confirming something that already happened and needs no answer: saved, sent, copied"
+    - "offering to undo an action for a few seconds"
+    - "saying that something running in the background has finished"
   avoidWhen:
-    - "el mensaje es parte del contenido y tiene que quedarse; eso es un Callout"
-    - "hay que leerlo sí o sí antes de seguir; eso es un Dialog"
-    - "es un error de un campo; eso va en el FormField, pegado al control"
+    - "the message is part of the content and has to stay; that is a Callout"
+    - "it must be read before going on; that is a Dialog"
+    - "it is an error of one field; that goes in the FormField, next to the control"
   alternatives:
     - Callout
     - Dialog
     - FormField
 ToastTemplate:
   useWhen:
-    - "un script va a clonar la misma anatomía de Toast para mensajes dinámicos"
+    - "a script is going to clone the same Toast anatomy for dynamic messages"
   avoidWhen:
-    - "el Toast ya existe en la región desde el primer render"
+    - "the Toast already exists in the region from the first render"
   alternatives:
     - Toast

@@ -2,12 +2,12 @@
 
 Slider:
   useWhen:
-    - "el valor es aproximado y verlo moverse ayuda: volumen, brillo, un rango de precio"
-    - "lleva nombre con aria-label o aria-labelledby, y value dentro de min y max"
+    - "the value is approximate and seeing it move helps: volume, brightness, a price range"
+    - "it carries a name through aria-label or aria-labelledby, and a value within min and max"
   avoidWhen:
-    - "hace falta precisión; ahí un NumberField se escribe más rápido"
-    - "son opciones discretas y pocas; eso es un RadioGroup o un Segmented"
-    - "el usuario elige DOS valores, un mínimo y un máximo; eso es SliderRange"
+    - "precision is needed; there a NumberField is typed faster"
+    - "the options are discrete and few; that is a RadioGroup or a Segmented"
+    - "the user chooses TWO values, a minimum and a maximum; that is SliderRange"
   alternatives:
     - NumberField
     - Segmented
@@ -15,10 +15,10 @@ Slider:
 
 SliderRange:
   useWhen:
-    - "el usuario acota un rango entre un mínimo y un máximo. Un filtro de precio, una franja de fechas por posición"
+    - "the user narrows a range between a minimum and a maximum. A price filter, a span of dates by position"
   avoidWhen:
-    - "es un solo valor; eso es Slider"
-    - "hace falta precisión exacta en cada extremo; ahí dos NumberField (mínimo y máximo) se escriben más rápido"
+    - "it is a single value; that is Slider"
+    - "exact precision is needed at each end; there two NumberFields (minimum and maximum) are typed faster"
   alternatives:
     - NumberField
     - Slider

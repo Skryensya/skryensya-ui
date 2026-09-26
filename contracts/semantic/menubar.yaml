@@ -2,11 +2,11 @@
 
 Menubar:
   useWhen:
-    - "una barra persistente de comandos de aplicación, algunos con submenú desplegable. Un editor (Archivo/Editar/Ver)"
-    - "navegación de sitio con secciones que despliegan sub-destinos"
+    - "a persistent bar of application commands, some with a dropdown submenu. An editor (File/Edit/View)"
+    - "site navigation with sections that drop down sub-destinations"
   avoidWhen:
-    - "es un solo botón que abre un menú de comandos; eso es Menu"
-    - "son destinos de navegación sin desplegables ni comandos; eso es NavList"
+    - "it is a single button opening a menu of commands; that is Menu"
+    - "they are navigation destinations with no dropdowns or commands; that is NavList"
   alternatives:
     - Menu
     - NavList
@@ -15,4 +15,4 @@ Menubar:
 
 MenubarItem:
   useWhen:
-    - "un ítem de la barra. Con `items` (el mismo shape de Menu: comandos, checkbox/radio, separadores, submenús anidados) es un desplegable, sin `items` es un comando directo"
+    - "one item of the bar. With `items` (the same shape as Menu: commands, checkbox/radio, separators, nested submenus) it is a dropdown; without `items` it is a direct command"

@@ -2,12 +2,12 @@
 
 Combobox:
   useWhen:
-    - "la lista es larga: escribir para filtrar llega antes que recorrerla"
-    - "cada opción necesita una descripción bajo la etiqueta, no sólo texto"
-    - "hace falta elegir varias y verlas como chips removibles"
+    - "the list is long: typing to filter gets there before scanning it"
+    - "each option needs a description under its label, not only text"
+    - "several have to be chosen and seen as removable chips"
   avoidWhen:
-    - "las opciones caben a la vista: un select ya resuelve elegir de una lista conocida"
-    - "el valor es libre y no sale de una lista: eso es un input con sugerencias"
+    - "the options fit in view: a select already handles choosing from a known list"
+    - "the value is free and does not come from a list: that is an input with suggestions"
   alternatives:
     - Select
     - Select.native

@@ -2,10 +2,10 @@
 
 Progress:
   useWhen:
-    - "se conoce cuánto falta: una subida, un formulario por pasos, una descarga"
+    - "how much is left is known: an upload, a multi-step form, a download"
   avoidWhen:
-    - "la espera es de duración desconocida; eso es un Loader"
-    - "es una MEDICIÓN dentro de un rango (disco, batería, rating); eso es Meter"
+    - "the wait is of unknown length; that is a Loader"
+    - "it is a MEASUREMENT within a range (disk, battery, rating); that is Meter"
   alternatives:
     - Loader
     - Meter

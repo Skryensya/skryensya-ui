@@ -2,12 +2,12 @@
 
 Megamenu:
   useWhen:
-    - "navegación de sitio/marketing con categorías que despliegan un panel de varias columnas de enlaces, borde a borde bajo la barra"
+    - "site/marketing navigation with categories that drop down a multi-column panel of links, edge to edge under the bar"
   avoidWhen:
-    - "el desplegable es una lista de comandos de aplicación, no destinos; eso es Menu"
-    - "la barra es de comandos de aplicación (Archivo/Editar/Ver), algunos con desplegable; eso es Menubar"
-    - "son destinos simples sin panel de varias columnas; eso es NavList"
-    - "solo hace falta la barra de marca/acciones sin panel de categorías; eso es Navbar"
+    - "the dropdown is a list of application commands, not destinations; that is Menu"
+    - "the bar is application commands (File/Edit/View), some with a dropdown; that is Menubar"
+    - "they are simple destinations with no multi-column panel; that is NavList"
+    - "only the brand/actions bar is needed, with no category panel; that is Navbar"
   alternatives:
     - Menu
     - Menubar
@@ -16,4 +16,4 @@ Megamenu:
 
 MegamenuTrigger:
   useWhen:
-    - "una categoría de la barra. Su panel (`columns`) son 2-4 NavListGroup, no comandos ni un solo enlace"
+    - "one category of the bar. Its panel (`columns`) is 2-4 NavListGroups, not commands or a single link"

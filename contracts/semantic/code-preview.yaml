@@ -2,20 +2,20 @@
 
 CodePreview:
   useWhen:
-    - "hay que mostrar código y conviene que se lea como código: resaltado, con su etiqueta"
-    - "el bloque es largo y mostrarlo entero empuja el resto de la página fuera de la vista"
+    - "code has to be shown and should read as code: highlighted, with its label"
+    - "the block is long and showing it whole pushes the rest of the page out of view"
   avoidWhen:
-    - "es un literal dentro de una frase: eso es Code"
-    - "lo que importa es copiarlo, no leerlo, no mostrarlo: eso es StateButton compuesto con el comportamiento de copiar, sin el bloque de código alrededor"
+    - "it is a literal inside a sentence: that is Code"
+    - "what matters is copying it, not reading or showing it: that is StateButton composed with the copy behaviour, with no code block around it"
   alternatives:
     - Code
 
 CodePreview.density:
   useWhen:
-    - "el mismo código tiene una versión corta para entenderlo y una completa para copiarlo"
-    - "mostrar sólo la completa hace que nadie la lea, y sólo la corta deja afuera lo que hace falta"
+    - "the same code has a short version to understand it and a complete one to copy it"
+    - "showing only the complete one means nobody reads it, and only the short one leaves out what is needed"
   avoidWhen:
-    - "hay una sola versión del código: eso es CodePreview y no necesita el switch"
-    - "las dos versiones son código distinto, no dos niveles de detalle del mismo"
+    - "there is only one version of the code: that is CodePreview and it needs no switch"
+    - "the two versions are different code, not two levels of detail of the same code"
   alternatives:
     - CodePreview

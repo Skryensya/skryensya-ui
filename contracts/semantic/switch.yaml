@@ -2,11 +2,11 @@
 
 Switch:
   useWhen:
-    - "el cambio surte efecto en el momento: modo oscuro, notificaciones, una función que se enciende"
-    - "no hay botón de guardar de por medio"
-    - "lleva nombre: el texto como children, o aria-label si el rótulo visible está al lado; defaultChecked si arranca encendido"
+    - "the change takes effect immediately: dark mode, notifications, a feature being turned on"
+    - "there is no save button involved"
+    - "it carries a name: the text as children, or aria-label when the visible label sits beside it; defaultChecked if it starts on"
   avoidWhen:
-    - "el valor se envía con un formulario; eso es un Checkbox"
-    - "hace falta un tercer estado indeterminado; un switch está encendido o apagado"
+    - "the value is submitted with a form; that is a Checkbox"
+    - "an indeterminate third state is needed; a switch is on or off"
   alternatives:
     - Checkbox

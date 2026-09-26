@@ -2,12 +2,12 @@
 
 Pagination:
   useWhen:
-    - "los resultados vienen de a páginas y hay que poder saltar a una en particular"
-    - "importa saber cuántas páginas hay: el total es parte de la información"
+    - "the results come in pages and it must be possible to jump to a particular one"
+    - "knowing how many pages there are matters: the total is part of the information"
   avoidWhen:
-    - "la lista es corta y entra entera; paginar agrega un paso que no compra nada"
-    - "el orden es cronológico y se explora hacia abajo; ahí conviene cargar más al llegar al final"
-    - "la tabla ya trae tamaño de página y estado de filas; eso es TablePager"
+    - "the list is short and fits whole; paging adds a step that buys nothing"
+    - "the order is chronological and explored downward; there, loading more on reaching the end fits better"
+    - "the table already brings page size and row status; that is TablePager"
   alternatives:
     - TablePager
     - Feed

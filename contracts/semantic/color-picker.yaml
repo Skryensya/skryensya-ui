@@ -2,30 +2,30 @@
 
 ColorPicker:
   useWhen:
-    - "el valor es un color arbitrario, no una de pocas opciones fijas"
-    - "conviene ver y ajustar el matiz, la saturación y la transparencia a mano"
+    - "the value is an arbitrary color, not one of a few fixed options"
+    - "the hue, saturation and transparency should be seen and adjusted by hand"
   avoidWhen:
-    - "el color es siempre uno de un puñado conocido: eso es Select o Segmented"
-    - "el espacio es mínimo o el color es secundario al resto del formulario"
+    - "the color is always one of a known handful: that is Select or Segmented"
+    - "space is minimal or the color is secondary to the rest of the form"
   alternatives:
     - ColorPicker.compact
     - ColorPicker.native
 
 ColorPicker.compact:
   useWhen:
-    - "el swatch vive en una barra de herramientas u otro lugar apretado"
-    - "el lector sólo necesita área, matiz y presets, no cada canal por separado"
+    - "the swatch lives in a toolbar or another tight place"
+    - "the reader only needs the area, the hue and presets, not every channel separately"
   avoidWhen:
-    - "hace falta escribir un valor exacto (hex, RGB, HSL u OKLCH): eso es ColorPicker"
+    - "an exact value has to be typed (hex, RGB, HSL or OKLCH): that is ColorPicker"
   alternatives:
     - ColorPicker
 
 ColorPicker.native:
   useWhen:
-    - "un color común dentro de un formulario, sin presets ni canales propios"
-    - "el picker del sistema operativo y el envío deben pertenecer al navegador"
+    - "an ordinary color inside a form, with no presets or channels of its own"
+    - "the operating system's picker and the submission should belong to the browser"
   avoidWhen:
-    - "hace falta OKLCH, presets o ver los canales mientras se ajusta: eso es ColorPicker"
+    - "OKLCH, presets or seeing the channels while adjusting are needed: that is ColorPicker"
   alternatives:
     - ColorPicker
     - ColorPicker.compact

@@ -2,13 +2,13 @@
 
 NumberField:
   useWhen:
-    - "el valor es un número que se escribe: una cantidad, un monto, una cantidad de noches"
-    - "ajustar de a un paso es una acción frecuente y conviene que tenga botones"
-    - "hace falta formato por locale (miles, decimales, moneda) sin perder el valor crudo"
+    - "the value is a number that is typed: a quantity, an amount, a number of nights"
+    - "adjusting one step at a time is a frequent action and deserves buttons"
+    - "locale formatting (thousands, decimals, currency) is needed without losing the raw value"
   avoidWhen:
-    - "el valor es aproximado y verlo moverse ayuda; eso es un Slider"
-    - "son pocas opciones discretas; eso es un Segmented o un RadioGroup"
-    - "es texto que sólo parece número (un RUT, un teléfono, un código); eso es un Input"
+    - "the value is approximate and seeing it move helps; that is a Slider"
+    - "there are a few discrete options; that is a Segmented or a RadioGroup"
+    - "it is text that only looks like a number (a RUT, a phone number, a code); that is an Input"
   alternatives:
     - Slider
     - Segmented

@@ -2,13 +2,13 @@
 
 Select.native:
   useWhen:
-    - "una elección estándar de una lista conocida, dentro de un formulario"
-    - "el teclado, el envío y la accesibilidad deben pertenecer al navegador"
+    - "a standard choice from a known list, inside a form"
+    - "the keyboard, the submission and the accessibility should belong to the browser"
   avoidWhen:
-    - "cada opción necesita markup propio: icono, descripción, dos líneas"
-    - "hace falta el evento sk:selectvaluechange o una colección controlada"
-    - "la persona escribe para filtrar una lista larga; eso es Combobox"
-    - "hay pocas opciones fijas y caben a la vista; eso es Segmented o RadioGroup"
+    - "each option needs markup of its own: an icon, a description, two lines"
+    - "the sk:selectvaluechange event or a controlled collection is needed"
+    - "the person types to filter a long list; that is Combobox"
+    - "there are a few fixed options and they fit in view; that is Segmented or RadioGroup"
   alternatives:
     - Select
     - Combobox
@@ -17,12 +17,12 @@ Select.native:
 
 Select:
   useWhen:
-    - "las opciones necesitan markup, no sólo texto"
-    - "hace falta una colección controlada, posicionamiento propio o el evento sk:selectvaluechange"
+    - "the options need markup, not only text"
+    - "a controlled collection, custom positioning or the sk:selectvaluechange event is needed"
   avoidWhen:
-    - "alcanza con una elección estándar: la apariencia dejó de ser razón para reemplazar el control nativo"
-    - "la persona escribe para filtrar; eso es Combobox"
-    - "hay pocas opciones fijas a la vista; eso es Segmented o RadioGroup"
+    - "a standard choice is enough: appearance stopped being a reason to replace the native control"
+    - "the person types to filter; that is Combobox"
+    - "there are a few fixed options in view; that is Segmented or RadioGroup"
   alternatives:
     - Select.native
     - Combobox

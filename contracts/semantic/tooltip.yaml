@@ -2,12 +2,12 @@
 
 Tooltip:
   useWhen:
-    - "un control ya tiene nombre accesible y necesita una descripción breve al pasar el puntero o enfocar"
-    - "un botón de sólo icono necesita una pista visual redundante para quien puede verla"
+    - "a control already has an accessible name and needs a short description on hover or focus"
+    - "an icon-only button needs a redundant visual hint for whoever can see it"
   avoidWhen:
-    - "el texto es el único nombre o la única información disponible; debe vivir fuera del tooltip"
-    - "el contenido necesita acciones, formato o varias líneas; usa Popover"
-    - "es una lista de acciones; eso es un Menu"
+    - "the text is the only name or the only information available; it has to live outside the tooltip"
+    - "the content needs actions, formatting or several lines; use Popover"
+    - "it is a list of actions; that is a Menu"
   alternatives:
     - Popover
     - Menu

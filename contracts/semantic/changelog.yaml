@@ -2,28 +2,28 @@
 
 Changelog:
   useWhen:
-    - "hay un historial de versiones de algo: release notes, el changelog de un contrato"
-    - "quien lee viene a saber si ya tiene el cambio que está leyendo, y eso lo contesta una versión"
+    - "there is a version history of something: release notes, a contract's changelog"
+    - "the reader comes to learn whether they already have the change they are reading, and a version answers that"
   avoidWhen:
-    - "son instrucciones para leer y hacer, en orden pero sin versiones; eso es un ProcessList"
-    - "importa en qué etapa está alguien, qué ya hizo y qué le falta; eso es Steps"
-    - "es una sola novedad suelta; una entrada sin historial alrededor no es un historial"
+    - "they are instructions to read and follow, in order but without versions; that is a ProcessList"
+    - "what matters is which stage someone is at, what they have done and what is left; that is Steps"
+    - "it is a single piece of news; one entry with no history around it is not a history"
   alternatives:
     - ProcessList
     - Steps
 
 ChangelogRelease:
   useWhen:
-    - "una versión y todo lo que salió en ella"
-    - "hay trabajo sin publicar: se escribe la versión con sufijo -dev y se omite la fecha"
+    - "a version and everything that shipped in it"
+    - "there is unpublished work: write the version with a -dev suffix and leave the date out"
   avoidWhen:
-    - "fuera de un Changelog: el riel y el orden los dibuja la lista, no el release suelto"
-    - "quieres marcar 'sin publicar' con una opción aparte; la ausencia de fecha ya lo dice, y dos campos que dicen lo mismo se pueden contradecir"
+    - "outside a Changelog: the rail and the order are drawn by the list, not by a loose release"
+    - "you want to mark 'unpublished' with a separate option; the missing date already says it, and two fields saying the same thing can contradict each other"
   alternatives: []
 
 ChangelogEntry:
   useWhen:
-    - "un cambio, con su tipo y a qué parte del contrato le pegó"
+    - "one change, with its kind and which part of the contract it touched"
   avoidWhen:
-    - "fuera de un ChangelogRelease: un cambio que no está bajo una versión no dice desde cuándo se puede contar con él"
+    - "outside a ChangelogRelease: a change that is not under a version does not say since when it can be relied on"
   alternatives: []

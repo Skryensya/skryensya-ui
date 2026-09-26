@@ -2,12 +2,12 @@
 
 Stack:
   useWhen:
-    - "las cosas van una debajo de otra con un ritmo constante"
-    - "es la disposición por defecto de un formulario"
+    - "things go one below another with a steady rhythm"
+    - "it is a form's default arrangement"
   avoidWhen:
-    - "van una al lado de otra; eso es Inline"
-    - "necesitan columnas de igual ancho; eso es Grid"
-    - "necesitan una superficie (padding/borde/fondo); eso es Box alrededor, no Stack"
+    - "they go side by side; that is Inline"
+    - "they need equal-width columns; that is Grid"
+    - "they need a surface (padding/border/background); that is Box around it, not Stack"
   alternatives:
     - Inline
     - Grid
@@ -15,43 +15,43 @@ Stack:
 
 Inline:
   useWhen:
-    - "las cosas van una al lado de otra: una fila de botones, un rótulo con su valor"
-    - "una fila de acciones es lo último de una card y debe sentarse en el piso cuando las cards vecinas crecen; eso es blockStart auto, no un segundo componente llamado button-wrapper"
+    - "things go side by side: a row of buttons, a label with its value"
+    - "a row of actions is the last thing in a card and should sit on the floor when neighbouring cards grow; that is blockStart auto, not a second component called button-wrapper"
   avoidWhen:
-    - "son columnas de igual ancho; eso es un Grid"
-    - "el empty state, el dialog o el toolbar ya tienen su propia parte de acciones; no sustituyas esa anatomía por un Inline"
+    - "they are equal-width columns; that is a Grid"
+    - "the empty state, the dialog or the toolbar already has its own actions part; do not replace that anatomy with an Inline"
   alternatives:
     - Grid
     - Stack
 
 Grid:
   useWhen:
-    - "columnas de igual ancho: una grilla de tarjetas"
-    - "una grilla responsive cuyo techo de columnas es columns, y opcionalmente fill para igualar la altura de reposo de las columnas"
+    - "equal-width columns: a grid of cards"
+    - "a responsive grid whose column ceiling is columns, optionally with fill to even out the columns' resting height"
   avoidWhen:
-    - "los anchos son distintos entre sí; eso es un Inline"
-    - "la página necesita medidas nombradas (narrow/content/breakout/rail); eso es LayoutGrid"
+    - "the widths differ from each other; that is an Inline"
+    - "the page needs named measures (narrow/content/breakout/rail); that is LayoutGrid"
   alternatives:
     - Inline
     - LayoutGrid
 
 LayoutGrid:
   useWhen:
-    - "una página necesita una medida de lectura y algunos hijos deben ser angostos, abrirse o sangrar de borde a borde"
-    - "una sección full-width debe conservar su contenido centrado sin un wrapper adicional"
-    - "la página lleva un rail de apoyo (TOC, navegación contextual): es un hijo directo con data-width=\"rail\" (después del contenido) o data-width=\"rail-start\" (antes), o ambos: no un span de contenido como narrow/breakout, sino una columna aparte que la misma grilla reserva junto al flujo, separada de él solo por --sk-layout-rail-gap"
+    - "a page needs a reading measure and some children should be narrower, break out or bleed edge to edge"
+    - "a full-width section should keep its content centered without an extra wrapper"
+    - "the page carries a supporting rail (TOC, contextual navigation): a direct child with data-width=\"rail\" (after the content) or data-width=\"rail-start\" (before), or both: not a content span like narrow/breakout, but a separate column the same grid reserves beside the flow, separated from it only by --sk-layout-rail-gap"
   avoidWhen:
-    - "todos los hijos comparten un único techo de ancho; Wrapper es más simple"
-    - "se distribuyen tarjetas en columnas iguales; eso es Grid"
+    - "every child shares a single width ceiling; Wrapper is simpler"
+    - "cards are spread over equal columns; that is Grid"
   alternatives:
     - Wrapper
     - Grid
 
 Main:
   useWhen:
-    - "la región es el landmark <main> de la página: el área de trabajo de una aplicación o de una plantilla"
+    - "the region is the page's <main> landmark: the work area of an application or a template"
   avoidWhen:
-    - "es una sección dentro de la página, no el landmark principal; usa Box, Stack o LayoutGrid según corresponda"
+    - "it is a section inside the page, not the main landmark; use Box, Stack or LayoutGrid as appropriate"
   alternatives:
     - Box
     - Stack

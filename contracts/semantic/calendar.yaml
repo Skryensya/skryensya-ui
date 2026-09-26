@@ -2,11 +2,11 @@
 
 Calendar:
   useWhen:
-    - "elegir la fecha es la tarea de la pantalla, no un campo más de un formulario"
-    - "ver el mes ayuda a decidir: fines de semana, feriados, cuántos días faltan"
-    - "hay lugar para una grilla siempre visible"
+    - "choosing the date is the screen's task, not one more field of a form"
+    - "seeing the month helps decide: weekends, holidays, how many days are left"
+    - "there is room for an always-visible grid"
   avoidWhen:
-    - "es un campo dentro de un formulario: ahí el calendario va detrás de un input"
-    - "la fecha se escribe más rápido de lo que se busca en una grilla"
+    - "it is a field inside a form: there the calendar sits behind an input"
+    - "the date is typed faster than it is found in a grid"
   alternatives:
     - DatePicker

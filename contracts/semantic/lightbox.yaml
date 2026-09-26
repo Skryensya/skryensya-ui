@@ -2,15 +2,15 @@
 
 Lightbox:
   useWhen:
-    - "hay fotos que se muestran en miniatura y quien lee necesita verlas grandes, de a una, sin salir de la página: una galería, las fotos de un producto, las capturas de un informe"
-    - "la imagen tiene detalle que sólo se lee de cerca (un plano, una captura con texto chico, una foto de producto): el visor trae zoom con botones y teclado, y en táctil con pellizco y doble toque"
-    - "hay que abrir una imagen desde código, sin miniatura en la página: el handle abre, cierra y navega con el mismo ciclo de foco y bloqueo de scroll que un clic"
-    - "una galería larga: sólo carga la imagen actual y sus dos vecinas, nunca la galería entera"
+    - "photos are shown as thumbnails and the reader needs to see them large, one at a time, without leaving the page: a gallery, a product's photos, a report's screenshots"
+    - "the image has detail only readable up close (a plan, a screenshot with small text, a product photo): the viewer brings zoom by buttons and keyboard, and by pinch and double tap on touch"
+    - "an image has to open from code, with no thumbnail on the page: the handle opens, closes and navigates with the same focus and scroll-lock cycle as a click"
+    - "a long gallery: only the current image and its two neighbours load, never the whole gallery"
   avoidWhen:
-    - "la imagen se entiende a su tamaño en la página: agrandarla agrega un paso que nadie pidió; eso es ImageFrame"
-    - "lo que se quiere mostrar grande no es una imagen sino un diagrama o un dibujo que hay que explorar dentro de la página: eso es Canvas, que no tapa la página"
-    - "el contenido del modal es texto, un formulario o acciones: eso es Dialog; un Lightbox no tiene cuerpo propio más allá de la imagen y su leyenda"
-    - "las imágenes tienen que recorrerse en la página misma, varias a la vista: eso es Carousel"
+    - "the image reads fine at its size on the page: enlarging it adds a step nobody asked for; that is ImageFrame"
+    - "what should be shown large is not an image but a diagram or a drawing to explore inside the page: that is Canvas, which does not cover the page"
+    - "the modal's content is text, a form or actions: that is Dialog; a Lightbox has no body beyond the image and its caption"
+    - "the images have to be browsed on the page itself, several in view: that is Carousel"
   alternatives:
     - ImageFrame
     - Canvas
@@ -19,11 +19,11 @@ Lightbox:
 
 Lightbox.Trigger:
   useWhen:
-    - "una miniatura en la página tiene que abrir su imagen en un Lightbox: el enlace apunta a la imagen completa, así que sin JavaScript igual la abre"
-    - "varias miniaturas forman una galería: todas nombran el mismo Lightbox en `opens` y el orden de la página es el orden de la galería"
+    - "a thumbnail on the page has to open its image in a Lightbox: the link points at the full image, so it still opens without JavaScript"
+    - "several thumbnails form a gallery: they all name the same Lightbox in `opens`, and page order is gallery order"
   avoidWhen:
-    - "la imagen se abre desde un botón que no es una miniatura (\"Ver fotos\"): eso es un Button que llama al handle del Lightbox"
-    - "la miniatura tiene que llevar a otra página y no a la imagen: eso es un Link"
+    - "the image opens from a button that is not a thumbnail (\"View photos\"): that is a Button calling the Lightbox's handle"
+    - "the thumbnail has to lead to another page and not to the image: that is a Link"
   alternatives:
     - Button.action
     - Link

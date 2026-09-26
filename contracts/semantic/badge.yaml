@@ -2,27 +2,27 @@
 
 Badge:
   useWhen:
-    - "un conteo o un estado corto pegado a otra cosa: no leídos, cantidad, etiqueta de estado"
-    - "el tono comunica un rol del sistema: success, warning, danger"
+    - "a count or a short status attached to something else: unread, quantity, a status label"
+    - "the tone communicates a system role: success, warning, danger"
   avoidWhen:
-    - "el usuario puede quitarlo o actuar sobre él; eso es un Tag"
-    - "es texto de párrafo con color; un badge es una cápsula, no énfasis"
-    - "no hay texto visible, sólo un punto; eso es BadgeDot"
+    - "the user can remove it or act on it; that is a Tag"
+    - "it is colored paragraph text; a badge is a capsule, not emphasis"
+    - "there is no visible text, only a dot; that is BadgeDot"
   alternatives:
     - Tag
     - BadgeDot
 BadgeDot:
   useWhen:
-    - "un punto compacto comunica presencia, novedad o estado junto a otro control"
+    - "a compact dot communicates presence, something new, or a status next to another control"
   avoidWhen:
-    - "hay texto o un conteo visible; eso es un Badge"
+    - "there is visible text or a count; that is a Badge"
   alternatives:
     - Badge
 BadgeHolder:
   useWhen:
-    - "un Badge o BadgeDot se ancla a la esquina de un botón o avatar"
+    - "a Badge or BadgeDot is anchored to the corner of a button or an avatar"
   avoidWhen:
-    - "el badge participa del flujo normal; no necesita un ancla"
+    - "the badge sits in normal flow; it needs no anchor"
   alternatives:
     - Badge
     - BadgeDot

@@ -2,11 +2,11 @@
 
 EmptyState:
   useWhen:
-    - "una lista o una región no tiene nada que mostrar, y hay que decir por qué"
-    - "es la primera vez y conviene ofrecer la acción que la llena"
+    - "a list or a region has nothing to show, and why has to be said"
+    - "it is the first time and the action that fills it should be offered"
   avoidWhen:
-    - "los datos están cargando; eso es un Loader o Placeholder"
-    - "hubo un error; ahí el mensaje es un Callout, no un vacío"
+    - "the data is loading; that is a Loader or a Placeholder"
+    - "there was an error; there the message is a Callout, not an empty state"
   alternatives:
     - Callout
     - Placeholder

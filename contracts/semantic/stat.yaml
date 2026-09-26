@@ -2,9 +2,9 @@
 
 Stat:
   useWhen:
-    - "un número con su nombre: usuarios activos, ingresos del mes"
-    - "hay un delta que muestra hacia dónde va"
+    - "a number with its name: active users, revenue this month"
+    - "there is a delta showing which way it is going"
   avoidWhen:
-    - "son varios números comparables entre sí; eso es una Table"
+    - "there are several numbers comparable with each other; that is a Table"
   alternatives:
     - Table

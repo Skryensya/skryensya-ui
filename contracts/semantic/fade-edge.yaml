@@ -2,13 +2,13 @@
 
 FadeEdge:
   useWhen:
-    - "un borde recortado necesita indicar visualmente que el contenido continúa o entra y sale de la superficie"
-    - "el efecto debe envolver otro componente sin cambiar su semántica, foco ni comportamiento"
+    - "a clipped edge needs to show visually that the content continues, or enters and leaves the surface"
+    - "the effect has to wrap another component without changing its semantics, focus or behaviour"
   avoidWhen:
-    - "el contenido no está recortado; desvanecerlo sólo baja contraste"
-    - "el gradiente protege texto sobre una foto; eso es MediaGradient dentro de MediaCaption"
-    - "el desvanecido escondería un control o información necesaria en reposo"
-    - "el borde que se recorta es el viewport de un Marquee; Marquee ya tiene su propio fade interno, y un FadeEdge alrededor también lava el Play/Pause"
+    - "the content is not clipped; fading it only lowers contrast"
+    - "the gradient protects text over a photo; that is MediaGradient inside MediaCaption"
+    - "the fade would hide a control or information needed at rest"
+    - "the clipped edge is a Marquee's viewport; Marquee already has its own inner fade, and a FadeEdge around it also washes out the Play/Pause"
   alternatives:
     - MediaGradient
     - Marquee

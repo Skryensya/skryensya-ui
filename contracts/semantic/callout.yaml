@@ -2,11 +2,11 @@
 
 Callout:
   useWhen:
-    - "hay que contar algo que pasó: un error, una confirmación, una advertencia, o simplemente una nota al margen"
-    - "el mensaje queda en la página, no desaparece solo"
+    - "something that happened has to be told: an error, a confirmation, a warning, or just a side note"
+    - "the message stays on the page, it does not go away on its own"
   avoidWhen:
-    - "el mensaje es efímero y se va solo; eso es un Toast"
-    - "la región está vacía por no tener datos; eso es un EmptyState"
+    - "the message is ephemeral and goes away on its own; that is a Toast"
+    - "the region is empty for lack of data; that is an EmptyState"
   alternatives:
     - Toast
     - EmptyState

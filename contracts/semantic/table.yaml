@@ -2,54 +2,54 @@
 
 Table:
   useWhen:
-    - "los datos tienen filas y columnas, y una celda significa algo por su cruce"
-    - "lleva nombre: un TableCaption, o aria-labelledby hacia un título visible"
-    - "el usuario va a comparar valores entre filas"
+    - "the data has rows and columns, and a cell means something by where they cross"
+    - "it carries a name: a TableCaption, or aria-labelledby pointing at a visible title"
+    - "the user is going to compare values across rows"
   avoidWhen:
-    - "es una lista de cosas sin columnas; eso es una List"
-    - "se usa para maquetar; una tabla anuncia relaciones que la maquetación no tiene"
+    - "it is a list of things with no columns; that is a List"
+    - "it is used for layout; a table announces relationships the layout does not have"
 
 TableCaption:
   useWhen:
-    - "la tabla necesita un nombre que un lector de pantalla anuncie antes del contenido"
+    - "the table needs a name a screen reader announces before the content"
   avoidWhen:
-    - "el título ya está fuera y asociado por aria-labelledby"
+    - "the title is already outside and associated through aria-labelledby"
 
 TableHead:
   useWhen:
-    - "las columnas tienen encabezado, que es casi siempre"
+    - "the columns have headers, which is almost always"
 
 TableBody:
   useWhen:
-    - "siempre: es donde viven las filas de datos, y la tabla no está completa sin él"
+    - "always: it is where the data rows live, and the table is not complete without it"
 
 TableFooter:
   useWhen:
-    - "hay totales o un resumen al pie de las columnas"
+    - "there are totals or a summary at the foot of the columns"
   avoidWhen:
-    - "es una fila de datos más; eso va en el cuerpo"
+    - "it is one more data row; that goes in the body"
 
 TableRow:
   useWhen:
-    - "un registro de la tabla"
+    - "one record of the table"
 
 TableHeader:
   useWhen:
-    - "la celda nombra su columna, o nombra su fila con scope row"
-    - "un encabezado agrupa varias columnas (colspan) o varias filas de encabezado (rowspan)"
+    - "the cell names its column, or names its row with scope row"
+    - "a header groups several columns (colspan) or several header rows (rowspan)"
   avoidWhen:
-    - "es un dato; eso es TableCell"
+    - "it is a value; that is TableCell"
 
 TableCell:
   useWhen:
-    - "un valor dentro de una fila"
+    - "a value inside a row"
 
 TableScroll:
   useWhen:
-    - "casi siempre: una tabla dentro de un flex o un grid empuja la columna y revienta la superficie, y ésta es la caja que se encoge en su lugar"
-    - "la tabla es más ancha que su espacio y hay que poder desplazarla de lado"
-    - "conviene fijar la primera columna o el encabezado mientras el resto se desplaza"
+    - "almost always: a table inside a flex or a grid pushes the column out and breaks the surface, and this is the box that shrinks in its place"
+    - "the table is wider than its space and has to scroll sideways"
+    - "the first column or the header should stay fixed while the rest scrolls"
   avoidWhen:
-    - "la tabla es angosta y su contenedor tiene ancho fijo; ahí el envoltorio no aporta nada"
+    - "the table is narrow and its container has a fixed width; there the wrapper adds nothing"
   alternatives:
     - Table

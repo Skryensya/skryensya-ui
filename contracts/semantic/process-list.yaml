@@ -2,18 +2,18 @@
 
 ProcessList:
   useWhen:
-    - "son instrucciones a seguir y el contenido de cada paso es lo importante"
+    - "they are instructions to follow, and the content of each step is what matters"
   avoidWhen:
-    - "lo que importa es en qué paso está el usuario; eso es Steps"
-    - "son filas de una lista (enlaces, acciones, metadatos) sin cuerpo de instrucción; eso es List"
+    - "what matters is which step the user is on; that is Steps"
+    - "they are rows of a list (links, actions, metadata) with no instruction body; that is List"
   alternatives:
     - Steps
     - List
 
 ProcessListItem:
   useWhen:
-    - "una instrucción dentro de la lista"
+    - "one instruction inside the list"
   avoidWhen:
-    - "el ítem reporta complete/current/upcoming; eso es un step de Steps, no una instrucción"
+    - "the item reports complete/current/upcoming; that is a step of Steps, not an instruction"
   alternatives:
     - Steps

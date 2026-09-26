@@ -2,14 +2,13 @@
 
 Tabs:
   useWhen:
-    - varias secciones comparten una región y sólo una se ve a la vez
-    - 'el contenido es hermano, no una jerarquía: todas las pestañas están al mismo nivel'
-    - el usuario alterna entre vistas del mismo objeto (resumen, actividad, ajustes)
-    - la lista siempre lleva nombre (aria-label o aria-labelledby a un título visible)
+    - "several sections share one region and only one is seen at a time"
+    - "the content is siblings, not a hierarchy: every tab is at the same level"
+    - "the user switches between views of the same object (summary, activity, settings)"
+    - "the list always carries a name (aria-label, or aria-labelledby pointing at a visible title)"
   avoidWhen:
-    - "el contenido de cada sección es largo y el usuario querría verlo todo junto: eso es un
-      Accordion o una página con secciones"
-    - 'cada pestaña navega a otra URL: eso es un NavList'
-    - hay una sola sección; una pestaña sola no es una elección
+    - "each section's content is long and the user would want to see it all together: that is an Accordion or a page with sections"
+    - "each tab navigates to another URL: that is a NavList"
+    - "there is a single section; a lone tab is not a choice"
   alternatives:
     - NavList

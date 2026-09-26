@@ -2,12 +2,12 @@
 
 Placeholder:
   useWhen:
-    - "se prefigura una línea de texto que está por llegar y ya se sabe qué rol tipográfico va a tener"
-    - "evita el salto de layout cuando los datos aparecen, porque reserva exactamente la caja de línea del rol que reemplaza"
+    - "a line of text that is about to arrive is prefigured, and its typographic role is already known"
+    - "it prevents the layout shift when the data appears, because it reserves exactly the line box of the role it replaces"
   avoidWhen:
-    - "no se sabe qué va a aparecer; ahí un Loader dice más"
-    - "el texto es un párrafo; ahí varias líneas sueltas son Placeholder.paragraph, que ya sabe cómo termina un párrafo"
-    - "la región está vacía de propósito (sin resultados, primera visita); eso es EmptyState, no un skeleton"
+    - "what will appear is not known; there a Loader says more"
+    - "the text is a paragraph; there several loose lines are Placeholder.paragraph, which already knows how a paragraph ends"
+    - "the region is empty on purpose (no results, first visit); that is EmptyState, not a skeleton"
   alternatives:
     - Placeholder.paragraph
     - Loader
@@ -15,22 +15,22 @@ Placeholder:
 
 Placeholder.paragraph:
   useWhen:
-    - "lo que falta es prosa: un cuerpo, una descripción, un comentario"
-    - "se quiere el borde irregular que hace leer el bloque como texto y no como una tabla"
+    - "what is missing is prose: a body, a description, a comment"
+    - "the ragged edge that makes the block read as text and not as a table is wanted"
   avoidWhen:
-    - "es una sola línea; ahí es Placeholder y conserva la medida completa"
-    - "las líneas tienen anchos que significan algo distinto entre sí (un nombre, una fecha); eso son Placeholder sueltos con su propio width"
+    - "it is a single line; there it is Placeholder and keeps the full measure"
+    - "the lines have widths that mean different things (a name, a date); those are separate Placeholders with their own width"
   alternatives:
     - Placeholder
     - Loader
 
 Placeholder.block:
   useWhen:
-    - "el hueco es rectangular: media, una tabla, un gráfico, una card"
-    - "el bloque va dentro de un contenedor recortado (ImageFrame, Box con overflow) y tiene que tomar su caja y su esquina: eso es `fill`"
+    - "the gap is rectangular: media, a table, a chart, a card"
+    - "the block goes inside a clipped container (ImageFrame, Box with overflow) and has to take its box and its corner: that is `fill`"
   avoidWhen:
-    - "lo que falta es texto; un rectángulo del alto de un párrafo no anticipa líneas, anticipa una imagen"
-    - "el marco ya existe y solo falta el src; eso es ImageFrame con Placeholder.block fill adentro, no un bloque suelto fingiendo el marco"
+    - "what is missing is text; a rectangle the height of a paragraph does not anticipate lines, it anticipates an image"
+    - "the frame already exists and only the src is missing; that is ImageFrame with Placeholder.block fill inside, not a loose block pretending to be the frame"
   alternatives:
     - Placeholder.paragraph
     - ImageFrame
@@ -38,9 +38,9 @@ Placeholder.block:
 
 Placeholder.circle:
   useWhen:
-    - "el hueco es un avatar o un control circular, y se puede nombrar su escala (sm, md, lg) para que el reemplazo no salte"
+    - "the gap is an avatar or a round control, and its scale can be named (sm, md, lg) so the replacement does not jump"
   avoidWhen:
-    - "la forma final no es circular; el skeleton no debe prometer una silueta que el contenido no tiene"
+    - "the final shape is not round; the skeleton must not promise a silhouette the content does not have"
   alternatives:
     - Placeholder.block
     - Avatar.initials

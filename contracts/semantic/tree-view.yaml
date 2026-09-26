@@ -2,14 +2,14 @@
 
 TreeView:
   useWhen:
-    - "los datos anidan de verdad y la jerarquía es parte de lo que hay que entender"
-    - "hace falta abrir y cerrar ramas sin perder de vista dónde se está"
-    - "un explorador de archivos, un organigrama, categorías que se eligen"
+    - "the data truly nests and the hierarchy is part of what has to be understood"
+    - "branches have to open and close without losing sight of where you are"
+    - "a file explorer, an org chart, categories to choose from"
   avoidWhen:
-    - "hay un solo nivel; eso es una List o una NavList"
-    - "son dos niveles fijos y conocidos; una NavList con grupos se lee mejor"
-    - "cada fila jerárquica tiene además columnas (tamaño, fecha, dueño); eso es un Treegrid"
-    - "son enlaces para navegar el sitio o la página; un role=tree no es navegación: eso es NavList o Toc"
+    - "there is a single level; that is a List or a NavList"
+    - "there are two fixed, known levels; a NavList with groups reads better"
+    - "each hierarchical row also has columns (size, date, owner); that is a Treegrid"
+    - "they are links to navigate the site or the page; a role=tree is not navigation: that is NavList or Toc"
   alternatives:
     - NavList
     - List

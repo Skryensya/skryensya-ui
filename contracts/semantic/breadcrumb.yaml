@@ -2,10 +2,10 @@
 
 Breadcrumb:
   useWhen:
-    - "la página vive dentro de una jerarquía y el usuario necesita volver hacia arriba"
+    - "the page lives inside a hierarchy and the user needs to go back up it"
   avoidWhen:
-    - "la navegación es plana; eso es un NavList"
-    - "son pasos de un proceso; eso es Steps"
+    - "the navigation is flat; that is a NavList"
+    - "they are steps of a process; that is Steps"
   alternatives:
     - NavList
     - Steps

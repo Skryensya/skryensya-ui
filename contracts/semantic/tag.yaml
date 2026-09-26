@@ -2,19 +2,19 @@
 
 Tag:
   useWhen:
-    - "una etiqueta que clasifica contenido: filtro aplicado, faceta, palabra clave"
-    - "el usuario puede quitarla (removable) o sólo nombra un tema en una lista"
+    - "a label that classifies content: an applied filter, a facet, a keyword"
+    - "the user can remove it (removable), or it only names a topic in a list"
   avoidWhen:
-    - "es sólo un conteo o un estado del sistema que nadie puede tocar; eso es un Badge"
+    - "it is only a count or a system status nobody can touch; that is a Badge"
   alternatives:
     - Badge
 
 Tag.link:
   useWhen:
-    - "una etiqueta que navega a una faceta, tema o palabra clave"
+    - "a label that navigates to a facet, a topic or a keyword"
   avoidWhen:
-    - "también debe poder quitarse; un tag enlace no es dismissible porque no puede contener otro botón"
-    - "es un enlace dentro de una frase; eso es Link"
+    - "it also has to be removable; a link tag is not dismissible because it cannot contain another button"
+    - "it is a link inside a sentence; that is Link"
   alternatives:
     - Link
     - Button.navigation

@@ -2,13 +2,13 @@
 
 NavList:
   useWhen:
-    - la lista de destinos de un sidebar, un navbar o un drawer
-    - navegación principal o secundaria de una página
+    - "the list of destinations of a sidebar, a navbar or a drawer"
+    - "a page's main or secondary navigation"
   avoidWhen:
-    - 'son acciones de una aplicación, no destinos: eso es un menú, con role="menu"'
-    - 'es una ruta jerárquica hasta la página actual: eso es un Breadcrumb'
-    - 'es un índice de encabezados de la página actual: eso es un Toc'
-    - 'la barra tiene desplegables de comandos o sub-destinos con menuitem: eso es Menubar'
+    - "they are an application's actions, not destinations: that is a menu, with role=\"menu\""
+    - "it is a hierarchical path to the current page: that is a Breadcrumb"
+    - "it is an index of the current page's headings: that is a Toc"
+    - "the bar has dropdowns of commands or sub-destinations with menuitem: that is Menubar"
   alternatives:
     - Menu
     - Breadcrumb
@@ -17,22 +17,22 @@ NavList:
 
 NavListGroup:
   useWhen:
-    - agrupa destinos bajo un rótulo
-    - hace falta el <ul> aunque el grupo no lleve rótulo visible
-    - "con collapsible: la sección se puede ocultar/mostrar. El patrón WAI 'Disclosure (Navigation)'"
+    - "it groups destinations under a label"
+    - "the <ul> is needed even when the group has no visible label"
+    - "with collapsible: the section can be hidden/shown. The WAI 'Disclosure (Navigation)' pattern"
   avoidWhen:
-    - 'hay un solo destino y ningún rótulo: el grupo sigue siendo obligatorio, no es opcional'
-    - "collapsible sin label: el botón necesita el texto del rótulo para tener algo que mostrar"
-    - "heading sin label: un encabezado vacío es peor que ninguno"
-    - "collapsible y heading juntos: el collapsible ya es un botón; heading no aplica"
+    - "there is a single destination and no label: the group is still required, it is not optional"
+    - "collapsible without label: the button needs the label's text to have something to show"
+    - "heading without label: an empty heading is worse than none"
+    - "collapsible and heading together: collapsible is already a button; heading does not apply"
 
 NavListLink:
   useWhen:
-    - un destino de la lista
-    - marca la página actual con current
-    - "tiene sus propios sub-destinos: un NavListGroup en el slot nested, adentro del mismo <li>"
+    - "one destination of the list"
+    - "it marks the current page with current"
+    - "it has sub-destinations of its own: a NavListGroup in the nested slot, inside the same <li>"
   avoidWhen:
-    - 'dispara una acción en vez de navegar: eso es Button.action'
+    - "it triggers an action instead of navigating: that is Button.action"
   alternatives:
     - Button.navigation
 

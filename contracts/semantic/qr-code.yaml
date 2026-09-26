@@ -2,14 +2,14 @@
 
 QRCode:
   useWhen:
-    - "hay que llevar al lector desde una superficie física  -  una mesa, un afiche, una pantalla ajena  -  hasta una URL, sin que la tipee"
-    - "el destino es corto y estable: un enlace, un identificador, una credencial de wifi"
-    - "el código se imprime o se proyecta, y por eso necesita contraste real y una zona de silencio de verdad"
+    - "the reader has to be taken from a physical surface - a table, a poster, someone else's screen - to a URL without typing it"
+    - "the destination is short and stable: a link, an identifier, a wifi credential"
+    - "the code is printed or projected, and so needs real contrast and a real quiet zone"
   avoidWhen:
-    - "el lector ya está en el mismo dispositivo; ahí un enlace común es más rápido y accesible que apuntar una cámara"
-    - "el contenido es largo o cambia seguido; el símbolo crece hasta volverse ilegible y queda desactualizado impreso"
-    - "es el único camino a una acción importante; un QR sin enlace escrito al lado deja afuera a quien no puede escanear"
-    - "se quiere decorar con un logo enorme; a partir de cierto tamaño el símbolo deja de escanear y eso no es un problema de estilo"
+    - "the reader is already on the same device; there a plain link is faster and more accessible than aiming a camera"
+    - "the content is long or changes often; the symbol grows until it is unreadable and goes stale once printed"
+    - "it is the only way to an important action; a QR with no written link beside it leaves out whoever cannot scan"
+    - "it should be decorated with a huge logo; past a certain size the symbol stops scanning, and that is not a matter of style"
   alternatives:
     - Link
     - CodePreview

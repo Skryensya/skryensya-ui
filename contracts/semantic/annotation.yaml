@@ -2,19 +2,19 @@
 
 Annotated:
   useWhen:
-    - "hay que señalar las piezas de algo que ya está renderizado y decir cómo se llama cada una: la anatomía de un componente, las partes de una composición, un diagrama de armado"
-    - "las marcas no pueden taparlo: cada parte lleva un número en uno de los cuatro márgenes de una grilla y el sujeto ocupa la celda del medio, así que el solape no se evita, no se puede representar; los nombres van en una leyenda ordenada debajo"
-    - "cada número llega a su parte por una línea guía de uno o dos tramos, sólo rectos o de 45 grados: la menor cantidad que alcanza"
-    - "el dibujo se recalcula solo cuando cambia el tamaño del contenedor, cuando el sujeto reflowea o cuando llega una tipografía: dónde cae una parte no es un valor que se pueda escribir al componer"
-    - "el diagrama tiene que leerse en un teléfono: el dibujo vive en un canvas, se diseña a su propio ancho y se muestra ajustado, con zoom para acercarse a una parte"
-    - "algunas partes son áreas que contienen otras (un acordeón, uno de sus ítems, un panel): `mark: bracket` las marca con un corchete del largo de la parte, anidado hacia afuera, en vez de una guía que caería sobre un hijo cualquiera"
-    - "el sujeto es una muestra y no un control: `inert` viene prendido, no toma puntero, ni foco, ni teclado, y sale del árbol de accesibilidad"
+    - "the pieces of something already rendered have to be pointed at and named: a component's anatomy, the parts of a composition, an assembly diagram"
+    - "the marks must not cover it: each part gets a number in one of the four margins of a grid and the subject takes the middle cell, so overlap is not avoided, it cannot be expressed; the names go in an ordered legend below"
+    - "each number reaches its part by a leader line of one or two segments, straight or at 45 degrees only: the fewest that will do"
+    - "the drawing recomputes itself when the container resizes, the subject reflows or a font arrives: where a part lands is not a value that can be written when composing"
+    - "the diagram has to read on a phone: the drawing lives on a canvas, is designed at its own width and shown fitted, with zoom to get close to a part"
+    - "some parts are areas that contain others (an accordion, one of its items, a panel): `mark: bracket` marks them with a bracket as long as the part, nested outward, instead of a leader that would land on some arbitrary child"
+    - "the subject is a sample and not a control: `inert` is on, it takes no pointer, focus or keyboard, and leaves the accessibility tree"
   avoidWhen:
-    - "lo que se quiere es una leyenda numerada debajo de una imagen estática, sin guías ni anillos: eso es una List o una Table"
-    - "la etiqueta tiene que aparecer al pasar el puntero o al enfocar: eso es Tooltip, que es chrome flotante y efímero; esto está siempre dibujado"
-    - "hay que explicar un dato al lado de un control dentro de un formulario real: eso es el `hint` de FormField, que además queda enlazado por aria-describedby"
-    - "el sujeto tiene que seguir siendo usable: `inert` es todo o nada, así que un diagrama sobre una UI viva es dos cosas peleando por el mismo markup"
-    - "el diagrama es de cajas y flechas entre nodos, no de partes de una sola cosa: esto ancla cada etiqueta a un selector adentro del sujeto, no dibuja un grafo"
+    - "what is wanted is a numbered legend under a static image, with no leaders or rings: that is a List or a Table"
+    - "the label has to appear on hover or focus: that is Tooltip, which is floating, ephemeral chrome; this is always drawn"
+    - "a value next to a control inside a real form needs explaining: that is FormField's `hint`, which is also linked through aria-describedby"
+    - "the subject has to stay usable: `inert` is all or nothing, so a diagram over a live UI is two things fighting over the same markup"
+    - "the diagram is boxes and arrows between nodes, not the parts of one thing: this anchors each label to a selector inside the subject, it does not draw a graph"
   alternatives:
     - Tooltip
     - FormField

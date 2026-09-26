@@ -2,25 +2,25 @@
 
 Checkbox:
   useWhen:
-    - "una decisión de sí o no que se envía con el formulario"
-    - "varias opciones independientes donde cada una se marca por su cuenta"
-    - "aceptar términos, suscribirse, activar una preferencia que se guarda al enviar"
+    - "a yes-or-no decision submitted with the form"
+    - "several independent options, each checked on its own"
+    - "accepting terms, subscribing, turning on a preference that is saved on submit"
   avoidWhen:
-    - "el cambio surte efecto de inmediato, sin enviar nada; eso es un Switch"
-    - "se elige UNA opción de un conjunto; eso es un RadioGroup"
+    - "the change takes effect immediately, with nothing to submit; that is a Switch"
+    - "ONE option of a set is chosen; that is a RadioGroup"
   alternatives:
     - Switch
     - CheckboxGroup
 
 CheckboxGroup:
   useWhen:
-    - "un conjunto de opciones que además se marca o desmarca entero"
-    - "hace falta mostrar que la selección es parcial: algunos sí, otros no"
-    - "seleccionar todo en una tabla, permisos, filtros con un maestro arriba"
+    - "a set of options that can also be checked or unchecked as a whole"
+    - "the selection has to show as partial: some yes, some no"
+    - "select all in a table, permissions, filters with a master checkbox on top"
   avoidWhen:
-    - "las opciones no tienen nada en común; ahí son Checkbox sueltos"
-    - "se elige UNA; eso es un RadioGroup"
-    - "el padre debería poder quedarse en indeterminate por su cuenta: ese estado se DERIVA de los hijos, no se elige"
+    - "the options have nothing in common; then they are separate Checkboxes"
+    - "ONE is chosen; that is a RadioGroup"
+    - "the parent should be able to stay indeterminate on its own: that state is DERIVED from the children, never chosen"
   alternatives:
     - Checkbox
     - RadioGroup

@@ -2,10 +2,10 @@
 
 Box:
   useWhen:
-    - "hace falta relleno, una superficie o un borde alrededor de un grupo"
+    - "a group needs padding, a surface or a border around it"
   avoidWhen:
-    - "sólo hace falta separar cosas; eso es un Stack, Inline o Grid sin caja"
-    - "hace falta centrar una columna de página; eso es Wrapper"
+    - "things only need to be spaced apart; that is a Stack, Inline or Grid with no box"
+    - "a page column needs centering; that is Wrapper"
   alternatives:
     - Stack
     - Inline

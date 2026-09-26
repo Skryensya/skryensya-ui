@@ -2,47 +2,47 @@
 
 Treegrid:
   useWhen:
-    - "los datos tienen jerarquía Y columnas a la vez. Un explorador de archivos con tamaño/fecha, un org chart con cargo/área"
-    - "cada fila necesita expandirse o colapsarse sin perder el resto de sus columnas"
+    - "the data has hierarchy AND columns at once. A file explorer with size/date, an org chart with role/department"
+    - "each row needs to expand or collapse without losing the rest of its columns"
   avoidWhen:
-    - "hay columnas pero ninguna jerarquía; eso es una Table"
-    - "hay jerarquía pero una sola columna de texto; eso es un TreeView"
+    - "there are columns but no hierarchy; that is a Table"
+    - "there is hierarchy but a single text column; that is a TreeView"
   alternatives:
     - Table
     - TreeView
 
 TreegridScroll:
   useWhen:
-    - "casi siempre: mismo motivo que TableScroll. La grilla no debe reventar un flex o un grid al ser más ancha que su espacio"
+    - "almost always: the same reason as TableScroll. The grid must not break a flex or a grid by being wider than its space"
   alternatives:
     - Treegrid
 
 TreegridHead:
   useWhen:
-    - "las columnas tienen encabezado, que es casi siempre"
+    - "the columns have headers, which is almost always"
 
 TreegridHeadRow:
   useWhen:
-    - "siempre que hay TreegridHead: es la fila que contiene los TreegridColumnHeader"
+    - "whenever there is a TreegridHead: it is the row holding the TreegridColumnHeaders"
 
 TreegridColumnHeader:
   useWhen:
-    - "la celda nombra su columna"
+    - "the cell names its column"
 
 TreegridBody:
   useWhen:
-    - "siempre: es donde viven las filas de la grilla, y la grilla no está completa sin él"
+    - "always: it is where the grid's rows live, and the grid is not complete without it"
 
 TreegridRow:
   useWhen:
-    - "un registro de la grilla, en el mismo orden que un lector de pantalla lo recorre: nunca anidado dentro de otro TreegridRow, un <tr> no puede contener otro <tr>"
-    - "la fila tiene descendientes: pasa `expanded` (true o false) y escríbelos a continuación, en orden, con un `level` mayor"
-    - "toda fila lleva un `value` único en la grilla: es lo que reportan los eventos de expandir y activar"
+    - "one record of the grid, in the same order a screen reader walks it: never nested inside another TreegridRow, a <tr> cannot contain another <tr>"
+    - "the row has descendants: pass `expanded` (true or false) and write them right after, in order, with a higher `level`"
+    - "every row carries a `value` unique in the grid: it is what the expand and activate events report"
   avoidWhen:
-    - "la fila es una hoja sin hijos; ahí no se pasa `expanded` en absoluto. Su ausencia es lo que la marca hoja, no un valor `false`"
+    - "the row is a leaf with no children; there `expanded` is not passed at all. Its absence is what marks it a leaf, not a `false` value"
 
 TreegridCell:
   useWhen:
-    - "un valor dentro de una fila de la grilla"
+    - "a value inside a row of the grid"
   avoidWhen:
-    - "el contenido necesita su propio control interactivo (un botón, un link); esta versión del contrato es fiel al ejemplo WAI `treegrid-1`. Celdas de solo texto, ver docs/aria-apg-audit.md"
+    - "the content needs its own interactive control (a button, a link); this version of the contract is faithful to the WAI `treegrid-1` example. Text-only cells, see docs/aria-apg-audit.md"

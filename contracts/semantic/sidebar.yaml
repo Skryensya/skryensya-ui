@@ -2,61 +2,61 @@
 
 Sidebar:
   useWhen:
-    - "la navegación principal de una aplicación vive al costado y acompaña a toda la sesión"
-    - "hay muchas secciones y conviene que se vean sin abrir nada"
+    - "an application's main navigation lives on the side and stays for the whole session"
+    - "there are many sections and they should be visible without opening anything"
   avoidWhen:
-    - "es un sitio de contenido con pocas secciones; eso es un Navbar"
-    - "aparece sobre el contenido y se cierra al elegir; eso es un Drawer / Vaul"
+    - "it is a content site with a few sections; that is a Navbar"
+    - "it appears over the content and closes on choosing; that is a Drawer / Vaul"
   alternatives:
     - Navbar
     - Vaul
 
 SidebarHeader:
   useWhen:
-    - "arriba va la marca, el nombre del espacio de trabajo o el trigger"
+    - "the brand, the workspace name or the trigger goes at the top"
   avoidWhen:
-    - "es parte de la lista de destinos; eso va en SidebarContent"
+    - "it is part of the list of destinations; that goes in SidebarContent"
   alternatives: []
 
 SidebarContent:
   useWhen:
-    - "es el medio que scrollea; aquí adentro va la NavList"
+    - "it is the middle that scrolls; the NavList goes in here"
   avoidWhen:
-    - "tiene que quedar fijo al scrollear; eso es el header o el footer"
+    - "it has to stay fixed while scrolling; that is the header or the footer"
   alternatives: []
 
 SidebarFooter:
   useWhen:
-    - "abajo va la cuenta, el modo de color o lo que se usa poco y se busca siempre"
+    - "the account, the color mode, or whatever is rarely used and always looked for goes at the bottom"
   avoidWhen:
-    - "es un destino más; eso va en la lista"
+    - "it is one more destination; that goes in the list"
   alternatives: []
 
 SidebarSeparator:
   useWhen:
-    - "hay que separar dos grupos de destinos y el corte es parte de la información"
+    - "two groups of destinations have to be separated and the break is part of the information"
   avoidWhen:
-    - "sólo se busca aire entre elementos; eso es espaciado, no un separador"
+    - "only room between items is wanted; that is spacing, not a separator"
   alternatives: []
 
 SidebarTrigger:
   useWhen:
-    - "la persona tiene que poder angostar la barra para ganar ancho de contenido"
-    - "la lista es de UN solo nivel y cada destino tiene su propio ícono: colapsado sólo quedan los íconos, así que sin ellos (o sin ese nivel único) el riel no dice nada"
+    - "the person has to be able to narrow the bar to gain content width"
+    - "the list has ONE level and each destination has its own icon: collapsed, only the icons remain, so without them (or without that single level) the rail says nothing"
   avoidWhen:
-    - "se espera que oculte la barra; angosta, nunca esconde"
-    - "la lista tiene subniveles (grupos anidados, un árbol de archivos): no hay una fila por nivel que mostrar en un riel de íconos; angosta con SidebarResizeHandle en cambio"
-    - "algún destino no tiene ícono propio; un riel colapsado con huecos es peor que uno que no colapsa"
+    - "it is expected to hide the bar; it narrows, it never hides"
+    - "the list has sublevels (nested groups, a file tree): there is no one row per level to show in an icon rail; narrow it with SidebarResizeHandle instead"
+    - "some destination has no icon of its own; a collapsed rail with gaps is worse than one that does not collapse"
   alternatives:
     - SidebarResizeHandle
 
 SidebarResizeHandle:
   useWhen:
-    - "el ancho correcto lo decide el contenido de cada persona: rutas largas, un árbol profundo, nombres de archivo"
-    - "hace falta un ancho intermedio, no sólo angosta o ancha"
-    - "la lista tiene subniveles o destinos sin ícono propio: no hay riel de íconos posible, así que la única forma de ganar ancho es angostar sin esconder nada"
+    - "the right width is decided by each person's content: long paths, a deep tree, file names"
+    - "an intermediate width is needed, not only narrow or wide"
+    - "the list has sublevels or destinations with no icon of their own: no icon rail is possible, so the only way to gain width is narrowing without hiding anything"
   avoidWhen:
-    - "la lista de destinos es fija y conocida; ahí el ancho es una decisión de diseño, no de quien lee"
-    - "lo que se busca es sacarla del medio; para eso está SidebarTrigger, que angosta a un riel"
+    - "the list of destinations is fixed and known; there the width is a design decision, not the reader's"
+    - "the aim is getting it out of the way; that is what SidebarTrigger is for, which narrows it to a rail"
   alternatives:
     - SidebarTrigger

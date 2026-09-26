@@ -2,14 +2,14 @@
 
 Tour:
   useWhen:
-    - "una interfaz nueva o rediseñada tiene pocas piezas que conviene señalar en orden (tres a cinco), y quien la usa puede pedir el recorrido cuando quiera"
-    - "cada paso cabe en una idea: qué es este elemento y para qué sirve, en una o dos frases"
-    - "la página tiene que seguir usable durante el recorrido: sin fondo que la tape, sin bloquear clics y sin atrapar el foco"
+    - "a new or redesigned interface has a few pieces worth pointing out in order (three to five), and its user can ask for the tour whenever they want"
+    - "each step fits in one idea: what this element is and what it is for, in one or two sentences"
+    - "the page has to stay usable during the tour: no backdrop covering it, no blocked clicks and no trapped focus"
   avoidWhen:
-    - "la explicación es de un solo control y se necesita al pasar o enfocar: eso es Tooltip"
-    - "hay que completar pasos que cambian datos (un alta, una configuración): eso es un formulario por pasos con Steps, no un recorrido que señala"
-    - "el contenido es largo o necesita imágenes y ejemplos: eso es una página de ayuda o un Dialog, no una caja junto a un elemento"
-    - "la función sólo se entiende con el recorrido: si una pieza necesita un tour para usarse, el problema es la pieza"
+    - "the explanation is about a single control and is needed on hover or focus: that is Tooltip"
+    - "steps that change data have to be completed (a sign-up, a configuration): that is a multi-step form with Steps, not a tour that points"
+    - "the content is long or needs images and examples: that is a help page or a Dialog, not a box next to an element"
+    - "the feature can only be understood with the tour: if a piece needs a tour to be used, the problem is the piece"
   alternatives:
     - Tooltip
     - Popover
@@ -18,8 +18,8 @@ Tour:
 
 Tour.Trigger:
   useWhen:
-    - "el recorrido tiene que poder iniciarse, y repetirse después de omitirlo o terminarlo, desde un lugar visible y estable (la ayuda, el encabezado)"
+    - "the tour has to be startable, and repeatable after skipping or finishing it, from a visible and stable place (help, the header)"
   avoidWhen:
-    - "se quiere iniciar el recorrido solo al cargar la página: un tour nunca empieza sin que alguien lo pida"
+    - "the tour should start on its own when the page loads: a tour never starts without someone asking for it"
   alternatives:
     - Button.action

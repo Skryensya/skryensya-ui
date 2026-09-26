@@ -2,12 +2,12 @@
 
 Questionnaire:
   useWhen:
-    - "varias preguntas se responden de a una, con progreso visible y validación antes de avanzar"
-    - "una encuesta, un onboarding o un intake donde cada pregunta merece la pantalla entera"
+    - "several questions are answered one at a time, with visible progress and validation before moving on"
+    - "a survey, an onboarding or an intake where each question deserves the whole screen"
   avoidWhen:
-    - "todas las preguntas caben y se leen juntas; eso es un formulario de FormField"
-    - "las etapas son pantallas con contenido propio, no preguntas; eso es Steps sobre tu propia navegación"
-    - "solo necesitas mostrar avance (barra o etapas) sin preguntar nada; eso es Progress o Steps"
+    - "all the questions fit and read together; that is a form of FormFields"
+    - "the stages are screens with content of their own, not questions; that is Steps over your own navigation"
+    - "you only need to show progress (a bar or stages) without asking anything; that is Progress or Steps"
   alternatives:
     - FormField
     - Steps
@@ -15,10 +15,10 @@ Questionnaire:
 
 QuestionnaireItem:
   useWhen:
-    - "una pregunta de elección única, múltiple o de texto libre dentro de un Questionnaire"
-    - "una pregunta con opciones y, además, la posibilidad de escribir otra respuesta"
+    - "a single-choice, multiple-choice or free-text question inside a Questionnaire"
+    - "a question with options and, besides, the chance to write another answer"
   avoidWhen:
-    - "la elección no es parte de una secuencia de preguntas; eso es un TileRadioGroup o un TileCheckbox sueltos"
+    - "the choice is not part of a sequence of questions; that is a standalone TileRadioGroup or TileCheckbox"
   alternatives:
     - TileRadioGroup
     - TileCheckbox

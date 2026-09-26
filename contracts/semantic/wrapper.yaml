@@ -2,14 +2,14 @@
 
 Wrapper:
   useWhen:
-    - "la página necesita una medida centrada para que el texto no se estire de borde a borde"
-    - "un header, un cuerpo y un footer deben compartir el mismo techo de ancho: los tres usan el mismo wrapperSize"
-    - "el contenido necesita gutters laterales pero ningún techo; eso es wrapperSize full, que conserva el padding inline y solo quita el máximo"
+    - "the page needs a centered measure so the text does not stretch edge to edge"
+    - "a header, a body and a footer should share the same width ceiling: all three use the same wrapperSize"
+    - "the content needs side gutters but no ceiling; that is wrapperSize full, which keeps the inline padding and only drops the maximum"
   avoidWhen:
-    - "el contenido debe tocar los bordes (una imagen o una banda a sangre); full igual deja gutters, así que ahí no hay wrapper, o se usa LayoutGrid con data-width=\"full-width\""
-    - "algunos hijos deben ser más angostos o abrirse más que el resto; eso es LayoutGrid, no Wrappers anidados"
-    - "ya está dentro de otro Wrapper; anidarlos suma los dos padding inline y el techo de afuera manda igual"
-    - "la región necesita fondo, borde o padding propio; Wrapper solo mide y centra, eso es un Box (adentro o afuera del Wrapper)"
+    - "the content should touch the edges (a full-bleed image or band); full still leaves gutters, so there is no wrapper there, or LayoutGrid with data-width=\"full-width\" is used"
+    - "some children should be narrower or wider than the rest; that is LayoutGrid, not nested Wrappers"
+    - "it is already inside another Wrapper; nesting them adds both inline paddings and the outer ceiling wins anyway"
+    - "the region needs a background, border or padding of its own; Wrapper only measures and centers, that is a Box (inside or outside the Wrapper)"
   alternatives:
     - LayoutGrid
     - Box

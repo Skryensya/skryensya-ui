@@ -2,22 +2,22 @@
 
 CopyButton:
   useWhen:
-    - "un bloque de código, un comando o un token se va a pegar en otro lado y seleccionarlo a mano es lento o impreciso"
-    - "el valor ya está a la vista (un bloque de código) o no hace falta verlo para copiarlo"
+    - "a code block, a command or a token is going to be pasted elsewhere, and selecting it by hand is slow or imprecise"
+    - "the value is already in view (a code block) or does not need to be seen to be copied"
   avoidWhen:
-    - "quien copia tiene que ver o revisar el valor antes (un enlace para compartir, una clave): eso es Clipboard"
-    - "la acción hace algo más que copiar (compartir, exportar, descargar): eso es un Button con su propio nombre"
+    - "whoever copies has to see or check the value first (a share link, a key): that is Clipboard"
+    - "the action does more than copy (share, export, download): that is a Button with its own name"
   alternatives:
     - Clipboard
     - Button.action
 
 Clipboard:
   useWhen:
-    - "el valor tiene que verse antes de copiarlo: un enlace para compartir, una clave de API, un identificador"
-    - "además del botón, quien usa la página puede querer seleccionar el valor o copiarlo con el teclado"
+    - "the value has to be seen before copying it: a share link, an API key, an identifier"
+    - "besides the button, the reader may want to select the value or copy it with the keyboard"
   avoidWhen:
-    - "el valor es largo o de varias líneas (código, configuración): eso es un bloque de código con CopyButton"
-    - "el valor se puede editar: eso es un Input en un FormField"
+    - "the value is long or spans several lines (code, configuration): that is a code block with CopyButton"
+    - "the value can be edited: that is an Input in a FormField"
   alternatives:
     - CopyButton
     - Input

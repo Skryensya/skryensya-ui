@@ -7,17 +7,17 @@
 
 Hero:
   useWhen:
-    - "es la apertura de una página o de una sección: necesita distinguirse visualmente de lo que sigue"
-    - "el titular y la bajada necesitan más aire y una superficie propia, no la del fondo de la página"
-    - "adentro siempre va un encabezado real (Heading), nunca sólo texto grande: si el hero abre la página entera, ese encabezado es el <h1> de la página"
-    - "como mucho una acción primaria y una secundaria más silenciosa; nunca una fila de botones de igual peso"
-    - "el host por defecto no es un landmark y no necesita aria-label; si se autora como landmark (<section>, as=\"section\" en React) sí necesita aria-label o aria-labelledby apuntando al encabezado adentro"
+    - "it opens a page or a section: it needs to stand apart visually from what follows"
+    - "the headline and the sub-line need more room and a surface of their own, not the page's background"
+    - "a real heading (Heading) always goes inside, never just large text: if the hero opens the whole page, that heading is the page's <h1>"
+    - "at most one primary action and one quieter secondary one; never a row of buttons of equal weight"
+    - "the default host is not a landmark and needs no aria-label; authored as a landmark (<section>, as=\"section\" in React) it does need aria-label or aria-labelledby pointing at the heading inside"
   avoidWhen:
-    - "es una sección más de la página, no la de apertura; eso es un Box o directamente un Stack"
-    - "sólo hace falta separar contenido con relleno o borde; eso es un Box"
-    - "el mensaje necesita más de dos acciones o más de un titular compitiendo; separa el resto en su propia sección"
-    - "una imagen adentro reemplaza al titular en vez de acompañarlo; el titular sigue siendo un Heading real, la imagen lleva su propio alt"
-    - "es el cierre de la página (navegación secundaria, aviso legal, crédito); eso es Footer"
+    - "it is one more section of the page, not the opening one; that is a Box or simply a Stack"
+    - "content only needs separating with padding or a border; that is a Box"
+    - "the message needs more than two actions or more than one competing headline; move the rest into its own section"
+    - "an image inside replaces the headline instead of accompanying it; the headline stays a real Heading, and the image carries its own alt"
+    - "it closes the page (secondary navigation, legal notice, credit); that is Footer"
   alternatives:
     - Box
     - Footer

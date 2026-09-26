@@ -2,11 +2,11 @@
 
 List:
   useWhen:
-    - "filas de cosas del mismo tipo: una bandeja, ajustes, resultados"
+    - "rows of things of the same kind: an inbox, settings, results"
   avoidWhen:
-    - "las filas tienen columnas comparables entre sí; eso es una Table"
-    - "son destinos de navegación del sitio o de la página; eso es NavList"
-    - "son instrucciones para leer y hacer, en orden; eso es ProcessList"
+    - "the rows have columns comparable with each other; that is a Table"
+    - "they are navigation destinations of the site or the page; that is NavList"
+    - "they are instructions to read and follow, in order; that is ProcessList"
   alternatives:
     - Table
     - NavList
@@ -14,36 +14,36 @@ List:
 
 OrderedList:
   useWhen:
-    - "el orden de las filas comunica secuencia, prioridad o ranking"
+    - "the order of the rows communicates sequence, priority or ranking"
   avoidWhen:
-    - "reordenar las filas no cambia su significado; eso es List"
-    - "son pasos de un proceso con cuerpo rico por ítem; eso es ProcessList"
+    - "reordering the rows does not change their meaning; that is List"
+    - "they are steps of a process with a rich body per item; that is ProcessList"
   alternatives:
     - List
     - ProcessList
 
 ListItemPlain:
   useWhen:
-    - "una fila de interfaz sólo necesita contenido directo, sin anatomía de título, descripción o trailing"
+    - "an interface row only needs direct content, with no title, description or trailing anatomy"
 
 ListItem:
   useWhen:
-    - "una fila que no se toca"
+    - "a row that is not interactive"
 
 ListItemLink:
   useWhen:
-    - "la fila entera navega, y el objetivo de foco y de clic es la fila"
+    - "the whole row navigates, and the row is the focus and click target"
   avoidWhen:
-    - "sólo una parte de la fila es enlace; ahí el enlace va adentro, no envolviendo"
-    - "la fila dispara una acción sin cambiar de URL; eso es ListItemButton"
+    - "only part of the row is a link; there the link goes inside, not wrapping"
+    - "the row triggers an action without changing URL; that is ListItemButton"
   alternatives:
     - ListItemButton
 
 ListItemButton:
   useWhen:
-    - "la fila entera dispara una acción (enviar, cerrar sesión, abrir un diálogo), y el objetivo de foco y de clic es la fila"
+    - "the whole row triggers an action (send, sign out, open a dialog), and the row is the focus and click target"
   avoidWhen:
-    - "la fila navega a otra URL; eso es ListItemLink"
-    - "sólo un control dentro de la fila es el botón; ahí el botón va adentro, no envolviendo"
+    - "the row navigates to another URL; that is ListItemLink"
+    - "only a control inside the row is the button; there the button goes inside, not wrapping"
   alternatives:
     - ListItemLink

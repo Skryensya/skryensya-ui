@@ -2,90 +2,90 @@
 
 TileLink:
   useWhen:
-    - "toda la tarjeta lleva al mismo lado y conviene que el área clickeable sea toda"
-    - "una grilla de destinos: proyectos, artículos, secciones"
+    - "the whole card goes to the same place and the whole of it should be clickable"
+    - "a grid of destinations: projects, articles, sections"
   avoidWhen:
-    - "adentro hay más de una acción; dos targets anidados es una trampa, no una tarjeta"
-    - "no navega a ningún lado; eso es un TileButton"
+    - "there is more than one action inside; two nested targets are a trap, not a card"
+    - "it navigates nowhere; that is a TileButton"
   alternatives:
     - TileButton
 
 TileButton:
   useWhen:
-    - "la tarjeta entera dispara una acción: elegir un plan, empezar un flujo"
+    - "the whole card triggers an action: choosing a plan, starting a flow"
   avoidWhen:
-    - "la acción es elegir entre varias y la elección se ve; eso es TileCheckbox o un RadioGroup"
-    - "navega; eso es un TileLink"
+    - "the action is choosing among several and the choice shows; that is TileCheckbox or a RadioGroup"
+    - "it navigates; that is a TileLink"
   alternatives:
     - TileLink
     - Button.action
 
 ExpandableTile:
   useWhen:
-    - "hay detalle que no todos necesitan y esconderlo baja el ruido de la página"
-    - "son varias secciones y sólo importa una a la vez; ahí se arma un Accordion con éstas"
+    - "there is detail not everyone needs, and hiding it lowers the page's noise"
+    - "there are several sections and only one matters at a time; there an Accordion is built from these"
   avoidWhen:
-    - "el contenido es lo que la persona vino a leer; esconderlo agrega un clic y nada más"
-    - "flota sobre la página; eso es un Popover o un Dialog"
+    - "the content is what the person came to read; hiding it adds a click and nothing else"
+    - "it floats over the page; that is a Popover or a Dialog"
   alternatives:
     - Accordion
 
 ExpandableTileTrigger:
   useWhen:
-    - "es el encabezado que abre y cierra su ExpandableTile"
+    - "it is the header that opens and closes its ExpandableTile"
   avoidWhen:
-    - "está fuera de un ExpandableTile; no tiene a qué apuntar"
+    - "it is outside an ExpandableTile; it has nothing to point at"
   alternatives: []
 
 ExpandableTileContent:
   useWhen:
-    - "es el cuerpo que se pliega dentro de su ExpandableTile"
+    - "it is the body that folds inside its ExpandableTile"
   avoidWhen:
-    - "está fuera de un ExpandableTile; no tiene quién lo abra"
+    - "it is outside an ExpandableTile; nothing opens it"
   alternatives: []
 
 TileCheckbox:
   useWhen:
-    - "se eligen varias opciones y cada una es una tarjeta con su propio contenido"
-    - "conviene que toda la tarjeta sea el área de click, no sólo el cuadradito"
+    - "several options are chosen and each is a card with content of its own"
+    - "the whole card should be the click target, not only the little box"
   avoidWhen:
-    - "es una sola opción en una lista de texto; eso es un Checkbox"
-    - "sólo se puede elegir una; eso es un TileRadioGroup"
+    - "it is a single option in a text list; that is a Checkbox"
+    - "only one can be chosen; that is a TileRadioGroup"
   alternatives:
     - Checkbox
     - TileRadioGroup
 
 TileSwitch:
   useWhen:
-    - "la tarjeta prende o apaga algo y el efecto es inmediato: una preferencia, una integración"
+    - "the card turns something on or off and the effect is immediate: a preference, an integration"
   avoidWhen:
-    - "el cambio recién se aplica al enviar el formulario; ahí un Checkbox dice la verdad"
-    - "es una opción entre varias; eso es un TileRadioGroup"
+    - "the change only applies when the form is submitted; there a Checkbox tells the truth"
+    - "it is one option among several; that is a TileRadioGroup"
   alternatives:
     - Switch
     - TileCheckbox
 
 TileRadioGroup:
   useWhen:
-    - "se elige una sola opción y cada una necesita explicarse: planes, métodos de envío"
-    - "conviene comparar las opciones lado a lado antes de decidir"
+    - "a single option is chosen and each one needs explaining: plans, shipping methods"
+    - "the options are best compared side by side before deciding"
   avoidWhen:
-    - "las opciones son una palabra cada una; eso es un RadioGroup o un Segmented"
-    - "se pueden elegir varias; eso es TileCheckbox"
+    - "the options are one word each; that is a RadioGroup or a Segmented"
+    - "several can be chosen; that is TileCheckbox"
   alternatives:
     - RadioGroup
     - Segmented
 TileContent:
   useWhen:
-    - "un Tile necesita la anatomía compartida de título y descripción"
+    - "a Tile needs the shared anatomy of title and description"
   avoidWhen:
-    - "está fuera de un Tile; no es contenido autónomo"
+    - "it is outside a Tile; it is not standalone content"
   alternatives: []
 
 TileChevron:
   useWhen:
-    - "un tile expandible o una sección de accordion necesita mostrar que se abre y se cierra"
+    - "an expandable tile or an accordion section needs to show that it opens and closes"
   avoidWhen:
-    - "está fuera de un trigger expandible: no es un icono de propósito general"
-    - "hace falta que el estado se anuncie; eso ya lo dice el aria-expanded del trigger"
+    - "it is outside an expandable trigger: it is not a general-purpose icon"
+    - "the state needs announcing; the trigger's aria-expanded already says it"
   alternatives: []

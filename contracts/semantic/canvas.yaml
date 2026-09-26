@@ -2,16 +2,16 @@
 
 Canvas:
   useWhen:
-    - "hay un dibujo más grande que la pantalla que lo muestra (un diagrama, una anatomía, un plano) y reescalarlo es mejor que reacomodarlo: se diseña a su ancho y se muestra ajustado"
-    - "en un teléfono el contenido se reescribiría palabra por palabra: acá se ve entero y chico, y quien lee hace zoom en la parte que le interesa"
-    - "el zoom tiene que sentirse como en una herramienta de diseño: arrastrar mueve, Ctrl/Cmd + rueda y el pellizco del trackpad acercan alrededor del puntero, `+`/`-`/`0` desde el teclado"
-    - "no puede secuestrar el scroll de la página: un dedo y la rueda sola siguen siendo de la página; dos dedos y Ctrl + rueda son del canvas, y un aviso breve lo explica cuando alguien intenta lo otro"
-    - "para un Annotated no hace falta envolverlo: ya trae el mismo canvas alrededor del marco y deja la leyenda afuera, sin escalar"
+    - "a drawing is larger than the screen showing it (a diagram, an anatomy, a plan) and rescaling it beats reflowing it: it is designed at its own width and shown fitted"
+    - "on a phone the content would be rewrapped word by word: here it is seen whole and small, and the reader zooms into the part they care about"
+    - "zoom has to feel like a design tool: dragging pans, Ctrl/Cmd + wheel and trackpad pinch zoom around the pointer, `+`/`-`/`0` from the keyboard"
+    - "it must not hijack the page's scroll: one finger and the plain wheel stay the page's; two fingers and Ctrl + wheel are the canvas's, and a short hint explains it when someone tries the other"
+    - "an Annotated needs no wrapping: it already brings the same canvas around its frame and keeps the legend outside, unscaled"
   avoidWhen:
-    - "el contenido entra en la pantalla o se puede reacomodar sin perder sentido: un canvas agrega un gesto que nadie necesitaba"
-    - "es una imagen que sólo hay que ver más grande: eso es ImageFrame con un enlace a la imagen completa, o un Dialog con la imagen"
-    - "el contenido es interactivo y tiene que seguir usándose: arrastrar para mover compite con cada clic y cada selección de texto adentro"
-    - "es una tabla o una lista ancha: eso es scroll horizontal nativo dentro de su propio contenedor, que ya sabe hacer el teclado y el lector de pantalla"
+    - "the content fits the screen or can reflow without losing meaning: a canvas adds a gesture nobody needed"
+    - "it is an image that only needs to be seen larger: that is ImageFrame with a link to the full image, or a Dialog with the image"
+    - "the content is interactive and has to stay usable: drag-to-pan competes with every click and every text selection inside"
+    - "it is a wide table or list: that is native horizontal scroll inside its own container, which the keyboard and the screen reader already handle"
   alternatives:
     - Annotated
     - ImageFrame

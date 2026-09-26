@@ -2,19 +2,19 @@
 
 Carousel:
   useWhen:
-    - "hay muchos ítems parejos y el espacio horizontal alcanza para unos pocos: tarjetas, fotos"
-    - "conviene que se vea que hay más al costado, con el ítem siguiente asomando"
+    - "there are many similar items and the horizontal space fits only a few: cards, photos"
+    - "it should show there is more to the side, with the next item peeking in"
   avoidWhen:
-    - "el contenido es importante y no puede depender de que alguien deslice; ahí va una grilla"
-    - "son pocos ítems y entran todos; el carrusel esconde lo que ya cabía"
-    - "es un solo mensaje rotando solo; eso se lee poco y molesta mucho"
+    - "the content matters and cannot depend on someone swiping; that is a grid"
+    - "there are a few items and they all fit; the carousel hides what already fitted"
+    - "it is a single message rotating on its own; that is little read and much disliked"
   alternatives:
     - Grid
     - List
 
 CarouselSlide:
   useWhen:
-    - "es un ítem del carrusel; adentro puede ir cualquier cosa, normalmente una Card"
+    - "it is one item of the carousel; anything can go inside, usually a card"
   avoidWhen:
-    - "está fuera de un Carousel; no hay pista donde encajar"
+    - "it is outside a Carousel; there is no track to fit into"
   alternatives: []

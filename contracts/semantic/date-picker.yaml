@@ -2,21 +2,21 @@
 
 DatePicker:
   useWhen:
-    - "la fecha es un campo de un formulario, junto a otros campos"
-    - "conviene poder escribirla y también buscarla en el calendario"
+    - "the date is a field of a form, next to other fields"
+    - "it should be possible both to type it and to look it up in the calendar"
   avoidWhen:
-    - "elegir la fecha ES la pantalla: ahí la grilla va siempre visible"
-    - "sólo importa el mes o el año, no el día"
+    - "choosing the date IS the screen: there the grid is always visible"
+    - "only the month or the year matters, not the day"
   alternatives:
     - Calendar
 
 DatePicker.native:
   useWhen:
-    - "una fecha común dentro de un formulario, sin selección de rango"
-    - "el teclado, el formato local y el envío deben pertenecer al navegador"
+    - "an ordinary date inside a form, with no range selection"
+    - "the keyboard, the local format and the submission should belong to the browser"
   avoidWhen:
-    - "hace falta un rango (inicio y fin): eso es DatePicker con selectionMode range"
-    - "el calendario tiene que verse siempre: eso es Calendar"
+    - "a range is needed (start and end): that is DatePicker with selectionMode range"
+    - "the calendar has to be always visible: that is Calendar"
   alternatives:
     - DatePicker
     - Calendar

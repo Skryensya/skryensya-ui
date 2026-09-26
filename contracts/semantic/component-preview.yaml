@@ -2,11 +2,10 @@
 
 ComponentPreview.bare:
   useWhen:
-    - 'hay que mostrar algo junto a su código fuente: un ejemplo, una demo, un caso de uso'
-    - la superficie de docs no necesita comparar dos bindings ni presets de pantalla
+    - "something has to be shown next to its source code: an example, a demo, a use case"
+    - "the docs surface does not need to compare two bindings or screen presets"
   avoidWhen:
-    - "hace falta comparar Vanilla y React del MISMO componente: eso es la maquinaria de este
-      sitio, no un contrato publicado"
-    - 'el bloque es sólo código, sin nada que mostrar arriba: eso es CodePreview solo'
+    - "Vanilla and React of the SAME component have to be compared: that is this site's machinery, not a published contract"
+    - "the block is only code, with nothing to show above it: that is CodePreview alone"
   alternatives:
     - CodePreview

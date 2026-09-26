@@ -2,16 +2,16 @@
 
 Dialog:
   useWhen:
-    - "hay que decidir algo antes de seguir: confirmar un borrado, completar un paso corto"
-    - "la fila de acciones del footer debe quedar al inicio o al final del eje inline (`footerAlign`; por defecto al final)"
-    - "conviene que el resto de la página quede inerte mientras tanto"
-    - "en móvil el mismo dialog puede pedirse como hoja desde abajo (opción vaul)"
-    - "confirmación destructiva o error bloqueante que necesita atención inmediata (opción alert)"
+    - "something has to be decided before going on: confirming a deletion, completing a short step"
+    - "the footer's action row should sit at the start or the end of the inline axis (`footerAlign`; the end by default)"
+    - "the rest of the page should be inert meanwhile"
+    - "on mobile the same dialog can be asked for as a sheet from the bottom (the vaul option)"
+    - "a destructive confirmation or a blocking error that needs immediate attention (the alert option)"
   avoidWhen:
-    - "es información auxiliar que no bloquea; eso es un Tooltip o un Popover"
-    - "es una lista de acciones colgada de un botón; eso es un Menu"
-    - "el contenido es largo o navegable: eso pide una página, no una caja modal"
-    - "el panel debe ocupar un borde entero a todo alto: eso es Vaul.drawer"
+    - "it is auxiliary information that does not block; that is a Tooltip or a Popover"
+    - "it is a list of actions hanging from a button; that is a Menu"
+    - "the content is long or navigable: that needs a page, not a modal box"
+    - "the panel has to take a whole edge at full height: that is Vaul.drawer"
   alternatives:
     - Popover
     - Tooltip

@@ -2,13 +2,13 @@
 
 OtpInput:
   useWhen:
-    - "se pide un código de un solo uso enviado por SMS, email o una app de autenticación"
-    - "el código tiene un largo fijo conocido de antemano (4, 6 dígitos)"
-    - "conviene que el teléfono ofrezca autocompletar el código recibido por SMS"
+    - "a one-time code sent by SMS, email or an authenticator app is asked for"
+    - "the code has a fixed length known in advance (4, 6 digits)"
+    - "the phone should offer to autofill the code received by SMS"
   avoidWhen:
-    - "el valor es texto libre de largo variable; eso es Input"
-    - "el valor es un número con paso y límites; eso es NumberField"
-    - "hace falta validar el código contra un servidor antes de aceptarlo; eso lo resuelve quien compone, escuchando sk:otpinputvaluecomplete y mostrando el error en su propio mensaje"
+    - "the value is free text of variable length; that is Input"
+    - "the value is a number with a step and bounds; that is NumberField"
+    - "the code has to be checked against a server before accepting it; the composer handles that, listening to sk:otpinputvaluecomplete and showing the error in its own message"
   alternatives:
     - Input
     - NumberField

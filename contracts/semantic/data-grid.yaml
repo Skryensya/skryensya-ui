@@ -2,21 +2,21 @@
 
 DataGrid:
   useWhen:
-    - "un conjunto de celdas necesita navegación 2D por teclado. Flechas se mueven entre filas y columnas"
-    - "es una grilla de widgets (chips, tarjetas, enlaces) y se quiere UNA sola parada de tabulación en vez de una por widget. El caso 'layout grid' de WAI"
-    - "es una grilla de datos interactiva (editable, con celdas que reciben foco). El caso 'data grid' de WAI"
+    - "a set of cells needs 2D keyboard navigation. Arrow keys move between rows and columns"
+    - "it is a grid of widgets (chips, cards, links) and ONE tab stop is wanted instead of one per widget. WAI's 'layout grid' case"
+    - "it is an interactive data grid (editable, with cells that take focus). WAI's 'data grid' case"
   avoidWhen:
-    - "los datos son tabulares pero ESTÁTICOS, sin necesidad de navegar con flechas; eso es Table"
-    - "hay jerarquía además de columnas; eso es Treegrid"
-    - "es una cuadrícula puramente visual (CSS Grid) sin navegación por teclado; eso es Grid/LayoutGrid en layout.ts"
+    - "the data is tabular but STATIC, with no need for arrow-key navigation; that is Table"
+    - "there is hierarchy on top of the columns; that is Treegrid"
+    - "it is a purely visual grid (CSS Grid) with no keyboard navigation; that is Grid/LayoutGrid in layout.ts"
   alternatives:
     - Table
     - Treegrid
 
 DataGridRow:
   useWhen:
-    - "una fila lógica de celdas: no necesariamente una fila visual; puede envolver varias líneas físicas"
+    - "a logical row of cells: not necessarily a visual row; it may wrap several physical lines"
 
 DataGridCell:
   useWhen:
-    - "un valor o un widget dentro de una fila de la grilla; el rol interactivo del contenido (botón, enlace) se preserva, nunca se reinterpreta"
+    - "a value or a widget inside a row of the grid; the interactive role of the content (button, link) is preserved, never reinterpreted"

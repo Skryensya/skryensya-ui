@@ -2,9 +2,9 @@
 
 Editor:
   useWhen:
-    - "se necesita texto con estilos - negrita, listas, títulos, citas - no sólo texto plano"
-    - "la barra de formato debe venir resuelta, sin componerla a mano"
+    - "styled text is needed - bold, lists, headings, quotes - not only plain text"
+    - "the formatting toolbar should come ready, without composing it by hand"
   avoidWhen:
-    - "el campo es de una sola línea, o no necesita ningún formato: ahí alcanza Input/Textarea"
+    - "the field is a single line, or needs no formatting at all: Input/Textarea is enough there"
   alternatives:
     - Textarea

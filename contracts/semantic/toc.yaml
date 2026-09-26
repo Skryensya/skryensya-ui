@@ -2,11 +2,11 @@
 
 Toc:
   useWhen:
-    - un documento largo tiene varias secciones (h2/h3) y el lector necesita saltar entre ellas
-    - 'hace falta ver, mientras se lee, en qué sección se está: el "current" lo mueve el scroll-spy'
-    - el title nombra el nav y encabeza la lista, así que siempre va ("En esta página")
+    - "a long document has several sections (h2/h3) and the reader needs to jump between them"
+    - "which section is being read has to be visible while reading: the scroll-spy moves the \"current\""
+    - "the title names the nav and heads the list, so it is always there (\"On this page\")"
   avoidWhen:
-    - 'los destinos son páginas distintas, no secciones de ESTA página: eso es NavList'
-    - 'el documento es corto y cabe entero en una pantalla: un índice no ahorra nada ahí'
+    - "the destinations are different pages, not sections of THIS page: that is NavList"
+    - "the document is short and fits on one screen: an index saves nothing there"
   alternatives:
     - NavList

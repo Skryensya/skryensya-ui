@@ -2,12 +2,12 @@
 
 CommandPalette:
   useWhen:
-    - "hay muchos destinos o acciones y escribir el nombre llega antes que recorrerlos"
-    - "quien usa el producto seguido quiere llegar sin navegar"
+    - "there are many destinations or actions and typing the name gets there before browsing them"
+    - "frequent users of the product want to get there without navigating"
   avoidWhen:
-    - "las opciones son pocas y caben a la vista: eso es un Menu"
-    - "es el único camino a algo: una paleta complementa la navegación, no la reemplaza"
-    - "hace falta un campo de formulario que filtre una lista conocida: eso es un Combobox"
+    - "the options are few and fit in view: that is a Menu"
+    - "it is the only way to reach something: a palette complements navigation, it does not replace it"
+    - "a form field that filters a known list is needed: that is a Combobox"
   alternatives:
     - Menu
     - Combobox

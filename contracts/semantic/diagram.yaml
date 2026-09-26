@@ -2,24 +2,24 @@
 
 Diagram:
   useWhen:
-    - "hay que explicar cómo se relacionan varias cosas: un flujo lineal, un if/else, un árbol de decisión, una máquina de estados con un ciclo. Los cuatro salen de las mismas dos piezas, no son cuatro modos"
-    - "las cajas son contenido HTML normal y el dibujo es todo lo demás: el runtime mide y calcula los recorridos, los codos, las puntas de flecha y dónde cae cada etiqueta. Quien compone nunca escribe una coordenada"
-    - "la disposición es una grilla CSS común: `columns` en el marco y `span` en un nodo cubren las formas habituales, y cualquier otra cosa es `grid-area` en la hoja de quien lo usa. Si una media query mueve un nodo, los conectores se vuelven a trazar solos"
-    - "la relación tiene que llegarle a un lector de pantalla: el SVG es `aria-hidden` y el binding escribe adentro de cada nodo una lista anunciada de a dónde lleva, así que el dibujo se puede leer sin verlo"
-    - "hace falta un ciclo: una arista hacia un nodo que está más arriba sale por el margen y vuelve, que es como se dibuja \"y vuelve a empezar\" desde siempre"
-    - "las aristas no son una secuencia sino una relación entre cosas (un modelo, un esquema): `arrow: \"none\"` dibuja la línea sin punta y la etiqueta lleva la cardinalidad"
-    - "un nodo tiene que decir más que una línea de texto: su slot acepta una composición, así que adentro entra cualquier árbol del catálogo"
-    - "lo que hay que dibujar es lógica booleana: `shape` trae las siete compuertas de la notación IEEE 91 / IEC 60617-12 (`and`, `or`, `xor`, `nand`, `nor`, `xnor`, `not`), con la forma real y no una caja que dice AND adentro"
-    - "el diagrama es más ancho que la pantalla que lo muestra (cuatro columnas en un teléfono): envuelto en un `Canvas` se diseña a su ancho de escritorio y se muestra ajustado, con zoom, en vez de apretar cada caja a una palabra por línea"
-    - "una compuerta y un paso van en el mismo dibujo: son un solo `Diagram`, así que el resultado de una compuerta puede entrar a una caja de proceso y la salida de un paso puede ser un operando, sin cambiar de componente a mitad de camino"
+    - "how several things relate has to be explained: a linear flow, an if/else, a decision tree, a state machine with a loop. All four come from the same two pieces, they are not four modes"
+    - "the boxes are ordinary HTML content and the drawing is everything else: the runtime measures and computes the routes, the elbows, the arrowheads and where each label lands. Whoever composes never writes a coordinate"
+    - "the layout is an ordinary CSS grid: `columns` on the frame and `span` on a node cover the usual shapes, and anything else is `grid-area` in the consumer's own stylesheet. If a media query moves a node, the connectors redraw themselves"
+    - "the relationship has to reach a screen reader: the SVG is `aria-hidden` and the binding writes an announced list of where it leads inside each node, so the drawing can be read without seeing it"
+    - "a loop is needed: an edge to a node higher up leaves through the margin and comes back, which is how \"and start again\" has always been drawn"
+    - "the edges are not a sequence but a relation between things (a model, a schema): `arrow: \"none\"` draws the line with no head and the label carries the cardinality"
+    - "a node has to say more than one line of text: its slot takes a composition, so any tree of the catalogue fits inside"
+    - "what has to be drawn is boolean logic: `shape` brings the seven gates of IEEE 91 / IEC 60617-12 notation (`and`, `or`, `xor`, `nand`, `nor`, `xnor`, `not`), with the real shape and not a box that says AND inside"
+    - "the diagram is wider than the screen showing it (four columns on a phone): wrapped in a `Canvas` it is designed at its desktop width and shown fitted, with zoom, instead of squeezing each box to one word per line"
+    - "a gate and a step go in the same drawing: they are one `Diagram`, so a gate's result can feed a process box and a step's output can be an operand, without switching components halfway"
   avoidWhen:
-    - "lo que hay que nombrar son las partes de una sola cosa ya dibujada: eso es Annotation, que ancla cada etiqueta a un selector adentro del sujeto y no dibuja un grafo"
-    - "el contenido es una secuencia sin ramas y sin ciclos: eso es ProcessList si son instrucciones, o Steps si lo primario es el progreso; un diagrama de una sola columna sin bifurcaciones es una lista con líneas de más"
-    - "la jerarquía es de contención y no de flujo (carpetas, un árbol de archivos): eso es TreeView o Folder, donde lo que importa es qué está adentro de qué"
-    - "el grafo es grande, viene de datos, o hay que explorarlo o arrastrar nodos: esto no resuelve disposición, dibuja diagramas chicos escritos a mano. Para acercar y mover la vista sí alcanza con envolverlo en un Canvas"
-    - "lo que se necesita es notación UML completa, swimlanes o tipos de caja por convención (cilindro, paralelogramo, hexágono): son convenciones que hay que enseñarle a quien lee, y de las formas de prosa acá sólo viven las tres que se entienden sin leyenda. Las compuertas lógicas son la excepción y pasan la misma prueba por el otro lado: no son una caja que significa AND, son el símbolo que la norma le asigna a la conjunción, y quien lee la notación la lee sin leyenda"
-    - "hace falta un esquemático de verdad: esto dibuja las siete compuertas y nada más. No hay flip-flops, ni buses, ni multiplexores, ni componentes con patas numeradas, ni nodos de unión, ni netlist; una compuerta tampoco lleva nada adentro, así que un designador visible (`U1`) no tiene dónde ir"
-    - "el dibujo lógico necesita realimentación: un latch de compuertas cruzadas no se puede dibujar acá. Los operandos tienen que venir de columnas anteriores, que es el orden en el que un esquemático se dibuja igual; un cable que va hacia atrás dobla a mitad de camino entre sus dos puntas, y si las dos compuertas comparten columna ese punto queda adentro de las dos y el cable pasa por debajo del símbolo que alimentaba"
+    - "what has to be named are the parts of one thing already drawn: that is Annotation, which anchors each label to a selector inside the subject and does not draw a graph"
+    - "the content is a sequence with no branches and no loops: that is ProcessList if they are instructions, or Steps if progress is primary; a single-column diagram with no forks is a list with extra lines"
+    - "the hierarchy is containment and not flow (folders, a file tree): that is TreeView or Folder, where what matters is what is inside what"
+    - "the graph is large, comes from data, or has to be explored or have its nodes dragged: this does not do layout, it draws small hand-written diagrams. Wrapping it in a Canvas is enough to zoom and pan the view"
+    - "full UML notation, swimlanes or box types by convention (cylinder, parallelogram, hexagon) are needed: those are conventions the reader has to be taught, and of the prose shapes only the three understood without a legend live here. Logic gates are the exception and pass the same test from the other side: they are not a box that means AND, they are the symbol the standard assigns to conjunction, and anyone who reads the notation reads it without a legend"
+    - "a real schematic is needed: this draws the seven gates and nothing else. There are no flip-flops, buses, multiplexers, components with numbered pins, junction nodes or netlist; a gate holds nothing inside either, so a visible designator (`U1`) has nowhere to go"
+    - "the logic drawing needs feedback: a latch of cross-coupled gates cannot be drawn here. Operands have to come from earlier columns, which is the order a schematic is drawn in anyway; a wire going backwards bends halfway between its two ends, and if both gates share a column that point falls inside both and the wire runs under the symbol it was feeding"
   alternatives:
     - Annotated
     - ProcessList

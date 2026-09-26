@@ -2,13 +2,13 @@
 
 Folder:
   useWhen:
-    - "un bloque de contenido necesita decir de qué es ANTES de que lo leas: la pestaña es un rótulo, no un título más"
-    - "hay una colección de cosas del mismo tipo y conviene que cada una se lea como un objeto aparte"
-    - "conviene que en reposo se lea como texto limpio: una carpeta nunca se ve hasta que la tocas"
+    - "a block of content needs to say what it is about BEFORE it is read: the tab is a label, not one more heading"
+    - "there is a collection of things of the same kind and each should read as a separate object"
+    - "at rest it should read as clean text: a folder is never seen until it is touched"
   avoidWhen:
-    - "es una superficie sin rótulo propio; eso es un Box, que no dibuja nada"
-    - "la superficie entera es un control; eso es un TileLink o un TileButton, que ya traen el estado y el foco de un control"
-    - "el contenido se abre y se cierra; eso es un Accordion o un Details"
+    - "it is a surface with no label of its own; that is a Box, which draws nothing"
+    - "the whole surface is a control; that is a TileLink or a TileButton, which already bring a control's state and focus"
+    - "the content opens and closes; that is an Accordion or a Details"
   alternatives:
     - Box
     - TileLink
@@ -16,33 +16,33 @@ Folder:
 
 FolderLink:
   useWhen:
-    - "la carpeta entera va a un lugar: el rectángulo completo es el destino"
-    - "hace falta que el revelado responda al teclado sin depender de lo que haya adentro"
+    - "the whole folder goes somewhere: the complete rectangle is the destination"
+    - "the reveal has to respond to the keyboard without depending on what is inside"
   avoidWhen:
-    - "la carpeta hace algo en la página en vez de navegar; eso es un TileButton"
-    - "adentro hay más de un destino; dos links anidados no existen, pon los links en el cuerpo de un Folder"
+    - "the folder does something on the page instead of navigating; that is a TileButton"
+    - "there is more than one destination inside; nested links do not exist, put the links in the body of a Folder"
   alternatives:
     - Folder
     - TileLink
 
 FolderPreview:
   useWhen:
-    - "va adentro del slot previews de un Folder o un FolderLink: es la caja de UNA imagen del abanico"
-    - "hace falta que la imagen tenga su paspartú y su sombra propios, que la imagen sola no puede llevar"
+    - "it goes in the previews slot of a Folder or a FolderLink: it is the box of ONE image of the fan"
+    - "the image needs its own mat and shadow, which the image alone cannot carry"
   avoidWhen:
-    - "la imagen es contenido de la carpeta y no un adelanto; eso va en el cuerpo, donde se la puede alcanzar"
-    - "está fuera de un Folder: sola no significa nada"
+    - "the image is the folder's content and not a preview; that goes in the body, where it can be reached"
+    - "it is outside a Folder: alone it means nothing"
   alternatives:
     - ImageFrame
     - Folder
 
 FolderStack:
   useWhen:
-    - "las carpetas se leen como una pila: cada una muestra su pestaña y una franja de cuerpo"
-    - "el solape mismo es la información, que hay más abajo y hay un orden"
+    - "the folders read as a stack: each shows its tab and a strip of body"
+    - "the overlap itself is the information, that there is more below and there is an order"
   avoidWhen:
-    - "cada carpeta necesita verse entera; eso es una Grid o un Inline de Folders"
-    - "el conjunto es una lista con semántica propia (resultados, pasos); eso lo nombra quien la contiene, no esto"
+    - "each folder needs to be seen whole; that is a Grid or an Inline of Folders"
+    - "the set is a list with semantics of its own (results, steps); whoever contains it names that, not this"
   alternatives:
     - Grid
     - Folder

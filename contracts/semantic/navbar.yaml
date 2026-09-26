@@ -2,24 +2,24 @@
 
 Navbar:
   useWhen:
-    - "la app necesita una barra superior con marca y acciones"
+    - "the app needs a top bar with a brand and actions"
   avoidWhen:
-    - "la navegación va al costado; eso es un Sidebar"
-    - "hace falta un panel de categorías de varias columnas; eso es Megamenu"
+    - "the navigation goes on the side; that is a Sidebar"
+    - "a multi-column category panel is needed; that is Megamenu"
   alternatives:
     - Sidebar
     - Megamenu
 
 NavbarBrand:
   useWhen:
-    - "el logo o el nombre del producto, normalmente enlazando al inicio"
+    - "the logo or the product name, usually linking to the home page"
   avoidWhen:
-    - "es un destino de la lista de navegación; eso va en NavList"
+    - "it is a destination of the navigation list; that goes in NavList"
   alternatives: []
 
 NavbarActions:
   useWhen:
-    - "las acciones del extremo: cuenta, notificaciones, tema"
+    - "the actions at the end: account, notifications, theme"
   avoidWhen:
-    - "son destinos de navegación del sitio; eso es NavList"
+    - "they are the site's navigation destinations; that is NavList"
   alternatives: []

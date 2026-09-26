@@ -2,13 +2,13 @@
 
 Listbox:
   useWhen:
-    - "quien usa la pantalla tiene que ver todas las opciones mientras elige: una vista, unos pocos filtros, los elementos sobre los que va a actuar"
-    - "se puede elegir más de una, y marcar y desmarcar sin abrir nada es más rápido que un desplegable"
-    - "la lista se recorre con el teclado (flechas, búsqueda al tipear) y el foco tiene que quedarse en un solo lugar"
+    - "whoever uses the screen has to see every option while choosing: a view, a few filters, the items they are about to act on"
+    - "more than one can be chosen, and checking and unchecking without opening anything is faster than a dropdown"
+    - "the list is browsed with the keyboard (arrows, type-ahead) and focus has to stay in one place"
   avoidWhen:
-    - "es un campo de un formulario que se envía: Listbox no tiene input ni name; eso es Select, RadioGroup o un grupo de Checkbox"
-    - "las opciones son muchas o el espacio es poco: un listbox siempre abierto ocupa lo que ocupan sus opciones; eso es Select o Combobox"
-    - "cada fila navega a otra página o ejecuta una acción: eso es NavList o Menu, no una elección"
+    - "it is a form field that gets submitted: Listbox has no input and no name; that is Select, RadioGroup or a group of Checkboxes"
+    - "the options are many or the space is small: an always-open listbox takes as much room as its options; that is Select or Combobox"
+    - "each row navigates to another page or runs an action: that is NavList or Menu, not a choice"
   alternatives:
     - Select
     - Combobox

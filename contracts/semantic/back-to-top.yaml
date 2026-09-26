@@ -2,16 +2,16 @@
 
 BackToTop:
   useWhen:
-    - "la página es larga y quien baja mucho quiere volver al principio sin arrastrar el scroll a mano"
-    - "aparece sola después de pasar un umbral de scroll y se va sola al volver arriba: no ocupa una esquina cuando no hace falta"
-    - "el scroll lo hace la plataforma (scrollTo): suave, salvo que se pida menos movimiento, y entonces instantáneo"
-    - "el scroller puede no ser el documento: con `scroller` apunta a un panel con overflow propio"
+    - "the page is long and someone who scrolled far wants to get back to the top without dragging the scroll by hand"
+    - "it appears on its own past a scroll threshold and leaves on its own back at the top: it takes no corner when it is not needed"
+    - "the platform does the scrolling (scrollTo): smooth, unless less motion is asked for, and then instant"
+    - "the scroller may not be the document: `scroller` points it at a panel with its own overflow"
   avoidWhen:
-    - "la página entra entera en una pantalla: no hay de dónde volver"
-    - "lo que se quiere es saltar el chrome de arriba para llegar al contenido: eso es SkipLink, va primero en el foco y usa un ancla real"
-    - "el destino es una sección concreta y no el principio del scroller: eso es un enlace de ancla dentro del texto, o Toc"
-    - "el foco tiene que viajar siempre al volver arriba: pásale `target` con el id de algo enfocable al inicio, o mira SkipLink"
-    - "hay que restaurar la posición de scroll al navegar entre páginas: eso lo hace el router, no un botón"
+    - "the whole page fits on one screen: there is nowhere to come back from"
+    - "the point is to skip the chrome at the top and reach the content: that is SkipLink, first in focus order and a real anchor"
+    - "the destination is a specific section and not the start of the scroller: that is an anchor link in the text, or Toc"
+    - "focus always has to travel back up too: give it a `target` with the id of something focusable at the start, or see SkipLink"
+    - "scroll position has to be restored between pages: that is the router's job, not a button's"
   alternatives:
     - SkipLink
     - Toc

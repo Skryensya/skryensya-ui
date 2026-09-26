@@ -1,5 +1,7 @@
 ---
 import "@skryensya/core/components/form-field.css";
+/* The "FormField + Select" demo wraps a native Select: its frame only has what this page imports. */
+import "@skryensya/core/components/select.css";
 /* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
 import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
@@ -43,7 +45,7 @@ const css = `@import "@skryensya/core/tokens.scss";
 
     <h3>{t("formFieldPage.independentTitle")}</h3>
     <p set:html={t("formFieldPage.independentBody")} />
-    <ComponentPreview tree={formFieldAroundSelectTree(t)} label="FormField + Select" />
+    <ComponentPreview tree={formFieldAroundSelectTree(t)} label="FormField + Select" minHeight="22.5rem" />
 
     <h3>{t("formFieldPage.errorTitle")}</h3>
     <p set:html={t("formFieldPage.errorBody")} />

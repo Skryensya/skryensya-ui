@@ -3,29 +3,34 @@
   "version": "0.0.1-dev",
   "private": true,
   "type": "module",
-  "description": "MCP server over the compiled manifest: get_catalog, get_contract and validate_ui. Rebuilt from zero; the v1 server that read docs/ai/schemas is gone (tag ai-v1).",
+  "description": "MCP server over the compiled manifest: discover_ui, get_examples, get_contract, validate_ui and get_catalog, over stdio and stateless Streamable HTTP. A protocol adapter over @skryensya/ai-compiler/agent.",
   "scripts": {
     "build": "node scripts/build.ts",
     "start": "node dist/index.js",
     "start:http": "node dist/http.js",
     "check": "node scripts/build.ts && tsc -p tsconfig.json --noEmit && tsc -p tsconfig.scripts.json && vitest run",
-    "inspector": "npx @modelcontextprotocol/inspector node dist/index.js"
+    "inspector": "npx @modelcontextprotocol/inspector node dist/index.js",
+    "docs": "tsx scripts/docs.ts"
   },
   "bin": {
     "skryensya-mcp": "./dist/index.js"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.30.0",
+    "@modelcontextprotocol/node": "^2.0.0",
+    "@modelcontextprotocol/server": "^2.0.0",
     "@skryensya/ai-compiler": "workspace:*",
     "@skryensya/core": "workspace:*",
     "@skryensya/snippets": "workspace:*",
-    "zod": "^3.24.1"
+    "hono": "^4.12.34",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@modelcontextprotocol/client": "^2.0.0",
+    "@modelcontextprotocol/sdk": "^1.30.0",
     "@types/node": "catalog:",
+    "esbuild": "^0.28.1",
     "tsx": "^4.19.2",
     "typescript": "^5.9.3",
-    "vitest": "^4.1.11",
-    "esbuild": "^0.28.1"
+    "vitest": "^4.1.11"
   }
 }

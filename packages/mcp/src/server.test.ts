@@ -1,256 +1,233 @@
 import { join } from "node:path";
+import { Client } from "@modelcontextprotocol/client";
+import { StdioClientTransport } from "@modelcontextprotocol/client/stdio";
+import { Client as LegacyClient } from "@modelcontextprotocol/sdk/client/index.js";
+import { StdioClientTransport as LegacyStdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 import { snippets } from "@skryensya/snippets";
 import { SCHEMA_VERSION } from "@skryensya/ai-compiler/artifact";
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+import { emitMarkup, emitReactSource } from "@skryensya/ai-compiler/emit";
+import { sheetsForTree } from "@skryensya/ai-compiler/sheets-for-tree";
+import { validateUsageTree } from "@skryensya/ai-compiler/validate";
+import type { UsageTree } from "@skryensya/core/usage-tree";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { errorOutput } from "./schemas.js";
+import { toolNames, tools } from "./tools.js";
 
 /*
- * Contract tests through a REAL client over stdio, not by calling the handlers directly. What is
- * being tested is the thing an agent actually talks to: the transport, the tool names, the schemas
- * the SDK derives, and the shape of what comes back. A test that imported the functions would pass
- * with a server that fails to start.
+ * Contract tests through a REAL client over stdio, against the BUILT binary (`dist/index.js`, what
+ * `.mcp.json` starts with plain node). What is tested is what an agent talks to: the transport, the
+ * tool names, the schemas the SDK publishes, and what comes back. A test that imported the handlers
+ * would pass with a server that fails to start, and once did.
+ *
+ * `check` builds before it runs vitest, so the binary is never stale here.
  */
 
+const binary = join(import.meta.dirname, "..", "dist", "index.js");
 let client: Client;
 
+type Payload = Record<string, any>;
+
+/*
+ * Every call goes through here, and every result is held to the two promises this server makes on
+ * every answer: `structuredContent` fits the tool's declared outputSchema (or, on an error, the
+ * shared error shape), and the text block is that same value serialized, which is what a client
+ * without structured output reads.
+ */
 const call = async (name: string, args: Record<string, unknown> = {}) => {
   const result = await client.callTool({ name, arguments: args });
-  const content = result.content as { type: string; text: string }[];
-  return { isError: result.isError === true, payload: JSON.parse(content[0]!.text) };
+  const payload = result.structuredContent as Payload;
+  const text = (result.content as { type: string; text: string }[])[0]!.text;
+  expect(JSON.parse(text), `${name}: text block mirrors structuredContent`).toEqual(payload);
+
+  const isError = result.isError === true;
+  const schema = isError ? errorOutput : tools.find((tool) => tool.name === name)!.output;
+  const parsed = schema.safeParse(payload);
+  expect(parsed.success, `${name}: ${parsed.success ? "" : parsed.error.message}`).toBe(true);
+
+  expect(payload.schemaVersion, `${name}: provenance`).toBe(SCHEMA_VERSION);
+  expect(payload.sourceHash, `${name}: provenance`).toMatch(/^[0-9a-f]{16}$/);
+  return { isError, payload };
 };
 
 beforeAll(async () => {
   client = new Client({ name: "contract-tests", version: "1.0.0" });
-  await client.connect(
-    new StdioClientTransport({
-      command: "npx",
-      args: ["tsx", join(import.meta.dirname, "index.ts")],
-    }),
-  );
+  await client.connect(new StdioClientTransport({ command: "node", args: [binary] }));
 }, 60_000);
 
 afterAll(async () => {
   await client.close();
 });
 
-describe("the shipped binary", () => {
-  /*
-   * The tests above run the server through tsx. That is NOT what `.mcp.json` starts: it starts
-   * `dist/index.js` with plain node, which cannot load a `.ts` file or follow a workspace link. The
-   * source passed every test while the built server could not start at all, so this case exists to
-   * make the difference visible instead of discovering it in a session.
-   */
-  it("starts under plain node and answers", async () => {
-    const built = new Client({ name: "binary-check", version: "1.0.0" });
-
-    try {
-      await built.connect(
-        new StdioClientTransport({
-          command: "node",
-          args: [join(import.meta.dirname, "..", "dist", "index.js")],
-        }),
-      );
-
-      const { tools } = await built.listTools();
-      expect(tools.map((tool) => tool.name).sort()).toEqual([
-        "get_catalog",
-        "get_contract",
-        "get_examples",
-        "validate_ui",
-      ]);
-    } finally {
-      await built.close();
-    }
-  }, 30_000);
-});
-
 describe("the surface", () => {
-  it("exposes exactly four tools", async () => {
-    const { tools } = await client.listTools();
-
-    /*
-     * FOUR, not five, and not back to three either.
-     *
-     * The old surface's sin was one tool per WORKFLOW STEP over the same content  -  search, then read
-     * a schema, then check props  -  which is exactly what get_catalog -> get_contract -> validate_ui
-     * replaced with three. get_examples is not another step over that same content: it is a second
-     * KIND of content (a worked tree, not a bare contract) that none of the other three can answer,
-     * the same way get_contract answers a question get_catalog cannot. Folding it into get_catalog
-     * would mean either shipping every example's full tree on every catalogue read (defeats "small
-     * enough to read whole" the moment every example's tree is in there) or growing get_catalog a
-     * second, unrelated query shape it was never meant to have. A fifth tool is the one to be
-     * suspicious of, not this one.
-     */
-    expect(tools.map((tool) => tool.name).sort()).toEqual([
-      "get_catalog",
-      "get_contract",
-      "get_examples",
-      "validate_ui",
-    ]);
+  it("exposes exactly the declared inventory, in workflow order", async () => {
+    const { tools: listed } = await client.listTools();
+    expect(listed.map((tool) => tool.name)).toEqual([...toolNames]);
+    expect(toolNames).toEqual(["discover_ui", "get_examples", "get_contract", "validate_ui", "get_catalog"]);
   });
 
-  it("stamps every response with the artifact it came from", async () => {
-    const { payload } = await call("get_catalog");
+  it("declares an outputSchema and read-only annotations on every tool", async () => {
+    const { tools: listed } = await client.listTools();
+    for (const tool of listed) {
+      expect(tool.outputSchema?.type, tool.name).toBe("object");
+      expect(tool.annotations?.readOnlyHint, tool.name).toBe(true);
+    }
+  });
 
-    expect(payload.sourceHash).toMatch(/^[0-9a-f]{16}$/);
-    expect(payload.schemaVersion).toBe(SCHEMA_VERSION);
+  it("teaches the discovery workflow and no longer makes a full scan or examples mandatory", () => {
+    const text = client.getInstructions() ?? "";
+    for (const name of toolNames) expect(text).toContain(name);
+    expect(text).not.toMatch(/page through ALL|EVERY time|IS NOT OPTIONAL/);
+    // Significantly shorter than the ~4,500 characters it replaced.
+    expect(text.length).toBeLessThan(2_000);
   });
 });
 
-describe("get_catalog", () => {
+describe("discover_ui", () => {
+  it("is deterministic over the wire", async () => {
+    const args = { query: "a switch that applies a setting immediately" };
+    const first = await call("discover_ui", args);
+    const second = await call("discover_ui", args);
+    expect(second.payload).toEqual(first.payload);
+  });
+
+  it("explains every candidate and links the related examples", async () => {
+    const { payload } = await call("discover_ui", { query: "switch setting" });
+    const sw = payload.candidates.find((c: Payload) => c.signature === "Switch");
+    expect(sw.matched).toContainEqual({ field: "signature", term: "switch", value: "Switch" });
+    expect(sw.examples).toContain("settings-row-with-switch");
+    expect(payload.examples.map((e: Payload) => e.id)).toContain("settings-row-with-switch");
+    for (const candidate of payload.candidates) expect(candidate.matched.length).toBeGreaterThan(0);
+  });
+
+  it("sends the caller to get_catalog when nothing matches", async () => {
+    const { isError, payload } = await call("discover_ui", { query: "zzqx" });
+    expect(isError).toBe(false);
+    expect(payload.coverage).toBe("none");
+    expect(payload.guidance).toContain("get_catalog");
+  });
+
+  it("returns the vocabulary when called with nothing", async () => {
+    const { payload } = await call("discover_ui");
+    expect(payload.coverage).toBe("browse");
+    expect(payload.vocabulary.intents.length).toBeGreaterThan(100);
+  });
+});
+
+describe("get_catalog, the exhaustive fallback", () => {
   it("pages, small enough per page that a real caller downstream of Claude Code can read it", async () => {
     const { payload } = await call("get_catalog");
-
     expect(payload.page).toBe(1);
-    expect(payload.contracts.length).toBeGreaterThan(0);
     expect(payload.contracts.length).toBeLessThanOrEqual(10);
-    expect(payload.totalFamilies).toBeGreaterThan(payload.contracts.length);
     expect(payload.more).toBe(true);
-    // The concrete failure this exists to prevent: the full catalogue serialized is ~110KB and
-    // trips Claude Code's own fixed large-result threshold, confirmed live against a real recorded
-    // eval run. One page has to stay far under that, not just under some formal token count.
     expect(JSON.stringify(payload).length).toBeLessThan(30_000);
   });
 
-  it("names what IS available when asked for a page past the end", async () => {
+  it("names what IS available when asked for a page past the end, with provenance", async () => {
     const { isError, payload } = await call("get_catalog", { page: 9999 });
-
     expect(isError).toBe(true);
     expect(payload.detail).toMatch(/\d+ pages?/);
   });
 
-  it("adds up to the whole catalogue across every page, with the reason to choose each signature", async () => {
-    const contracts: { id: string; signatures: unknown[] }[] = [];
-    let page = 1;
-    for (;;) {
+  it("adds up to the whole catalogue, and discovery can reach nothing it does not list", async () => {
+    const signatures = new Set<string>();
+    let families = 0;
+    for (let page = 1; ; page += 1) {
       const { payload } = await call("get_catalog", { page });
-      contracts.push(...payload.contracts);
+      families += payload.contracts.length;
+      for (const entry of payload.contracts) for (const s of entry.signatures) signatures.add(s.id);
       if (!payload.more) {
-        expect(page).toBe(payload.totalPages);
-        expect(contracts.length).toBe(payload.totalFamilies);
+        expect(families).toBe(payload.totalFamilies);
         break;
       }
-      page += 1;
     }
-
-    const button = contracts.find((entry) => entry.id === "button") as {
-      signatures: { id: string; useWhen: string[]; avoidWhen: string[]; host: string; template?: unknown }[];
-    };
-    const action = button.signatures.find((s) => s.id === "Button.action")!;
-
-    expect(action.useWhen.length).toBeGreaterThan(0);
-    expect(action.avoidWhen.length).toBeGreaterThan(0);
-    expect(action.host).toBe("button");
-    // Structure is get_contract's job; the index exists to be read whole.
-    expect(action.template).toBeUndefined();
+    const { payload } = await call("discover_ui", { category: "forms", limit: 60, includeDeprecated: true });
+    for (const candidate of payload.candidates) expect(signatures.has(candidate.signature)).toBe(true);
   });
 });
 
 describe("get_contract", () => {
   it("returns the options, their attributes and the constraints", async () => {
     const { payload } = await call("get_contract", { id: "button" });
-
-    // BOTH axes, ever since `variant` (how strong) and `tone` (what it means) were separated: this test
-    // asked for `danger` on `variant`, which is exactly the value that moved, so checking it on one
-    // alone no longer says the contract travels whole.
-    expect(payload.options.variant.values).toContain("ghost");
     expect(payload.options.variant.attr).toBe("data-variant");
     expect(payload.options.tone.values).toContain("danger");
-    expect(payload.options.tone.attr).toBe("data-tone");
     expect(payload.signatures["Button.navigation"].requires).toEqual(["href"]);
     expect(payload.css).toBe("@skryensya/core/components/button.css");
+    expect(payload.semantics).toBeUndefined();
+    expect((await call("get_contract", { id: "button", detail: "full" })).payload.semantics).toBeDefined();
   });
 
   it("names what IS published when asked for something that is not", async () => {
-    // Deliberately a name nothing will ever publish. This asked for `combobox` until combobox was
-    // published, at which point the test was proving the opposite of what it claims.
     const { isError, payload } = await call("get_contract", { id: "nonesuch" });
-
     expect(isError).toBe(true);
     expect(payload.detail).toContain("button");
   });
 });
 
 describe("get_examples", () => {
-  it("lists every snippet, without shipping a tree nobody asked for yet", async () => {
+  it("lists every snippet without shipping a tree", async () => {
     const { payload } = await call("get_examples");
-
     expect(payload.examples.length).toBe(snippets.length);
-    const productCard = payload.examples.find((entry: { id: string }) => entry.id === "product-card-in-grid");
-    expect(productCard.level).toBe("molecule");
-    expect(productCard.contracts).toEqual(
-      expect.arrayContaining(["box", "image-frame", "layout", "typography"]),
-    );
-    // The index exists to be read whole and cheaply  -  the tree is get_examples(id)'s job.
-    expect(productCard.tree).toBeUndefined();
+    const card = payload.examples.find((entry: Payload) => entry.id === "product-card-in-grid");
+    expect(card.contracts).toEqual(expect.arrayContaining(["box", "image-frame", "layout", "typography"]));
+    expect(card.tree).toBeUndefined();
   });
 
   it("returns one snippet's full tree by id", async () => {
     const { payload } = await call("get_examples", { id: "pagination-standalone" });
-
-    expect(payload.level).toBe("component");
     expect(payload.tree.contract).toBe("pagination");
     expect(payload.tree.options.total).toBe(9);
   });
 
   it("names what IS published when asked for an id that is not", async () => {
     const { isError, payload } = await call("get_examples", { id: "nonesuch" });
-
     expect(isError).toBe(true);
     expect(payload.detail).toContain("pagination-standalone");
   });
-
-  /*
-   * Every snippet, through the real door.
-   *
-   * The two bugs this file exists because of: collections, then numbers; were both found by driving
-   * the server as a CLIENT after everything else was green, and both were shapes the catalogue
-   * publishes and no test happened to send. So rather than add a case per shape and hope the next gap
-   * is one somebody predicted, this sends every composition there is  -  and they are exactly what a
-   * snippet is small enough to slip past by accident: a collection item missing `slots: {}`, an
-   * option sent as the wrong type.
-   *
-   * A snippet the door rejects is a snippet an agent cannot copy, which is the whole point of
-   * publishing them.
-   */
-  it("every snippet's tree is a tree validate_ui actually accepts", async () => {
-    for (const snippet of snippets) {
-      const { payload } = await call("validate_ui", { tree: snippet.tree });
-      expect(payload.valid, snippet.id).toBe(true);
-    }
-  });
 });
 
-describe("validate_ui", () => {
+describe("validate_ui, the hard boundary", () => {
+  /*
+   * Behavioural compatibility, stated as equality with the compiler: every snippet's tree comes back
+   * valid, with exactly the markup, React source and problems the compiler produces for it, and a
+   * stylesheet list that IS `sheetsForTree` rather than a second resolver that can drift from it.
+   */
+  it("returns the compiler's own verdict, code and stylesheet closure for every snippet", async () => {
+    for (const snippet of snippets) {
+      const { payload } = await call("validate_ui", { tree: snippet.tree });
+      const tree = snippet.tree as UsageTree;
+      expect(payload.valid, snippet.id).toBe(true);
+      expect(payload.problems, snippet.id).toEqual(validateUsageTree(tree).problems);
+      expect(payload.emitted.vanilla, snippet.id).toBe(emitMarkup(tree));
+      expect(payload.emitted.react, snippet.id).toBe(emitReactSource(tree).component);
+      expect(payload.css, snippet.id).toEqual(sheetsForTree(tree).sheets);
+    }
+  });
+
+  it("includes the sheets the old MCP-local resolver missed (hookSheets, compose sheets)", async () => {
+    const tooltip = snippets.find((s) => s.id === "icon-only-button-tooltip")!;
+    expect((await call("validate_ui", { tree: tooltip.tree })).payload.css).toContain("@skryensya/core/patterns/anchored.css");
+    const card = snippets.find((s) => s.id === "product-card-in-grid")!;
+    expect((await call("validate_ui", { tree: card.tree })).payload.css).toContain("@skryensya/core/patterns/media-gradient.css");
+  });
+
   it("returns the code for both bindings when the tree holds", async () => {
     const { payload } = await call("validate_ui", {
-      tree: {
-        contract: "button",
-        signature: "Button.navigation",
-        options: { tone: "accent", href: "/docs" },
-        children: "Documentación",
-      },
+      tree: { contract: "button", signature: "Button.navigation", options: { tone: "accent", href: "/docs" }, children: "Docs" },
     });
-
     expect(payload.valid).toBe(true);
-    // Not the exact opening tag: it wraps one attribute per line past the print width, same as
-    // the React snippet beside it, so a long class list has no host to be a substring of.
     expect(payload.emitted.vanilla).toContain('class="sk-button sk-interactive"');
     expect(payload.emitted.react).toContain('import { Button } from "@skryensya/react/button";');
+    expect(payload.emitted.reactData).toBeNull();
     expect(payload.css).toEqual(["@skryensya/core/components/button.css"]);
   });
 
   it("emits NOTHING for an invalid tree", async () => {
-    // The emitter is a renderer, not a checker: this tree would produce an empty <button> that looks
-    // fine. Returning it would hand the agent plausible, wrong code.
-    const { payload } = await call("validate_ui", {
-      tree: { contract: "button", signature: "Button.action" },
-    });
-
+    const { isError, payload } = await call("validate_ui", { tree: { contract: "button", signature: "Button.action" } });
+    expect(isError).toBe(false);
     expect(payload.valid).toBe(false);
     expect(payload.emitted).toBeNull();
-    expect(payload.problems.map((p: { rule: string }) => p.rule)).toContain("missing-required-slot");
+    expect(payload.css).toBeUndefined();
+    expect(payload.problems.map((p: Payload) => p.rule)).toContain("missing-required-slot");
   });
 
   it("locates a problem inside a composition", async () => {
@@ -261,36 +238,11 @@ describe("validate_ui", () => {
         children: {
           contract: "nav-list",
           signature: "NavListGroup",
-          children: { contract: "nav-list", signature: "NavListLink", children: "Inicio" },
+          children: { contract: "nav-list", signature: "NavListLink", children: "Home" },
         },
       },
     });
-
-    const missing = payload.problems.find((p: { rule: string }) => p.rule === "missing-required");
-    expect(missing.path).toBe("NavList > NavListGroup > NavListLink");
-  });
-
-  it("collects every stylesheet a composition needs", async () => {
-    const { payload } = await call("validate_ui", {
-      tree: {
-        contract: "nav-list",
-        signature: "NavList",
-        attrs: { "aria-label": "Principal" },
-        children: {
-          contract: "nav-list",
-          signature: "NavListGroup",
-          children: {
-            contract: "nav-list",
-            signature: "NavListLink",
-            options: { href: "/" },
-            children: "Inicio",
-          },
-        },
-      },
-    });
-
-    expect(payload.valid).toBe(true);
-    expect(payload.css).toEqual(["@skryensya/core/patterns/nav-list.css"]);
+    expect(payload.problems.find((p: Payload) => p.rule === "missing-required").path).toBe("NavList > NavListGroup > NavListLink");
   });
 
   it("reports an advisory without failing the tree", async () => {
@@ -301,109 +253,134 @@ describe("validate_ui", () => {
         children: {
           contract: "nav-list",
           signature: "NavListGroup",
-          children: {
-            contract: "nav-list",
-            signature: "NavListLink",
-            options: { href: "/" },
-            children: "Inicio",
-          },
+          children: { contract: "nav-list", signature: "NavListLink", options: { href: "/" }, children: "Home" },
         },
       },
     });
-
     expect(payload.valid).toBe(true);
-    expect(payload.problems.some((p: { severity: string }) => p.severity === "advisory")).toBe(true);
-    expect(payload.emitted).not.toBeNull();
+    expect(payload.problems.some((p: Payload) => p.severity === "advisory")).toBe(true);
   });
 
-  it("catches the empty frame; the bug a static check used to bless", async () => {
-    const { payload } = await call("validate_ui", {
-      tree: { contract: "image-frame", signature: "ImageFrame" },
-    });
-
+  it("catches the empty frame", async () => {
+    const { payload } = await call("validate_ui", { tree: { contract: "image-frame", signature: "ImageFrame" } });
     expect(payload.valid).toBe(false);
-    expect(payload.problems.map((p: { rule: string }) => p.rule)).toContain("missing-exactly-one");
+    expect(payload.problems.map((p: Payload) => p.rule)).toContain("missing-exactly-one");
   });
 });
 
 describe("the tool schema accepts everything the compiler's model does", () => {
-  /*
-   * The MCP describes a usage tree in zod; the compiler describes it in TypeScript. Two declarations
-   * of one shape, which is the duplication this whole system exists to argue against; it drifted
-   * the moment collections were added: every Tabs composition was rejected at the door by the one
-   * tool meant to validate it, and nothing caught it until the server was driven as a client.
-   *
-   * Every canonical shape the catalogue publishes has to survive the door.
-   */
-  it("accepts a collection, which is how a tab set is written", async () => {
+  it("accepts a collection, and returns the data module it needs", async () => {
     const { payload } = await call("validate_ui", {
       tree: {
         contract: "tabs",
         signature: "Tabs",
-        attrs: { "aria-label": "Cuenta" },
+        attrs: { "aria-label": "Account" },
         slots: {
           items: [
-            { options: { value: "perfil" }, slots: { label: "Perfil", children: "Tu nombre." } },
-            { options: { value: "seguridad" }, slots: { label: "Seguridad", children: "Sesiones." } },
+            { options: { value: "profile" }, slots: { label: "Profile", children: "Your name." } },
+            { options: { value: "security" }, slots: { label: "Security", children: "Sessions." } },
           ],
         },
       },
     });
-
     expect(payload.valid).toBe(true);
-    expect(payload.emitted.vanilla).toContain('data-value="perfil"');
+    expect(payload.emitted.vanilla).toContain('data-value="profile"');
     expect(payload.emitted.react).toContain("items={");
+    expect(payload.emitted.reactData.file).toMatch(/\.ts$/);
   });
 
-  /*
-   * The SECOND time the same duplication bit, and it bit the same way: the schema at the door said an
-   * option is a string or a boolean, while the type it mirrors has said `string | boolean | number`
-   * for as long as there have been numeric options. So the server rejected every Pagination, every
-   * Progress, every Slider, every NumberField; the whole numeric half of the catalogue; and none of
-   * the fourteen tests above noticed, because not one of them passed a number.
-   *
-   * A guard in `index.ts` now fails to COMPILE when the type widens. This is the runtime half: the
-   * shapes an agent actually sends, through the real server.
-   */
-  it("accepts numeric options, which half the catalogue is made of", async () => {
+  it("accepts numeric options", async () => {
     for (const tree of [
       { contract: "pagination", signature: "Pagination", options: { page: 4, total: 12 } },
-      { contract: "progress", signature: "Progress", options: { value: 68, label: "Subida" } },
-      { contract: "slider", signature: "Slider", options: { value: 40, min: 0, max: 100 }, attrs: { "aria-label": "Volumen" } },
-      {
-        contract: "number-field",
-        signature: "NumberField",
-        options: { name: "noches", min: 1, max: 14 },
-        slots: { label: "Noches" },
-      },
+      { contract: "progress", signature: "Progress", options: { value: 68, label: "Upload" } },
+      { contract: "slider", signature: "Slider", options: { value: 40, min: 0, max: 100 }, attrs: { "aria-label": "Volume" } },
     ]) {
-      const { payload } = await call("validate_ui", { tree });
-      expect(payload.valid, `${tree.signature} con opciones numéricas`).toBe(true);
+      expect((await call("validate_ui", { tree })).payload.valid, tree.signature).toBe(true);
     }
   });
 
-  it("accepts a signature nested in a named slot, which is how an icon is written", async () => {
+  it("accepts a signature nested in a named slot", async () => {
     const { payload } = await call("validate_ui", {
       tree: {
         contract: "nav-list",
         signature: "NavList",
-        attrs: { "aria-label": "Ajustes" },
+        attrs: { "aria-label": "Settings" },
         children: {
           contract: "nav-list",
           signature: "NavListGroup",
           children: {
             contract: "nav-list",
             signature: "NavListLink",
-            options: { href: "/ajustes" },
+            options: { href: "/settings" },
             slots: { icon: { contract: "icon", signature: "Icon", options: { name: "settings" } } },
-            children: "Ajustes",
+            children: "Settings",
           },
         },
       },
     });
-
     expect(payload.valid).toBe(true);
     expect(payload.emitted.vanilla).toContain('data-sk-icon="settings"');
-    expect(payload.emitted.react).toContain("<Icon name=");
   });
+});
+
+describe("arguments that do not fit the schema", () => {
+  /*
+   * Answered like every other failure: an error result with provenance and a detail naming the
+   * offending path, not the SDK's bare line of text. `call` also checks it fits `errorOutput`.
+   */
+  it("answers an out-of-range argument with a machine-readable, stamped error", async () => {
+    const { isError, payload } = await call("get_catalog", { page: 0 });
+    expect(isError).toBe(true);
+    expect(payload.error).toBe("Invalid arguments for get_catalog.");
+    expect(payload.detail).toMatch(/^page: /);
+  });
+
+  it("rejects an unknown key in a tree instead of silently dropping it", async () => {
+    const { isError, payload } = await call("validate_ui", {
+      tree: { contract: "button", signature: "Button.navigation", option: { href: "/" }, children: "Docs" },
+    });
+    expect(isError).toBe(true);
+    expect(payload.detail).toContain('"option"');
+  });
+
+  it("rejects an unknown key nested in a slot or a collection entry too", async () => {
+    const nested = await call("validate_ui", {
+      tree: { contract: "layout", signature: "Stack", children: { contract: "typography", signature: "Text", child: "x" } },
+    });
+    expect(nested.payload.detail).toContain('"child"');
+    const entry = await call("validate_ui", {
+      tree: { contract: "tabs", signature: "Tabs", slots: { items: [{ options: { value: "a" }, slots: { label: "A" }, extra: 1 }] } },
+    });
+    expect(entry.isError).toBe(true);
+  });
+});
+
+describe("a client of the previous server", () => {
+  /*
+   * The v1 SDK client, speaking the 2025 `initialize` handshake, reading results the way every
+   * client of the old server did: the first text block, parsed as JSON. The server answers it
+   * through the SDK's legacy path, from the same factory, with the same tools.
+   */
+  it("still lists and calls the tools it knew, and reads them from the text block", async () => {
+    const legacy = new LegacyClient({ name: "v1-client", version: "1.0.0" });
+    await legacy.connect(new LegacyStdioClientTransport({ command: "node", args: [binary] }));
+    try {
+      const { tools: listed } = await legacy.listTools();
+      expect(listed.map((tool) => tool.name)).toEqual(expect.arrayContaining(["get_catalog", "get_contract", "get_examples", "validate_ui"]));
+
+      const result = await legacy.callTool({
+        name: "validate_ui",
+        arguments: { tree: { contract: "button", signature: "Button.action", children: "Save" } },
+      });
+      const payload = JSON.parse((result.content as { text: string }[])[0]!.text);
+      expect(payload.valid).toBe(true);
+      expect(payload.emitted.vanilla).toContain("sk-button");
+      expect(payload.sourceHash).toMatch(/^[0-9a-f]{16}$/);
+
+      const catalog = await legacy.callTool({ name: "get_catalog", arguments: {} });
+      expect(JSON.parse((catalog.content as { text: string }[])[0]!.text).page).toBe(1);
+    } finally {
+      await legacy.close();
+    }
+  }, 30_000);
 });

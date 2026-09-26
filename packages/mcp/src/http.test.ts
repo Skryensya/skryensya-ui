@@ -1,201 +1,254 @@
 import { type ChildProcess, spawn } from "node:child_process";
+import type { AddressInfo } from "node:net";
 import { join } from "node:path";
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
+import { Client } from "@modelcontextprotocol/client";
+import { StreamableHTTPClientTransport } from "@modelcontextprotocol/client";
+import { Client as LegacyClient } from "@modelcontextprotocol/sdk/client/index.js";
+import { StreamableHTTPClientTransport as LegacyHttpTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { createServer } from "./create-server.js";
+import { createHttpApp, httpConfigFromEnv, type HttpApp, type HttpConfig } from "./http-app.js";
+import { toolNames } from "./tools.js";
 
 /*
- * Contract tests through a REAL client over Streamable HTTP, the same discipline `server.test.ts`
- * uses for stdio: what is being tested is the thing an agent actually talks to over a network
- * (the transport, the route, the auth gate), not the four tools themselves  -  those already have
- * their own exhaustive suite in `server.test.ts`, run against the identical `createServer()` this
- * file's own server also calls. Duplicating that suite here would test `createServer()` twice and
- * `http.ts` not at all.
+ * The HTTP surface, tested two ways: in-process (the app built from a config on port 0, fast and
+ * precise about each gate), and as the shipped binary under plain node (what the Docker image
+ * starts). The tools themselves are `server.test.ts`'s job; this file is about the route,
+ * the gates, statelessness and the process lifecycle.
  */
 
-async function waitForPort(url: string, timeoutMs: number): Promise<void> {
-  const deadline = Date.now() + timeoutMs;
-  for (;;) {
-    try {
-      await fetch(url, { method: "OPTIONS" });
-      return;
-    } catch {
-      if (Date.now() > deadline) throw new Error(`Timed out waiting for ${url}`);
-      await new Promise((resolve) => setTimeout(resolve, 100));
-    }
-  }
+const base: HttpConfig = {
+  host: "127.0.0.1",
+  port: 0,
+  allowedHosts: ["localhost", "127.0.0.1", "[::1]"],
+  allowedOrigins: ["localhost", "127.0.0.1", "[::1]"],
+  maxBodyBytes: 1_000_000,
+};
+
+async function start(config: Partial<HttpConfig> = {}): Promise<{ app: HttpApp; url: string; logs: string[] }> {
+  const logs: string[] = [];
+  const app = createHttpApp({ ...base, ...config }, createServer, (line) => logs.push(line));
+  await new Promise<void>((resolve) => app.server.listen(0, "127.0.0.1", resolve));
+  const { port } = app.server.address() as AddressInfo;
+  return { app, url: `http://127.0.0.1:${port}`, logs };
 }
 
-function spawnHttpServer(command: string, args: readonly string[], env: Record<string, string>): ChildProcess {
-  return spawn(command, args, {
-    env: { ...process.env, ...env },
-    stdio: ["ignore", "ignore", "inherit"],
-  });
+const rpc = (body: unknown, headers: Record<string, string> = {}) => ({
+  method: "POST",
+  headers: { "Content-Type": "application/json", Accept: "application/json, text/event-stream", ...headers },
+  body: JSON.stringify(body),
+});
+
+async function connect(url: string, headers: Record<string, string> = {}): Promise<Client> {
+  const client = new Client({ name: "http-tests", version: "1.0.0" });
+  await client.connect(new StreamableHTTPClientTransport(new URL(`${url}/mcp`), { requestInit: { headers } }));
+  return client;
 }
 
-describe("over Streamable HTTP", () => {
-  const PORT = 8799;
-  const URL = `http://127.0.0.1:${PORT}/mcp`;
-  let proc: ChildProcess;
-  let client: Client;
-
-  beforeAll(async () => {
-    proc = spawnHttpServer("npx", ["tsx", join(import.meta.dirname, "http.ts")], { PORT: String(PORT) });
-    await waitForPort(URL, 15_000);
-
-    client = new Client({ name: "http-contract-tests", version: "1.0.0" });
-    await client.connect(new StreamableHTTPClientTransport(new globalThis.URL(URL)));
-  }, 30_000);
-
-  afterAll(async () => {
-    await client.close();
-    proc.kill();
+describe("configuration from the environment", () => {
+  it("binds 0.0.0.0 in production and loopback otherwise, on PORT", () => {
+    expect(httpConfigFromEnv({ NODE_ENV: "production", PORT: "4321" })).toMatchObject({ host: "0.0.0.0", port: 4321 });
+    expect(httpConfigFromEnv({})).toMatchObject({ host: "127.0.0.1", port: 8787 });
+    expect(httpConfigFromEnv({ HOST: "0.0.0.0" }).host).toBe("0.0.0.0");
   });
 
-  it("exposes the same four tools stdio does", async () => {
-    const { tools } = await client.listTools();
-    expect(tools.map((tool) => tool.name).sort()).toEqual([
-      "get_catalog",
-      "get_contract",
-      "get_examples",
-      "validate_ui",
-    ]);
+  it("checks Host against localhost on a loopback bind, and against MCP_ALLOWED_HOSTS when set", () => {
+    expect(httpConfigFromEnv({}).allowedHosts).toContain("localhost");
+    expect(httpConfigFromEnv({ NODE_ENV: "production" }).allowedHosts).toEqual([]);
+    expect(httpConfigFromEnv({ MCP_ALLOWED_HOSTS: "a.example, b.example" }).allowedHosts).toEqual(["a.example", "b.example"]);
   });
 
-  it("answers a real tool call, stamped with the same provenance stdio returns", async () => {
-    const result = await client.callTool({ name: "get_catalog", arguments: {} });
-    const content = result.content as { type: string; text: string }[];
-    const payload = JSON.parse(content[0]!.text);
-
-    expect(payload.sourceHash).toMatch(/^[0-9a-f]{16}$/);
-    expect(payload.contracts.length).toBeGreaterThan(0);
+  it("reads the token and never invents one", () => {
+    expect(httpConfigFromEnv({}).token).toBeUndefined();
+    expect(httpConfigFromEnv({ MCP_HTTP_TOKEN: "  " }).token).toBeUndefined();
+    expect(httpConfigFromEnv({ MCP_HTTP_TOKEN: "s3cret" }).token).toBe("s3cret");
   });
 
-  it("validates a tree and returns emitted code, the same as stdio", async () => {
-    const result = await client.callTool({
-      name: "validate_ui",
-      arguments: {
-        tree: {
-          contract: "button",
-          signature: "Button.navigation",
-          options: { tone: "accent", href: "/docs" },
-          children: "Documentación",
-        },
-      },
-    });
-    const content = result.content as { type: string; text: string }[];
-    const payload = JSON.parse(content[0]!.text);
-
-    expect(payload.valid).toBe(true);
-    expect(payload.emitted.vanilla).toContain('class="sk-button sk-interactive"');
-  });
-
-  it("rejects GET with 405, there is no server-initiated stream in stateless mode", async () => {
-    const response = await fetch(URL, { method: "GET" });
-    expect(response.status).toBe(405);
-  });
-
-  it("rejects DELETE with 405, there is no session to end in stateless mode", async () => {
-    const response = await fetch(URL, { method: "DELETE" });
-    expect(response.status).toBe(405);
-  });
-
-  it("answers 404 for any path other than /mcp", async () => {
-    const response = await fetch(`http://127.0.0.1:${PORT}/whatever`, { method: "POST" });
-    expect(response.status).toBe(404);
-  });
-
-  it("allows a browser-based caller in, permissive CORS on a read-only, non-secret surface", async () => {
-    const response = await fetch(URL, { method: "OPTIONS" });
-    expect(response.headers.get("access-control-allow-origin")).toBe("*");
+  it("refuses a nonsense PORT", () => {
+    expect(() => httpConfigFromEnv({ PORT: "eighty" })).toThrow(/PORT/);
   });
 });
 
-describe("with MCP_HTTP_TOKEN set", () => {
-  const PORT = 8798;
-  const URL = `http://127.0.0.1:${PORT}/mcp`;
-  const TOKEN = "test-secret-token";
-  let proc: ChildProcess;
+describe("routes and gates", () => {
+  let server: Awaited<ReturnType<typeof start>>;
+  beforeAll(async () => (server = await start()));
+  afterAll(() => server.app.shutdown(100));
 
-  beforeAll(async () => {
-    proc = spawnHttpServer("npx", ["tsx", join(import.meta.dirname, "http.ts")], {
-      PORT: String(PORT),
-      MCP_HTTP_TOKEN: TOKEN,
-    });
-    await waitForPort(URL, 15_000);
-  }, 30_000);
-
-  afterAll(() => {
-    proc.kill();
+  it("answers /healthz with a small 2xx and no MCP content", async () => {
+    const response = await fetch(`${server.url}/healthz`);
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({ status: "ok" });
   });
 
-  it("rejects a request with no Authorization header", async () => {
-    const response = await fetch(URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "tools/list" }),
-    });
-    expect(response.status).toBe(401);
-  });
-
-  it("rejects a request with the wrong token", async () => {
-    const response = await fetch(URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: "Bearer wrong" },
-      body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "tools/list" }),
-    });
-    expect(response.status).toBe(401);
-  });
-
-  it("accepts a request carrying the real token, through a real client", async () => {
-    const client = new Client({ name: "http-auth-test", version: "1.0.0" });
+  it("serves the full tool inventory at /mcp", async () => {
+    const client = await connect(server.url);
     try {
-      await client.connect(
-        new StreamableHTTPClientTransport(new globalThis.URL(URL), {
-          requestInit: { headers: { Authorization: `Bearer ${TOKEN}` } },
-        }),
-      );
-      const { tools } = await client.listTools();
-      expect(tools.length).toBe(4);
+      expect((await client.listTools()).tools.map((tool) => tool.name)).toEqual([...toolNames]);
+      const result = await client.callTool({ name: "discover_ui", arguments: { query: "switch" } });
+      expect((result.structuredContent as { sourceHash: string }).sourceHash).toMatch(/^[0-9a-f]{16}$/);
     } finally {
       await client.close();
     }
   });
+
+  it("still serves a 2025-era client through the stateless fallback", async () => {
+    const legacy = new LegacyClient({ name: "v1-http", version: "1.0.0" });
+    await legacy.connect(new LegacyHttpTransport(new URL(`${server.url}/mcp`)));
+    try {
+      const result = await legacy.callTool({ name: "get_contract", arguments: { id: "button" } });
+      expect(JSON.parse((result.content as { text: string }[])[0]!.text).id).toBe("button");
+    } finally {
+      await legacy.close();
+    }
+  });
+
+  it("answers 405 to a session GET: there are no sessions", async () => {
+    expect((await fetch(`${server.url}/mcp`, { method: "GET", headers: { Accept: "text/event-stream" } })).status).toBe(405);
+  });
+
+  it("answers 404 anywhere else", async () => {
+    expect((await fetch(`${server.url}/whatever`, { method: "POST" })).status).toBe(404);
+  });
+
+  it("refuses a browser Origin that is not allowlisted, and reflects one that is (never *)", async () => {
+    const evil = await fetch(`${server.url}/mcp`, rpc({ jsonrpc: "2.0", id: 1, method: "ping" }, { Origin: "https://evil.example" }));
+    expect(evil.status).toBe(403);
+    const local = await fetch(`${server.url}/mcp`, { method: "OPTIONS", headers: { Origin: "http://localhost:6274" } });
+    expect(local.status).toBe(204);
+    expect(local.headers.get("access-control-allow-origin")).toBe("http://localhost:6274");
+  });
+
+  it("refuses a Host that is not allowlisted (DNS rebinding)", async () => {
+    const { request } = await import("node:http");
+    const status = await new Promise<number>((resolve, reject) => {
+      const req = request(`${server.url}/mcp`, { method: "POST", headers: { Host: "attacker.example", "Content-Type": "application/json" } }, (res) => {
+        res.resume();
+        resolve(res.statusCode!);
+      });
+      req.on("error", reject);
+      req.end("{}");
+    });
+    expect(status).toBe(403);
+  });
+
+  it("answers malformed JSON with a parse error and no stack trace", async () => {
+    const response = await fetch(`${server.url}/mcp`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json, text/event-stream" },
+      body: "{not json",
+    });
+    expect(response.status).toBe(400);
+    const text = await response.text();
+    expect(text).toContain("-32700");
+    expect(text).not.toMatch(/at \w+ \(|node:internal|\.ts:\d+/);
+  });
+});
+
+describe("request size", () => {
+  it("refuses a body over the limit with 413", async () => {
+    const { app, url } = await start({ maxBodyBytes: 1_000 });
+    try {
+      const response = await fetch(`${url}/mcp`, rpc({ jsonrpc: "2.0", id: 1, method: "ping", params: { pad: "x".repeat(5_000) } }));
+      expect(response.status).toBe(413);
+    } finally {
+      await app.shutdown(100);
+    }
+  });
+});
+
+describe("with MCP_HTTP_TOKEN set", () => {
+  const TOKEN = "test-secret-token";
+  let server: Awaited<ReturnType<typeof start>>;
+  beforeAll(async () => (server = await start({ token: TOKEN })));
+  afterAll(() => server.app.shutdown(100));
+
+  it("rejects no token and a wrong token with a Bearer challenge", async () => {
+    for (const headers of [{}, { Authorization: "Bearer wrong" }, { Authorization: `Basic ${TOKEN}` }]) {
+      const response = await fetch(`${server.url}/mcp`, rpc({ jsonrpc: "2.0", id: 1, method: "tools/list" }, headers));
+      expect(response.status).toBe(401);
+      expect(response.headers.get("www-authenticate")).toMatch(/^Bearer/);
+    }
+  });
+
+  it("accepts the real token through a real client", async () => {
+    const client = await connect(server.url, { Authorization: `Bearer ${TOKEN}` });
+    try {
+      expect((await client.listTools()).tools.length).toBe(toolNames.length);
+    } finally {
+      await client.close();
+    }
+  });
+
+  it("keeps /healthz open, so a platform health check needs no secret", async () => {
+    expect((await fetch(`${server.url}/healthz`)).status).toBe(200);
+  });
+});
+
+describe("statelessness under concurrency", () => {
+  /*
+   * Twenty clients at once, each asking a different question. Every answer has to be the answer to
+   * ITS question: a shared server instance or a mutable cache would show up here as a crossed or
+   * rejected response.
+   */
+  it("answers concurrent calls independently and identically to sequential ones", async () => {
+    const { app, url } = await start();
+    const queries = ["switch", "checkbox", "accordion", "tabs", "pagination", "dialog", "tooltip", "table", "slider", "avatar"];
+    try {
+      const clients = await Promise.all(Array.from({ length: 20 }, () => connect(url)));
+      const answers = await Promise.all(
+        clients.map((client, at) => client.callTool({ name: "discover_ui", arguments: { query: queries[at % queries.length], limit: 3 } })),
+      );
+      const sequential = await connect(url);
+      for (const [at, answer] of answers.entries()) {
+        const expected = await sequential.callTool({ name: "discover_ui", arguments: { query: queries[at % queries.length], limit: 3 } });
+        expect(answer.structuredContent).toEqual(expected.structuredContent);
+      }
+      await Promise.all([...clients, sequential].map((client) => client.close()));
+    } finally {
+      await app.shutdown(100);
+    }
+  }, 30_000);
 });
 
 describe("the shipped binary", () => {
-  /*
-   * Same reason `server.test.ts`'s own "the shipped binary" case exists: the tests above run
-   * `http.ts` through tsx, not what a real deploy starts (`node dist/http.js`, plain node, no
-   * workspace links resolved). The source passing every test while the built server cannot even
-   * start is exactly the gap that case is there to make visible instead of discovering in a
-   * session.
-   */
-  it("starts under plain node and answers", async () => {
-    const PORT = 8797;
-    const URL = `http://127.0.0.1:${PORT}/mcp`;
-    const proc = spawnHttpServer("node", [join(import.meta.dirname, "..", "dist", "http.js")], {
-      PORT: String(PORT),
+  function spawnBinary(env: Record<string, string>): ChildProcess {
+    return spawn("node", [join(import.meta.dirname, "..", "dist", "http.js")], {
+      env: { ...process.env, ...env },
+      stdio: ["ignore", "pipe", "pipe"],
     });
+  }
 
-    try {
-      await waitForPort(URL, 15_000);
-
-      const client = new Client({ name: "http-binary-check", version: "1.0.0" });
+  async function waitFor(url: string, timeoutMs = 15_000): Promise<void> {
+    const deadline = Date.now() + timeoutMs;
+    for (;;) {
       try {
-        await client.connect(new StreamableHTTPClientTransport(new globalThis.URL(URL)));
-        const { tools } = await client.listTools();
-        expect(tools.map((tool) => tool.name).sort()).toEqual([
-          "get_catalog",
-          "get_contract",
-          "get_examples",
-          "validate_ui",
-        ]);
-      } finally {
-        await client.close();
+        if ((await fetch(url)).ok) return;
+      } catch {
+        if (Date.now() > deadline) throw new Error(`Timed out waiting for ${url}`);
       }
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+  }
+
+  it("binds 0.0.0.0 in production, answers, and drains cleanly on SIGTERM", async () => {
+    const port = 8796;
+    const proc = spawnBinary({ NODE_ENV: "production", PORT: String(port), MCP_ALLOWED_HOSTS: "127.0.0.1" });
+    let stdout = "";
+    proc.stdout!.on("data", (chunk) => (stdout += chunk));
+    try {
+      await waitFor(`http://127.0.0.1:${port}/healthz`);
+      expect(stdout).toContain(`http://0.0.0.0:${port}/mcp`);
+
+      const client = await connect(`http://127.0.0.1:${port}`);
+      expect((await client.listTools()).tools.map((tool) => tool.name)).toEqual([...toolNames]);
+      await client.close();
+
+      const exited = new Promise<number | null>((resolve) => proc.on("exit", resolve));
+      proc.kill("SIGTERM");
+      expect(await exited).toBe(0);
+      expect(stdout).toContain("SIGTERM: draining");
     } finally {
-      proc.kill();
+      proc.kill("SIGKILL");
     }
   }, 30_000);
 });

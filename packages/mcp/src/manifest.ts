@@ -47,10 +47,24 @@ function read(name: string): unknown {
  * on purpose: a server that answers `get_contract` from a half-read artifact is worse than one that
  * does not start, because the answer looks exactly like a good one.
  */
-const pair = asCompiledPair(read("ai-index.json"), read("ai-manifest.json"));
+export const pair = deepFreeze(asCompiledPair(read("ai-index.json"), read("ai-manifest.json")));
 
 export const catalogueIndex: CompiledIndex = pair.index;
 export const manifest: CompiledManifest = pair.manifest;
+
+/*
+ * FROZEN, all the way down. The HTTP server builds a fresh MCP server per request, but every one of
+ * them reads this same object, so "stateless" is only true if nothing can write to it. Freezing
+ * turns an accidental mutation in some future handler into a TypeError on the first request that
+ * tries it, instead of one request's answer quietly leaking into the next.
+ */
+function deepFreeze<T>(value: T): T {
+  if (value && typeof value === "object" && !Object.isFrozen(value)) {
+    Object.freeze(value);
+    for (const nested of Object.values(value)) deepFreeze(nested);
+  }
+  return value;
+}
 
 /** Stamped on every response, so any answer can be traced back to the artifact that produced it. */
 export const provenance = {

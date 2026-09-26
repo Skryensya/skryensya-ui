@@ -1,19 +1,14 @@
 #!/usr/bin/env node
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { serveStdio } from "@modelcontextprotocol/server/stdio";
 import { createServer } from "./create-server.js";
 
 /*
- * The stdio entry point: one process, one client, exactly what `.mcp.json` starts (`node
- * dist/index.js`). The four tools themselves live in `create-server.ts`, shared with `http.ts`'s
- * own Streamable HTTP transport  -  this file's only job is wiring the ONE server this process needs
- * to the ONE transport it speaks.
+ * The stdio entry point: what `.mcp.json` starts (`node dist/index.js`). `serveStdio` owns the
+ * connection: the opening exchange picks the protocol era (2026-07-28, or the 2025 `initialize`
+ * handshake an older client sends), and ONE instance from the shared factory serves the connection.
+ *
+ * Nothing here may write to stdout: stdout IS the protocol. Diagnostics go to stderr.
  */
-async function main(): Promise<void> {
-  const server = createServer();
-  await server.connect(new StdioServerTransport());
-}
-
-main().catch((error: unknown) => {
-  console.error("skryensya-ui MCP server failed to start:", error);
-  process.exit(1);
+serveStdio(createServer, {
+  onerror: (error) => console.error("skryensya-ui MCP (stdio):", error.message),
 });

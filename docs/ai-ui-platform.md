@@ -28,7 +28,7 @@ flowchart TB
     VB["Binding Vanilla<br/>markup + enhancer"]
     MC["Compilador<br/>importa · reconcilia · emite"]
     MV["Manifest + emisor<br/>usage tree → markup / TSX"]
-    MCP["MCP<br/>get_catalog · get_contract · validate_ui"]
+    MCP["MCP<br/>discover_ui · get_contract · validate_ui"]
     DOCS["apps/docs<br/>catálogo ejecutable, dos etapas vivas"]
     PW["Playwright<br/>simetría · interacción · a11y · visual"]
 
@@ -237,15 +237,23 @@ escribe una clase, y esa regla no se toca.
 
 ## 6. La API del MCP
 
+> Updated 2026-09-26 by [ADR-0026](decisions/0026-deterministic-discovery-narrows-the-catalogue.md), in
+> English per ADR-0021. The authoritative, generated list is the tool table in
+> [`packages/mcp/README.md`](../packages/mcp/README.md).
+
 ```ts
-get_catalog()                    // full index: families, signatures, useWhen, avoidWhen, deprecations
+discover_ui({ query?, intents?, category?, host?, parent? })  // deterministic, lexical candidates with evidence
+get_examples({ id? })            // established trees: the index, or one tree
 get_contract({ id, detail? })    // a family's compiled contract
-validate_ui({ tree })            // G0-G3 over the tree; if it passes, it returns the emitted code and the CSS
+validate_ui({ tree })            // G0-G3 over the tree; if it passes, the emitted code and the CSS
+get_catalog({ page? })           // the exhaustive index, paged: the fallback and the authority
 ```
 
-Tres tools. `get_catalog` no toma query: no hay ranker (decisión 31). `validate_ui` devuelve
-`{ valid, problems[], emitted: { vanilla, react, reactData }, css }`: el agente pega lo emitido,
-nunca lo teclea. Toda respuesta lleva `schemaVersion` y `sourceHash`.
+`discover_ui` narrows the catalogue before the agent chooses; it is lexical, explains every
+candidate, and has no score. `get_catalog` stays the complete list. `validate_ui` returns
+`{ valid, problems[], emitted: { vanilla, react, reactData }, css }`: the agent uses what was
+emitted and never types it. Every result carries `schemaVersion` and `sourceHash` as
+`structuredContent` validated against the tool's `outputSchema`, and as JSON text.
 
 ---
 
@@ -821,5 +829,5 @@ antes que en el prompt.
 - Declarar éxito visual desde un checker estático.
 - Una tool nueva por cada necesidad de workflow.
 - Instructions largas como sustituto de contratos y gates.
-- Un ranker, mientras el catálogo entre en el contexto.
+- Un ranker, mientras el catálogo entre en el contexto (ADR-0026 admits deterministic, explained discovery without a score).
 - Compatibilidad v1, después de haber decidido la ruptura.

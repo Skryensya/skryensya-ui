@@ -10,6 +10,11 @@ summary: >-
   thing that decides anything: whether the final composition was correct.
 ---
 
+> **Superseded in part by [ADR-0026](0026-deterministic-discovery-narrows-the-catalogue.md)** (2026-09-26):
+> the revisit threshold below was reached, and deterministic, explained discovery now narrows the
+> catalogue. The complete index remains the authority, and everything this decision rejected beyond
+> that (a weighted ranker, calibration, aliases, embeddings) stays rejected.
+
 ## The problem
 
 `packages/mcp/src/search.ts` ranks by literal word overlap over `{id, surface, use}`. It does not work

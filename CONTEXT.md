@@ -169,6 +169,18 @@ agent proposes and the thing the gates check. Written in signatures, never in pa
 selecting meaning is the author's job and expanding it into structure is the template's.
 _Avoid_: usage plan, spec, recipe
 
+**Discovery**:
+The deterministic step that narrows the published catalogue to candidate signatures before an
+agent chooses one. Lexical, never semantic: it compares words with compiled fields and reports
+which field, term and value admitted each candidate. It orders by written rules and never scores.
+The catalogue stays the authority and the validator stays the judge. See ADR-0026.
+_Avoid_: search, ranking, recommendation, semantic search
+
+**Candidate**:
+One signature discovery returns, with the evidence that admitted it. A candidate is not a
+recommendation: the agent chooses, and only a validated usage tree is an answer.
+_Avoid_: result, match, suggestion, hit
+
 ## Native and enhanced
 
 **Native alternative**:

@@ -72,7 +72,7 @@ report. The command above serves the same site locally.
 | Package | What it is |
 |---|---|
 | [`@skryensya/ai-compiler`](packages/ai-compiler) | Reconciles the declared contracts with the semantic overlay and emits `artifacts/ai-manifest.json`. |
-| [`@skryensya/mcp`](packages/mcp) | MCP server over that manifest, so an agent can read the catalogue and validate a composition before writing code. |
+| [`@skryensya/mcp`](packages/mcp) | MCP server over that manifest (stdio and stateless HTTP), so an agent can discover candidate components, read their contracts and validate a composition before writing code. |
 | [`@skryensya/ai-gates`](packages/ai-gates) | Playwright gates: cross-binding symmetry, accessibility, focus-ring modality, and visual baselines. |
 
 ### Content and apps

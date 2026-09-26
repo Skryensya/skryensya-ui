@@ -5,8 +5,8 @@
 # POR DIGEST, no sólo por tag, y los MISMOS que Dockerfile.docs: un tag es un puntero que se mueve, y
 # dos builds del mismo commit pueden traer imágenes distintas sin que nada acá cambie. Para sacar el
 # de hoy:
-#   docker buildx imagetools inspect node:22-bookworm-slim
-FROM node:22-bookworm-slim@sha256:83f487e0a63425e5b4d146fb5e5be574bcbe1b7b843d3ebafdd95eaf7767a7e5 AS build
+#   docker buildx imagetools inspect node:24-bookworm-slim
+FROM node:24-bookworm-slim@sha256:0e0ff40c39bc087845bfb27465a0df4ea419520094bc35842ff83dd8cbe6f9b6 AS build
 
 ENV PNPM_HOME=/pnpm
 ENV PATH="$PNPM_HOME:$PATH"

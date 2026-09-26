@@ -48,6 +48,8 @@
 
   .sk-navbar__actions {
     display: flex;
+    /* centred, not stretched: an avatar or a badge is shorter than a button and would hang from the top */
+    align-items: center;
     gap: var(--sk-navbar-actions-gap);
     /* the actions push to the end: layout is the consumer's, not the system's */
     margin-inline-start: auto;

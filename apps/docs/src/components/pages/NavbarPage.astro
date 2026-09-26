@@ -2,17 +2,20 @@
 import "@skryensya/core/components/navbar.css";
 import "@skryensya/core/patterns/nav-list.css";
 import "@skryensya/core/components/button.css";
+import "@skryensya/core/components/avatar.css";
 /* Structure diagram: Annotated specimen; a preview frame only copies styles THIS page loaded. */
 import "@skryensya/core/components/annotation.css";
 import ComponentPageShell from "./ComponentPageShell.astro";
 import CodeBlock from "../CodeBlock.astro";
 import ComponentPreview from "../ComponentPreview.astro";
-import { navbarAnatomyTree, navbarTree } from "../../demos/navbar";
+import { navbarAnatomyTree, navbarAppTree, navbarBareCss, navbarBareTree, navbarTree } from "../../demos/navbar";
 import { annotationDemoCss } from "../../demos/annotation";
 import { getLocale, useTranslations } from "../../i18n";
 
 const install = `pnpm add @skryensya/core @skryensya/react`;
 const t = useTranslations(getLocale(Astro.url));
+
+const hrefs = { home: "/", projects: "/proyectos", reports: "/reportes", team: "/equipo" };
 
 const css = `@import "@skryensya/core/tokens.scss";
 @import "@skryensya/core/components/navbar.css";
@@ -54,6 +57,27 @@ const css = `@import "@skryensya/core/tokens.scss";
         team: "/equipo",
       })}
       label="Navbar"
+      flush
+      minHeight="10rem"
+      zoomedDesktop
+    />
+
+    <h3>{t("navbarPage.bareTitle")}</h3>
+    <p set:html={t("navbarPage.bareBody")} />
+    <ComponentPreview
+      tree={navbarBareTree(t, hrefs)}
+      css={navbarBareCss}
+      label={t("navbarPage.bareTitle")}
+      flush
+      minHeight="10rem"
+      zoomedDesktop
+    />
+
+    <h3>{t("navbarPage.appTitle")}</h3>
+    <p set:html={t("navbarPage.appBody")} />
+    <ComponentPreview
+      tree={navbarAppTree(t, hrefs)}
+      label={t("navbarPage.appTitle")}
       flush
       minHeight="10rem"
       zoomedDesktop

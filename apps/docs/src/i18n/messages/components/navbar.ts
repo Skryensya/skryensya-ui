@@ -7,6 +7,10 @@ export const navbarMessages = {
     "demo.navbar.team": "Equipo",
     "demo.navbar.invite": "Invitar",
     "demo.navbar.newProject": "Nuevo proyecto",
+    "demo.navbar.signIn": "Iniciar sesión",
+    "demo.navbar.getStarted": "Empezar",
+    "demo.navbar.search": "Buscar",
+    "demo.navbar.settings": "Configuración",
 
     "navbarPage.description": "Navbar: la barra, con la lista de navegación como pattern horizontal.",
     "navbarPage.lede":
@@ -21,6 +25,12 @@ export const navbarMessages = {
     "navbarPage.currentTitle": "La página actual es de la plataforma",
     "navbarPage.currentBody":
       'El link actual se marca con <code>aria-current="page"</code>, que el consumidor ya tiene que escribir para los lectores de pantalla. Los styling hooks lo siguen en vez de pedir una clase modificadora, y un <code>state</code> lo escribe una máquina; aquí no hay ninguna.',
+    "navbarPage.bareTitle": "Sin contenedor",
+    "navbarPage.bareBody":
+      "La superficie de la barra son cuatro hooks: <code>--sk-navbar-bg</code>, <code>--sk-navbar-wash</code>, <code>--sk-navbar-elevation</code> y <code>--sk-navbar-border-color</code>. Redeclararlos deja la barra apoyada directamente en la página, sin opción nueva: es el mismo mecanismo con que se ajusta cualquier shell. Sin barra alrededor, el link actual con fondo se lee como un chip, así que aquí conserva su color y su énfasis y suelta el fondo.",
+    "navbarPage.appTitle": "Barra de aplicación",
+    "navbarPage.appBody":
+      "En una app las acciones son herramientas, no llamados a la acción: van sólo con ícono, cada una con su nombre accesible, y la cuenta cierra la fila. El avatar es un nodo más en <code>NavbarActions</code>.",
     "navbarPage.test1": "Usa un landmark <code>header</code> y deja la navegación a su hijo NavList.",
   },
   en: {
@@ -31,6 +41,10 @@ export const navbarMessages = {
     "demo.navbar.team": "Team",
     "demo.navbar.invite": "Invite",
     "demo.navbar.newProject": "New project",
+    "demo.navbar.signIn": "Sign in",
+    "demo.navbar.getStarted": "Get started",
+    "demo.navbar.search": "Search",
+    "demo.navbar.settings": "Settings",
 
     "navbarPage.description": "Navbar: the bar, with the navigation list as a horizontal pattern.",
     "navbarPage.lede":
@@ -45,6 +59,12 @@ export const navbarMessages = {
     "navbarPage.currentTitle": "The current page belongs to the platform",
     "navbarPage.currentBody":
       'The current link is marked with <code>aria-current="page"</code>, which the consumer already has to write for screen readers. The styling hooks follow it instead of asking for a modifier class, and a <code>state</code> would be written by a machine; there is none here.',
+    "navbarPage.bareTitle": "Without a container",
+    "navbarPage.bareBody":
+      "The bar's surface is four hooks: <code>--sk-navbar-bg</code>, <code>--sk-navbar-wash</code>, <code>--sk-navbar-elevation</code> and <code>--sk-navbar-border-color</code>. Re-declaring them sets the bar straight on the page, with no new option: it is the same mechanism any shell is restyled with. With no bar around it, a tinted current link reads as a chip, so here it keeps its colour and emphasis and drops the fill.",
+    "navbarPage.appTitle": "An app bar",
+    "navbarPage.appBody":
+      "In an app the actions are tools, not calls to action: they go icon-only, each with its own accessible name, and the account closes the row. The avatar is just another node in <code>NavbarActions</code>.",
     "navbarPage.test1": "Uses a header landmark while leaving navigation to its NavList child.",
   },
 } as const;

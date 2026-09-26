@@ -442,28 +442,6 @@ html:has(dialog:modal) .sk-toc {
 }
 
 
-.sk-select-native {
-  box-sizing: border-box;
-  block-size: var(--sk-select-height);
-  padding-inline: var(--sk-select-padding-x);
-  border: var(--sk-select-border-width) solid var(--sk-select-border-color);
-  border-radius: var(--sk-select-radius);
-  background: var(--sk-select-bg);
-  color: var(--sk-select-fg);
-  font: inherit;
-  font-size: var(--sk-select-font-size);
-}
-
-.sk-select-native option {
-  background-color: var(--sk-select-bg);
-  color: var(--sk-select-fg);
-}
-
-.sk-select-native:focus-visible {
-  outline: var(--focus-ring-width) solid var(--focus-ring-color);
-  outline-offset: var(--focus-ring-offset);
-}
-
 /* ── layout ───────────────────────────────────────────────────────────────── */
 /*
  * Two tracks now: the site index (sidebar), and one flexible area holding everything to its right.

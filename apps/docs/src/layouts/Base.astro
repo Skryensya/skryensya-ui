@@ -29,6 +29,10 @@ import "@skryensya/core/components/segmented.css";
 import "@skryensya/core/components/pagination.css";
 import "@skryensya/core/components/separator.css";
 import "@skryensya/core/components/input.css";
+/* The site's icon set (Lucide) drawing the native select's chevron and check, the same glyphs the
+   enhanced Select renders. Global because every native select on the site, and every preview frame
+   that copies this page's styles, should read as the same control. */
+import "@skryensya/icons-lucide/select.css";
 /* The palette composes over `.sk-dialog` (decision 11), and its sheet says so on the first line: it
  * owns the search row, the list and the footer, not the modal frame. Without this sheet ⌘K came out
  * with the browser's black border and square corners. It goes first for that reason: it is the base,

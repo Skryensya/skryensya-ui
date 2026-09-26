@@ -14,7 +14,8 @@
       "types": "./src/index.ts",
       "default": "./src/index.ts"
     },
-    "./carousel.css": "./src/carousel.css"
+    "./carousel.css": "./src/carousel.css",
+    "./select.css": "./src/select.css"
   },
   "scripts": {
     "generate": "node scripts/generate.ts",

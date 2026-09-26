@@ -62,6 +62,11 @@
   .sk-select-native {
     --sk-select-state-opacity: 0;
 
+    /* The chevron's end inset matches the trigger's exactly: the trigger's `--space-inset-xs` end
+     * padding plus its indicator box centring a `--size-icon-md` glyph in `--size-control-sm`. The
+     * platform draws this control's icon flush to the padding, so the same arithmetic goes here. */
+    padding-inline-end: calc(var(--space-inset-xs) + (var(--size-control-sm) - var(--size-icon-md)) / 2);
+
     background:
       var(--sk-select-wash),
       color-mix(
@@ -103,35 +108,15 @@
       align-items: center;
     }
 
-    /* Same glyph as the enhanced trigger's own chevron (`--size-icon-md`, Button's icon-only `sm`
-     * size) rather than the item check's `--size-icon-sm`, for the same reason: one recipe for a
-     * field's own affordance icon, regardless of which of the two anatomies renders it. */
+    /* Sized and placed like the enhanced trigger's chevron (`--size-icon-md`, Button's icon-only `sm`
+     * glyph). The GLYPH is not drawn here: each icon set's `select.css` paints this pseudo-element
+     * with the same `chevron-down` / `chevron-up` the trigger renders, so the two anatomies share one
+     * drawing instead of a hand-copied one. Without that sheet the browser's own icon stays. */
     .sk-select-native::picker-icon {
-      content: "";
       flex: 0 0 auto;
       inline-size: var(--size-icon-md);
       block-size: var(--size-icon-md);
       margin-inline-start: auto;
-      background: currentColor;
-      clip-path: polygon(
-        16.67% 37.5%,
-        50% 70.83%,
-        83.33% 37.5%,
-        75% 29.17%,
-        50% 54.17%,
-        25% 29.17%
-      );
-    }
-
-    .sk-select-native:open::picker-icon {
-      clip-path: polygon(
-        16.67% 62.5%,
-        50% 29.17%,
-        83.33% 62.5%,
-        75% 70.83%,
-        50% 45.83%,
-        25% 70.83%
-      );
     }
 
     .sk-select-native::picker(select) {
@@ -166,7 +151,10 @@
       overflow: hidden;
       border: 0;
       border-radius: var(--sk-select-item-radius);
-      background: var(--sk-select-content-bg);
+      /* Transparent, like the enhanced item: the picker panel paints the surface AND its elevation
+       * wash, and an option painting the bare surface colour on top read as a lighter tile. The state
+       * layer (`::after`) stays inside the option, which isolates it. */
+      background: transparent;
       color: var(--sk-select-item-fg);
       font: inherit;
       text-align: start;
@@ -207,27 +195,18 @@
 
     .sk-select-native option:disabled {
       --state-layer-opacity: var(--state-layer-disabled-opacity);
-      background: var(--sk-select-content-bg);
       color: var(--sk-select-item-disabled-fg);
       cursor: not-allowed;
     }
 
+    /* Placed like the enhanced item's check. The glyph comes from the icon set's `select.css`, the
+     * same `check` the enhanced item renders; without it the browser's own checkmark stays. */
     .sk-select-native option::checkmark {
-      content: "";
       order: 1;
       flex: 0 0 auto;
       inline-size: var(--size-icon-sm);
       block-size: var(--size-icon-sm);
       margin-inline-start: auto;
-      background: currentColor;
-      clip-path: polygon(
-        16.67% 45.83%,
-        41.67% 70.83%,
-        83.33% 29.17%,
-        75% 20.83%,
-        41.67% 54.17%,
-        25% 37.5%
-      );
     }
 
     @media (forced-colors: active) {
@@ -297,10 +276,13 @@
     gap: var(--space-stack-xs);
   }
 
+  /* The kit's field label, the one FormField prints over every other control: the same colour, size
+   * and weight, so a Select and a native select in a FormField read as the same field. This used to
+   * be a caption (smaller, secondary, regular), a second label recipe nothing else in the kit used. */
   .sk-select__label {
-    color: var(--color-text-secondary);
-    font-size: var(--font-size-caption);
-    line-height: var(--font-line-height-caption);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-body-sm);
+    font-weight: var(--font-weight-label);
   }
 
   .sk-select__trigger {

@@ -7,7 +7,7 @@ this corpus already proved correct fails here first, before it fails an agent.
 
 ## What is actually in `evals/`
 
-Twelve cases (`case.ts` defines the shape, `cases/*.ts` hold them, `index.ts` aggregates them):
+Seventeen cases (`case.ts` defines the shape, `cases/*.ts` hold them, `index.ts` aggregates them):
 
 **Regressions**. Each one recasts a documented historical bug from `ai-ui-platform.md` as a
 product intent, so the bug cannot silently come back:
@@ -30,20 +30,35 @@ product intent, so the bug cannot silently come back:
 museum of past failures: `confirmation-dialog`, `paginated-data-table`, `field-with-hint`,
 `callout-with-retry`, `settings-toggle-row`.
 
+**Semantic choice** ([ADR-0028](../docs/decisions/0028-evals-judge-choices-with-invariants.md)).
+Cases where two structurally valid trees differ in whether they are RIGHT, so validity alone cannot
+score them. Each declares `invariants` (`uses` at least one of some
+signatures, `avoids` all of others) that any correct answer satisfies, rather than demanding the
+reference tree:
+
+- `cta-navigates-to-pricing`: action vs navigation (Button.navigation, never Button.action).
+- `switch-immediate-setting` and `checkbox-no-for-id`: Switch vs Checkbox, in both directions.
+- `faq-without-javascript`: Accordion vs native Details/DetailsGroup, decided by "no JavaScript".
+- `view-switcher-exclusive`: a component vs the alternative its `avoidWhen` names (Segmented or
+  RadioGroup, never pressed Button.action).
+
+`run.ts` checks every reference tree satisfies its own invariants, so an invariant no answer could
+meet fails the static gate instead of every live run.
+
 Every tree here was built by hand from the real contracts (`get_contract`) and confirmed valid with
 the real `validate_ui` before it was written down.
 
 ## What `run.ts` does NOT do
 
 This is a regression net over hand-composed trees, not a measurement of the thing G6 actually asks
-about: **whether an agent, given only the prompt and the three MCP tools, arrives at a correct
+about: **whether an agent, given only the prompt and the MCP tools, arrives at a correct
 composition on its own.** `run.ts` never calls a model. It re-validates the `tree` already sitting
 in each file. A prompt whose stored tree is right and a prompt no agent could ever solve look
 identical here.
 
 ## The live-agent harness (`agent/`, `run-agent.ts`)
 
-The other half of G6: send `prompt.es`/`prompt.en` to a real model, wired to the actual three MCP
+The other half of G6: send `prompt.es`/`prompt.en` to a real model, wired to the actual MCP
 tools over the actual stdio server (`packages/mcp/dist/index.js`, spawned exactly as `.mcp.json`
 spawns it), capture whatever tree it independently arrives at, and score it.
 
@@ -63,17 +78,44 @@ A `Provider` (`agent/providers.ts`) is just "given one case, produce a scored ru
 Adding another provider (OpenRouter, whatever) is one more entry in `providers.ts`, not a rewrite.
 
 **Scoring** (`agent/scoring.ts`) reads the tool-call log the harness records (by wrapping every
-discovered tool's `execute`, not by parsing `chat()`'s final text), and asks one question: did the
-agent's *last* `validate_ui` call come back `valid: true`? That is the only thing that fails a
-case. Whether the agent's emitted markup matches the reference tree in the case file is reported
-too, but **never fails a case on its own**: the reference tree is one composition that passes
-G0-G3, not the only one a correct agent could produce.
+discovered tool's `execute`, not by parsing `chat()`'s final text). A case PASSES when the agent's
+*last* `validate_ui` call came back `valid: true` AND the final tree satisfies the case's
+`invariants`, if it has any. Validity is still decided only by `validate_ui`; the invariants add
+the product requirement a valid tree can still miss. Whether the agent's emitted markup matches the
+reference tree is reported too, but **never fails a case on its own**: the reference tree is one
+composition that passes G0-G3, not the only one a correct agent could produce.
+
+Every run also records how the agent got there (`metrics` in each case's `.json`, columns in
+`index.md`, means in `summary.json`): tool calls, catalogue pages read, whether `discover_ui` was
+used, discovery calls before the first `validate_ui`, repair loops (every `validate_ui` after the
+first), examples read and whether the final tree used one, and the selected root signature.
 
 ```
 pnpm --filter @skryensya/evals agent [--provider anthropic|openai|claude-code|codex-cli] \
-                                      [--model <id>] [--lang es|en|both] [--case <id>] \
+                                      [--model <id>] [--lang es|en|both] [--case <id>[,<id>]] \
+                                      [--workflow discovery|catalog] [--server <path>] \
                                       [--concurrency <n>] [--verbose]
 ```
+
+### Comparing the discovery workflow with the catalogue-first one
+
+`--workflow` picks the framing the agent is given (`agent/system-prompt.ts`): `discovery` (the
+default, the current server) or `catalog` (what the previous server's agents were told: read the
+catalogue first). `--server` points the run at another build of the stdio server. To measure the
+previous server, build it from the commit before the one that added ADR-0026, in a worktree, and
+point at it:
+
+```
+BASE="$(git log --diff-filter=A --format=%H -- docs/decisions/0026-*.md | tail -1)^"
+git worktree add /tmp/sk-mcp-before "$BASE"
+(cd /tmp/sk-mcp-before && pnpm install --frozen-lockfile && pnpm --filter @skryensya/ai-compiler build \
+  && pnpm --filter @skryensya/mcp build)
+pnpm --filter @skryensya/evals agent --provider claude-code --workflow catalog \
+  --server /tmp/sk-mcp-before/packages/mcp/dist/index.js --case <ids>
+pnpm --filter @skryensya/evals agent --provider claude-code --case <ids>
+```
+
+Compare the two runs' `summary.json`, then `git worktree remove /tmp/sk-mcp-before`.
 
 Needs `packages/mcp` built (`pnpm --filter @skryensya/mcp build`). Without `--provider`, it picks
 the first available one, in declaration order (`anthropic`, `openai`, `claude-code`, `codex-cli`):
@@ -114,12 +156,10 @@ here got fixed instead of just documented:
   case can still occasionally slip through without a tool call, but confirmed across repeated runs
   it now converges reliably where it previously failed every time.
 
-What's left, and is a real, load-bearing cost of this provider rather than something routed around
-further: `get_catalog`'s ~110KB response still trips a separate, LOWER, fixed threshold that
-persists a large tool result to a file instead of inlining it; no env var moves that one. The agent
-spends a `Read` on its own saved output to recover it. Measured: this costs turns, not correctness.
-It's reading back what the tool itself returned, not repo source, and the agent still converges on
-a correct `validate_ui` call afterward.
+What was left, and why the catalogue is no longer the first call: the whole catalogue (~110KB then,
+~190KB now) tripped a separate, LOWER, fixed threshold that persists a large tool result to a file
+instead of inlining it; no env var moves that one. `get_catalog` became paged for that reason, and
+reading every page before composing is what `discover_ui` replaced (ADR-0026).
 
 ## Reviewing what it composed (`agent/report.ts`, `apps/eval-viewer`)
 

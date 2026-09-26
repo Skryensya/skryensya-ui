@@ -1,5 +1,6 @@
 import { validateUsageTree } from "@skryensya/ai-compiler/validate";
 import { evalCases } from "./index.js";
+import { brokenInvariants } from "./invariants.js";
 
 /*
  * THE FIRST SLICE OF F7, and only that slice: re-validates every case's hand-composed tree against
@@ -27,6 +28,11 @@ for (const evalCase of evalCases) {
   const errors = problems.filter((problem) => problem.severity === "error");
   for (const error of errors) {
     failures.push(`${evalCase.id} · ${error.path}: ${error.message}`);
+  }
+  // A reference tree that breaks its own case's invariants means the invariant is wrong, or cannot
+  // be met, and every live run would then fail for a reason no agent could fix.
+  for (const broken of brokenInvariants(evalCase.tree, evalCase.invariants)) {
+    failures.push(`${evalCase.id} · invariant: ${broken}`);
   }
 }
 

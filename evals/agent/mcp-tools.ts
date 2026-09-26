@@ -1,24 +1,21 @@
 import { existsSync } from "node:fs";
-import { fileURLToPath } from "node:url";
 import { createMCPClient } from "@tanstack/ai-mcp";
 import { stdioTransport } from "@tanstack/ai-mcp/stdio";
 import type { McpServerTool, MCPClient } from "@tanstack/ai-mcp";
+import { runConfig } from "./run-config.js";
 
 /*
  * The REAL server, over the REAL transport: `packages/mcp/dist/index.js`, spawned via stdio exactly
- * as `.mcp.json` spawns it for an actual client. A harness that talked to the compiler or the
- * manifest directly would be testing something this repo doesn't actually ship: `get_catalog`,
- * `get_contract` and `validate_ui` as MCP tools, reached over stdio, are the product.
+ * as `.mcp.json` spawns it for an actual client (or another build, via `--server`). A harness that
+ * talked to the compiler directly would be testing something this repo doesn't actually ship: the
+ * MCP tools, reached over stdio, are the product.
  *
  * One process per case (see `runCase` in `harness.ts`), not one shared across the run: each case is
  * an independent conversation, and a fresh process is the cheapest way to guarantee one case's tool
  * calls can never leak into another's; the same isolation `evals/README.md` already assumes.
  */
-const serverEntry = fileURLToPath(
-  new URL("../../packages/mcp/dist/index.js", import.meta.url),
-);
-
 export function assertServerBuilt(): void {
+  const { serverEntry } = runConfig();
   if (existsSync(serverEntry)) return;
   throw new Error(
     `skryensya-ui MCP server is not built: ${serverEntry} does not exist.\n` +
@@ -60,7 +57,7 @@ export async function connectServerTools(): Promise<{
   assertServerBuilt();
 
   const client = await createMCPClient({
-    transport: stdioTransport({ command: "node", args: [serverEntry] }),
+    transport: stdioTransport({ command: "node", args: [runConfig().serverEntry] }),
   });
 
   const calls: ToolCallRecord[] = [];

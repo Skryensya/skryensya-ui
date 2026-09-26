@@ -10,7 +10,7 @@ import type { CaseScore } from "./scoring.js";
 
 /*
  * ONE SHAPE, MANY WAYS TO RUN A MODEL. G6 asks whether AN AGENT arrives at a correct composition
- * from the prompt and the three MCP tools alone; it says nothing about which model, or even which
+ * from the prompt and the MCP tools alone; it says nothing about which model, or even which
  * agent loop. Locking this harness to one API-key provider would answer a narrower question than
  * the one F7 exists to ask, so a `Provider` is just "given one case, produce a scored run"; an
  * Anthropic or OpenAI call through TanStack AI's `chat()` (`harness.ts`), the real `claude` CLI

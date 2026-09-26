@@ -11,6 +11,10 @@ export const checkboxNoForIdCase: EvalCase = {
       "asociación. Un agente que reproduzca el patrón HTML habitual (label for + input id) produce " +
       "una firma que este contrato no tiene.",
   ],
+  invariants: [
+    { uses: ["Checkbox", "TileCheckbox"], because: "accepting terms is a value submitted with the form" },
+    { avoids: ["Switch", "TileSwitch"], because: "a switch applies at once; nothing here takes effect before submit" },
+  ],
   tree: {
     contract: "checkbox",
     signature: "Checkbox",

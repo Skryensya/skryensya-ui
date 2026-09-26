@@ -11,6 +11,10 @@ export const switchImmediateSettingCase: EvalCase = {
       "comparten el mismo par de reglas de asociación por envoltura, y la elección de contrato la " +
       "decide si el cambio se envía con un formulario o surte efecto en el momento.",
   ],
+  invariants: [
+    { uses: ["Switch", "TileSwitch"], because: "the change applies immediately, with nothing to submit" },
+    { avoids: ["Checkbox", "TileCheckbox"], because: "a checkbox is a value submitted with a form" },
+  ],
   tree: {
     contract: "switch",
     signature: "Switch",

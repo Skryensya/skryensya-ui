@@ -3,11 +3,11 @@ import type { AnyTextAdapter } from "@tanstack/ai";
 import type { EvalCase } from "../case.js";
 import { connectServerTools } from "./mcp-tools.js";
 import { scoreCase, type CaseScore } from "./scoring.js";
-import { evalSystemPrompt } from "./system-prompt.js";
+import { systemPrompt } from "./run-config.js";
 
 /*
  * ONE OF TWO WAYS TO DRIVE G6 (the other is `claude-code-provider.ts`): a model, wired via TanStack
- * AI to the actual three MCP tools over the actual stdio server, given nothing but one case's
+ * AI to the actual MCP tools over the actual stdio server, given nothing but one case's
  * prompt. `run.ts` (the other half of F7) re-validates a tree that was already composed by hand;
  * this is the harness that README named as missing: it never reads `evalCase.tree` before scoring,
  * only after, to check what the agent independently arrived at against it.
@@ -33,7 +33,7 @@ export async function runCase(
   try {
     await chat({
       adapter: options.adapter,
-      systemPrompts: [evalSystemPrompt],
+      systemPrompts: [systemPrompt()],
       messages: [{ role: "user", content: evalCase.prompt[lang] }],
       // eslint-disable-next-line @typescript-eslint/no-explicit-any -- MCP tools are discovered at
       // runtime from the server's own schemas; there is no static type to bind them to here.

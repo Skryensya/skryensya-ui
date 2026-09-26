@@ -12,6 +12,9 @@ import { settingsToggleRowCase } from "./cases/settings-toggle-row.js";
 import { switchImmediateSettingCase } from "./cases/switch-immediate-setting.js";
 import { tableCaptionOrderCase } from "./cases/table-caption-order.js";
 import { tooltipAnchoredPublishedCase } from "./cases/tooltip-anchored-published.js";
+import { ctaNavigatesToPricingCase } from "./cases/cta-navigates-to-pricing.js";
+import { faqWithoutJavascriptCase } from "./cases/faq-without-javascript.js";
+import { viewSwitcherExclusiveCase } from "./cases/view-switcher-exclusive.js";
 import type { EvalCase } from "./case.js";
 
 /*
@@ -34,6 +37,11 @@ export const evalCases: readonly EvalCase[] = [
   settingsToggleRowCase,
   articleCardInGridCase,
   personalLandingPageCase,
+  // Semantic choice: cases where two structurally valid trees differ in whether they are right,
+  // decided by `invariants` rather than by equality with the reference tree.
+  ctaNavigatesToPricingCase,
+  faqWithoutJavascriptCase,
+  viewSwitcherExclusiveCase,
 ];
 
 export type { EvalCase } from "./case.js";

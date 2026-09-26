@@ -2,11 +2,10 @@ import { spawn } from "node:child_process";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { fileURLToPath } from "node:url";
 import type { EvalCase } from "../case.js";
 import type { ToolCallRecord } from "./mcp-tools.js";
 import { scoreCase, type CaseScore } from "./scoring.js";
-import { evalSystemPrompt } from "./system-prompt.js";
+import { runConfig, systemPrompt } from "./run-config.js";
 
 /*
  * THE OTHER WAY TO DRIVE G6: instead of a hand-rolled agent loop (`harness.ts`), spawn the actual
@@ -35,10 +34,8 @@ import { evalSystemPrompt } from "./system-prompt.js";
 const MCP_SERVER_NAME = "skryensya-ui";
 const MCP_TOOL_PREFIX = `mcp__${MCP_SERVER_NAME}__`;
 
-const mcpServerEntry = fileURLToPath(new URL("../../packages/mcp/dist/index.js", import.meta.url));
-const mcpConfigInline = JSON.stringify({
-  mcpServers: { [MCP_SERVER_NAME]: { command: "node", args: [mcpServerEntry] } },
-});
+const mcpConfigInline = () =>
+  JSON.stringify({ mcpServers: { [MCP_SERVER_NAME]: { command: "node", args: [runConfig().serverEntry] } } });
 
 interface StreamContentBlock {
   type: string;
@@ -76,9 +73,9 @@ async function spawnClaude(prompt: string, options: ClaudeCodeOptions): Promise<
     "-p",
     prompt,
     "--append-system-prompt",
-    evalSystemPrompt,
+    systemPrompt(),
     "--mcp-config",
-    mcpConfigInline,
+    mcpConfigInline(),
     "--strict-mcp-config",
     "--allowedTools",
     `mcp__${MCP_SERVER_NAME}`,
@@ -91,7 +88,7 @@ async function spawnClaude(prompt: string, options: ClaudeCodeOptions): Promise<
   if (options.model) args.push("--model", options.model);
 
   // Isolated per call: nothing of this repo is reachable from here, so Bash/Read/grep have nothing
-  // to find, and the only path to a correct composition is the three MCP tools.
+  // to find, and the only path to a correct composition is the MCP tools.
   const cwd = await mkdtemp(join(tmpdir(), "skryensya-eval-"));
 
   try {
@@ -142,7 +139,7 @@ async function spawnClaude(prompt: string, options: ClaudeCodeOptions): Promise<
 }
 
 /**
- * Pairs each `tool_use` block for one of OUR three tools with its `tool_result`, by the id the
+ * Pairs each `tool_use` block for one of OUR tools with its `tool_result`, by the id the
  * stream itself uses to correlate them. Every other tool_use (ToolSearch, Read: the platform's own
  * tools, still available even though only `mcp__skryensya-ui` is pre-approved) is not ours to score
  * and is left out.
@@ -179,28 +176,36 @@ function extractRecords(events: StreamEvent[]): ToolCallRecord[] {
 }
 
 /**
- * Normal MCP shape: `content` is `[{ type: "text", text: "<json>" }]` (one text block, same as the
- * TanStack path parses in `mcp-tools.ts`). A synthetic Claude Code error, for example "exceeds maximum
- * allowed tokens" for `get_catalog`'s ~110KB payload, arrives as a plain string instead; treated as
- * a failed call, same as a thrown MCP error is on the other path.
+ * Two shapes arrive, and both are the server's JSON value:
+ *   - `[{ type: "text", text: "<json>" }]`, the text block every result carries;
+ *   - a plain string holding that JSON. Since the server returns `structuredContent`, Claude Code
+ *     presents the structured value to the model instead of the text block, and the stream carries
+ *     it as a string. Measured on the first discovery-workflow run: a valid `validate_ui` was scored
+ *     as a failed call because only the first shape was read.
+ * A string that is not JSON is a synthetic Claude Code error (for example "exceeds maximum allowed
+ * tokens") and is recorded as a failed call, the same as a thrown MCP error on the other path.
  */
 function toRecord(call: { name: string; args: unknown }, content: unknown): ToolCallRecord {
   const text =
     Array.isArray(content) && content[0]?.type === "text" && typeof content[0].text === "string"
       ? content[0].text
-      : undefined;
+      : typeof content === "string"
+        ? content
+        : undefined;
 
   if (text === undefined) {
-    return {
-      name: call.name,
-      args: call.args,
-      error: typeof content === "string" ? content : JSON.stringify(content),
-    };
+    return { name: call.name, args: call.args, error: JSON.stringify(content) };
   }
 
   try {
-    return { name: call.name, args: call.args, result: JSON.parse(text) };
+    const result: unknown = JSON.parse(text);
+    if (result && typeof result === "object") return { name: call.name, args: call.args, result };
   } catch {
-    return { name: call.name, args: call.args, error: `unparseable tool result: ${text.slice(0, 200)}` };
+    // Not JSON: fall through to the error record below.
   }
+  return {
+    name: call.name,
+    args: call.args,
+    error: typeof content === "string" ? content : `unparseable tool result: ${text.slice(0, 200)}`,
+  };
 }

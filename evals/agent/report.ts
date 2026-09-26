@@ -17,6 +17,37 @@ export interface RunMeta {
   runId: string;
   provider: string;
   model: string;
+  workflow: string;
+  server: string;
+}
+
+/** Aggregates over one run, the numbers two workflows are compared on. Written to `summary.json`. */
+export interface RunSummary {
+  runs: number;
+  passed: number;
+  valid: number;
+  usedDiscovery: number;
+  usedExample: number;
+  meanToolCalls: number;
+  meanCatalogPages: number;
+  meanDiscoveryCallsBeforeFirstValidate: number;
+  meanRepairLoops: number;
+}
+
+export function summarize(scores: readonly CaseScore[]): RunSummary {
+  const mean = (pick: (score: CaseScore) => number) =>
+    scores.length === 0 ? 0 : Math.round((scores.reduce((sum, score) => sum + pick(score), 0) / scores.length) * 100) / 100;
+  return {
+    runs: scores.length,
+    passed: scores.filter((score) => score.passed).length,
+    valid: scores.filter((score) => score.valid).length,
+    usedDiscovery: scores.filter((score) => score.metrics.usedDiscovery).length,
+    usedExample: scores.filter((score) => score.metrics.usedExample).length,
+    meanToolCalls: mean((score) => score.metrics.toolCalls),
+    meanCatalogPages: mean((score) => score.metrics.catalogPages),
+    meanDiscoveryCallsBeforeFirstValidate: mean((score) => score.metrics.discoveryCallsBeforeFirstValidate),
+    meanRepairLoops: mean((score) => score.metrics.repairLoops),
+  };
 }
 
 /** Directory-safe timestamp, close enough to ISO to sort correctly by name. */
@@ -49,12 +80,15 @@ function callTraceMd(score: CaseScore): string {
 }
 
 function caseMd(meta: RunMeta, score: CaseScore): string {
-  const verdict = score.valid ? "✅ PASS" : "❌ FAIL";
+  const verdict = score.passed ? "✅ PASS" : "❌ FAIL";
   const lines = [
     `# ${score.caseId} [${score.lang}]`,
     "",
     `**Verdict:** ${verdict}${score.matchesReferenceMarkup === false ? " (differs from reference tree)" : ""}`,
-    `**Provider:** ${meta.provider} (${meta.model})`,
+    `**Provider:** ${meta.provider} (${meta.model}), workflow \`${meta.workflow}\``,
+    `**Selected:** ${score.metrics.selected ?? "(none)"}; tool calls ${score.metrics.toolCalls}, catalogue pages ` +
+      `${score.metrics.catalogPages}, discover_ui ${score.metrics.discoverCalls}, repair loops ` +
+      `${score.metrics.repairLoops}, examples read ${score.metrics.examplesRead.join(", ") || "none"}`,
     "",
     "## Prompt",
     "",
@@ -90,25 +124,36 @@ function caseMd(meta: RunMeta, score: CaseScore): string {
 
 function indexMd(meta: RunMeta, scores: readonly CaseScore[]): string {
   const rows = scores.map((score) => {
-    const verdict = score.valid
+    const verdict = score.passed
       ? score.matchesReferenceMarkup === false
-        ? "✅ valid (differs)"
-        : "✅ valid"
-      : "❌ FAIL";
+        ? "✅ pass (differs)"
+        : "✅ pass"
+      : score.valid
+        ? "❌ valid, wrong choice"
+        : "❌ FAIL";
     const file = caseFileBase(score);
-    return `| ${score.caseId} | ${score.lang} | ${verdict} | [detail](./${file}.md) |`;
+    const m = score.metrics;
+    return (
+      `| ${score.caseId} | ${score.lang} | ${verdict} | ${m.selected ?? ""} | ${m.toolCalls} | ${m.catalogPages} | ` +
+      `${m.discoverCalls} | ${m.discoveryCallsBeforeFirstValidate} | ${m.repairLoops} | ${m.usedExample ? "yes" : ""} | ` +
+      `[detail](./${file}.md) |`
+    );
   });
 
-  const passed = scores.filter((score) => score.valid).length;
+  const summary = summarize(scores);
 
   return [
     `# Eval run ${meta.runId}`,
     "",
     `**Provider:** ${meta.provider} (${meta.model})`,
-    `**Result:** ${passed}/${scores.length} valid`,
+    `**Workflow:** ${meta.workflow} (\`${meta.server}\`)`,
+    `**Result:** ${summary.passed}/${summary.runs} passed, ${summary.valid}/${summary.runs} valid`,
+    `**Means:** ${summary.meanToolCalls} tool calls, ${summary.meanCatalogPages} catalogue pages, ` +
+      `${summary.meanDiscoveryCallsBeforeFirstValidate} discovery calls before the first validate_ui, ` +
+      `${summary.meanRepairLoops} repair loops`,
     "",
-    "| Case | Lang | Verdict | Detail |",
-    "|---|---|---|---|",
+    "| Case | Lang | Verdict | Selected | Calls | Catalog pages | discover_ui | Before 1st validate | Repairs | Example used | Detail |",
+    "|---|---|---|---|---|---|---|---|---|---|---|",
     ...rows,
     "",
   ].join("\n");
@@ -124,6 +169,7 @@ export async function writeRunReport(meta: RunMeta, scores: readonly CaseScore[]
   await mkdir(runDir, { recursive: true });
 
   await writeFile(join(runDir, "index.md"), indexMd(meta, scores), "utf8");
+  await writeFile(join(runDir, "summary.json"), JSON.stringify({ ...meta, ...summarize(scores) }, undefined, 2), "utf8");
 
   await Promise.all(
     scores.map(async (score) => {

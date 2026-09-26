@@ -2,11 +2,10 @@ import { spawn } from "node:child_process";
 import { copyFile, mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { homedir, tmpdir } from "node:os";
 import { join } from "node:path";
-import { fileURLToPath } from "node:url";
 import type { EvalCase } from "../case.js";
 import { assertServerBuilt, type ToolCallRecord } from "./mcp-tools.js";
 import { scoreCase, type CaseScore } from "./scoring.js";
-import { evalSystemPrompt } from "./system-prompt.js";
+import { runConfig, systemPrompt } from "./run-config.js";
 
 /*
  * Codex CLI provider: the OpenAI equivalent of `claude-code-provider.ts`. It measures the real
@@ -29,7 +28,6 @@ import { evalSystemPrompt } from "./system-prompt.js";
 const MCP_SERVER_NAME = "skryensya-ui";
 const MCP_TOOL_PREFIX = `mcp__${MCP_SERVER_NAME}__`;
 
-const mcpServerEntry = fileURLToPath(new URL("../../packages/mcp/dist/index.js", import.meta.url));
 
 interface StreamEvent {
   type?: string;
@@ -78,7 +76,7 @@ async function spawnCodex(prompt: string, options: CodexCliOptions): Promise<Str
       "--skip-git-repo-check",
     ];
     if (options.model) args.push("--model", options.model);
-    args.push(`${evalSystemPrompt}\n\nUser request:\n${prompt}`);
+    args.push(`${systemPrompt()}\n\nUser request:\n${prompt}`);
 
     return await new Promise<StreamEvent[]>((resolve, reject) => {
       const child = spawn("codex", args, {
@@ -128,7 +126,7 @@ async function seedCodexAuth(codexHome: string): Promise<void> {
 }
 
 function codexConfig(): string {
-  const entry = JSON.stringify(mcpServerEntry);
+  const entry = JSON.stringify(runConfig().serverEntry);
   return `[mcp_servers.${MCP_SERVER_NAME}]
 command = "node"
 args = [${entry}]

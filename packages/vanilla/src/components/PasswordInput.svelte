@@ -7,6 +7,7 @@
     passwordInputEvents,
     passwordInputParts,
   } from "@skryensya/core/password-input";
+  import type { SignatureOptionsOf } from "@skryensya/core/contract";
   import { normalizeProps, useMachine } from "@zag-js/svelte";
   import { bindParts, type PartBinding } from "../runtime/bind-part.svelte";
   import { getRoot, uniqueId } from "../runtime/svelte-hydrate";
@@ -35,15 +36,23 @@
   const { showLabel, hideLabel, autoComplete } = passwordInputContract.options;
   const showText = trigger?.getAttribute("aria-label") ?? showLabel.default;
   const hideText = trigger?.getAttribute(passwordInputAttrs.hideLabel) ?? hideLabel.default;
+  /*
+   * The authored `autocomplete` is only honoured when it is one of the contract's values, checked
+   * against `autoComplete.values` rather than a restated pair, and typed by derivation so the
+   * machine receives its own union and never a bare string.
+   */
+  type AutoComplete = SignatureOptionsOf<typeof passwordInputContract, "PasswordInput">["autoComplete"];
+  const isAutoComplete = (value: string | null | undefined): value is NonNullable<AutoComplete> =>
+    (autoComplete.values as readonly (string | null | undefined)[]).includes(value);
   const authoredAutoComplete = input?.getAttribute("autocomplete");
+  const resolvedAutoComplete: NonNullable<AutoComplete> = isAutoComplete(authoredAutoComplete)
+    ? authoredAutoComplete
+    : autoComplete.default;
 
   const service = useMachine(passwordInput.machine, () => ({
     id: machineId,
     name: input?.name || undefined,
-    autoComplete:
-      authoredAutoComplete === "new-password" || authoredAutoComplete === "current-password"
-        ? authoredAutoComplete
-        : autoComplete.default,
+    autoComplete: resolvedAutoComplete,
     defaultVisible: root.hasAttribute(passwordInputAttrs.defaultVisible),
     ignorePasswordManagers: root.hasAttribute(passwordInputAttrs.ignorePasswordManagers),
     disabled: input?.disabled,
